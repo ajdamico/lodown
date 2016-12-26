@@ -23,8 +23,6 @@ get_catalog_ahrf <-
 lodown_ahrf <-
   function( catalog , data_name = "ahrf" , ... ){
 
-    if (!requireNamespace("readr", quietly = TRUE)) stop("readr needed for this function to work. Please install it.", call. = FALSE)
-
     tf <- tempfile()
 
 
