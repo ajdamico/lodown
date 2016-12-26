@@ -32,7 +32,7 @@ get_catalog_atus <-
         )
 
 
-      cat( paste0( "loading " , data_name , " catalog from" , http.page , "\r\n\n" ) )
+      cat( paste0( "loading " , data_name , " catalog from " , http.page , "\r\n\n" ) )
 
       # download the contents of the website
       # to the temporary file
