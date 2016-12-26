@@ -1,7 +1,7 @@
 #' @importFrom utils download.file read.csv unzip getFromNamespace
 
 get_catalog_atus <-
-  function( ... ){
+  function( data_name = "atus" , ... ){
 
     catalog <- NULL
 
@@ -32,7 +32,7 @@ get_catalog_atus <-
         )
 
 
-      cat( "loading atus catalog from" , http.page , "\r\n\n" )
+      cat( paste0( "loading " , data_name , " catalog from" , http.page , "\r\n\n" ) )
 
       # download the contents of the website
       # to the temporary file
@@ -75,7 +75,7 @@ get_catalog_atus <-
 
 
 lodown_atus <-
-  function( catalog , ... ){
+  function( catalog , data_name = "atus" , ... ){
 
     tf <- tempfile()
 
@@ -141,10 +141,11 @@ lodown_atus <-
       file.remove( tf )
 
 
-      cat( paste0( "atus catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , getwd() , "/" , catalog[ i , 'directory' ] , "/" , catalog[ i , 'rda' ] , ".rda'\r\n\n" ) )
+      cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , getwd() , "/" , catalog[ i , 'directory' ] , "/" , catalog[ i , 'rda' ] , ".rda'\r\n\n" ) )
 
   }
 
+  cat( paste0( data_name , " download completed\r\n\n" ) )
 
   invisible( TRUE )
 

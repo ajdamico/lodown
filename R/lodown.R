@@ -35,6 +35,6 @@ lodown <-
 
     load_fun <- getFromNamespace( paste0( "lodown_" , data_name ) , "lodown" )
 
-    load_fun( catalog , ... )
+    load_fun( catalog , ...)
 
   }

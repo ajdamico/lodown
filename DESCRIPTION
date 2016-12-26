@@ -6,8 +6,10 @@ Author: Anthony Joseph Damico [aut, cre]
 Maintainer: Anthony Joseph Damico <ajdamico@gmail.com>
 Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.
-Suggests: RCurl, digest
+Imports: SAScii, RCurl, digest
+Suggests: readr
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 5.0.1
+
