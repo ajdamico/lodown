@@ -63,10 +63,18 @@ get_catalog_atus <-
       # remove all `lexicon` files.
       # you can download a specific year
       # for yourself if ya want.
-      all.files.on.page <-
-        all.files.on.page[ !grepl( 'lexiconwex' , all.files.on.page ) ]
+      all.files.on.page <- all.files.on.page[ !grepl( 'lexiconwex' , all.files.on.page ) ]
 
-      catalog <- rbind( catalog , data.frame( directory = year , rda = all.files.on.page ) )
+      catalog <- 
+		rbind( 
+			catalog , 
+			data.frame( 
+				directory = year , 
+				rda = all.files.on.page , 
+				full_url = paste0( "https://www.bls.gov/tus/special.requests/" , all.files.on.page , ".zip" ) ,
+				stringsAsFactors = FALSE
+			)
+		)
 
     }
 
@@ -79,31 +87,23 @@ lodown_atus <-
 
     tf <- tempfile()
 
-    http.dir <- "https://www.bls.gov/tus/special.requests/"
-
     for ( i in seq_len( nrow( catalog ) ) ){
 
-      # build a character string containing the
-      # full filepath to the current zipped file
-      fn <- paste0( http.dir , catalog[ i , 'rda' ] , ".zip" )
-
       # download the file
-      cache_download( fn , tf , mode = 'wb' )
+      cache_download( catalog[ i , 'full_url' ] , tf , mode = 'wb' )
 
       # extract the contents of the zipped file
       # into the current year-specific directory
       # and (at the same time) create an object called
-      # `files.in.zip` that contains the paths on
+      # `unzipped_files` that contains the paths on
       # your local computer to each of the unzipped files
-      files.in.zip <-
-        unzip( tf , exdir = paste0( "./" , catalog[ i , 'directory' ] ) )
+      unzipped_files <- unzip( tf , exdir = paste0( "./" , catalog[ i , 'directory' ] ) )
 
       # find the data file
-      csv.file <-
-        files.in.zip[ grep( ".dat" , files.in.zip , fixed = TRUE ) ]
+      csv_file <- unzipped_files[ grep( ".dat" , unzipped_files , fixed = TRUE ) ]
 
       # read the data file in as a csv
-      x <- read.csv( csv.file , stringsAsFactors = FALSE )
+      x <- read.csv( csv_file , stringsAsFactors = FALSE )
 
       # convert all column names to lowercase
       names( x ) <- tolower( names( x ) )
@@ -134,7 +134,7 @@ lodown_atus <-
       # delete the files that were unzipped
       # at the start of this loop,
       # including any directories
-      unlink( files.in.zip , recursive = TRUE )
+      unlink( unzipped_files , recursive = TRUE )
 
       # delete the temporary file
       # (which stored the zipped file)
