@@ -88,7 +88,7 @@ lodown_atus <-
       fn <- paste0( http.dir , catalog[ i , 'rda' ] , ".zip" )
 
       # download the file
-      cache_download( fn , tf , mode = 'wb' , quiet = TRUE )
+      cache_download( fn , tf , mode = 'wb' )
 
       # extract the contents of the zipped file
       # into the current year-specific directory
