@@ -34,6 +34,7 @@ lodown( "atus" , output_dir = "C:/My Directory/ATUS" )
 lodown( "ess" , output_dir = "C:/My Directory/ESS" , your_email = "email@address.com" )
 lodown( "nis" , output_dir = "C:/My Directory/NIS" )
 lodown( "nsch" , output_dir = "C:/My Directory/NSCH" )
+lodown( "scf" , output_dir = "C:/My Directory/SCF" )
 lodown( "yrbss" , output_dir = "C:/My Directory/YRBSS" )
 
 # examples to download only the first two records in the catalog
@@ -47,6 +48,8 @@ nis_cat <- get_catalog( "nis" , output_dir = "C:/My Directory/NIS" )
 lodown( "nis" , nis_cat[ 1:2 , ] )
 nsch_cat <- get_catalog( "nsch" , output_dir = "C:/My Directory/NSCH" )
 lodown( "nsch" , nsch_cat[ 1:2 , ] )
+scf_cat <- get_catalog( "scf" , output_dir = "C:/My Directory/SCF" )
+lodown( "scf" , scf_cat[ 1:2 , ] )
 yrbss_cat <- get_catalog( "yrbss" , output_dir = "C:/My Directory/YRBSS" )
 lodown( "yrbss" , yrbss_cat[ 1:2 , ] )
 #'
