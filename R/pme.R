@@ -94,7 +94,7 @@ lodown_pme <-
 			# download the file
 			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
 
-			unzipped_files <- unzip( tf )
+			unzipped_files <- unzip( tf , exdir = paste0( tempdir() , '/unzips' ) )
 
 			# ..and read that text file directly into an R data.frame
 			# using the sas importation script downloaded before this big fat loop

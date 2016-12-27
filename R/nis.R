@@ -64,7 +64,7 @@ lodown_nis <-
 
 		if( grepl( "\\.zip$" , catalog[ i , "full_url" ] , ignore.case = TRUE ) ){
 
-			unzipped_file <- unzip( tf  )
+			unzipped_file <- unzip( tf , exdir = paste0( tempdir() , '/unzips' ) )
 
 			if( length( unzipped_file ) > 1 ) stop( "only expecting one file" )
 

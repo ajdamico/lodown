@@ -157,7 +157,7 @@ lodown_nhis <-
 			# download the file
 			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
 
-			unzipped_files <- unzip( tf )
+			unzipped_files <- unzip( tf , exdir = paste0( tempdir() , "/unzips" ) )
 
 			# if the zipped file includes a csv file, pick only the `.dat` file instead
 			if( length( unzipped_files ) > 1 ) unzipped_files <- unzipped_files[ grep( "\\.dat$" , tolower( unzipped_files ) ) ]
