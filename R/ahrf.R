@@ -1,5 +1,5 @@
 get_catalog_ahrf <-
-  function( ... ){
+  function( data_name = "ahrf" , output_dir , ... ){
 
     lines_with_links <- grep( "https://(.*)\\.zip" , readLines( "https://ahrf.hrsa.gov/download.htm" , warn = FALSE ) , value = TRUE , ignore.case= TRUE )
 
@@ -16,6 +16,8 @@ get_catalog_ahrf <-
 
     this_catalog$full_url = as.character( full_url )
 
+	this_catalog$output_filename <- paste0( output_dir , "/" , this_catalog$directory , "/" , gsub( "\\.zip" , ".rda" , basename( this_catalog$full_url ) ) )
+	
     this_catalog[ !this_catalog[ , "tech_doc" ] , ]
   }
 
@@ -37,7 +39,7 @@ lodown_ahrf <-
       # and (at the same time) create an object called
       # `unzipped_files` that contains the paths on
       # your local computer to each of the unzipped files
-      unzipped_files <- unzip( tf , exdir = paste0( "./" , catalog[ i , 'directory' ] ) )
+      unzipped_files <- unzip( tf , exdir = dirname( catalog[ i , 'output_filename' ] ) )
 
       sas_path <- grep( "\\.sas$" , unzipped_files , value = TRUE )
 
@@ -65,18 +67,14 @@ lodown_ahrf <-
       # convert all column names to lowercase
       names( x ) <- tolower( names( x ) )
 
-      save( x , file = paste0( "./" , catalog[ i , 'directory' ] , "/" , gsub( "\\.zip" , ".rda" , basename( catalog[ i , 'full_url' ] ) ) ) )
+      save( x , file = catalog[ i , 'output_filename' ] )
 
-      # delete the temporary file
-      # (which stored the zipped file)
+	  # # delete the temporary files
       file.remove( tf )
 
-
-      cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , getwd() , "/" , catalog[ i , 'directory' ] , "/" , gsub( "\\.zip" , ".rda" , basename( catalog[ i , 'full_url' ] ) ) , "'\r\n\n" ) )
+      cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , catalog[ i , 'output_filename' ] , "'\r\n\n" ) )
 
     }
-
-    cat( paste0( data_name , " download completed\r\n\n" ) )
 
     invisible( TRUE )
 

@@ -33,8 +33,16 @@ lodown <-
 
     }
 
+	unique_directories <- unique( dirname( catalog[ , 'output_filename' ] ) )
+	
+	for ( this_dir in unique_directories ) if( !file.exists( this_dir ) ) dir.create( this_dir , recursive = TRUE )
+	
     load_fun <- getFromNamespace( paste0( "lodown_" , data_name ) , "lodown" )
 
     load_fun( catalog , ...)
 
+    cat( paste0( data_name , " local download completed\r\n\n" ) )
+
+	invisible( TRUE )
+	
   }

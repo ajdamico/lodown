@@ -50,7 +50,8 @@ cache_download <-
     sleepsec = 60 ,
 	
 	# which filesize function should be used
-	filesize_fun = c( 'rcurl' , 'httr' )
+	# c( 'rcurl' , 'httr' )
+	filesize_fun = 'rcurl'
 	
   ) {
 

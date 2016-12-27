@@ -4,10 +4,12 @@
 \alias{get_catalog}
 \title{retrieve a listing of all available extracts for a microdata set}
 \usage{
-get_catalog(data_name, ...)
+get_catalog(data_name, output_dir = getwd(), ...)
 }
 \arguments{
 \item{data_name}{a character vector with a microdata abbreviation}
+
+\item{output_dir}{home directory on the local computer to save the microdata}
 
 \item{...}{passed to \code{get_catalog}}
 }

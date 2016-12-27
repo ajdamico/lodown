@@ -1,5 +1,5 @@
 get_catalog_nis <-
-  function( data_name = "nis" , ... ){
+  function( data_name = "nis" , output_dir , ... ){
 
 	nis_ftp_site <- "ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/nis/"
   
@@ -45,6 +45,8 @@ get_catalog_nis <-
 	
 	catalog$sas_script <- ifelse( sas_scripts == 'character(0)' , NA , sas_scripts )
 
+	catalog$output_filename <- paste0( output_dir , "/" , catalog$year , " " , catalog$directory , ".rda" )
+	
 	catalog
   
   }
@@ -72,7 +74,7 @@ lodown_nis <-
 
 		} else unzipped_file <- basename( catalog[ i , "full_url" ] )
 
-		file.copy( tf , paste0( "./" , unzipped_file ) )
+		file.copy( tf , paste0( tempdir() , "/" , unzipped_file ) )
 	  
 		if( !is.na( catalog[ i , 'r_script' ] ) ){
 			
@@ -131,7 +133,7 @@ lodown_nis <-
 			x <-
 				readr::read_fwf(
 					# using the ftp filepath
-					unzipped_file ,
+					paste0( tempdir() , "/" , unzipped_file ) ,
 					# using the parsed sas widths
 					readr::fwf_widths( abs( sasc$width ) , col_names = sasc[ , 'varname' ] ) ,
 					# using the parsed sas column types
@@ -145,16 +147,14 @@ lodown_nis <-
       # convert all column names to lowercase
       names( x ) <- tolower( names( x ) )
 
-      save( x , file = paste0( "./" , catalog[ i , 'year' ] , " " , catalog[ i , 'directory' ] , ".rda" ) )
+      save( x , file = catalog[ i , 'output_filename' ] )
 
-      # delete the temporary file
-      file.remove( tf , unzipped_file )
+      # delete the temporary files
+      file.remove( tf , paste0( tempdir() , "/" , unzipped_file ) )
 
-      cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , getwd() , "/" , catalog[ i , 'year' ] , " " , catalog[ i , 'directory' ] , ".rda" , "'\r\n\n" ) )
+      cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , catalog[ i , 'output_filename' ] , "'\r\n\n" ) )
 
     }
-
-    cat( paste0( data_name , " download completed\r\n\n" ) )
 
     invisible( TRUE )
 

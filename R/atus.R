@@ -1,7 +1,7 @@
 #' @importFrom utils download.file read.csv unzip getFromNamespace
 
 get_catalog_atus <-
-  function( data_name = "atus" , ... ){
+  function( data_name = "atus" , output_dir , ... ){
 
     catalog <- NULL
 
@@ -55,23 +55,24 @@ get_catalog_atus <-
       txt <- sapply( strsplit( txt , "/tus/special.requests/" ) , "[[" , 2 )
 
       # ..second, remove everything after the `.zip`
-      all.files.on.page <- sapply( strsplit( txt , '.zip\">' ) , "[[" , 1 )
+      files_on_page <- sapply( strsplit( txt , '.zip\">' ) , "[[" , 1 )
 
       # now you've got all the basenames
-      # in the object `all.files.on.page`
+      # in the object `files_on_page`
 
       # remove all `lexicon` files.
       # you can download a specific year
       # for yourself if ya want.
-      all.files.on.page <- all.files.on.page[ !grepl( 'lexiconwex' , all.files.on.page ) ]
+      files_on_page <- files_on_page[ !grepl( 'lexiconwex' , files_on_page ) ]
 
       catalog <- 
 		rbind( 
 			catalog , 
 			data.frame( 
 				directory = year , 
-				rda = all.files.on.page , 
+				rda = files_on_page , 
 				full_url = paste0( "https://www.bls.gov/tus/special.requests/" , all.files.on.page , ".zip" ) ,
+				output_filename = paste0( output_dir , "/" , year , "/" , files_on_page , ".rda" )
 				stringsAsFactors = FALSE
 			)
 		)
@@ -97,7 +98,7 @@ lodown_atus <-
       # and (at the same time) create an object called
       # `unzipped_files` that contains the paths on
       # your local computer to each of the unzipped files
-      unzipped_files <- unzip( tf , exdir = paste0( "./" , catalog[ i , 'directory' ] ) )
+      unzipped_files <- unzip( tf , exdir = paste0( tempdir() , "/unzips" ) )
 
       # find the data file
       csv_file <- unzipped_files[ grep( ".dat" , unzipped_files , fixed = TRUE ) ]
@@ -120,10 +121,7 @@ lodown_atus <-
 
       # save the object named within savename
       # into an R data file (.rda) for easy loading later
-      save(
-        list = savename ,
-        file = paste0( "./" , catalog[ i , 'directory' ] , "/" , catalog[ i , 'rda' ] , ".rda" )
-      )
+      save( list = savename , file = catalog[ i , 'output_filename' ] )
 
       # delete the savename object from working memory
       rm( list = savename )
@@ -131,21 +129,13 @@ lodown_atus <-
       # clear up RAM
       gc()
 
-      # delete the files that were unzipped
-      # at the start of this loop,
-      # including any directories
-      unlink( unzipped_files , recursive = TRUE )
-
-      # delete the temporary file
-      # (which stored the zipped file)
-      file.remove( tf )
+      # delete the temporary files
+      file.remove( unzipped_files , tf )
 
 
-      cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , getwd() , "/" , catalog[ i , 'directory' ] , "/" , catalog[ i , 'rda' ] , ".rda'\r\n\n" ) )
+      cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , catalog[ i , 'output_filename' ] , "'\r\n\n" ) )
 
   }
-
-  cat( paste0( data_name , " download completed\r\n\n" ) )
 
   invisible( TRUE )
 

@@ -1,5 +1,5 @@
 get_catalog_ess <-
-  function( data_name = "ess" , ... ){
+  function( data_name = "ess" , output_dir , ... ){
 
   	catalog <- NULL
 
@@ -110,14 +110,21 @@ get_catalog_ess <-
 	catalog$file_name <- gsub( "(.*)f=(.*)&c(.*)" , "\\2" , catalog$full_url )
 
 	catalog$file_name <- basename( gsub( "(.*)f=(.*)&y(.*)" , "\\2" , catalog$file_name ) )
-	  
+	
+	catalog$output_filename <- 
+		ifelse( 
+			catalog$directory == 'docs' ,
+			paste0( output_dir , "/" , catalog$year , "/docs/" , catalog$file_name ) ,
+			paste0( output_dir , "/" , catalog$year , "/" , gsub( "\\.(.*)" , "" , catalog$file_name , ".rda" ) )
+		)
+	
 	catalog$year <- as.numeric( catalog$wave ) * 2 + 2000
 	
 	catalog$full_url <- paste0( "http://www.europeansocialsurvey.org" , catalog$full_url )
 	
 	no_country_allowed <- catalog[ catalog$directory == 'integrated' , 'full_url' ]
 	
-	catalog <- catalog[ !( catalog$directory == 'country' & catalog$full_url %in% no_country_allowed ) , ]
+	catalog <- catalog[ !( catalog$directory == 'countries' & catalog$full_url %in% no_country_allowed ) , ]
 	
 	catalog
   
@@ -143,8 +150,6 @@ lodown_ess <-
 
 	httr::GET( "http://www.europeansocialsurvey.org/user/login" , query = values )
 
-	for( this_year in unique( catalog$year ) ) dir.create( paste0( "./" , this_year ) , showWarnings = FALSE )
-	
     for ( i in seq_len( nrow( catalog ) ) ){
 
 		# download the file
@@ -152,18 +157,18 @@ lodown_ess <-
 
 		writeBin( httr::content( current.file ) , tf )
 	  
-		spss.files <- unzip( tf , exdir = "./unzips" )
+		spss.files <- unzip( tf , exdir = paste0( tempdir() , "/unzips" ) )
 		
 		# delete the temporary file
 		file.remove( tf )
 
 		if( catalog[ i , 'directory' ] == 'docs' ){
 		
-			file.copy( spss.files , paste0( "./" , catalog[ i , 'year' ] , "/docs/" , catalog[ i , 'file_name' ] ) )
+			file.copy( spss.files , catalog[ i , 'output_filename' ] )
 			
 			file.remove( spss.files )
 		
-			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , getwd() , "/" , catalog[ i , 'year' ] , "/docs/" , catalog[ i , 'file_name' ] , "'\r\n\n" ) )
+			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , catalog[ i , 'output_filename' ] , "'\r\n\n" ) )
 			
 		} else {
 			
@@ -223,19 +228,20 @@ lodown_ess <-
 				}
 						
 			}
-			  
+		
+			# delete the temporary files
+			file.remove( spss.files , tf )
+		
 			# convert all column names to lowercase
 			names( x ) <- tolower( names( x ) )
 
-			save( x , file = paste0( "./" , catalog[ i , 'year' ] , "/" , gsub( "\\.(.*)" , "" , catalog[ i , 'file_name' ] ) , ".rda" ) )
+			save( x , file = catalog[ i , 'output_filename' ] )
 
-			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , getwd() , "/" , catalog[ i , 'year' ] , "/" , gsub( "\\.(.*)" , "" , catalog[ i , 'file_name' ] ) , ".rda" , "'\r\n\n" ) )
+			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , catalog[ i , 'output_filename' ] , "'\r\n\n" ) )
 		
 		}
 		
     }
-
-    cat( paste0( data_name , " download completed\r\n\n" ) )
 
     invisible( TRUE )
 

@@ -3,6 +3,7 @@
 #' subheader
 #'
 #' @param data_name a character vector with a microdata abbreviation
+#' @param output_dir home directory on the local computer to save the microdata
 #' @param ... passed to \code{get_catalog}
 #'
 #' @return \code{data.frame} with files and folders available for download
@@ -31,10 +32,10 @@
 #' @export
 #'
 get_catalog <-
-  function( data_name , ... ){
+  function( data_name , output_dir = getwd() , ... ){
 
     cat_fun <- getFromNamespace( paste0( "get_catalog_" , data_name ) , "lodown" )
 
-    cat_fun( ... )
+    cat_fun( output_dir = output_dir , ... )
 
   }
