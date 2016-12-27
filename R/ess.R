@@ -110,6 +110,8 @@ get_catalog_ess <-
 	catalog$file_name <- gsub( "(.*)f=(.*)&c(.*)" , "\\2" , catalog$full_url )
 
 	catalog$file_name <- basename( gsub( "(.*)f=(.*)&y(.*)" , "\\2" , catalog$file_name ) )
+		
+	catalog$year <- as.numeric( catalog$wave ) * 2 + 2000
 	
 	catalog$output_filename <- 
 		ifelse( 
@@ -117,8 +119,6 @@ get_catalog_ess <-
 			paste0( output_dir , "/" , catalog$year , "/docs/" , catalog$file_name ) ,
 			paste0( output_dir , "/" , catalog$year , "/" , gsub( "\\.(.*)" , "" , catalog$file_name , ".rda" ) )
 		)
-	
-	catalog$year <- as.numeric( catalog$wave ) * 2 + 2000
 	
 	catalog$full_url <- paste0( "http://www.europeansocialsurvey.org" , catalog$full_url )
 	
