@@ -24,9 +24,6 @@ a freshly-prepared microdata extract on your local computer
 \description{
 get_catalog retrieves a listing of all available extracts for a microdata set
 }
-\details{
-stores microdata in the current working directory
-}
 \examples{
 
 \dontrun{
@@ -36,6 +33,7 @@ lodown( "ahrf" , output_dir = "C:/My Directory/AHRF" )
 lodown( "atus" , output_dir = "C:/My Directory/ATUS" )
 lodown( "ess" , output_dir = "C:/My Directory/ESS" , your_email = "email@address.com" )
 lodown( "nis" , output_dir = "C:/My Directory/NIS" )
+lodown( "nsch" , output_dir = "C:/My Directory/NSCH" )
 
 # examples to download only the first two records in the catalog
 ahrf_cat <- get_catalog( "ahrf" , output_dir = "C:/My Directory/AHRF" )
@@ -46,6 +44,8 @@ ess_cat <- get_catalog( "ess" , output_dir = "C:/My Directory/ESS" )
 lodown( "ess" , ess_cat[ 1:2 , ] , your_email = "email@address.com" )
 nis_cat <- get_catalog( "nis" , output_dir = "C:/My Directory/NIS" )
 lodown( "nis" , nis_cat[ 1:2 , ] )
+nsch_cat <- get_catalog( "nsch" , output_dir = "C:/My Directory/NSCH" )
+lodown( "nsch" , nsch_cat[ 1:2 , ] )
 
 }
 
