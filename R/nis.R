@@ -111,10 +111,9 @@ lodown_nis <-
 			nis.df <- paste0( 'NISPUF' , substr( catalog[ i , 'year' ] , 3 , 4 ) )
 			
 			# copy the data.frame produced by the r script over to the object `x`
-			x <- get( nis.df )
+			if( catalog[ i , 'directory' ] == 'flu' ) x <- NHFSPUF else x <- get( nis.df )
 		
 		} else {
-		
 		
 			script.txt <- readLines( catalog[ i , 'sas_script' ] , warn = FALSE )
 			
