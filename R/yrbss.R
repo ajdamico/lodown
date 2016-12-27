@@ -134,7 +134,7 @@ lodown_yrbss <-
 			# require a file, not something read into working memory)
 			writeLines( sas_text , tf_sas )
 			
-			x <- read_SAScii( tf_fn , tf_sas )
+			x <- read_SAScii( tf_fn , tf_sas , na = c( "" , "NA" , "." ) )
 			
 			# convert all column names to lowercase
 			names( x ) <- tolower( names( x ) )

@@ -92,8 +92,9 @@ read_SAScii <-
           # using the parsed sas widths
           readr::fwf_widths( abs( sasc$width ) , col_names = sasc[ , 'varname' ] ) ,
           # using the parsed sas column types
-          col_types = paste0( ifelse( grepl( "^toss" , sasc$varname ) , "_" , ifelse( sasc$char , "c" , "d" ) ) , collapse = "" )
-		  
+          col_types = paste0( ifelse( grepl( "^toss" , sasc$varname ) , "_" , ifelse( sasc$char , "c" , "d" ) ) , collapse = "" ) ,
+		  # passed in from read_SAScii
+		  ...
         )
 
       data.frame( x )
