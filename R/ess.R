@@ -1,0 +1,239 @@
+get_catalog_ess <-
+  function( data_name = "ess" , ... ){
+
+  	catalog <- NULL
+
+	# figure out all integrated file locations
+	ifl <- httr::GET( "http://www.europeansocialsurvey.org/data/round-index.html" )
+
+	# extract all integrated filepaths
+	ifl.block <- XML::htmlParse( ifl , asText = TRUE )
+
+	# find all links, with parsing explanation thanks to
+	# http://stackoverflow.com/questions/19097089/how-to-extract-childrenhtml-contents-from-an-xmldocumentcontent-object
+	z <- XML::xpathSApply( ifl.block , "//a", function(u) XML::xmlAttrs(u)["href"])
+
+	# isolate all links to unduplicated file downloads
+	downloads <- unique( z[ grep( "download.html?file=" , z , fixed = TRUE ) ] )
+
+	for( this_download in downloads ){
+
+		# download the integrated file's whole page
+		download.page <- httr::GET( paste0( "http://www.europeansocialsurvey.org" , this_download ) )
+
+		# again, convert the page to an R-readable format..
+		download.block <- XML::htmlParse( download.page , asText = TRUE )
+
+		# ..then extract all of the links.
+		z <- XML::xpathSApply( download.block , "//a", function(u) XML::xmlAttrs(u)["href"])
+
+		# extract the only link with the text `spss` in it.
+		spss.file <- z[ grep( "spss" , z ) ]
+		
+		catalog <-
+			rbind(
+				catalog ,
+				data.frame(
+					directory = "integrated" ,
+					wave = gsub( "(.*)ESS([0-9]+)e(.*)" , "\\2" , this_download ) ,
+					full_url = spss.file ,
+					stringsAsFactors = FALSE
+				)
+			)
+			
+	}
+			
+	for( current_round in unique( catalog$wave ) ){
+
+	    cat( paste0( "building " , data_name , " catalog for wave " , current_round , "\r\n\n" ) )
+
+		download_page <- httr::GET( paste0( "http://www.europeansocialsurvey.org/data/download.html?r=" , current_round ) )
+
+		# again, convert the page to an R-readable format..
+		download_block <- XML::htmlParse( download_page , asText = TRUE )
+
+		# ..then extract all of the links.
+		z <- XML::xpathSApply( download_block , "//a", function(u) XML::xmlAttrs(u)["href"])
+
+		# remove all e-mail addresses
+		z <- z[ !grepl( 'mailto' , z ) ]
+
+		# remove all files ending in `.html`
+		z <- z[ tools::file_ext( z ) != 'html' ]
+
+		# isolate the filepaths of all pdf files
+		pdfs <- z[ tools::file_ext( z ) == 'pdf' ]
+
+		catalog <-
+			rbind(
+				catalog ,
+				data.frame(
+					directory = "docs" ,
+					wave = current_round ,
+					full_url = pdfs ,
+					stringsAsFactors = FALSE
+				)
+			)
+
+		# isolate the filepaths of all current round file downloads
+		crd <- unique( z[ grep( paste0( "/download.html?file=ESS" , current_round ) , z , fixed = TRUE ) ] )
+		
+		for( this_download in crd ){
+
+			# download the integrated file's whole page
+			download.page <- httr::GET( paste0( "http://www.europeansocialsurvey.org" , this_download ) )
+
+			# again, convert the page to an R-readable format..
+			download.block <- XML::htmlParse( download.page , asText = TRUE )
+
+			# ..then extract all of the links.
+			z <- XML::xpathSApply( download.block , "//a", function(u) XML::xmlAttrs(u)["href"])
+
+			# extract the only link with the text `spss` in it.
+			spss.file <- z[ grep( "spss" , z ) ]
+			
+			catalog <-
+				rbind(
+					catalog ,
+					data.frame(
+						directory = "countries" ,
+						wave = current_round ,
+						full_url = spss.file ,
+						stringsAsFactors = FALSE
+					)
+				)
+
+		}
+			
+	}
+
+	catalog$file_name <- gsub( "(.*)f=(.*)&c(.*)" , "\\2" , catalog$full_url )
+
+	catalog$file_name <- basename( gsub( "(.*)f=(.*)&y(.*)" , "\\2" , catalog$file_name ) )
+	  
+	catalog$year <- as.numeric( catalog$wave ) * 2 + 2000
+	
+	catalog$full_url <- paste0( "http://www.europeansocialsurvey.org" , catalog$full_url )
+	
+	catalog
+  
+  }
+
+
+lodown_ess <-
+  function( catalog , data_name = "ess" , ... ){
+
+    if (!requireNamespace("memisc", quietly = TRUE)) stop("memisc needed for this function to work. Please install it.", call. = FALSE)
+
+	if( !( 'your_email' %in% names(list(...)) ) ) stop( "`your_email` parameter must be specified.  create an account at http://www.europeansocialsurvey.org/user/new" )
+	
+	your_email <- list(...)[["your_email"]]
+	
+	tf <- tempfile()
+
+	# store your e-mail address in a list to be passed to the website
+	values <- list( u = your_email )
+
+	# authenticate on the ess website
+	httr::POST( "http://www.europeansocialsurvey.org/user/login" , body = values )
+
+	httr::GET( "http://www.europeansocialsurvey.org/user/login" , query = values )
+
+	for( this_year in unique( catalog$year ) ) dir.create( paste0( "./" , this_year ) , showWarnings = FALSE )
+	
+    for ( i in seq_len( nrow( catalog ) ) ){
+
+		# download the file
+		current.file <- cache_download( catalog[ i , 'full_url' ] , FUN = httr::GET , filesize_fun = 'httr' )
+
+		writeBin( httr::content( current.file ) , tf )
+	  
+		spss.files <- unzip( tf , exdir = "./unzips" )
+		
+		# delete the temporary file
+		file.remove( tf )
+
+		if( catalog[ i , 'directory' ] == 'docs' ){
+		
+			file.copy( spss.files , paste0( "./" , catalog[ i , 'year' ] , "/docs/" , catalog[ i , 'file_name' ] ) )
+			
+			file.remove( spss.files )
+		
+			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , getwd() , "/" , catalog[ i , 'year' ] , "/docs/" , catalog[ i , 'file_name' ] , "'\r\n\n" ) )
+			
+		} else {
+			
+			# first, look for the .sav file
+			if ( any( grepl( 'sav' , spss.files ) ) ){
+			
+				# read that dot.sav file as a data.frame object
+				x <- foreign::read.spss( spss.files[ grep( 'sav' , spss.files ) ] , to.data.frame = TRUE , use.value.labels = FALSE )
+				
+			} else {
+			
+				# otherwise, read in from the `.por` file
+				attempt.one <- 
+					try( 
+						# read that dot.por file as a data.frame object
+						x <- foreign::read.spss( spss.files[ grep( 'por' , spss.files ) ] , to.data.frame = TRUE , use.value.labels = FALSE ) ,
+						silent = TRUE
+					)
+					
+				# if the prior attempt failed..
+				if ( class( attempt.one ) == 'try-error' ){
+					# otherwise, convert all factor variables to character
+					attempt.two <- 
+						try( 
+							# use the `memisc` package's `spss.portable.file` framework instead
+							x <-
+								data.frame(
+									memisc::as.data.set(
+										memisc::spss.portable.file( 
+											spss.files[ grep( 'por' , spss.files ) ] 
+										)
+									)
+								) ,
+							silent = TRUE
+						)
+						
+				} else attempt.two <- NULL
+				
+				
+				# if the prior attempt failed..
+				if ( class( attempt.two ) == 'try-error' ){
+				
+					# use the `memisc` package's `spss.portable.file` framework instead
+					b <-
+						memisc::as.data.set(
+							memisc::spss.portable.file( 
+								spss.files[ grep( 'por' , spss.files ) ] 
+							)
+						)
+					
+					# convert all factor variables to character variables
+					b <- sapply( b , function( z ) { if( class( z ) == 'factor' ) z <- as.character( z ) ; z } )
+					
+					# now run the conversion that caused the issue.
+					x <- data.frame( b )
+				
+				}
+						
+			}
+			  
+			# convert all column names to lowercase
+			names( x ) <- tolower( names( x ) )
+
+			save( x , file = paste0( "./" , catalog[ i , 'year' ] , "/" , gsub( "\\.(.*)" , "" , catalog[ i , 'file_name' ] ) , ".rda" ) )
+
+			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , getwd() , "/" , catalog[ i , 'year' ] , "/" , gsub( "\\.(.*)" , "" , catalog[ i , 'file_name' ] ) , ".rda" , "'\r\n\n" ) )
+		
+		}
+		
+    }
+
+    cat( paste0( data_name , " download completed\r\n\n" ) )
+
+    invisible( TRUE )
+
+  }
+
