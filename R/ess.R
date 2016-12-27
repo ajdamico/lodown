@@ -117,7 +117,7 @@ get_catalog_ess <-
 		ifelse( 
 			catalog$directory == 'docs' ,
 			paste0( output_dir , "/" , catalog$year , "/docs/" , catalog$file_name ) ,
-			paste0( output_dir , "/" , catalog$year , "/" , gsub( "\\.(.*)" , "" , catalog$file_name , ".rda" ) )
+			paste0( output_dir , "/" , catalog$year , "/" , gsub( "\\.(.*)" , "" , catalog$file_name ) , ".rda" )
 		)
 	
 	catalog$full_url <- paste0( "http://www.europeansocialsurvey.org" , catalog$full_url )
