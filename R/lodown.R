@@ -42,7 +42,7 @@
 #' lodown( "scf" , scf_cat[ 1:2 , ] )
 #' yrbss_cat <- get_catalog( "yrbss" , output_dir = "C:/My Directory/YRBSS" )
 #' lodown( "yrbss" , yrbss_cat[ 1:2 , ] )
-#' #'
+#' 
 #' }
 #'
 #' @export
