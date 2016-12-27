@@ -82,10 +82,10 @@ lodown_nis <-
 			script.r <- readLines( catalog[ i , 'r_script' ] )
 			
 			# change the path to the data to the local working directory
-			script.r <- gsub( "path-to-data" , "." , script.r )
+			script.r <- gsub( "path-to-data" , tempdir() , script.r )
 			
 			# change the path to the file to the public use file directory within your current working directory
-			script.r <- gsub( "path-to-file" , "." , script.r )
+			script.r <- gsub( "path-to-file" , tempdir() , script.r )
 				
 			# correct lines of the r script that just are not allowed
 			script.r <- gsub( "IHQSTATUSlevels=c(,M,N,V)" , "IHQSTATUSlevels=c(NA,'M','N','V')" , script.r , fixed = TRUE )
