@@ -115,6 +115,10 @@ get_catalog_ess <-
 	
 	catalog$full_url <- paste0( "http://www.europeansocialsurvey.org" , catalog$full_url )
 	
+	no_country_allowed <- catalog[ catalog$directory == 'integrated' , 'full_url' ]
+	
+	catalog <- catalog[ !( catalog$directory == 'country' & catalog$full_url %in% no_country_allowed ) , ]
+	
 	catalog
   
   }
