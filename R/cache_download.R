@@ -31,7 +31,7 @@ httr_filesize <-
 cache_download <-
   function (
 
-    url ,
+    this_url ,
 
     destfile = NULL ,
 
@@ -55,14 +55,14 @@ cache_download <-
 	
   ) {
 
-    if( filesize_fun == 'rcurl' ) this_filesize <- rcurl_filesize( url )
+    if( filesize_fun == 'rcurl' ) this_filesize <- rcurl_filesize( this_url )
 	
-	if( filesize_fun == 'httr' ) this_filesize <- httr_filesize( url )
+	if( filesize_fun == 'httr' ) this_filesize <- httr_filesize( this_url )
 	
 
     if( this_filesize == 0 ) stop( "remote server lists file size as zero" )
 
-    urlhash <- digest::digest(url)
+    urlhash <- digest::digest(this_url)
 
     cachefile <-
       paste0(
@@ -80,7 +80,7 @@ cache_download <-
 
           if( length( success ) == this_filesize | length( httr::content( success ) ) == this_filesize ){
 
-            cat( paste0( "'" , url , "' cached in '" , cachefile , "', returning object\r\n\n" ) )
+            cat( paste0( "'" , this_url , "'\r\ncached in\r\n'" , cachefile , "'\r\nreturning loaded object within R session\r\n\n" ) )
 
             return( invisible( success ) )
 
@@ -90,7 +90,7 @@ cache_download <-
 
          if ( file.info( cachefile )$size == this_filesize ){
 
-          cat( paste0( "'" , url , "' cached in '" , cachefile , "', copying to '" , destfile , "'\r\n\n" ) )
+          cat( paste0( "'" , this_url , "'\r\ncached in\r\n'" , cachefile , "'\r\ncopying to\r\n'" , destfile , "'\r\n\n" ) )
 
           return( invisible( ifelse( file.copy( cachefile , destfile , overwrite = TRUE ) , 0 , 1 ) ) )
 
@@ -103,19 +103,19 @@ cache_download <-
     if( is.null( destfile ) ){
       cat(
         paste0(
-          "saving from URL '" ,
-          url ,
-          "' to this object... \r\n\n"
+          "saving from URL\r\n'" ,
+          this_url ,
+          "'\r\nto loaded object within R session\r\n\n"
         )
       )
     } else {
       cat(
         paste0(
-          "Downloading from URL '" ,
-          url ,
-          "' to file '" ,
+          "Downloading from URL\r\n'" ,
+          this_url ,
+          "'\r\nto file\r\n'" ,
           destfile ,
-          "'... \r\n\n"
+          "'\r\n\n"
         )
       )
     }
@@ -143,7 +143,7 @@ cache_download <-
             success <-
               do.call(
                 FUN ,
-                list( url , ... )
+                list( this_url , ... )
               )
 
             if( length( success ) != this_filesize && length( httr::content( success ) ) != this_filesize ){
@@ -162,7 +162,7 @@ cache_download <-
             success <-
               do.call(
                 FUN ,
-                list( url , destfile , ... )
+                list( this_url , destfile , ... )
               ) == 0
 
             if( file.info( destfile )$size != this_filesize ){
@@ -182,7 +182,7 @@ cache_download <-
 
       # if the download did not work, wait `sleepsec` seconds and try again.
       if( class( failed.attempt ) == 'try-error' ){
-        cat( paste0( "download issue with '" , url , "'\r\n\n" ) )
+        cat( paste0( "download issue with\r\n'" , this_url , "'\r\n\n" ) )
         Sys.sleep( sleepsec )
       }
 
