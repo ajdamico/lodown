@@ -9,9 +9,9 @@ get_catalog_nsch <-
 	
 	dataset_hrefs <- paste0( gsub( '(.*)href=\"(.*)\"(.*)' , "\\2" , dataset_lines ) , "/" )
 
-	four_digit_years <- as.numeric( gsub( "(.*)([0-9][0-9][0-9][0-9])(.*)" , "\\2" , dataset_hrefs ) )
+	four_digit_years <- suppressWarnings( as.numeric( gsub( "(.*)([0-9][0-9][0-9][0-9])(.*)" , "\\2" , dataset_hrefs ) ) )
 	
-	two_digit_years <- 2000 + as.numeric( gsub( "(.*)([0-9][0-9])(.*)" , "\\2" , dataset_hrefs ) )
+	two_digit_years <- 2000 + suppressWarnings( as.numeric( gsub( "(.*)([0-9][0-9])(.*)" , "\\2" , dataset_hrefs ) ) )
 	
 	available_years <- 
 		ifelse( !is.na( four_digit_years ) , four_digit_years , 
