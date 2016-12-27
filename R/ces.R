@@ -48,7 +48,7 @@ lodown_ces <-
 				df_name <- gsub( "(.*)\\.(.*)" , "\\1" , basename( this_dta ) )
 			
 				# read the current stata-readable (.dta) file into R
-				x <- foreign::read.dta( this_dta )
+				x <- data.frame( haven::read_dta( this_dta ) )
 
 				# if the data.frame is a family file, tack on poverty thresholds
 				if( grepl( "fmli" , df_name ) ){

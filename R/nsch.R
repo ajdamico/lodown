@@ -57,8 +57,6 @@ get_catalog_nsch <-
 lodown_nsch <-
 	function( catalog , data_name = "nsch" , ... ){
 
-		if ( !requireNamespace( "haven" , quietly = TRUE ) ) stop( "haven needed for this function to work. to install it, type `install.packages( 'haven' )`" , call. = FALSE )
-
 		tf <- tempfile()
 
 
