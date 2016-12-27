@@ -107,7 +107,7 @@ lodown_nis <-
 			writeLines( script.r , tf )
 
 			# run the now-reduced r script
-			source( tf , echo = TRUE )
+			source( tf )
 
 			# create a character string containing the name of the nis puf data.frame object
 			nis.df <- paste0( 'NISPUF' , substr( catalog[ i , 'year' ] , 3 , 4 ) )
