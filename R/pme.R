@@ -80,7 +80,7 @@ lodown_pme <-
 
 		tf <- tempfile()
 
-		cache_download( "ftp://ftp.ibge.gov.br/Trabalho_e_Rendimento/Pesquisa_Mensal_de_Emprego/Microdados/documentacao/Documentacao.zip" , tf )
+		cachaca( "ftp://ftp.ibge.gov.br/Trabalho_e_Rendimento/Pesquisa_Mensal_de_Emprego/Microdados/documentacao/Documentacao.zip" , tf )
 
 		unzipped_files <- unzip( tf , exdir = unique( dirname( catalog$output_filename ) )  )
 
@@ -90,7 +90,7 @@ lodown_pme <-
 		for ( i in seq_len( nrow( catalog ) ) ){
 
 			# download the file
-			cache_download( catalog[ i , "full_url" ] , tf , mode = 'wb' )
+			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
 
 			unzipped_files <- unzip( tf )
 

@@ -45,15 +45,15 @@ lodown_scf <-
 
 		for ( i in seq_len( nrow( catalog ) ) ){
 
-			cache_download( catalog[ i , "main_url" ] , tf , mode = 'wb' )
+			cachaca( catalog[ i , "main_url" ] , tf , mode = 'wb' )
 			scf.m <- foreign::read.dta( unzipped_files <- unzip( tf ) )
 			file.remove( unzipped_files )
 			
-			cache_download( catalog[ i , "extract_url" ] , tf , mode = 'wb' )
+			cachaca( catalog[ i , "extract_url" ] , tf , mode = 'wb' )
 			scf.e <- foreign::read.dta( unzipped_files <- unzip( tf ) )
 			file.remove( unzipped_files )
 			
-			cache_download( catalog[ i , "rw_url" ] , tf , mode = 'wb' )
+			cachaca( catalog[ i , "rw_url" ] , tf , mode = 'wb' )
 			rw <- foreign::read.dta( unzipped_files <- unzip( tf ) )
 			file.remove( unzipped_files )
 			

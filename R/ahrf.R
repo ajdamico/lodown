@@ -31,7 +31,7 @@ lodown_ahrf <-
     for ( i in seq_len( nrow( catalog ) ) ){
 
       # download the file
-      cache_download( catalog[ i , "full_url" ] , tf , mode = 'wb' )
+      cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
 
 
       # extract the contents of the zipped file

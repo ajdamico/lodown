@@ -1,3 +1,6 @@
+#' @importFrom utils download.file read.csv unzip getFromNamespace
+NULL
+
 #' locally download, import, prepare publicly-available microdata
 #'
 #' get_catalog retrieves a listing of all available extracts for a microdata set
@@ -8,8 +11,6 @@
 #' @param ... passed to \code{get_catalog} and \code{lodown_}
 #'
 #' @return TRUE, and also the microdata in either the folder you specified or your working directory
-#'
-#' @author Anthony Damico
 #'
 #' @examples
 #'
@@ -46,7 +47,6 @@
 #' }
 #'
 #' @export
-#'
 lodown <-
 	function( data_name , catalog = NULL , ... ){
 
@@ -76,7 +76,6 @@ lodown <-
 
 #' @rdname lodown
 #' @export
-#'
 get_catalog <-
 	function( data_name , output_dir = getwd() , ... ){
 
@@ -110,3 +109,4 @@ read_SAScii <-
 		data.frame( x )
 
 	}
+	

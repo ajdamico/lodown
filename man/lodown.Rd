@@ -59,7 +59,4 @@ lodown( "yrbss" , yrbss_cat[ 1:2 , ] )
 }
 
 }
-\author{
-Anthony Damico
-}
 

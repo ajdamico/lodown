@@ -27,8 +27,32 @@ httr_filesize <-
       as.numeric( yy )
     }
 
-
-cache_download <-
+#' best file download, all other file downloads have inferior potassium
+#'
+#' check remote file size. check cache for a match and if it exists, copy it over. otherwise, download the file, confirm file size, save to cache too
+#'
+#' @param this_url where to download from
+#' @param destfile where to save locally, unnecessary when returning an object with \code{httr::GET} or \code{RCurl::getBinaryURL}
+#' @param ... passed to FUN
+#' @param FUN defaults to \code{download.file} but \code{downloader::download}, \code{httr::GET}, \code{RCurl::getBinaryURL} also work
+#' @param attempts number of times to retry a broken download
+#' @param sleepsec length of \code{Sys.sleep()} between broken downloads
+#' @param filesize_fun use \code{RCurl::getURL} or \code{httr::HEAD} to determine file size
+#'
+#' @return just pass on whatever FUN returns
+#'
+#' @examples
+#'
+#' \dontrun{
+#'
+#' tf <- tempfile()
+#' cachaca( "https://www.r-project.org/logo/Rlogo.png" , tf , mode = 'wb' )
+#' cachaca( "https://www.r-project.org/logo/Rlogo.png" , tf , mode = 'wb' )
+#' 
+#' }
+#'
+#' @export
+cachaca <-
   function (
 
     this_url ,
@@ -46,7 +70,7 @@ cache_download <-
     attempts = 3 ,
     # just in case of a server timeout or smthn equally annoying
 
-    # how long should cache_download wait between attempts?
+    # how long should cachaca wait between attempts?
     sleepsec = 60 ,
 	
 	# which filesize function should be used
