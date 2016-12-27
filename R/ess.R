@@ -134,7 +134,7 @@ get_catalog_ess <-
 lodown_ess <-
   function( catalog , data_name = "ess" , ... ){
 
-    if (!requireNamespace("memisc", quietly = TRUE)) stop("memisc needed for this function to work. Please install it.", call. = FALSE)
+	if ( !requireNamespace( "memisc" , quietly = TRUE ) ) stop( "memisc needed for this function to work. to install it, type `install.packages( 'memisc' )`" , call. = FALSE )
 
 	if( !( 'your_email' %in% names(list(...)) ) ) stop( "`your_email` parameter must be specified.  create an account at http://www.europeansocialsurvey.org/user/new" )
 	

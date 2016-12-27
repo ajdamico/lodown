@@ -7,8 +7,6 @@
 #' @param output_dir directory on your local computer to save the microdata
 #' @param ... passed to \code{get_catalog} and \code{lodown_}
 #'
-#' @details stores microdata in the current working directory
-#'
 #' @return a freshly-prepared microdata extract on your local computer
 #'
 #' @author Anthony Damico
@@ -22,6 +20,7 @@
 #' lodown( "atus" , output_dir = "C:/My Directory/ATUS" )
 #' lodown( "ess" , output_dir = "C:/My Directory/ESS" , your_email = "email@address.com" )
 #' lodown( "nis" , output_dir = "C:/My Directory/NIS" )
+#' lodown( "nsch" , output_dir = "C:/My Directory/NSCH" )
 #'
 #' # examples to download only the first two records in the catalog
 #' ahrf_cat <- get_catalog( "ahrf" , output_dir = "C:/My Directory/AHRF" )
@@ -32,6 +31,8 @@
 #' lodown( "ess" , ess_cat[ 1:2 , ] , your_email = "email@address.com" )
 #' nis_cat <- get_catalog( "nis" , output_dir = "C:/My Directory/NIS" )
 #' lodown( "nis" , nis_cat[ 1:2 , ] )
+#' nsch_cat <- get_catalog( "nsch" , output_dir = "C:/My Directory/NSCH" )
+#' lodown( "nsch" , nsch_cat[ 1:2 , ] )
 #'
 #' }
 #'
@@ -47,9 +48,9 @@ lodown <-
     }
 
 	unique_directories <- unique( dirname( catalog[ , 'output_filename' ] ) )
-	
+
 	for ( this_dir in unique_directories ) if( !file.exists( this_dir ) ) dir.create( this_dir , recursive = TRUE )
-	
+
     load_fun <- getFromNamespace( paste0( "lodown_" , data_name ) , "lodown" )
 
     load_fun( catalog , ...)
@@ -57,7 +58,7 @@ lodown <-
     cat( paste0( data_name , " local download completed\r\n\n" ) )
 
 	invisible( TRUE )
-	
+
   }
 
 #' @rdname lodown

@@ -1,5 +1,5 @@
 # get_catalog_template <-
-	# function( data_name = "template" , ... ){
+	# function( data_name = "template" , output_dir , ... ){
 
 	# catalog <-
 		# data.frame(
@@ -18,7 +18,7 @@
 # lodown_template <-
 	# function( catalog , data_name = "template" , ... ){
 
-		# if (!requireNamespace("template", quietly = TRUE)) stop("template needed for this function to work. Please install it.", call. = FALSE)
+		# if ( !requireNamespace( "template" , quietly = TRUE ) ) stop( "template needed for this function to work. to install it, type `install.packages( 'template' )`" , call. = FALSE )
 
 		# tf <- tempfile()
 
