@@ -50,7 +50,7 @@ get_catalog_nhis <-
 				ftp_files <- gsub( "household" , "household/househld.exe", ftp_files )
 				ftp_files <- gsub( "injurypoison" , "injurypoison/injpoiep.exe" , ftp_files )
 				ftp_files <- gsub( "person" , "person/personsx.exe" , ftp_files )
-				ftp_files <- gsub( "sampleadult" , "sampleadult/samadult.exesampleadult/samadult.exe" , ftp_files )
+				ftp_files <- gsub( "sampleadult" , "sampleadult/samadult.exe" , ftp_files )
 				ftp_files <- gsub( "samplechild" , "samplechild/samchild.exe" , ftp_files )
 				ftp_files <- ftp_files[ !( ftp_files %in% c( "" , "injuryverbatim" ) ) ]
 			
