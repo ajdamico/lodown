@@ -23,7 +23,7 @@ get_catalog_scf <-
 				extract_url = 
 					c( 'scfp1989s' , 'scfp1992s' , 'scfp1995s' , 'scfp1998s' , 'scfp2001s' , 'scfp2004s' , 'scfp2007s' , 'rscfp2009panels' , paste0( "scfp" , seq( 2010 , latest_year , 3 ) , "s" ) ) ,
 				rw_url = 
-					c( 'scf89rw1s' , '1992_scf92rw1s' , '1995_scf95rw1s' , '1998_scf98rw1s' , 'scf2001rw1s' , '2004_scf2004rw1s' , '2007_scfrw1s' , 'scf2009prw1s' , paste0( "scfp" , seq( 2010 , latest_year , 3 ) , "rw1s" ) ) ,
+					c( 'scf89rw1s' , '1992_scf92rw1s' , '1995_scf95rw1s' , '1998_scf98rw1s' , 'scf2001rw1s' , '2004_scf2004rw1s' , '2007_scfrw1s' , 'scf2009prw1s' , paste0( "scf" , seq( 2010 , latest_year , 3 ) , "rw1s" ) ) ,
 				stringsAsFactors = FALSE
 			)
 

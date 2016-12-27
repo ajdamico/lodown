@@ -7,7 +7,7 @@
 #' @param output_dir directory on your local computer to save the microdata
 #' @param ... passed to \code{get_catalog} and \code{lodown_}
 #'
-#' @return a freshly-prepared microdata extract on your local computer
+#' @return TRUE, and also the microdata in either the folder you specified or your working directory
 #'
 #' @author Anthony Damico
 #'
@@ -21,6 +21,7 @@
 #' lodown( "ess" , output_dir = "C:/My Directory/ESS" , your_email = "email@address.com" )
 #' lodown( "nis" , output_dir = "C:/My Directory/NIS" )
 #' lodown( "nsch" , output_dir = "C:/My Directory/NSCH" )
+#' lodown( "pme" , output_dir = "C:/My Directory/PME" )
 #' lodown( "scf" , output_dir = "C:/My Directory/SCF" )
 #' lodown( "yrbss" , output_dir = "C:/My Directory/YRBSS" )
 #'
@@ -35,6 +36,8 @@
 #' lodown( "nis" , nis_cat[ 1:2 , ] )
 #' nsch_cat <- get_catalog( "nsch" , output_dir = "C:/My Directory/NSCH" )
 #' lodown( "nsch" , nsch_cat[ 1:2 , ] )
+#' pme_cat <- get_catalog( "pme" , output_dir = "C:/My Directory/PME" )
+#' lodown( "pme" , pme_cat[ 1:2 , ] )
 #' scf_cat <- get_catalog( "scf" , output_dir = "C:/My Directory/SCF" )
 #' lodown( "scf" , scf_cat[ 1:2 , ] )
 #' yrbss_cat <- get_catalog( "yrbss" , output_dir = "C:/My Directory/YRBSS" )
@@ -45,61 +48,65 @@
 #' @export
 #'
 lodown <-
-  function( data_name , catalog = NULL , ... ){
+	function( data_name , catalog = NULL , ... ){
 
-    if( is.null( catalog ) ){
+		if( is.null( catalog ) ){
 
-      catalog <- get_catalog( data_name , ... )
+			cat( paste0( "building catalog for " , data_name , "\r\n\n" ) )
 
-    }
+			catalog <- get_catalog( data_name , ... )
 
-	unique_directories <- unique( dirname( catalog[ , 'output_filename' ] ) )
+		}
 
-	for ( this_dir in unique_directories ) if( !file.exists( this_dir ) ) dir.create( this_dir , recursive = TRUE )
+		unique_directories <- unique( dirname( catalog[ , 'output_filename' ] ) )
 
-    load_fun <- getFromNamespace( paste0( "lodown_" , data_name ) , "lodown" )
+		for ( this_dir in unique_directories ) if( !file.exists( this_dir ) ) dir.create( this_dir , recursive = TRUE )
 
-    load_fun( catalog , ...)
+		load_fun <- getFromNamespace( paste0( "lodown_" , data_name ) , "lodown" )
 
-    cat( paste0( data_name , " local download completed\r\n\n" ) )
+		cat( paste0( "beginning local download of " , data_name , "\r\n\n" ) )
 
-	invisible( TRUE )
+		load_fun( catalog , ...)
 
-  }
+		cat( paste0( data_name , " local download completed\r\n\n" ) )
+
+		invisible( TRUE )
+
+	}
 
 #' @rdname lodown
 #' @export
 #'
 get_catalog <-
-  function( data_name , output_dir = getwd() , ... ){
+	function( data_name , output_dir = getwd() , ... ){
 
-    cat_fun <- getFromNamespace( paste0( "get_catalog_" , data_name ) , "lodown" )
+		cat_fun <- getFromNamespace( paste0( "get_catalog_" , data_name ) , "lodown" )
 
-    cat_fun( output_dir = output_dir , ... )
+		cat_fun( output_dir = output_dir , ... )
 
-  }
+	}
 
-  
+
 read_SAScii <-
 	function( dat_path , sas_path , ... ){
 
-      sasc <- SAScii::parse.SAScii( sas_path )
+		sasc <- SAScii::parse.SAScii( sas_path )
 
-      sasc$varname[ is.na( sasc$varname ) ] <- paste0( "toss" , seq( sum( is.na( sasc$varname ) ) ) )
+		sasc$varname[ is.na( sasc$varname ) ] <- paste0( "toss" , seq( sum( is.na( sasc$varname ) ) ) )
 
-      # read in the fixed-width file..
-      x <-
-        readr::read_fwf(
-          # using the ftp filepath
-          dat_path ,
-          # using the parsed sas widths
-          readr::fwf_widths( abs( sasc$width ) , col_names = sasc[ , 'varname' ] ) ,
-          # using the parsed sas column types
-          col_types = paste0( ifelse( grepl( "^toss" , sasc$varname ) , "_" , ifelse( sasc$char , "c" , "d" ) ) , collapse = "" ) ,
-		  # passed in from read_SAScii
-		  ...
-        )
+		# read in the fixed-width file..
+		x <-
+			readr::read_fwf(
+				# using the ftp filepath
+				dat_path ,
+				# using the parsed sas widths
+				readr::fwf_widths( abs( sasc$width ) , col_names = sasc[ , 'varname' ] ) ,
+				# using the parsed sas column types
+				col_types = paste0( ifelse( grepl( "^toss" , sasc$varname ) , "_" , ifelse( sasc$char , "c" , "d" ) ) , collapse = "" ) ,
+				# passed in from read_SAScii
+				...
+			)
 
-      data.frame( x )
-	  
+		data.frame( x )
+
 	}

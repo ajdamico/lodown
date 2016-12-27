@@ -19,7 +19,7 @@ get_catalog(data_name, output_dir = getwd(), ...)
 \item{output_dir}{directory on your local computer to save the microdata}
 }
 \value{
-a freshly-prepared microdata extract on your local computer
+TRUE, and also the microdata in either the folder you specified or your working directory
 }
 \description{
 get_catalog retrieves a listing of all available extracts for a microdata set
@@ -34,6 +34,7 @@ lodown( "atus" , output_dir = "C:/My Directory/ATUS" )
 lodown( "ess" , output_dir = "C:/My Directory/ESS" , your_email = "email@address.com" )
 lodown( "nis" , output_dir = "C:/My Directory/NIS" )
 lodown( "nsch" , output_dir = "C:/My Directory/NSCH" )
+lodown( "pme" , output_dir = "C:/My Directory/PME" )
 lodown( "scf" , output_dir = "C:/My Directory/SCF" )
 lodown( "yrbss" , output_dir = "C:/My Directory/YRBSS" )
 
@@ -48,6 +49,8 @@ nis_cat <- get_catalog( "nis" , output_dir = "C:/My Directory/NIS" )
 lodown( "nis" , nis_cat[ 1:2 , ] )
 nsch_cat <- get_catalog( "nsch" , output_dir = "C:/My Directory/NSCH" )
 lodown( "nsch" , nsch_cat[ 1:2 , ] )
+pme_cat <- get_catalog( "pme" , output_dir = "C:/My Directory/PME" )
+lodown( "pme" , pme_cat[ 1:2 , ] )
 scf_cat <- get_catalog( "scf" , output_dir = "C:/My Directory/SCF" )
 lodown( "scf" , scf_cat[ 1:2 , ] )
 yrbss_cat <- get_catalog( "yrbss" , output_dir = "C:/My Directory/YRBSS" )
