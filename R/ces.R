@@ -54,10 +54,10 @@ lodown_ces <-
 				if( grepl( "fmli" , df_name ) ){
 
 					# subset the complete threshold data down to only the current year
-					thresh_merge <- all_thresholds[ all_thresholds$this_year == catalog[ i , "year" ] , ]
+					thresh_merge <- all_thresholds[ all_thresholds$year == catalog[ i , "year" ] , ]
 
 					# remove the `year` column
-					thresh_merge$this_year <- NULL
+					thresh_merge$year <- NULL
 
 					# rename fields so they merge cleanly
 					names( thresh_merge ) <- c( 'family_type' , 'num_kids' , 'poverty_threshold' )
