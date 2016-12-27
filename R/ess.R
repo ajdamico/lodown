@@ -159,9 +159,6 @@ lodown_ess <-
 	  
 		spss.files <- unzip( tf , exdir = paste0( tempdir() , "/unzips" ) )
 		
-		# delete the temporary file
-		file.remove( tf )
-
 		if( catalog[ i , 'directory' ] == 'docs' ){
 		
 			file.copy( spss.files , catalog[ i , 'output_filename' ] )
