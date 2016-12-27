@@ -169,7 +169,7 @@ lodown_ess <-
 			if ( any( grepl( 'sav' , spss.files ) ) ){
 			
 				# read that dot.sav file as a data.frame object
-				x <- foreign::read.spss( spss.files[ grep( 'sav' , spss.files ) ] , to.data.frame = TRUE , use.value.labels = FALSE )
+				suppressWarnings( x <- foreign::read.spss( spss.files[ grep( 'sav' , spss.files ) ] , to.data.frame = TRUE , use.value.labels = FALSE ) )
 				
 			} else {
 			
@@ -177,7 +177,7 @@ lodown_ess <-
 				attempt.one <- 
 					try( 
 						# read that dot.por file as a data.frame object
-						x <- foreign::read.spss( spss.files[ grep( 'por' , spss.files ) ] , to.data.frame = TRUE , use.value.labels = FALSE ) ,
+						suppressWarnings( x <- foreign::read.spss( spss.files[ grep( 'por' , spss.files ) ] , to.data.frame = TRUE , use.value.labels = FALSE ) ) ,
 						silent = TRUE
 					)
 					

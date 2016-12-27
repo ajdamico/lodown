@@ -125,23 +125,8 @@ lodown_nis <-
 			# save the reduced sas import script to the local disk
 			writeLines( script.sub , tf )
 
-			sasc <- SAScii::parse.SAScii( tf )
-
-			sasc$varname[ is.na( sasc$varname ) ] <- paste0( "toss" , seq( sum( is.na( sasc$varname ) ) ) )
-
-			# read in the fixed-width file..
-			x <-
-				readr::read_fwf(
-					# using the ftp filepath
-					paste0( tempdir() , "/" , unzipped_file ) ,
-					# using the parsed sas widths
-					readr::fwf_widths( abs( sasc$width ) , col_names = sasc[ , 'varname' ] ) ,
-					# using the parsed sas column types
-					col_types = paste0( ifelse( grepl( "^toss" , sasc$varname ) , "_" , ifelse( sasc$char , "c" , "d" ) ) , collapse = "" )
-				)
-
-			x <- data.frame( x )
-
+			x <- read_SAScii( paste0( tempdir() , "/" , unzipped_file ) , tf )
+			
 		}
 
       # convert all column names to lowercase
