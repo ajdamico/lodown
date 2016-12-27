@@ -72,7 +72,7 @@ get_catalog_atus <-
 				directory = year , 
 				rda = files_on_page , 
 				full_url = paste0( "https://www.bls.gov/tus/special.requests/" , all.files.on.page , ".zip" ) ,
-				output_filename = paste0( output_dir , "/" , year , "/" , files_on_page , ".rda" )
+				output_filename = paste0( output_dir , "/" , year , "/" , files_on_page , ".rda" ) ,
 				stringsAsFactors = FALSE
 			)
 		)
