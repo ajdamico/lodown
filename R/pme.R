@@ -20,6 +20,8 @@ get_catalog_pme <-
 			# define path of this year
 			year_dir <- paste0( "ftp://ftp.ibge.gov.br/Trabalho_e_Rendimento/Pesquisa_Mensal_de_Emprego/Microdados/" , this_year , "/" )
 
+			cat( paste0( "loading " , data_name , " catalog from " , year_dir , "\r\n\n" ) )
+
 			# just like above, read those lines into working memory
 			year.ftp.string <- readLines( textConnection( RCurl::getURL( year_dir ) ) )
 			

@@ -79,7 +79,7 @@ lodown_nis <-
 		if( !is.na( catalog[ i , 'r_script' ] ) ){
 
 			# load the r script into a character vector
-			script.r <- readLines( catalog[ i , 'r_script' ] )
+			script.r <- readLines( catalog[ i , 'r_script' ] , warn = FALSE )
 
 			# change the path to the data to the local working directory
 			script.r <- gsub( "path-to-data" , normalizePath( tempdir() , winslash = "/" ) , script.r , fixed = TRUE )
