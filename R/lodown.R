@@ -9,7 +9,7 @@
 #'
 #' @details stores microdata in the current working directory
 #'
-#' @return TRUE if it worked
+#' @return TRUE, if it worked
 #'
 #' @author Anthony Damico
 #'

@@ -16,13 +16,13 @@ lodown(data_name, catalog = NULL, ...)
 
 \item{...}{passed to \code{get_catalog} and \code{lodown_}}
 
-\item{catalog}{a \code{data.frame} containing folders and files to load}
+\item{catalog}{\code{data.frame} detailing available microdata extracts}
 }
 \value{
 TRUE if it worked
 }
 \description{
-subheader
+get_catalog retrieves a listing of all available extracts for a microdata set
 }
 \details{
 stores microdata in the current working directory
