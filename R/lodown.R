@@ -1,9 +1,10 @@
 #' locally download, import, prepare publicly-available microdata for analysis
 #'
-#' subheader
+#' get_catalog retrieves a listing of all available extracts for a microdata set
 #'
 #' @param data_name a character vector with a microdata abbreviation
-#' @param catalog a \code{data.frame} containing folders and files to load
+#' @param catalog \code{data.frame} detailing available microdata extracts
+#' @param output_dir home directory on the local computer to save the microdata
 #' @param ... passed to \code{get_catalog} and \code{lodown_}
 #'
 #' @details stores microdata in the current working directory
@@ -16,9 +17,21 @@
 #'
 #' \dontrun{
 #'
-#' setwd( "C:/My Directory/ATUS" )
+#' # examples to download everything
+#' lodown( "ahrf" , output_dir = "C:/My Directory/AHRF" )
+#' lodown( "atus" , output_dir = "C:/My Directory/ATUS" )
+#' lodown( "ess" , output_dir = "C:/My Directory/ESS" , your_email = "email@address.com" )
+#' lodown( "nis" , output_dir = "C:/My Directory/NIS" )
 #'
-#' lodown( "atus" )
+#' # examples to download only the first two records in the catalog
+#' ahrf_cat <- get_catalog( "ahrf" , output_dir = "C:/My Directory/AHRF" )
+#' lodown( "ahrf" , ahrf_cat[ 1:2 , ] )
+#' atus_cat <- get_catalog( "atus" , output_dir = "C:/My Directory/ATUS" )
+#' lodown( "atus" , atus_cat[ 1:2 , ] )
+#' ess_cat <- get_catalog( "ess" , output_dir = "C:/My Directory/ESS" )
+#' lodown( "ess" , ess_cat[ 1:2 , ] , your_email = "email@address.com" )
+#' nis_cat <- get_catalog( "nis" , output_dir = "C:/My Directory/NIS" )
+#' lodown( "nis" , nis_cat[ 1:2 , ] )
 #'
 #' }
 #'

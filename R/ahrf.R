@@ -69,7 +69,7 @@ lodown_ahrf <-
 
       save( x , file = catalog[ i , 'output_filename' ] )
 
-	  # # delete the temporary files
+	  # delete the temporary files
       file.remove( tf )
 
       cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , catalog[ i , 'output_filename' ] , "'\r\n\n" ) )
