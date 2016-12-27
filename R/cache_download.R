@@ -13,11 +13,18 @@ gettmpdir <-
   }
 
 
-remote_filesize <-
+rcurl_filesize <-
     function( url ){
       xx <- RCurl::getURL(url, nobody=1L, header=1L)
       yy <- strsplit(xx, "\r\n")[[1]]
       as.numeric( gsub( "Content-Length: " , "" , grep( "Content-Length" , yy , value = TRUE ) ) )
+    }
+
+httr_filesize <-
+    function( url ){
+      xx <- httr::HEAD(url)
+      yy <- httr::headers(xx)$`content-length`
+      as.numeric( yy )
     }
 
 
@@ -40,11 +47,17 @@ cache_download <-
     # just in case of a server timeout or smthn equally annoying
 
     # how long should cache_download wait between attempts?
-    sleepsec = 60
-
+    sleepsec = 60 ,
+	
+	# which filesize function should be used
+	filesize_fun = c( 'rcurl' , 'httr' )
+	
   ) {
 
-    this_filesize <- remote_filesize( url )
+    if( filesize_fun == 'rcurl' ) this_filesize <- rcurl_filesize( url )
+	
+	if( filesize_fun == 'httr' ) this_filesize <- httr_filesize( url )
+	
 
     if( this_filesize == 0 ) stop( "remote server lists file size as zero" )
 
@@ -64,7 +77,7 @@ cache_download <-
 
           load( cachefile )
 
-          if( length( success ) == this_filesize ){
+          if( length( success ) == this_filesize | length( httr::content( success ) ) == this_filesize ){
 
             cat( paste0( "'" , url , "' cached in '" , cachefile , "', returning object\r\n\n" ) )
 
@@ -132,7 +145,7 @@ cache_download <-
                 list( url , ... )
               )
 
-            if( length( success ) != this_filesize ){
+            if( length( success ) != this_filesize && length( httr::content( success ) ) != this_filesize ){
 
               message( paste0( "downloaded binary url size (" , length( success ) , ") does not match server's content length (" , this_filesize , ")" ) )
 
