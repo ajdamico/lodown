@@ -87,9 +87,9 @@ get_catalog <-
 
 
 read_SAScii <-
-	function( dat_path , sas_path , ... ){
+	function( dat_path , sas_path , beginline = 1 , lrecl = NULL , ... ){
 
-		sasc <- SAScii::parse.SAScii( sas_path )
+		sasc <- SAScii::parse.SAScii( sas_path , beginline = beginline , lrecl = lrecl )
 
 		sasc$varname[ is.na( sasc$varname ) ] <- paste0( "toss" , seq( sum( is.na( sasc$varname ) ) ) )
 

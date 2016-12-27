@@ -140,7 +140,49 @@ get_catalog_nhis <-
 			paste0( output_dir , "/" , catalog$year , "/" , gsub( "\\.(.*)" , ".rda" , basename( catalog$full_url ) ) )
 			
 		catalog$sas_script <- 
-			paste0( "ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/Program_Code/NHIS/" , catalog$year , "/" , gsub( "\\.rda" , ".sas" , basename( catalog$output_filename ) ) )
+			paste0( gsub( "Datasets" , "Program_Code" , dirname( catalog$full_url ) ) , "/" , gsub( "\\.rda" , ".sas" , basename( catalog$output_filename ) ) )
+		
+		catalog$imputed_income <- FALSE
+		
+		
+		available_imputed_incomes <- grep( "imputed_income" , ay , value = TRUE , ignore.case = TRUE )
+		
+		for( this_income in available_imputed_incomes ){
+		
+			# define path of this imputed income file
+			income_dir <- paste0( base_ftp_dir , this_income , "/" )
+
+			cat( paste0( "loading " , data_name , " catalog from " , income_dir , "\r\n\n" ) )
+
+			# just like above, read those lines into working memory
+			ftp_files <- tolower( readLines( textConnection( RCurl::getURL( income_dir , dirlistonly = TRUE ) ) ) )
+			
+			# remove stata files and missing files
+			ftp_files <- ftp_files[ !( ftp_files %in% "" ) & !grepl( "\\.do$" , ftp_files ) ]
+
+			# base the catalog off of the sas scripts
+			inc_cat <-
+				data.frame(
+					year = gsub( "_imputed_income" , "" , this_income , ignore.case = TRUE ) ,
+					type = "ii" ,
+					sas_script = paste0( income_dir , grep( "\\.sas$" , ftp_files , value = TRUE , ignore.case = TRUE ) ) ,
+					imputed_income = TRUE ,
+					stringsAsFactors = FALSE
+				)
+				
+			for( j in seq_len( nrow( inc_cat ) ) ){
+				inc_cat[ j , 'full_url' ] <-
+					paste0( 
+						income_dir , 
+						ftp_files[ ftp_files %in% paste0( gsub( "\\.sas" , "" , basename( inc_cat[ j , 'sas_script' ] ) , ignore.case = TRUE ) , c( '.zip' , '.exe' ) ) ]
+					)
+			}
+					
+			inc_cat$output_filename <-
+				paste0( output_dir , "/" , inc_cat$year , "/" , gsub( "\\.(.*)" , ".rda" , basename( inc_cat$full_url ) ) )
+			
+			catalog <- rbind( catalog , inc_cat )
+		}
 		
 		catalog
 
@@ -159,18 +201,48 @@ lodown_nhis <-
 
 			unzipped_files <- unzip( tf , exdir = paste0( tempdir() , "/unzips" ) )
 
-			# if the zipped file includes a csv file, pick only the `.dat` file instead
-			if( length( unzipped_files ) > 1 ) unzipped_files <- unzipped_files[ grep( "\\.dat$" , tolower( unzipped_files ) ) ]
+			if( catalog[ i , 'imputed_income' ] ){
 			
-			# ..and read that text file directly into an R data.frame
-			# using the sas importation script downloaded before this big fat loop
-			x <- read_SAScii( unzipped_files , catalog[ i , "sas_script" ] )
-			
-			# convert all column names to lowercase
-			names( x ) <- tolower( names( x ) )
-			
-			save( x , file = catalog[ i , 'output_filename' ] )
+				SAScii_start <- grep( "INPUT ALL VARIABLES" , readLines( catalog[ i , 'sas_script' ] ) ) + 1
+				
+				# unzip the file into a temporary directory.
+				# the unzipped file should contain *five* ascii files
+				income_file_names <- sort( unzipped_files )
+					
+				# loop through all five imputed income files
+				for ( j in 1:length( income_file_names ) ){
 
+					ii <- read_SAScii( income_file_names[ j ] , catalog[ i , 'sas_script' ] , beginline = SAScii_start )
+
+					names( ii ) <- tolower( names( ii ) )
+
+					ii$rectype <- NULL
+					
+					assign( paste0( "ii" , j ) , ii )
+					
+					
+				}
+				
+				# save all five imputed income data frames to a single .rda file #
+				save( list = paste0( "ii" , 1:5 ) , file = catalog[ i , 'output_filename' ] )
+						
+			
+			} else {
+				
+				# if the zipped file includes a csv file, pick only the `.dat` file instead
+				if( length( unzipped_files ) > 1 ) unzipped_files <- unzipped_files[ grep( "\\.dat$" , tolower( unzipped_files ) ) ]
+				
+				# ..and read that text file directly into an R data.frame
+				# using the sas importation script downloaded before this big fat loop
+				x <- read_SAScii( unzipped_files , catalog[ i , "sas_script" ] )
+				
+				# convert all column names to lowercase
+				names( x ) <- tolower( names( x ) )
+				
+				save( x , file = catalog[ i , 'output_filename' ] )
+
+			}
+			
 			# delete the temporary files
 			file.remove( tf , unzipped_files )
 
