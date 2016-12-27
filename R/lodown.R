@@ -1,15 +1,15 @@
-#' locally download, import, prepare publicly-available microdata for analysis
+#' locally download, import, prepare publicly-available microdata
 #'
 #' get_catalog retrieves a listing of all available extracts for a microdata set
 #'
 #' @param data_name a character vector with a microdata abbreviation
 #' @param catalog \code{data.frame} detailing available microdata extracts
-#' @param output_dir home directory on the local computer to save the microdata
+#' @param output_dir directory on your local computer to save the microdata
 #' @param ... passed to \code{get_catalog} and \code{lodown_}
 #'
 #' @details stores microdata in the current working directory
 #'
-#' @return TRUE, if it worked
+#' @return a freshly-prepared microdata extract on your local computer
 #'
 #' @author Anthony Damico
 #'
@@ -58,4 +58,16 @@ lodown <-
 
 	invisible( TRUE )
 	
+  }
+
+#' @rdname lodown
+#' @export
+#'
+get_catalog <-
+  function( data_name , output_dir = getwd() , ... ){
+
+    cat_fun <- getFromNamespace( paste0( "get_catalog_" , data_name ) , "lodown" )
+
+    cat_fun( output_dir = output_dir , ... )
+
   }

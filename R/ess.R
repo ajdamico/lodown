@@ -166,10 +166,6 @@ lodown_ess <-
 		
 			file.copy( spss.files , catalog[ i , 'output_filename' ] )
 			
-			file.remove( spss.files )
-		
-			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , catalog[ i , 'output_filename' ] , "'\r\n\n" ) )
-			
 		} else {
 			
 			# first, look for the .sav file
@@ -237,9 +233,9 @@ lodown_ess <-
 
 			save( x , file = catalog[ i , 'output_filename' ] )
 
-			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , catalog[ i , 'output_filename' ] , "'\r\n\n" ) )
-		
 		}
+		
+		cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , catalog[ i , 'output_filename' ] , "'\r\n\n" ) )
 		
     }
 
