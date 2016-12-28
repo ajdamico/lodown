@@ -87,7 +87,7 @@ lodown_icpsr <-
 #' @rdname lodown_icpsr
 #' @export
 get_catalog_icpsr <-
-	function( series_number = NULL , study_numbers = NULL , archive = "ICPSR" , bundle_preference = c( "rdata" , "stata" , "sas" , "spss" , "delimited" , "ascii" , "ascsas" , "ascstata" , "ascspss" ) ){
+	function( series_number = NULL , study_numbers = NULL , archive = "ICPSR" , bundle_preference = c( "rdata" , "stata" , "sas" , "spss" , "delimited" , "ascsas" , "ascstata" , "ascspss" , "ascii" ) ){
 
 		if( is.null( study_numbers ) ){
 		
