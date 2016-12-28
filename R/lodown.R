@@ -126,3 +126,4 @@ read_SAScii <-
 
 	}
 	
+no.na <- function( x , value = FALSE ){ x[ is.na( x ) ] <- value ; x }
