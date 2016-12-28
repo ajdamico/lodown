@@ -74,7 +74,7 @@ lodown <-
 
 		}
 
-		unique_directories <- unique( dirname( catalog[ , 'output_filename' ] ) )
+		unique_directories <- unique( c( catalog[ , 'unzip_folder' ] , dirname( catalog[ , 'output_filename' ] ) ) )
 
 		for ( this_dir in unique_directories ) if( !file.exists( this_dir ) ) dir.create( this_dir , recursive = TRUE )
 
