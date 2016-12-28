@@ -25,7 +25,10 @@ NULL
 #' lodown( "ess" , output_dir = "C:/My Directory/ESS" , your_email = "email@address.com" )
 #' lodown( "nhis" , output_dir = "C:/My Directory/NHIS" )
 #' lodown( "nis" , output_dir = "C:/My Directory/NIS" )
+#' lodown( "nibrs" , output_dir = "C:/My Directory/NIBRS" ,
+#' 		your_email = "email@address.com" , your_password = "password" )
 #' lodown( "nsch" , output_dir = "C:/My Directory/NSCH" )
+#' lodown( "nppes" , output_dir = "C:/My Directory/NPPES" )
 #' lodown( "nsduh" , output_dir = "C:/My Directory/NSDUH" , 
 #' 		your_email = "email@address.com" , your_password = "password" )
 #' lodown( "pme" , output_dir = "C:/My Directory/PME" )
@@ -46,8 +49,13 @@ NULL
 #' lodown( "ess" , ess_cat[ 1:2 , ] , your_email = "email@address.com" )
 #' nhis_cat <- get_catalog( "nhis" , output_dir = "C:/My Directory/NHIS" )
 #' lodown( "nhis" , nhis_cat[ 1:2 , ] )
+#' nibrs_cat <- get_catalog( "nibrs" , output_dir = "C:/My Directory/NIBRS" )
+#' lodown( "nibrs" , nibrs_cat[ 1:2 , ] ,
+#' 		your_email = "email@address.com" , your_password = "password" )
 #' nis_cat <- get_catalog( "nis" , output_dir = "C:/My Directory/NIS" )
 #' lodown( "nis" , nis_cat[ 1:2 , ] )
+#' nppes_cat <- get_catalog( "nppes" , output_dir = "C:/My Directory/NPPES" )
+#' lodown( "nppes" , nppes_cat )
 #' nsch_cat <- get_catalog( "nsch" , output_dir = "C:/My Directory/NSCH" )
 #' lodown( "nsch" , nsch_cat[ 1:2 , ] )
 #' nsduh_cat <- get_catalog( "nsduh" , output_dir = "C:/My Directory/NSDUH" )

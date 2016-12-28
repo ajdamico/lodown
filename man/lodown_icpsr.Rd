@@ -9,7 +9,7 @@ lodown_icpsr(data_name, catalog, ...)
 
 get_catalog_icpsr(series_number = NULL, study_numbers = NULL,
   archive = "ICPSR", bundle_preference = c("rdata", "stata", "sas", "spss",
-  "delimited", "ascii", "ascsas", "ascstata", "ascspss"))
+  "delimited", "ascsas", "ascstata", "ascspss", "ascii"))
 }
 \arguments{
 \item{data_name}{a character vector with a microdata abbreviation}

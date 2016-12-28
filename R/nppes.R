@@ -13,7 +13,7 @@ get_catalog_nppes <-
 	catalog <-
 		data.frame(
 			full_url = fn ,
-			dbfolder = output_dir ,
+			dbfolder = paste0( output_dir , "/MonetDB" ) ,
 			stringsAsFactors = FALSE
 		)
 
