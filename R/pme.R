@@ -78,7 +78,7 @@ get_catalog_pme <-
 
 
 lodown_pme <-
-	function( catalog , data_name = "pme" , ... ){
+	function( data_name = "pme" , catalog , ... ){
 
 		tf <- tempfile()
 

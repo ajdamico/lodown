@@ -190,7 +190,7 @@ get_catalog_nhis <-
 
 
 lodown_nhis <-
-	function( catalog , data_name = "nhis" , ... ){
+	function( data_name = "nhis" , catalog , ... ){
 
 		tf <- tempfile()
 	

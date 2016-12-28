@@ -55,7 +55,7 @@ get_catalog_nsch <-
 
 
 lodown_nsch <-
-	function( catalog , data_name = "nsch" , ... ){
+	function( data_name = "nsch" , catalog , ... ){
 
 		tf <- tempfile()
 

@@ -23,7 +23,7 @@ get_catalog_ces <-
 
 
 lodown_ces <-
-	function( catalog , data_name = "ces" , ... ){
+	function( data_name = "ces" , catalog , ... ){
 
 		all_thresholds <- census_thresholds()
 	

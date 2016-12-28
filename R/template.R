@@ -16,7 +16,7 @@
 
 
 # lodown_template <-
-	# function( catalog , data_name = "template" , ... ){
+	# function( data_name = "template" , catalog , ... ){
 
 		# if ( !requireNamespace( "template" , quietly = TRUE ) ) stop( "template needed for this function to work. to install it, type `install.packages( 'template' )`" , call. = FALSE )
 

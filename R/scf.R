@@ -39,7 +39,7 @@ get_catalog_scf <-
 
 
 lodown_scf <-
-	function( catalog , data_name = "scf" , ... ){
+	function( data_name = "scf" , catalog , ... ){
 
 		tf <- tempfile()
 

@@ -23,7 +23,7 @@ get_catalog_ahrf <-
 
 
 lodown_ahrf <-
-  function( catalog , data_name = "ahrf" , ... ){
+  function( data_name = "ahrf" , catalog , ... ){
 
     tf <- tempfile()
 

@@ -38,7 +38,7 @@ get_catalog_yrbss <-
 
 
 lodown_yrbss <-
-	function( catalog , data_name = "yrbss" , ... ){
+	function( data_name = "yrbss" , catalog , ... ){
 
 		tf_fn <- tempfile()
 		tf_sas <- tempfile()

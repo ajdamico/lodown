@@ -8,7 +8,8 @@
 lodown_icpsr(data_name, catalog, ...)
 
 get_catalog_icpsr(series_number = NULL, study_numbers = NULL,
-  archive = "ICPSR")
+  archive = "ICPSR", bundle_preference = c("rdata", "stata", "sas", "spss",
+  "delimited", "ascii", "ascsas", "ascstata", "ascspss"))
 }
 \arguments{
 \item{data_name}{a character vector with a microdata abbreviation}
@@ -22,6 +23,8 @@ get_catalog_icpsr(series_number = NULL, study_numbers = NULL,
 \item{study_numbers}{one or more study numbers from http://www.icpsr.umich.edu/icpsrweb/ICPSR/studies?q=}
 
 \item{archive}{defaults to "ICPSR" but other archives include "HMCA" , "NACJD" , "NAHDAP" , "NADAC" , "civicleads" , "RCMD" , "ADDEP" , "childcare" , "NCAA" , "NACDA" , "DSDR" , "METLDB"}
+
+\item{bundle_preference}{when multiple filetypes are available, which should be given priority?}
 }
 \description{
 get_catalog_icpsr retrieves a listing of all available extracts for a microdata set

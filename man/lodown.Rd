@@ -38,6 +38,8 @@ lodown( "ess" , output_dir = "C:/My Directory/ESS" , your_email = "email@address
 lodown( "nhis" , output_dir = "C:/My Directory/NHIS" )
 lodown( "nis" , output_dir = "C:/My Directory/NIS" )
 lodown( "nsch" , output_dir = "C:/My Directory/NSCH" )
+lodown( "nsduh" , output_dir = "C:/My Directory/NSDUH" , 
+		your_email = "email@address.com" , your_password = "password" )
 lodown( "pme" , output_dir = "C:/My Directory/PME" )
 lodown( "scf" , output_dir = "C:/My Directory/SCF" )
 lodown( "yrbss" , output_dir = "C:/My Directory/YRBSS" )
@@ -60,6 +62,9 @@ nis_cat <- get_catalog( "nis" , output_dir = "C:/My Directory/NIS" )
 lodown( "nis" , nis_cat[ 1:2 , ] )
 nsch_cat <- get_catalog( "nsch" , output_dir = "C:/My Directory/NSCH" )
 lodown( "nsch" , nsch_cat[ 1:2 , ] )
+nsduh_cat <- get_catalog( "nsduh" , output_dir = "C:/My Directory/NSDUH" )
+lodown( "nsduh" , nsduh_cat[ 1:2 , ] ,
+		your_email = "email@address.com" , your_password = "password" )
 pme_cat <- get_catalog( "pme" , output_dir = "C:/My Directory/PME" )
 lodown( "pme" , pme_cat[ 1:2 , ] )
 scf_cat <- get_catalog( "scf" , output_dir = "C:/My Directory/SCF" )

@@ -82,7 +82,7 @@ get_catalog_atus <-
 
 
 lodown_atus <-
-  function( catalog , data_name = "atus" , ... ){
+  function( data_name = "atus" , catalog , ... ){
 
     tf <- tempfile()
 

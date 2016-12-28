@@ -1,7 +1,7 @@
 get_catalog_addhealth <-
 	function( data_name = "addhealth" , output_dir , ... ){
 
-	catalog <- get_catalog_icpsr( study_numbers = "21600" )
+	catalog <- get_catalog_icpsr( study_numbers = "21600" , bundle_preference = "rdata" )
 	
 	catalog$wave <- stringr::str_trim( gsub( "[[:punct:]]" , "" , sapply( strsplit( catalog$dataset_name , ":" ) , "[[" , 1 ) ) )
 	
@@ -15,9 +15,9 @@ get_catalog_addhealth <-
 
 
 lodown_addhealth <-
-	function( catalog , data_name = "addhealth" , ... ){
+	function( data_name = "addhealth" , catalog , ... ){
 	
-		lodown_icpsr( catalog , data_name = data_name , ... )
+		lodown_icpsr( data_name = data_name , catalog , ... )
 
 		invisible( TRUE )
 

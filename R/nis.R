@@ -53,7 +53,7 @@ get_catalog_nis <-
 
 
 lodown_nis <-
-  function( catalog , data_name = "nis" , ... ){
+  function( data_name = "nis" , catalog , ... ){
 
 	tf <- tempfile()
 

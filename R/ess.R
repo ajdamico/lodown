@@ -132,7 +132,7 @@ get_catalog_ess <-
 
 
 lodown_ess <-
-  function( catalog , data_name = "ess" , ... ){
+  function( data_name = "ess" , catalog , ... ){
 
 	if ( !requireNamespace( "memisc" , quietly = TRUE ) ) stop( "memisc needed for this function to work. to install it, type `install.packages( 'memisc' )`" , call. = FALSE )
 

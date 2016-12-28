@@ -7,6 +7,7 @@
 #' @param series_number any data series number from http://www.icpsr.umich.edu/icpsrweb/ICPSR/series
 #' @param study_numbers one or more study numbers from http://www.icpsr.umich.edu/icpsrweb/ICPSR/studies?q=
 #' @param archive defaults to "ICPSR" but other archives include "HMCA" , "NACJD" , "NAHDAP" , "NADAC" , "civicleads" , "RCMD" , "ADDEP" , "childcare" , "NCAA" , "NACDA" , "DSDR" , "METLDB"
+#' @param bundle_preference when multiple filetypes are available, which should be given priority?
 #' @param ... passed to \code{get_catalog} and \code{lodown_}
 #'
 #' @export
@@ -86,7 +87,7 @@ lodown_icpsr <-
 #' @rdname lodown_icpsr
 #' @export
 get_catalog_icpsr <-
-	function( series_number = NULL , study_numbers = NULL , archive = "ICPSR" ){
+	function( series_number = NULL , study_numbers = NULL , archive = "ICPSR" , bundle_preference = c( "rdata" , "stata" , "sas" , "spss" , "delimited" , "ascii" , "ascsas" , "ascstata" , "ascspss" ) ){
 
 		if( is.null( study_numbers ) ){
 		
@@ -126,14 +127,21 @@ get_catalog_icpsr <-
 				
 				for( this_id in dataset_ids ){
 					
-					this_rdata <- grep( paste0( "ds=" , this_id , "&bundle=rdata" ) , available_bundles , value = TRUE )
-					this_ascsas <- grep( paste0( "ds=" , this_id , "&bundle=ascsas" ) , available_bundles , value = TRUE )
-					this_delimited <- grep( paste0( "ds=" , this_id , "&bundle=delimited" ) , available_bundles , value = TRUE )
-					
 					this_bundle <- NULL
-					if( length( this_delimited ) == 1 ) this_bundle <- this_delimited
-					if( length( this_ascsas ) == 1 ) this_bundle <- this_ascsas
-					if( length( this_rdata ) == 1 ) this_bundle <- this_rdata
+					
+					pref_num <- 1
+					
+					while( is.null( this_bundle ) ){
+					
+						current_preference <- bundle_preference[ pref_num ]
+						
+						bundle_test <- grep( paste0( "ds=" , this_id , "&bundle=" , current_preference ) , available_bundles , value = TRUE )
+						
+						if( length( bundle_test ) == 1 ) this_bundle <- bundle_test else pref_num <- pref_num + 1
+						
+						if( pref_num > length( bundle_preference ) ) break
+					
+					}
 					
 					if( !is.null( this_bundle ) ) all_ds <- rbind( all_ds , data.frame( dataset_name = dataset_names[ which( this_id == dataset_ids ) ] , ds = this_id , full_url = this_bundle , stringsAsFactors = FALSE ) )
 					
