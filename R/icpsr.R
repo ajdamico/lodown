@@ -73,7 +73,7 @@ lodown_icpsr <-
 			# delete the temporary files
 			file.remove( tf )
 
-			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " unzipped to '" , dirname( catalog[ i , 'unzip_folder' ] ) , "'\r\n\n" ) )
+			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " unzipped to '" , catalog[ i , 'unzip_folder' ] , "'\r\n\n" ) )
 
 		}
 
