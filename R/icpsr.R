@@ -68,12 +68,12 @@ lodown_icpsr <-
 			
 			cachaca( dp , tf , FUN = download_to_filename, curl=curl, filesize_fun = 'unzip_verify' )
 
-			unzip( tf , exdir = dirname( catalog[ i , 'output_filename' ] ) , junkpaths = TRUE )
+			unzip( tf , exdir = dirname( catalog[ i , 'unzip_folder' ] ) , junkpaths = TRUE )
 
 			# delete the temporary files
 			file.remove( tf )
 
-			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " unzipped to '" , dirname( catalog[ i , 'output_filename' ] ) , "'\r\n\n" ) )
+			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " unzipped to '" , dirname( catalog[ i , 'unzip_folder' ] ) , "'\r\n\n" ) )
 
 		}
 

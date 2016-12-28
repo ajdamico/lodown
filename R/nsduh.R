@@ -3,6 +3,8 @@ get_catalog_nsduh <-
 
 	catalog <- get_catalog_icpsr( "00064" , bundle_preference = "stata" )
 	
+	catalog$unzip_folder <- paste0( output_dir , "/" , catalog$temporalCoverage , "/" , ifelse( catalog$dataset_name %in% c( "Part A" , "Part B" ) , tolower( catalog$dataset_name ) , "" ) )
+
 	catalog$output_filename <- paste0( output_dir , "/" , catalog$temporalCoverage , " " , ifelse( catalog$dataset_name %in% c( "Part A" , "Part B" ) , tolower( catalog$dataset_name ) , "main" ) , ".rda" )
 
 	catalog
@@ -18,7 +20,7 @@ lodown_nsduh <-
 		for( i in seq_len( nrow( catalog ) ) ){
 		
 			# find stata file within unzipped path
-			stata_files <- grep( "\\.dta$" , list.files( dirname( catalog[ i , 'output_filename' ] ) , full.names = TRUE ) , value = TRUE )
+			stata_files <- grep( "\\.dta$" , list.files( catalog[ i , 'unzip_folder' ] , full.names = TRUE ) , value = TRUE )
 			
 			for( this_stata in stata_files ){
 			
