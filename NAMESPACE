@@ -2,7 +2,9 @@
 
 export(cachaca)
 export(get_catalog)
+export(get_catalog_icpsr)
 export(lodown)
+export(lodown_icpsr)
 importFrom(utils,download.file)
 importFrom(utils,getFromNamespace)
 importFrom(utils,read.csv)

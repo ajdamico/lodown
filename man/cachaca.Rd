@@ -20,7 +20,7 @@ cachaca(this_url, destfile = NULL, ..., FUN = download.file, attempts = 3,
 
 \item{sleepsec}{length of \code{Sys.sleep()} between broken downloads}
 
-\item{filesize_fun}{use \code{RCurl::getURL} or \code{httr::HEAD} to determine file size}
+\item{filesize_fun}{use \code{RCurl::getURL} or \code{httr::HEAD} to determine file size.  use "unzip_verify" to verify the download by unzipping it without a warning instead}
 }
 \value{
 just pass on whatever FUN returns

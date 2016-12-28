@@ -2,30 +2,43 @@
 
 # from http://stackoverflow.com/questions/16474696/read-system-tmp-dir-in-r
 gettmpdir <-
-  function() {
-    tm <- Sys.getenv(c('TMPDIR', 'TMP', 'TEMP'))
-    d <- which(file.info(tm)$isdir & file.access(tm, 2) == 0)
-    if (length(d) > 0)
-      tm[[d[1]]]
-    else if (.Platform$OS.type == 'windows')
-      Sys.getenv('R_USER')
-    else '/tmp'
-  }
+	function() {
+		tm <- Sys.getenv(c('TMPDIR', 'TMP', 'TEMP'))
+		d <- which(file.info(tm)$isdir & file.access(tm, 2) == 0)
+		if (length(d) > 0)
+		tm[[d[1]]]
+		else if (.Platform$OS.type == 'windows')
+		Sys.getenv('R_USER')
+		else '/tmp'
+	}
 
 
 rcurl_filesize <-
-    function( url ){
-      xx <- RCurl::getURL(url, nobody=1L, header=1L)
-      yy <- strsplit(xx, "\r\n")[[1]]
-      as.numeric( gsub( "Content-Length: " , "" , grep( "Content-Length" , yy , value = TRUE ) ) )
-    }
+	function( url ){
+		xx <- RCurl::getURL(url, nobody=1L, header=1L)
+		yy <- strsplit(xx, "\r\n")[[1]]
+		as.numeric( gsub( "Content-Length: " , "" , grep( "Content-Length" , yy , value = TRUE ) ) )
+	}
 
 httr_filesize <-
-    function( url ){
-      xx <- httr::HEAD(url)
-      yy <- httr::headers(xx)$`content-length`
-      as.numeric( yy )
-    }
+	function( url ){
+		xx <- httr::HEAD(url)
+		yy <- httr::headers(xx)$`content-length`
+		as.numeric( yy )
+	}
+
+download_get_filename <- function(url, curl=RCurl::getCurlHandle(), ...) {
+		h <- RCurl::basicHeaderGatherer()
+		RCurl::curlSetOpt(nobody=T, curl=curl)
+		RCurl::getURL(url, headerfunction = h$update, curl=curl, ...)
+		gsub( '(.*)\\"(.*)\\"' , "\\2" , h$value()[["Content-Type"]])
+	}
+
+download_to_filename <- function(url, dlfile, curl=RCurl::getCurlHandle(), ...) {
+		RCurl::curlSetOpt(nobody=F, httpget=T, curl=curl)
+		writeBin(RCurl::getBinaryURL(url = url, curl=curl, ...), dlfile)
+		0L
+	}
 
 #' best file download, all other file downloads have inferior potassium
 #'
@@ -37,7 +50,7 @@ httr_filesize <-
 #' @param FUN defaults to \code{download.file} but \code{downloader::download}, \code{httr::GET}, \code{RCurl::getBinaryURL} also work
 #' @param attempts number of times to retry a broken download
 #' @param sleepsec length of \code{Sys.sleep()} between broken downloads
-#' @param filesize_fun use \code{RCurl::getURL} or \code{httr::HEAD} to determine file size
+#' @param filesize_fun use \code{RCurl::getURL} or \code{httr::HEAD} to determine file size.  use "unzip_verify" to verify the download by unzipping it without a warning instead
 #'
 #' @return just pass on whatever FUN returns
 #'
@@ -53,177 +66,163 @@ httr_filesize <-
 #'
 #' @export
 cachaca <-
-  function (
+	function (
 
-    this_url ,
+		this_url ,
 
-    destfile = NULL ,
+		destfile = NULL ,
 
-    # pass in any other arguments needed for the FUN
-    ... ,
+		# pass in any other arguments needed for the FUN
+		... ,
 
-    # specify which download function to use.
-    # `download.file` and `downloader::download` should both work.
-    FUN = download.file ,
+		# specify which download function to use.
+		# `download.file` and `downloader::download` should both work.
+		FUN = download.file ,
 
-    # how many attempts should be made with FUN?
-    attempts = 3 ,
-    # just in case of a server timeout or smthn equally annoying
+		# how many attempts should be made with FUN?
+		attempts = 3 ,
+		# just in case of a server timeout or smthn equally annoying
 
-    # how long should cachaca wait between attempts?
-    sleepsec = 60 ,
-	
-	# which filesize function should be used
-	# c( 'rcurl' , 'httr' )
-	filesize_fun = 'rcurl'
-	
-  ) {
+		# how long should cachaca wait between attempts?
+		sleepsec = 60 ,
 
-    if( filesize_fun == 'rcurl' ) this_filesize <- rcurl_filesize( this_url )
-	
-	if( filesize_fun == 'httr' ) this_filesize <- httr_filesize( this_url )
-	
+		# which filesize function should be used
+		# c( 'rcurl' , 'httr' )
+		filesize_fun = 'rcurl'
 
-    if( this_filesize == 0 ) stop( "remote server lists file size as zero" )
-
-    urlhash <- digest::digest(this_url)
-
-    cachefile <-
-      paste0(
-        gsub( "\\" , "/" , gettmpdir() , fixed = TRUE ) ,
-        "/" ,
-        urlhash ,
-        ".Rdownloadercache"
-      )
-
-    if( file.exists( cachefile ) ){
-
-      if( is.null( destfile ) ){
-
-          load( cachefile )
-
-          if( length( success ) == this_filesize | length( httr::content( success ) ) == this_filesize ){
-
-            cat( paste0( "'" , this_url , "'\r\ncached in\r\n'" , cachefile , "'\r\nreturning loaded object within R session\r\n\n" ) )
-
-            return( invisible( success ) )
-
-          } else rm( success )
-
-      } else {
-
-         if ( file.info( cachefile )$size == this_filesize ){
-
-          cat( paste0( "'" , this_url , "'\r\ncached in\r\n'" , cachefile , "'\r\ncopying to\r\n'" , destfile , "'\r\n\n" ) )
-
-          return( invisible( ifelse( file.copy( cachefile , destfile , overwrite = TRUE ) , 0 , 1 ) ) )
-
-        }
-
-      }
-    }
+	) {
 
 
-    if( is.null( destfile ) ){
-      cat(
-        paste0(
-          "saving from URL\r\n'" ,
-          this_url ,
-          "'\r\nto loaded object within R session\r\n\n"
-        )
-      )
-    } else {
-      cat(
-        paste0(
-          "Downloading from URL\r\n'" ,
-          this_url ,
-          "'\r\nto file\r\n'" ,
-          destfile ,
-          "'\r\n\n"
-        )
-      )
-    }
+		# if the cached file exists, assume it's good.
+		urlhash <- digest::digest(this_url)
 
-    # start out with a failed attempt, so the while loop below commences
-    failed.attempt <- try( stop() , silent = TRUE )
+		cachefile <-
+			paste0(
+				gsub( "\\" , "/" , gettmpdir() , fixed = TRUE ) ,
+				"/" ,
+				urlhash ,
+				".Rdownloadercache"
+			)
 
-    # keep trying the download until you run out of attempts
-    # and all previous attempts have failed
+		if( file.exists( cachefile ) ){
 
-    initial.attempts <- attempts
+			if( is.null( destfile ) ){
 
-    while( attempts > 0 & class( failed.attempt ) == 'try-error' ){
+				load( cachefile )
 
-      # only run this loop a few times..
-      attempts <- attempts - 1
+				cat( paste0( "'" , this_url , "'\r\ncached in\r\n'" , cachefile , "'\r\nreturning loaded object within R session\r\n\n" ) )
 
-      failed.attempt <-
-        try( {
+				return( invisible( success ) )
 
-          # if there is no destination file, then `success` contains the data.
-          if( is.null( destfile ) ){
+			} else {
 
-            # did the download work?
-            success <-
-              do.call(
-                FUN ,
-                list( this_url , ... )
-              )
+				cat( paste0( "'" , this_url , "'\r\ncached in\r\n'" , cachefile , "'\r\ncopying to\r\n'" , destfile , "'\r\n\n" ) )
 
-            if( length( success ) != this_filesize && length( httr::content( success ) ) != this_filesize ){
+				return( invisible( ifelse( file.copy( cachefile , destfile , overwrite = TRUE ) , 0 , 1 ) ) )
 
-              message( paste0( "downloaded binary url size (" , length( success ) , ") does not match server's content length (" , this_filesize , ")" ) )
+			}
 
-              class(failed.attempt) <- 'try-error'
+		}
 
-              rm( success )
 
-            }
+		if( is.null( destfile ) ){
+			cat( paste0( "saving from URL\r\n'" , this_url , "'\r\nto loaded object within R session\r\n\n" ) )
+		} else {
+			cat( paste0( "Downloading from URL\r\n'" , this_url , "'\r\nto file\r\n'" , destfile , "'\r\n\n" ) )
+		}
 
-          } else {
+		
+		if( filesize_fun == 'rcurl' ) this_filesize <- rcurl_filesize( this_url )
 
-            # did the download work?
-            success <-
-              do.call(
-                FUN ,
-                list( this_url , destfile , ... )
-              ) == 0
+		if( filesize_fun == 'httr' ) this_filesize <- httr_filesize( this_url )
 
-            if( file.info( destfile )$size != this_filesize ){
+		if( filesize_fun != 'unzip_verify' && this_filesize == 0 ) stop( "remote server lists file size as zero" )
 
-                message( paste0( "downloaded file size on disk (" , file.info( destfile )$size , ") does not match server's content length (" , this_filesize , ")" ) )
+		if( filesize_fun == 'unzip_verify' & is.null( destfile ) ) stop( "the unzip_verify option only allowed when there's a destination file" )
+		
+		# start out with a failed attempt, so the while loop below commences
+		failed.attempt <- try( stop() , silent = TRUE )
 
-                class(failed.attempt) <- 'try-error'
+		# keep trying the download until you run out of attempts
+		# and all previous attempts have failed
 
-                rm( success )
-            }
+		initial.attempts <- attempts
 
-          }
+		while( attempts > 0 & class( failed.attempt ) == 'try-error' ){
 
-        } ,
-        silent = TRUE
-        )
+			# only run this loop a few times..
+			attempts <- attempts - 1
 
-      # if the download did not work, wait `sleepsec` seconds and try again.
-      if( class( failed.attempt ) == 'try-error' ){
-        cat( paste0( "download issue with\r\n'" , this_url , "'\r\n\n" ) )
-        Sys.sleep( sleepsec )
-      }
+			failed.attempt <-
+				try( {
 
-    }
+					# if there is no destination file, then `success` contains the data.
+					if( is.null( destfile ) ){
 
-    # double-check that the `success` object exists.. it might not if `attempts` was set to zero.
-    if ( exists( 'success' ) ){
+						# did the download work?
+						success <- do.call( FUN , list( this_url , ... ) )
 
-      if( is.null( destfile ) ){
+						if( length( success ) != this_filesize && length( httr::content( success ) ) != this_filesize ){
 
-        save( success , file = cachefile )
+							message( paste0( "downloaded binary url size (" , length( success ) , ") does not match server's content length (" , this_filesize , ")" ) )
 
-      } else file.copy( destfile , cachefile , overwrite = TRUE )
+							class(failed.attempt) <- 'try-error'
 
-      return( invisible( success ) )
+							rm( success )
 
-      # otherwise break.
-    } else stop( paste( "download failed after" , initial.attempts , "attempts" ) )
+						}
 
-  }
+					} else {
+
+						# did the download work?
+						success <- do.call( FUN , list( this_url , destfile , ... ) ) == 0
+
+						if( filesize_fun == 'unzip_verify' ){
+						
+							tryCatch( unzipped_files <- unzip( destfile , exdir = paste0( tempdir() , "/unzips" ) ) , warning = function(w) { stop( "unzip_verify failed: " , conditionMessage( w ) ) } )
+							
+							# if the unzip worked without issue, then the file size is correct
+							this_filesize <- file.info( destfile )$size
+							
+							file.remove( unzipped_files )
+													
+						}
+						
+						if( file.info( destfile )$size != this_filesize ){
+
+							message( paste0( "downloaded file size on disk (" , file.info( destfile )$size , ") does not match server's content length (" , this_filesize , ")" ) )
+
+							class(failed.attempt) <- 'try-error'
+
+							rm( success )
+
+						}
+
+					}
+		
+					} , silent = TRUE
+				)
+
+			# if the download did not work, wait `sleepsec` seconds and try again.
+			if( class( failed.attempt ) == 'try-error' ){
+				cat( paste0( "download issue with\r\n'" , this_url , "'\r\n\n" ) )
+				Sys.sleep( sleepsec )
+			}
+
+		}
+
+		# double-check that the `success` object exists.. it might not if `attempts` was set to zero.
+		if ( exists( 'success' ) ){
+
+		if( is.null( destfile ) ){
+
+		save( success , file = cachefile )
+
+		} else file.copy( destfile , cachefile , overwrite = TRUE )
+
+		return( invisible( success ) )
+
+		# otherwise break.
+		} else stop( paste( "download failed after" , initial.attempts , "attempts" ) )
+
+	}

@@ -17,6 +17,8 @@ NULL
 #' \dontrun{
 #'
 #' # examples to download everything
+#' lodown( "addhealth" , output_dir = "C:/My Directory/AddHealth" , 
+#' 		your_email = "email@address.com" , your_password = "password" )
 #' lodown( "ahrf" , output_dir = "C:/My Directory/AHRF" )
 #' lodown( "atus" , output_dir = "C:/My Directory/ATUS" )
 #' lodown( "ces" , output_dir = "C:/My Directory/CES" )
@@ -29,6 +31,9 @@ NULL
 #' lodown( "yrbss" , output_dir = "C:/My Directory/YRBSS" )
 #'
 #' # examples to download only the first two records in the catalog
+#' addhealth_cat <- get_catalog( "addhealth" , output_dir = "C:/My Directory/AddHealth" )
+#' lodown( "addhealth" , addhealth_cat , 
+#' 		your_email = "email@address.com" , your_password = "password" )
 #' ahrf_cat <- get_catalog( "ahrf" , output_dir = "C:/My Directory/AHRF" )
 #' lodown( "ahrf" , ahrf_cat[ 1:2 , ] )
 #' atus_cat <- get_catalog( "atus" , output_dir = "C:/My Directory/ATUS" )
