@@ -3,7 +3,7 @@ get_catalog_nsduh <-
 
 	catalog <- get_catalog_icpsr( "00064" , bundle_preference = "stata" )
 	
-	catalog$unzip_folder <- paste0( output_dir , "/" , catalog$temporalCoverage , "/" , ifelse( catalog$dataset_name %in% c( "Part A" , "Part B" ) , tolower( catalog$dataset_name ) , "" ) )
+	catalog$unzip_folder <- paste0( output_dir , "/" , catalog$temporalCoverage , ifelse( catalog$dataset_name %in% c( "Part A" , "Part B" ) , paste0( "/" , tolower( catalog$dataset_name ) ) , "" ) )
 
 	catalog$output_filename <- paste0( output_dir , "/" , catalog$temporalCoverage , " " , ifelse( catalog$dataset_name %in% c( "Part A" , "Part B" ) , tolower( catalog$dataset_name ) , "main" ) , ".rda" )
 
