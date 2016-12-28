@@ -3,10 +3,6 @@ get_catalog_nsduh <-
 
 	catalog <- get_catalog_icpsr( "00064" , bundle_preference = "stata" )
 	
-	catalog$wave <- stringr::str_trim( gsub( "[[:punct:]]" , "" , sapply( strsplit( catalog$dataset_name , ":" ) , "[[" , 1 ) ) )
-	
-	catalog$data_title <- stringr::str_trim( gsub( "[[:punct:]]" , "" , sapply( strsplit( catalog$dataset_name , ":" ) , "[[" , 2 ) ) )
-	
 	catalog$output_filename <- paste0( output_dir , "/" , catalog$temporalCoverage , " " , ifelse( catalog$dataset_name %in% c( "Part A" , "Part B" ) , tolower( catalog$dataset_name ) , "main" ) , ".rda" )
 
 	catalog
