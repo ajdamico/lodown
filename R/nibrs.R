@@ -5,6 +5,13 @@ get_catalog_nibrs <-
 	
 	catalog$unzip_folder <- paste0( output_dir , "/" , gsub( "[^0-9A-z ]" , "" , catalog$name ) , "/" , catalog$dataset_name )
 
+	catalog$db_tablename <- tolower( gsub( " " , "_" , paste0( gsub( "[^0-9A-z ]" , "" , catalog$name ) , "_" , catalog$dataset_name ) ) )
+	catalog$db_tablename <- gsub( "national_incidentbased_reporting_system_" , "x" , catalog$db_tablename )
+	catalog$db_tablename <- gsub( "uniform_crime_reporting_" , "ucr_" , catalog$db_tablename )
+	catalog$db_tablename <- gsub( "program_data_" , "" , catalog$db_tablename )
+	catalog$db_tablename <- gsub( "-level_file" , "_level" , catalog$db_tablename )
+	catalog$db_tablename <- gsub( "segment" , "seg" , catalog$db_tablename )
+	
 	catalog$unzip_folder <- gsub( "IncidentBased" , "Incident Based" , catalog$unzip_folder )
 
 	catalog$dbfolder <- paste0( output_dir , "/MonetDB" )
@@ -59,10 +66,6 @@ lodown_nibrs <-
 			
 			DBI::dbBegin(db)
 
-			# determine the tablename within the big database
-			tablename <- gsub( "(.*)/ICPSR_(.*)/(DS|ds)(.*)" , "x\\2_\\4" , dirname( data.file ) )
-			# it should be x[study number]_[dataset number]
-			
 			# in most cases, the sas importation script should start right at the beginning..
 			beginline <- 1
 			
@@ -71,7 +74,7 @@ lodown_nibrs <-
 				fn = data.file ,
 				sas_ri = sas.import ,
 				tl = TRUE ,	# convert all column names to lowercase?
-				tablename = tablename ,
+				tablename = catalog[ i , 'db_tablename' ] ,
 				beginline = beginline ,
 				skip.decimal.division = TRUE ,
 				connection = db
@@ -133,10 +136,10 @@ lodown_nibrs <-
 				# this loop assumes you have less than 4GB of RAM, so tables with more
 				# than 100,000 records will not automatically get read in unless you comment
 				# out this `if` block by adding `#` in front of this line and the accompanying `}`
-				if ( DBI::dbGetQuery( db , paste( 'select count(*) from ' , tablename ) )[ 1 , 1 ] < 100000 ){
+				if ( DBI::dbGetQuery( db , paste( 'select count(*) from ' , catalog[ i , 'db_tablename' ] ) )[ 1 , 1 ] < 100000 ){
 					
 					# pull the data file into working memory
-					x <- DBI::dbReadTable( db , tablename )
+					x <- DBI::dbReadTable( db , catalog[ i , 'db_tablename' ] )
 				
 					# if there are any missing values to recode
 					if ( length( mvr ) == 1 ){
@@ -162,13 +165,13 @@ lodown_nibrs <-
 						}
 						
 						# remove the current data table from the database
-						DBI::dbRemoveTable( db , tablename )
+						DBI::dbRemoveTable( db , catalog[ i , 'db_tablename' ] )
 						
 						names( x ) <- tolower( names( x ) )
 						
 						# ..and overwrite it with the data.frame object
 						# that you've just blessedly cleaned up
-						DBI::dbWriteTable( db , tablename , x )
+						DBI::dbWriteTable( db , catalog[ i , 'db_tablename' ] , x )
 
 					}
 					
@@ -188,7 +191,7 @@ lodown_nibrs <-
 							db , 
 							paste(
 								"UPDATE" ,
-								tablename ,
+								catalog[ i , 'db_tablename' ] ,
 								"SET" ,
 								vtr ,
 								" = NULL WHERE" ,
@@ -203,17 +206,14 @@ lodown_nibrs <-
 			} else {
 				
 				# check whether the current table has less than 100000 records..
-				if ( DBI::dbGetQuery( db , paste( 'select count(*) from ' , tablename ) )[ 1 , 1 ] < 100000 ){
+				if ( DBI::dbGetQuery( db , paste( 'select count(*) from ' , catalog[ i , 'db_tablename' ] ) )[ 1 , 1 ] < 100000 ){
 				
 					# pull the data file into working memory
-					x <- DBI::dbReadTable( db , tablename )
+					x <- DBI::dbReadTable( db , catalog[ i , 'db_tablename' ] )
 				
 					# save the r data.frame object to the local disk as an `.rda`
 					save( x , file = gsub( "txt$" , "rda" , data.file ) )
 				
-					# remove the object from working memory
-					rm( x )
-					
 				}
 				
 			}

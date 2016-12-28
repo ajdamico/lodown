@@ -13,6 +13,7 @@ get_catalog_nppes <-
 	catalog <-
 		data.frame(
 			full_url = fn ,
+			db_tablename = "npi" ,
 			dbfolder = paste0( output_dir , "/MonetDB" ) ,
 			stringsAsFactors = FALSE
 		)
@@ -25,6 +26,7 @@ get_catalog_nppes <-
 lodown_nppes <-
 	function( data_name = "nppes" , catalog , path_to_7za = '7za' , ... ){
 	
+		if( nrow( catalog ) != 1 ) stop( "nppes catalog must be exactly one record" )
 	
 		if( ( .Platform$OS.type != 'windows' ) && ( system( paste0('"', path_to_7za , '" -h' ) ) != 0 ) ) stop( "you need to install 7-zip" )
 		
@@ -97,16 +99,7 @@ lodown_nppes <-
 		colDecl <- paste( fields , colTypes )
 
 		# ..to initiate this table in the monet database
-		sql.create <-
-			sprintf(
-				paste(
-					"CREATE TABLE npi (%s)"
-				) ,
-				paste(
-					colDecl ,
-					collapse = ", "
-				)
-			)
+		sql.create <- sprintf( paste( "CREATE TABLE" , catalog$db_tablename , "(%s)" ) , paste( colDecl , collapse = ", " ) )
 
 		# run the actual MonetDB table creation command
 		DBI::dbSendQuery( db , sql.create )
@@ -152,7 +145,9 @@ lodown_nppes <-
 			paste0( 
 				"copy " , 
 				num.lines , 
-				" offset 2 records into npi from '" , 
+				" offset 2 records into " ,
+				catalog$db_tablename , 
+				" from '" , 
 				normalizePath( tf2 ) , 
 				"' using delimiters ',','\\n','\"' NULL as ''" 
 			)
