@@ -82,7 +82,7 @@ lodown <-
 
 		cat( paste0( "beginning local download of " , data_name , "\r\n\n" ) )
 
-		load_fun( catalog , ...)
+		load_fun( data_name = data_name , catalog , ...)
 
 		cat( paste0( data_name , " local download completed\r\n\n" ) )
 
@@ -97,7 +97,7 @@ get_catalog <-
 
 		cat_fun <- getFromNamespace( paste0( "get_catalog_" , data_name ) , "lodown" )
 
-		cat_fun( output_dir = output_dir , ... )
+		cat_fun( data_name = data_name , output_dir = output_dir , ... )
 
 	}
 
