@@ -126,6 +126,9 @@ get_catalog_ess <-
 	
 	catalog <- catalog[ !( catalog$directory == 'countries' & catalog$full_url %in% no_country_allowed ) , ]
 	
+	# skip ESS7 - parents' occupation edition 2.0, all country files and integrated isco file
+	catalog <- catalog[ !grepl( "ESS7PoccInte02" , catalog[ , 'file_name' ] ) , ]
+	
 	catalog
   
   }
