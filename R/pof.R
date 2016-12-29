@@ -8,7 +8,7 @@ get_catalog_pof <-
 		ay <- rev( gsub( "(.*) (.*)" , "\\2" , ftp_listing ) )
 	
 		# hardcoded removal of 1995-1996
-		ay <- ay[ !( ay %in% c( "" , "Pesquisa_de_Orcamentos_Familiares_1995_1996" ) ) ]
+		ay <- ay[ !( ay %in% c( "" , "Pesquisa_de_Orcamentos_Familiares_1995_1996" , "Pesquisa_de_Orcamentos_Familiares_1997_1998" ) ) ]
 	
 		second_year <- gsub( "(.*)_([0-9]+)" , "\\2" , ay )
 	
@@ -18,7 +18,7 @@ get_catalog_pof <-
 				period = gsub( "Pesquisa_de_Orcamentos_Familiares_" , "" , ay ) ,
 				documentation = paste0( pof_ftp , ay , "/Microdados/" , ifelse( second_year < 2009 , "Documentacao.zip" , "documentacao.zip" ) ) ,
 				aliment_file = ifelse( second_year < 2009 , NA , paste0( pof_ftp , ay , "/Microdados/tradutores.zip" ) ) ,
-				output_folder = paste0( output_dir , "/" , ay ) ,
+				output_folder = paste0( output_dir , "/" , gsub( "Pesquisa_de_Orcamentos_Familiares_" , "" , ay ) ) ,
 				stringsAsFactors = FALSE
 			)
 
@@ -283,7 +283,7 @@ lodown_pof <-
 			# delete the temporary files
 			file.remove( tf , files , ali_files )
 
-			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , catalog[ i , 'output_filename' ] , "'\r\n\n" ) )
+			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'output_folder' ] , "'\r\n\n" ) )
 
 		}
 
