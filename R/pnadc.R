@@ -62,7 +62,7 @@ lodown_pnadc <-
 		
 		cachaca( doc_path , tf , mode = 'wb' )
 
-		sasfiles <- grep( "\\.sas$" , unzip( tf ) , value = TRUE , ignore.case = TRUE )
+		sasfiles <- grep( "\\.sas$" , unzip( tf , exdir = tempdir() ) , value = TRUE , ignore.case = TRUE )
 			
 		for ( i in seq_len( nrow( catalog ) ) ){
 
