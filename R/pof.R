@@ -14,7 +14,7 @@ get_catalog_pof <-
 	
 		catalog <-
 			data.frame(
-				full_urls = paste0( pof_ftp , ay , "/Microdatos/Dados.zip" ) ,
+				full_urls = paste0( pof_ftp , ay , "/Microdados/Dados.zip" ) ,
 				period = gsub( "Pesquisa_de_Orcamentos_Familiares_" , "" , ay ) ,
 				documentation = paste0( pof_ftp , ay , "/" , ifelse( second_year < 2009 , "Documentacao.zip" , "documentacao.zip" ) ) ,
 				output_folder = output_dir ,
