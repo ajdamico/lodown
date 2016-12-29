@@ -14,7 +14,7 @@ get_catalog_pof <-
 	
 		catalog <-
 			data.frame(
-				full_url = paste0( pof_ftp , ay , "/Microdatos/Datos.zip" ) ,
+				full_urls = paste0( pof_ftp , ay , "/Microdatos/Datos.zip" ) ,
 				period = gsub( "Pesquisa_de_Orcamentos_Familiares_" , "" , ay ) ,
 				documentation = paste0( pof_ftp , ay , "/" , ifelse( second_year < 2009 , "Documentacao.zip" , "documentacao.zip" ) ) ,
 				output_folder = output_dir ,
@@ -27,9 +27,9 @@ get_catalog_pof <-
 
 
 lodown_pof <-
-	function( data_name = "nppes" , catalog , path_to_7za = if( .Platform$OS.type != 'windows' ) '7za' else normalizePath( "C:/Program Files (x86)/7-zip/7z.exe" ) , ... ){
+	function( data_name = "nppes" , catalog , path_to_7za = if( .Platform$OS.type != 'windows' ) '7za' else normalizePath( "C:/Program Files/7-zip/7z.exe" ) , ... ){
 	
-		if( system( paste0( '"' , path_to_7za , '" -h' ) ) != 0 ) stop("you need to install 7-zip.  if you already have it, include a parameter like path_to_7za='/directory/7za' or path_to_7za='C:/Program Files (x86)/7-zip/7z.exe'" )
+		if( system( paste0( '"' , path_to_7za , '" -h' ) ) != 0 ) stop( paste0( "you need to install 7-zip.  if you already have it, include a parameter like path_to_7za='" , path_to_7za , "'" ) )
 		
 		tf <- tempfile()
 
