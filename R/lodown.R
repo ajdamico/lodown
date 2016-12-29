@@ -26,6 +26,8 @@ NULL
 #' lodown( "brfss" , output_dir = "C:/My Directory/BRFSS" )
 #' lodown( "ces" , output_dir = "C:/My Directory/CES" )
 #' lodown( "ess" , output_dir = "C:/My Directory/ESS" , your_email = "email@address.com" )
+#' lodown( "ncvs" , output_dir = "C:/My Directory/NCVS" ,
+#' 		your_email = "email@address.com" )
 #' lodown( "nhis" , output_dir = "C:/My Directory/NHIS" )
 #' lodown( "nis" , output_dir = "C:/My Directory/NIS" )
 #' lodown( "nibrs" , output_dir = "C:/My Directory/NIBRS" ,
@@ -56,6 +58,9 @@ NULL
 #' lodown( "ces" , ces_cat[ 1:2 , ] )
 #' ess_cat <- get_catalog( "ess" , output_dir = "C:/My Directory/ESS" )
 #' lodown( "ess" , ess_cat[ 1:2 , ] , your_email = "email@address.com" )
+#' ncvs_cat <- get_catalog( "ncvs" , output_dir = "C:/My Directory/NCVS" )
+#' lodown( "ncvs" , ncvs_cat[ 1:2 , ] ,
+#' 		your_email = "email@address.com" )
 #' nhis_cat <- get_catalog( "nhis" , output_dir = "C:/My Directory/NHIS" )
 #' lodown( "nhis" , nhis_cat[ 1:2 , ] )
 #' nibrs_cat <- get_catalog( "nibrs" , output_dir = "C:/My Directory/NIBRS" )

@@ -1,9 +1,9 @@
 get_catalog_ncvs <-
 	function( data_name = "ncvs" , output_dir , ... ){
 
-	catalog <- get_catalog_icpsr( "95" )
+	catalog <- get_catalog_icpsr( "95" , archive = "NACJD" )
 	
-	catalog$unzip_folder <- paste0( output_dir , "/" , gsub( "\\[|\\]" , "" , gsub( "[^0-9A-z ]" , "" , catalog$name ) , "/" , catalog$dataset_name ) )
+	catalog$unzip_folder <- paste0( output_dir , "/" , gsub( "\\[|\\]" , "" , gsub( "[^0-9A-z ]" , "" , gsub( "-" , " " , catalog$name ) ) , "/" , catalog$dataset_name ) )
 
 	catalog$db_tablename <- tolower( gsub( " |-" , "_" , paste0( gsub( "([^0-9A-z ])" , "" , paste( catalog$name , catalog$dataset_name ) ) ) ) )
 	catalog$db_tablename <- gsub( "national_crime_victimization_survey_" , "x" , catalog$db_tablename )
@@ -25,6 +25,27 @@ lodown_ncvs <-
 	function( data_name = "ncvs" , catalog , ... ){
 
 		lodown_icpsr( data_name = data_name , catalog , ... )
+		
+		for( i in seq_len( nrow( catalog ) ) ){
+		
+			# find stata file within unzipped path
+			stata_files <- grep( "\\.dta$" , list.files( catalog[ i , 'unzip_folder' ] , full.names = TRUE ) , value = TRUE )
+			
+			stopifnot( length( stata_files ) > 1 )
+			
+			if( length( stata_files ) == 1 ){
+				
+				x <- icpsr_stata( x , catalog_entry = catalog[ i , ] )
+
+				names( x ) <- tolower( names( x ) )
+				
+				save( x , file = catalog[ i , 'output_filename' ] )
+				
+				cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , catalog[ i , 'output_filename' ] , "'\r\n\n" ) )
+			
+			}
+		
+		}
 
 		invisible( TRUE )
 
