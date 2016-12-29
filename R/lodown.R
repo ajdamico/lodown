@@ -38,6 +38,7 @@ NULL
 #' 		your_email = "email@address.com" , your_password = "password" )
 #' lodown( "pme" , output_dir = "C:/My Directory/PME" )
 #' lodown( "pnadc" , output_dir = "C:/My Directory/PNADC" )
+#' lodown( "pof" , output_dir = "C:/My Directory/POF" )
 #' lodown( "scf" , output_dir = "C:/My Directory/SCF" )
 #' lodown( "yrbss" , output_dir = "C:/My Directory/YRBSS" )
 #'
@@ -79,6 +80,8 @@ NULL
 #' lodown( "pme" , pme_cat[ 1:2 , ] )
 #' pnadc_cat <- get_catalog( "pnadc" , output_dir = "C:/My Directory/PNADC" )
 #' lodown( "pnadc" , pnadc_cat[ 1:2 , ] )
+#' pof_cat <- get_catalog( "pof" , output_dir = "C:/My Directory/POF" )
+#' lodown( "pof" , pof_cat[ 1:2 , ] )
 #' scf_cat <- get_catalog( "scf" , output_dir = "C:/My Directory/SCF" )
 #' lodown( "scf" , scf_cat[ 1:2 , ] )
 #' yrbss_cat <- get_catalog( "yrbss" , output_dir = "C:/My Directory/YRBSS" )
