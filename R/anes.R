@@ -14,7 +14,7 @@ get_catalog_anes <-
 		z <- httr::content( httr::GET( "http://www.electionstudies.org/studypages/download/datacenter_all_datasets.php" ) )
 
 		# http://stackoverflow.com/a/41380643/1759499
-		nested_links <- purrr::map( rvest::html_nodes(z, "article") , ~ rvest::html_attr( html_nodes( . , "a" ) , "href" ) )
+		nested_links <- purrr::map( rvest::html_nodes(z, "article") , ~ rvest::html_attr( rvest::html_nodes( . , "a" ) , "href" ) )
 		
 		study_names <- stringr::str_trim( sapply( strsplit( rvest::html_text( rvest::html_nodes( z , "article" ) ) , "\\r\\n" ) , "[[" , 2 ) )
 		
