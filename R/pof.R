@@ -253,7 +253,7 @@ lodown_pof <-
 						curfile , 
 						tf2 , 
 						beginline = all.beginlines[ cur.beginline ] ,
-						skip.decimal.division = TRUE
+						skip_decimal_division = TRUE
 					)
 				
 				# convert all column names to lowercase

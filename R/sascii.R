@@ -2,10 +2,12 @@
 
 
 read_SAScii <-
-	function( dat_path , sas_path , beginline = 1 , lrecl = NULL , ... ){
+	function( dat_path , sas_path , beginline = 1 , lrecl = NULL , skip_decimal_division = NULL , ... ){
 
 		sasc <- SAScii::parse.SAScii( sas_path , beginline = beginline , lrecl = lrecl )
 
+		y <- sasc[ !is.na( sasc[ , "varname" ] ) , ]
+		
 		sasc$varname[ is.na( sasc$varname ) ] <- paste0( "toss" , seq( sum( is.na( sasc$varname ) ) ) )
 
 		# read in the fixed-width file..
@@ -21,7 +23,37 @@ read_SAScii <-
 				...
 			)
 
-		data.frame( x )
+		x <- data.frame( x )
+				
+		if (is.null(skip_decimal_division)) {
+			
+			user.defined.scipen <- getOption("scipen")
+			
+			options(scipen = 1e+06)
+			
+			no_decimal_points <- unlist( sapply( x , function( z ) ( sum( grepl( "." , z , fixed = TRUE ) ) == 0 ) )
+			
+			cols_to_multiply <- no_decimal_points & !y[ , "char" ] & y[ , "divisor" ] != 1
+			
+			x[ cols_to_multiply ] <- data.frame( t( t( x[ cols_to_multiply ] ) * y[ , "divisor" ] ) )
+			
+			options(scipen = user.defined.scipen)
+			
+		} else {
+		
+			if( !skip_decimal_division ){
+
+				cols_to_multiply <- !y[ , "char" ] & y[ , "divisor" ] != 1
+			
+				x[ cols_to_multiply ] <- data.frame( t( t( x[ cols_to_multiply ] ) * y[ , "divisor" ] ) )
+			
+
+			}
+			
+		}
+
+		
+		x
 
 	}
 	
@@ -37,7 +69,7 @@ read_SAScii_monetdb <-
 		beginline = 1 , 
 		zipped = F , 
 		lrecl = NULL , 
-		skip.decimal.division = FALSE , # skipping decimal division defaults to FALSE for this function!
+		skip_decimal_division = FALSE , # skipping decimal division defaults to FALSE for this function!
 		tl = F ,						# convert all column names to lowercase?
 		tablename ,
 		overwrite = FALSE ,				# overwrite existing table?
@@ -224,7 +256,7 @@ read_SAScii_monetdb <-
 
 					sql <- paste( "UPDATE" , tablename , "SET" , y[ l , 'varname' ] , "=" , y[ l , 'varname' ] , "*" , y[ l , "divisor" ] )
 
-					if ( !skip.decimal.division ) DBI::dbSendQuery( connection , sql )
+					if ( !skip_decimal_division ) DBI::dbSendQuery( connection , sql )
 
 
 				}
