@@ -55,13 +55,13 @@ lodown_brfss <-
 		
 		for ( i in seq_len( nrow( catalog ) ) ){
 
+			# open the connection to the monetdblite database
+			db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog[ i , 'dbfolder' ] )
+
 			# download the file
 			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
 
 			unzipped_files <- unzip( tf , exdir = paste0( tempdir() , "/unzips" ) )
-
-			# open the connection to the monetdblite database
-			db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog[ i , 'dbfolder' ] )
 
 			if( is.na( catalog[ i , 'sas_ri' ] ) ){
 			
