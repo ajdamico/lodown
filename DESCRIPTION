@@ -5,6 +5,8 @@ Version: 0.1.0
 Author: Anthony Joseph Damico [aut, cre]
 Maintainer: Anthony Joseph Damico <ajdamico@gmail.com>
 Description: easy.
+URL: http://asdfree.com/
+BugReports: https://github.com/ajdamico/lodown/issues
 Imports: survey, SAScii, RCurl, digest, readr, httr, XML, foreign, stringr, rvest, haven, xml2, DBI, MonetDBLite, R.utils
 Suggests: memisc, readxl, reshape2, jsonlite, purrr, gdata
 License: GPL-3
