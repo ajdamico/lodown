@@ -95,7 +95,7 @@ lodown_pnadc <-
 				
 			# ..and read that text file directly into an R data.frame
 			# using the sas importation script downloaded before this big fat loop
-			x <- read_SAScii( txt_file , sasfile )
+			x <- read_SAScii( txt_file , sasfile , na = c( "NA" , "" , "." ) )
 
 			# immediately make every field numeric
 			for( i in names( x ) ) x[ , i ] <- as.numeric( as.character( x[ , i ] ) )
