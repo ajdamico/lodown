@@ -62,7 +62,7 @@ lodown_pof <-
 				# tables with food codes  #
 				
 				# figure out which is the alimentacao file
-				cda <- files[ grep( 'codigos_de_alimentacao' , tolower( files ) ) ]
+				cda <- ali_files[ grep( 'codigos_de_alimentacao' , tolower( ali_files ) ) ]
 			
 				# extract both tabs from the excel file
 				componentes <- gdata::read.xls( cda , sheet = 1 , skip = 1 , colClasses = 'character' )
