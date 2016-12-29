@@ -236,8 +236,8 @@ lodown_pof <-
 					# build the string to send to DOS
 					dos.command <- paste0( '"' , path_to_7za , '" x "' , normalizePath( data.file ) , '" -o"' , normalizePath( paste0( tempdir() , '/unzips' ) ) , '"' )
 
-					# extract the file, platform-specific
-					if ( .Platform$OS.type != 'windows' ) system( dos.command ) else shell( dos.command )
+					# extract the file
+					shell( dos.command )
 
 					# find the name of the final ASCII data file to be imported
 					curfile <- paste0( tempdir() , '/unzips/' , gsub( ".7z" , ".txt" , basename( data.file ) ) )
