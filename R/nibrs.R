@@ -76,7 +76,7 @@ lodown_nibrs <-
 				tl = TRUE ,	# convert all column names to lowercase?
 				tablename = catalog[ i , 'db_tablename' ] ,
 				beginline = beginline ,
-				skip.decimal.division = TRUE ,
+				skip_decimal_division = TRUE ,
 				connection = db
 			)
 				
