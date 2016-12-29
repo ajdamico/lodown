@@ -1,18 +1,18 @@
 # get_catalog_template <-
 	# function( data_name = "template" , output_dir , ... ){
 
-	# catalog <-
-		# data.frame(
-			# directory = ifelse( grepl( "_SN_" , path_to_files ) , "state" , "county" ) ,
-			# tech_doc = grepl( "_USER_TECH_" , path_to_files ) ,
-			# year = gsub( "(.*)([0-9][0-9][0-9][0-9])-([0-9][0-9][0-9][0-9])(.*)" , "\\2" , basename( path_to_files ) ) ,
-			# full_url = path_to_files ,
-			# stringsAsFactors = FALSE
-		# )
+		# catalog <-
+			# data.frame(
+				# directory = ifelse( grepl( "_SN_" , path_to_files ) , "state" , "county" ) ,
+				# tech_doc = grepl( "_USER_TECH_" , path_to_files ) ,
+				# year = gsub( "(.*)([0-9][0-9][0-9][0-9])-([0-9][0-9][0-9][0-9])(.*)" , "\\2" , basename( path_to_files ) ) ,
+				# full_url = path_to_files ,
+				# stringsAsFactors = FALSE
+			# )
 
-	# catalog
+		# catalog
 
-# }
+	# }
 
 
 # lodown_template <-

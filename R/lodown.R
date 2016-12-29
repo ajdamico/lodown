@@ -20,6 +20,7 @@ NULL
 #' lodown( "addhealth" , output_dir = "C:/My Directory/AddHealth" , 
 #' 		your_email = "email@address.com" , your_password = "password" )
 #' lodown( "ahrf" , output_dir = "C:/My Directory/AHRF" )
+#' lodown( "anes" , output_dir = "C:/My Directory/ANES" , your_email = "email@address.com" )
 #' lodown( "atus" , output_dir = "C:/My Directory/ATUS" )
 #' lodown( "ces" , output_dir = "C:/My Directory/CES" )
 #' lodown( "ess" , output_dir = "C:/My Directory/ESS" , your_email = "email@address.com" )
@@ -41,6 +42,9 @@ NULL
 #' 		your_email = "email@address.com" , your_password = "password" )
 #' ahrf_cat <- get_catalog( "ahrf" , output_dir = "C:/My Directory/AHRF" )
 #' lodown( "ahrf" , ahrf_cat[ 1:2 , ] )
+#' anes_cat <- get_catalog( "anes" , output_dir = "C:/My Directory/ANES" , 
+#' 		your_email = "email@address.com" )
+#' lodown( "anes" , anes_cat , your_email = "email@address.com" )
 #' atus_cat <- get_catalog( "atus" , output_dir = "C:/My Directory/ATUS" )
 #' lodown( "atus" , atus_cat[ 1:2 , ] )
 #' ces_cat <- get_catalog( "ces" , output_dir = "C:/My Directory/CES" )
