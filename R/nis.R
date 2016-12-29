@@ -125,7 +125,7 @@ lodown_nis <-
 			# save the reduced sas import script to the local disk
 			writeLines( script.sub , tf )
 
-			x <- read_SAScii( paste0( tempdir() , "/" , unzipped_file ) , tf )
+			x <- read_SAScii( paste0( tempdir() , "/" , basename( unzipped_file ) ) , tf )
 			
 		}
 
@@ -135,7 +135,7 @@ lodown_nis <-
       save( x , file = catalog[ i , 'output_filename' ] )
 
       # delete the temporary files
-      file.remove( tf , paste0( tempdir() , "/" , unzipped_file ) )
+      file.remove( tf , paste0( tempdir() , "/" , basename( unzipped_file ) ) )
 
       cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , catalog[ i , 'output_filename' ] , "'\r\n\n" ) )
 
