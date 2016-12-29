@@ -276,7 +276,7 @@ lodown_brfss <-
 			DBI::dbDisconnect( db , shutdown = TRUE )
 
 			# delete the temporary files
-			file.remove( tf , impfile , unzipped_files , sasfile , csvfile )
+			suppressWarnings( file.remove( tf , impfile , unzipped_files , sasfile , csvfile ) )
 
 			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'db_tablename' ] , "'\r\n\n" ) )
 
