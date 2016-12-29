@@ -77,7 +77,7 @@ lodown_anes <-
 				
 			}
 			
-			if( grepl( "\\.dta$" , unzipped_files , ignore.case = TRUE ) ){
+			if( any( grepl( "\\.dta$" , unzipped_files , ignore.case = TRUE ) ) ){
 			
 				path_to_dta <- grep( "\\.dta$" , unzipped_files , ignore.case = TRUE , value = TRUE )
 				
