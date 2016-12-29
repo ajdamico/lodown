@@ -119,30 +119,5 @@ get_catalog <-
 		cat_fun( data_name = data_name , output_dir = output_dir , ... )
 
 	}
-
-
-read_SAScii <-
-	function( dat_path , sas_path , beginline = 1 , lrecl = NULL , ... ){
-
-		sasc <- SAScii::parse.SAScii( sas_path , beginline = beginline , lrecl = lrecl )
-
-		sasc$varname[ is.na( sasc$varname ) ] <- paste0( "toss" , seq( sum( is.na( sasc$varname ) ) ) )
-
-		# read in the fixed-width file..
-		x <-
-			readr::read_fwf(
-				# using the ftp filepath
-				dat_path ,
-				# using the parsed sas widths
-				readr::fwf_widths( abs( sasc$width ) , col_names = sasc[ , 'varname' ] ) ,
-				# using the parsed sas column types
-				col_types = paste0( ifelse( grepl( "^toss" , sasc$varname ) , "_" , ifelse( sasc$char , "c" , "d" ) ) , collapse = "" ) ,
-				# passed in from read_SAScii
-				...
-			)
-
-		data.frame( x )
-
-	}
 	
 no.na <- function( x , value = FALSE ){ x[ is.na( x ) ] <- value ; x }
