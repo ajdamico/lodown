@@ -31,7 +31,7 @@ read_SAScii <-
 			
 			options(scipen = 1e+06)
 			
-			no_decimal_points <- unlist( sapply( x , function( z ) ( sum( grepl( "." , z , fixed = TRUE ) ) == 0 ) )
+			no_decimal_points <- unlist( sapply( x , function( z ) ( sum( grepl( "." , z , fixed = TRUE ) ) == 0 ) ) )
 			
 			cols_to_multiply <- no_decimal_points & !y[ , "char" ] & y[ , "divisor" ] != 1
 			
