@@ -74,7 +74,7 @@ lodown_nis <-
 
 		} else unzipped_file <- basename( catalog[ i , "full_url" ] )
 
-		file.copy( tf , paste0( tempdir() , "/" , unzipped_file ) )
+		file.copy( tf , paste0( tempdir() , "/" , basename( unzipped_file ) ) )
 
 		if( !is.na( catalog[ i , 'r_script' ] ) ){
 
