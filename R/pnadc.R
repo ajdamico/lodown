@@ -41,9 +41,9 @@ get_catalog_pnadc <-
 				stringsAsFactors = FALSE
 			)
 
-		catalog$full_url <- paste0( year.ftp , year , "/" , zip.filenames )
+		catalog$full_url <- paste0( year.ftp , catalog$year , "/" , zip.filenames )
 		
-		catalog$output_filename <- paste0( output_dir , '/pnadc ' , year , ' ' , quarter , '.rda' )
+		catalog$output_filename <- paste0( output_dir , '/pnadc ' , catalog$year , ' ' , catalog$quarter , '.rda' )
 		
 		catalog
 
@@ -98,7 +98,7 @@ lodown_pnadc <-
 			x <- read_SAScii( txt_file , sasfile , na = c( "NA" , "" , "." ) )
 
 			# immediately make every field numeric
-			for( i in names( x ) ) x[ , i ] <- as.numeric( as.character( x[ , i ] ) )
+			for( j in names( x ) ) x[ , j ] <- as.numeric( as.character( x[ , j ] ) )
 
 			# convert all column names to lowercase
 			names( x ) <- tolower( names( x ) )
