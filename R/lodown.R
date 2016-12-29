@@ -1,4 +1,5 @@
-#' @importFrom utils download.file read.csv unzip getFromNamespace
+#' @importFrom utils download.file read.csv unzip getFromNamespace write.csv
+#' @importFrom stats as.formula
 NULL
 
 #' locally download, import, prepare publicly-available microdata
@@ -22,6 +23,7 @@ NULL
 #' lodown( "ahrf" , output_dir = "C:/My Directory/AHRF" )
 #' lodown( "anes" , output_dir = "C:/My Directory/ANES" , your_email = "email@address.com" )
 #' lodown( "atus" , output_dir = "C:/My Directory/ATUS" )
+#' lodown( "brfss" , output_dir = "C:/My Directory/BRFSS" )
 #' lodown( "ces" , output_dir = "C:/My Directory/CES" )
 #' lodown( "ess" , output_dir = "C:/My Directory/ESS" , your_email = "email@address.com" )
 #' lodown( "nhis" , output_dir = "C:/My Directory/NHIS" )
@@ -47,6 +49,8 @@ NULL
 #' lodown( "anes" , anes_cat , your_email = "email@address.com" )
 #' atus_cat <- get_catalog( "atus" , output_dir = "C:/My Directory/ATUS" )
 #' lodown( "atus" , atus_cat[ 1:2 , ] )
+#' brfss_cat <- get_catalog( "brfss" , output_dir = "C:/My Directory/BRFSS" )
+#' lodown( "brfss" , brfss_cat[ 1:2 , ] )
 #' ces_cat <- get_catalog( "ces" , output_dir = "C:/My Directory/CES" )
 #' lodown( "ces" , ces_cat[ 1:2 , ] )
 #' ess_cat <- get_catalog( "ess" , output_dir = "C:/My Directory/ESS" )
