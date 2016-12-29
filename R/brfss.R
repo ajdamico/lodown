@@ -3,7 +3,7 @@ get_catalog_brfss <-
 			
 		data_page <- readLines( "https://www.cdc.gov/brfss/annual_data/annual_data.htm" )
 
-		available_years <- unique( gsub( "(.*)/brfss/annual_data/annual_([0-9][0-9][0-9][0-9]).htm(.*)" , "\\2" , grep( "annual_data/annual_([0-9][0-9][0-9][0-9]).htm" , data_page , value = TRUE ) ) )
+		available_years <- sort( unique( gsub( "(.*)/brfss/annual_data/annual_([0-9][0-9][0-9][0-9]).htm(.*)" , "\\2" , grep( "annual_data/annual_([0-9][0-9][0-9][0-9]).htm" , data_page , value = TRUE ) ) ) )
 
 		path_to_files <-
 			ifelse( available_years < 1990 , 
