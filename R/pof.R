@@ -234,7 +234,7 @@ lodown_pof <-
 				} else {
 				
 					# build the string to send to DOS
-					dos.command <- paste0( '"' , path_to_7za , '" x ' , data.file , ' -o"' , tempdir() , '/unzips"')
+					dos.command <- paste0( '"' , path_to_7za , '" x "' , normalizePath( data.file ) , '" -o"' , normalizePath( paste0( tempdir() , '/unzips' ) ) , '"' )
 
 					# extract the file, platform-specific
 					if ( .Platform$OS.type != 'windows' ) system( dos.command ) else shell( dos.command )
