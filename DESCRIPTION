@@ -6,7 +6,7 @@ Author: Anthony Joseph Damico [aut, cre]
 Maintainer: Anthony Joseph Damico <ajdamico@gmail.com>
 Description: easy.
 Imports: survey, SAScii, RCurl, digest, readr, httr, XML, foreign, stringr, rvest, haven, xml2, DBI, MonetDBLite, R.utils
-Suggests: memisc, readxl, reshape2, jsonlite, purrr
+Suggests: memisc, readxl, reshape2, jsonlite, purrr, gdata
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
