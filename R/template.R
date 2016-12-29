@@ -41,7 +41,7 @@
 			# save( x , file = catalog[ i , 'output_filename' ] )
 
 			# # delete the temporary files
-			# file.remove( tf , unzipped_files )
+			# suppressWarnings( file.remove( tf , unzipped_files ) )
 
 			# cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , catalog[ i , 'output_filename' ] , "'\r\n\n" ) )
 

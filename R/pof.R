@@ -281,7 +281,7 @@ lodown_pof <-
 
 						
 			# delete the temporary files
-			file.remove( tf , files , ali_files )
+			suppressWarnings( file.remove( tf , files , ali_files ) )
 
 			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'output_folder' ] , "'\r\n\n" ) )
 
