@@ -91,7 +91,7 @@ lodown_anes <-
 				
 				if( length( path_to_sav ) != 1 ) stop( "not prepared for multiple files within one zipped file" )
 				
-				x <- data.frame( haven::read_spss( path_to_sav ) )
+				suppressWarnings( x <- foreign::read.spss( path_to_sav , to.data.frame = TRUE , use.value.labels = FALSE ) )
 				
 			}
 

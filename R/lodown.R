@@ -92,7 +92,7 @@ lodown <-
 
 		load_fun <- getFromNamespace( paste0( "lodown_" , data_name ) , "lodown" )
 
-		cat( paste0( "beginning local download of " , data_name , "\r\n\n" ) )
+		cat( paste0( "locally downloading " , data_name , "\r\n\n" ) )
 
 		load_fun( data_name = data_name , catalog , ...)
 
