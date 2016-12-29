@@ -262,7 +262,7 @@ lodown_brfss <-
 					id = as.formula( paste( "~" , catalog[ i , 'psu' ] ) ) ,
 					data = catalog[ i , 'db_tablename' ] ,
 					dbtype = "MonetDBLite" ,
-					dbname = db
+					dbname = catalog[ i , 'dbfolder' ]
 				)
 
 			# save the complex sample survey design
