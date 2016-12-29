@@ -234,10 +234,10 @@ lodown_pof <-
 				} else {
 				
 					# build the string to send to DOS
-					dos.command <- paste0( '"' , path_to_7za , '" x "' , normalizePath( data.file ) , '" -o"' , normalizePath( paste0( tempdir() , '/unzips' ) ) , '"' )
+					dos.command <- paste0( '"' , path_to_7za , '" x "' , normalizePath( data.file ) , '" -o"' , normalizePath( paste0( tempdir() , '\\unzips' ) ) , '"' )
 
 					# extract the file
-					shell( dos.command )
+					system( dos.command , show.output.on.console = FALSE )
 
 					# find the name of the final ASCII data file to be imported
 					curfile <- paste0( tempdir() , '/unzips/' , gsub( ".7z" , ".txt" , basename( data.file ) ) )
