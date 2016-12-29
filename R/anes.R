@@ -69,6 +69,14 @@ lodown_anes <-
 			
 			unzipped_files <- unzip( tf , exdir = paste0( tempdir() , "/unzips" ) )
 
+			for( stata12 in grep( "stata12" , unzipped_files , value = TRUE ) ){
+				
+				file.remove( stata12 )
+				
+				unzipped_files <- unzipped_files[ unzipped_files != stata12 ]
+				
+			}
+			
 			if( grepl( "\\.dta$" , unzipped_files , ignore.case = TRUE ) ){
 			
 				path_to_dta <- grep( "\\.dta$" , unzipped_files , ignore.case = TRUE , value = TRUE )
