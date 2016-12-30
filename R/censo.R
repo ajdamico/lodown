@@ -308,6 +308,7 @@ lodown_censo <-
 			
 			
 			# ..and fill them all with the number 1.
+			DBI::dbSendQuery( 
 				db , 
 				paste0(
 					'UPDATE c' , 
