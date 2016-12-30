@@ -87,17 +87,39 @@ lodown_nsfg <-
 
 			cachaca( catalog[ i , "sas_ri" ] , tf2 , mode = 'wb' )
 
-			
 			if( grepl( "1982PregSetup.sas" , catalog[ i , "sas_ri" ] , fixed = TRUE ) ){
 			
 				# load this file into working memory
 				sasc <- readLines( tf2 )
 				
-				# substitute some variable names
+				sasc <- gsub( "BPRec\t11-12" , "TOSS\t1-10\tBPRec\t11-12" , sasc )
+				
 				sasc <- gsub( "CASEID \t\t1494-1498" , "CASEID \t\t1494-1498 		REC_TYPE 1499-1500" , sasc )
 				
+				sasc <- gsub( "MAROUT\t321\t\tFMAROUT\t322" , "" , sasc )
+				
 				# save it back onto the disk
-				writeLines( sasc , tf )
+				writeLines( sasc , tf2 )
+			
+			}
+
+			if( grepl( "2002HHvars.dat" , catalog[ i , "full_url" ] , fixed = TRUE ) ){
+			
+				sasc <-
+					"input CASEID   1 - 12
+						   R_SEX     13
+						   HHFAMTYP  14
+						   HHPARTYP  15
+						   NCHILDHH  16
+						   HHKIDTYP  17
+						   CSPBBHH   18
+						   CSPBSHH   19
+						   CSPSBHH   20
+						   CSPOKDHH  21
+					;"
+					
+				# save it back onto the disk
+				writeLines( sasc , tf2 )
 			
 			}
 
@@ -106,7 +128,12 @@ lodown_nsfg <-
 			
 				# read a slice of this sas import script into RAM
 				sasc <- readLines( tf2 )[ 4322:4583 ]
-				
+			
+				sasc <- gsub( "Qtype\t\t11\t\tcmbirth\t\t12-15\t\t\tA1\t\t18" , "TOSS\t1-10\tQtype\t\t11\t\tcmbirth\t\t12-15\t\t\tA1\t\t18" , sasc )
+				sasc <- gsub( "F22_1CM\t622-628" , "F22_1CM\t623-628" , sasc )
+				sasc <- gsub( "FMARITAL\t1041" , "" , sasc )
+				sasc <- gsub( "CSECNUM  \t1167-1168" , "" , sasc )
+				sasc <- gsub( "AGEREMAR\t1265-1267\t\tAGEREMAR\t1284-1287" , "AGEREMAR\t1284-1287" , sasc )
 				# get rid of the tab separators and collapse all strings together into one
 				sasc <- paste( gsub( "\t" , " " , sasc ) , collapse = " " )
 				
@@ -147,7 +174,7 @@ lodown_nsfg <-
 			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
 						
 			# this particular file has no line endings
-			if( catalog[ i , 'full_url' ] == "ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/NSFG/1988PregData.dat" ){
+			if( grepl( "1988PregData.dat" , catalog[ i , 'full_url' ] , fixed = TRUE ) ){
 
 				# start an empty object
 				fwf88 <- NULL
@@ -180,9 +207,15 @@ lodown_nsfg <-
 					# using the parsed sas widths
 					readr::fwf_widths( abs( sasc$width ) , col_names = sasc[ , 'varname' ] ) ,
 					# using the parsed sas column types
-					col_types = paste0( ifelse( is.na( sasc$varname ) , "_" , ifelse( sasc$char , "c" , "d" ) ) , collapse = "" )
+					col_types = paste0( ifelse( is.na( sasc$varname ) , "_" , ifelse( sasc$char , "c" , "d" ) ) , collapse = "" ) ,
+					
+					na = c( "NA" , "" , "." )
 				)
 				
+			x <- data.frame( x )
+			
+			stopifnot( nrow( x ) == R.utils::countLines( tf ) )
+			
 			# convert all column names to lowercase
 			names( x ) <- tolower( names( x ) )
 			
@@ -190,31 +223,31 @@ lodown_nsfg <-
 			
 				names( x )[ names( x ) == 'rectype' ] <- 'rec_type'
 				
-				x <- x[ x$rec_type >= 5 , ]
+				x <- x[ x[ , 'rec_type' ] >= 5 , ]
 				
 				x <- mvrf_nsfg( x , readLines( tf2 ) )
 			
 			} else if( grepl( "1976FemRespSetup.sas" , catalog[ i , 'sas_ri' ] , fixed = TRUE ) ){
 			
-				x <- x[ x$marstat <= 4 , ]
+				x <- x[ x[ , 'marstat' ] <= 4 , ]
 
 				x <- mvrf_nsfg( x , readLines( tf2 ) )
 			
 			} else if( grepl( "1982PregSetup.sas" , catalog[ i , 'sas_ri' ] , fixed = TRUE ) ){
 			
-				x <- x[ x$rec_type > 0 , ]
+				x <- x[ x[ , 'rec_type' ] > 0 , ]
 				
 				x <- mvrf_nsfg( x , readLines( tf2 ) )
 			
 			} else if( grepl( "1982FemRespSetup.sas" , catalog[ i , 'sas_ri' ] , fixed = TRUE ) ){
 				
-				x <- x[ x$rec_type == 0 , ]
+				x <- x[ x[ , 'rec_type' ] == 0 , ]
 				
 				x <- mvrf_nsfg( x , readLines( tf2 ) )
 			
 			} else x <- mvrf_nsfg( x , readLines( tf2 ) )
 			
-			
+			stopifnot( nrow ( x ) > 0 )
 			
 			# save this data.frame object to the local disk
 			save( x , file = catalog[ i , "output_filename" ] )

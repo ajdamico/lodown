@@ -35,6 +35,7 @@ NULL
 #' lodown( "nibrs" , output_dir = "C:/My Directory/NIBRS" ,
 #' 		your_email = "email@address.com" , your_password = "password" )
 #' lodown( "nsch" , output_dir = "C:/My Directory/NSCH" )
+#' lodown( "nsfg" , output_dir = "C:/My Directory/NSFG" )
 #' lodown( "nppes" , output_dir = "C:/My Directory/NPPES" )
 #' lodown( "nsduh" , output_dir = "C:/My Directory/NSDUH" , 
 #' 		your_email = "email@address.com" , your_password = "password" )
@@ -79,6 +80,8 @@ NULL
 #' lodown( "nppes" , nppes_cat )
 #' nsch_cat <- get_catalog( "nsch" , output_dir = "C:/My Directory/NSCH" )
 #' lodown( "nsch" , nsch_cat[ 1:2 , ] )
+#' nsfg_cat <- get_catalog( "nsfg" , output_dir = "C:/My Directory/NSFG" )
+#' lodown( "nsfg" , nsfg_cat[ 1:2 , ] )
 #' nsduh_cat <- get_catalog( "nsduh" , output_dir = "C:/My Directory/NSDUH" )
 #' lodown( "nsduh" , nsduh_cat[ 1:2 , ] ,
 #' 		your_email = "email@address.com" , your_password = "password" )
