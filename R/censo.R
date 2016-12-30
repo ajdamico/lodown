@@ -21,7 +21,7 @@ get_catalog_censo <-
 			rbind( 
 				catalog ,
 				data.frame(
-					paste0( ftp_path_2010 , "/" , files_to_download_2010 ) ,
+					full_url = paste0( ftp_path_2010 , "/" , files_to_download_2010 ) ,
 					year = 2010 ,
 					db_table_prefix = gsub( ".zip" , "" , files_to_download_2010 , ignore.case = TRUE ) ,
 					dbfolder = paste0( output_dir , "/MonetDB" ) ,
@@ -88,8 +88,10 @@ lodown_censo <-
 			# open the connection to the monetdblite database
 			db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog[ i , 'dbfolder' ] )
 
-			unzipped_files <- cachaca( catalog[ i , 'dom_ranc' ] , tf , mode = 'wb' )
-					
+			cachaca( catalog[ i , 'full_url' ] , tf , mode = 'wb' )
+			
+			unzipped_files <- unzip( tf , exdir = tempdir() )
+
 			dom_file <- unzipped_files[ grep( 'DOM|Domicilios' , unzipped_files , useBytes = TRUE ) ]
 			pes_file <- unzipped_files[ grep( 'PES|Pessoas' , unzipped_files , useBytes = TRUE ) ]
 			fam_file <- unzipped_files[ grep( 'FAM' , toupper( unzipped_files ) , useBytes = TRUE ) ]
