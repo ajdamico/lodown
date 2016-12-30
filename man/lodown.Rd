@@ -29,6 +29,7 @@ get_catalog retrieves a listing of all available extracts for a microdata set
 \dontrun{
 
 # examples to download everything
+lodown( "acs" , output_dir = "C:/My Directory/ACS" )
 lodown( "addhealth" , output_dir = "C:/My Directory/AddHealth" , 
 		your_email = "email@address.com" , your_password = "password" )
 lodown( "ahrf" , output_dir = "C:/My Directory/AHRF" )
@@ -54,6 +55,8 @@ lodown( "scf" , output_dir = "C:/My Directory/SCF" )
 lodown( "yrbss" , output_dir = "C:/My Directory/YRBSS" )
 
 # examples to download only the first two records in the catalog
+acs <- get_catalog( "acs" , output_dir = "C:/My Directory/ACS" )
+lodown( "acs" , acs[ 1:2 , ] )
 addhealth_cat <- get_catalog( "addhealth" , output_dir = "C:/My Directory/AddHealth" )
 lodown( "addhealth" , addhealth_cat , 
 		your_email = "email@address.com" , your_password = "password" )
