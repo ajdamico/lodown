@@ -21,6 +21,7 @@ get_catalog_censo <-
 			rbind( 
 				catalog ,
 				data.frame(
+					paste0( ftp_path_2010 , "/" , files_to_download_2010 ) ,
 					year = 2010 ,
 					db_table_prefix = gsub( ".zip" , "" , files_to_download_2010 , ignore.case = TRUE ) ,
 					dbfolder = paste0( output_dir , "/MonetDB" ) ,
@@ -56,6 +57,7 @@ get_catalog_censo <-
 			rbind( 
 				catalog ,
 				data.frame(
+					full_url = paste0( ftp_path_2000 , "/" , files_to_download_2000 ) ,
 					year = 2000 ,
 					db_table_prefix = gsub( ".zip" , "" , files_to_download_2000 , ignore.case = TRUE ) ,
 					dbfolder = paste0( output_dir , "/MonetDB" ) ,
@@ -86,15 +88,15 @@ lodown_censo <-
 			# open the connection to the monetdblite database
 			db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog[ i , 'dbfolder' ] )
 
-			unzipped_files <- cachaca( this_download , tf , mode = 'wb' )
+			unzipped_files <- cachaca( catalog[ i , 'dom_ranc' ] , tf , mode = 'wb' )
 					
-			dom_file <- unzipped.files[ grep( 'DOM|Domicilios' , unzipped.files , useBytes = TRUE ) ]
-			pes_file <- unzipped.files[ grep( 'PES|Pessoas' , unzipped.files , useBytes = TRUE ) ]
-			fam_file <- unzipped.files[ grep( 'FAM' , toupper( unzipped.files ) , useBytes = TRUE ) ]
+			dom_file <- unzipped_files[ grep( 'DOM|Domicilios' , unzipped_files , useBytes = TRUE ) ]
+			pes_file <- unzipped_files[ grep( 'PES|Pessoas' , unzipped_files , useBytes = TRUE ) ]
+			fam_file <- unzipped_files[ grep( 'FAM' , toupper( unzipped_files ) , useBytes = TRUE ) ]
 
-			this_dom <- ifelse( !is.na( catalog[ i , 'dom_ranc' ] ) , ranc( dom_file , catalog[ i , 'dom_ranc' ] ) , dom_file )
-			this_pes <- ifelse( !is.na( catalog[ i , 'pes_ranc' ] ) , ranc( pes_file , catalog[ i , 'pes_ranc' ] ) , pes_file )
-			this_fam <- ifelse( !is.na( catalog[ i , 'fam_ranc' ] ) , ranc( fam_file , catalog[ i , 'fam_ranc' ] ) , fam_file )
+			this_dom <- ifelse( !is.na( catalog[ i , 'dom_ranc' ] ) , ranc_censo( dom_file , catalog[ i , 'dom_ranc' ] ) , dom_file )
+			this_pes <- ifelse( !is.na( catalog[ i , 'pes_ranc' ] ) , ranc_censo( pes_file , catalog[ i , 'pes_ranc' ] ) , pes_file )
+			this_fam <- ifelse( !is.na( catalog[ i , 'fam_ranc' ] ) , ranc_censo( fam_file , catalog[ i , 'fam_ranc' ] ) , fam_file )
 			
 			
 			for( this_dom in dom_file ){
