@@ -32,7 +32,7 @@ get_catalog_censo <-
 					fam_sas = NA ,
 					dom_ranc = NA ,
 					pes_ranc = NA ,
-					fam_ranc = NA
+					fam_ranc = NA ,
 					stringsAsFactors = FALSE
 				)
 			)
@@ -67,7 +67,7 @@ get_catalog_censo <-
 					fam_sas = system.file("extdata", "LE_FAMILIAS.sas", package = "lodown") ,
 					dom_ranc = 170 ,
 					pes_ranc = 390 ,
-					fam_ranc = 118
+					fam_ranc = 118 ,
 					stringsAsFactors = FALSE
 				)
 			)
@@ -114,7 +114,7 @@ lodown_censo <-
 			for( this_pes in pes_file ){
 			
 				read_SAScii_monetdb (
-					this_pes
+					this_pes ,
 					sas_ri = catalog[ i , 'pes_sas' ] ,
 					zipped = FALSE ,
 					tl = TRUE ,
@@ -127,7 +127,7 @@ lodown_censo <-
 			for( this_fam in fam_file ){
 			
 				read_SAScii_monetdb (
-					this_fam
+					this_fam ,
 					sas_ri = catalog[ i , 'fam_sas' ] ,
 					zipped = FALSE ,
 					tl = TRUE ,
