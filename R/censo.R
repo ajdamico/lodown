@@ -217,165 +217,113 @@ lodown_censo <-
 
 			DBI::dbSendQuery( db , this_create )
 
+			if( unique_designs[ i , 'type' ] == 'dom' ){
+				count_create <-
+					paste0(
+						'create table c' ,
+						substr( unique_designs[ i , 'year' ] , 3 , 4 ) , 
+						'_dom_count_pes as (select ' ,
+						unique_designs[ i , 'fpc3' ] , 
+						' , ' ,
+						unique_designs[ i , 'fpc4' ] ,
+						' , count(*) as dom_count_' ,
+						unique_designs[ i , 'type' ] ,
+						' from c' ,
+						substr( unique_designs[ i , 'year' ] , 3 , 4 ) ,
+						'_' ,
+						unique_designs[ i , 'type' ] ,
+						'_pre_fpc group by ' ,
+						unique_designs[ i , 'fpc3' ] , 
+						' , ' ,
+						unique_designs[ i , 'fpc4' ] ,
+						' ) WITH DATA' )
 
-			count_create <-
-				paste0(
-					'create table c' ,
-					substr( unique_designs[ i , 'year' ] , 3 , 4 ) , 
-					'_dom_count_' ,
-					unique_designs[ i , 'type' ] , 
-					' as (select ' ,
-					unique_designs[ i , 'fpc3' ] , 
-					' , ' ,
-					unique_designs[ i , 'fpc4' ] ,
-					' , count(*) as dom_count_' ,
-					unique_designs[ i , 'type' ] ,
-					' from c' ,
-					substr( unique_designs[ i , 'year' ] , 3 , 4 ) ,
-					'_' ,
-					unique_designs[ i , 'type' ] ,
-					'_pre_fpc group by ' ,
-					unique_designs[ i , 'fpc3' ] , 
-					' , ' ,
-					unique_designs[ i , 'fpc4' ] ,
-					' ) WITH DATA' )
+				DBI::dbSendQuery( db , count_create )
+						
+				dom_fpc_merge <-
+					paste0( 
+						'create table c' ,
+						substr( unique_designs[ i , 'year' ] , 3 , 4 ) , 
+						'_dom as ( select a1.* , b1.dom_count_pes from (select a2.* , b2.sum_' ,
+						unique_designs[ i , 'fpc2' ] ,
+						' as dom_fpc from c' ,
+						substr( unique_designs[ i , 'year' ] , 3 , 4 ) , 
+						'_dom_count_pes as a2 inner join c' , 
+						substr( unique_designs[ i , 'year' ] , 3 , 4 ) , 
+						'_' , 
+						unique_designs[ i , 'type' ] , 
+						'_fpc as b2 on a2.' ,
+						unique_designs[ i , 'fpc1' ] ,
+						' = b2.' ,
+						unique_designs[ i , 'fpc1' ] ,
+						') as a1 inner join c' ,
+						substr( unique_designs[ i , 'year' ] , 3 , 4 ) , 
+						' as b1 on a1.' ,
+						unique_designs[ i , 'fpc3' ] ,
+						' = b1.' ,
+						unique_designs[ i , 'fpc3' ] ,
+						' AND a1.' ,
+						unique_designs[ i , 'fpc4' ] ,
+						' = b1.' ,
+						unique_designs[ i , 'fpc4' ] ,
+						' ) WITH DATA'
+					)
+					
+				DBI::dbSendQuery( db , dom_fpc_merge )
 
-			DBI::dbSendQuery( db , count_create )
-
-			fpc_merge <-
-				paste0( 'create table c' ,
-					substr( unique_designs[ i , 'year' ] , 3 , 4 ) , 
-					'_' ,
-					unique_designs[ i , 'type' ] , 
-					' as ( select a1.* , b1.dom_count_' ,
-					unique_designs[ i , 'type' ] , 
-					' from (select a2.* , b2.sum_fpc2 as sum_fpc from c' ,
-					substr( unique_designs[ i , 'year' ] , 3 , 4 ) , 
-					'_dom_pre_fpc' ,
-					' as a2 inner join c' ,
-					substr( unique_designs[ i , 'year' ] , 3 , 4 ) , 
-					'_fpc as b2 on a2.' ,
-					unique_designs[ i , 'fpc1' ] , 
-					' = b2.' ,
-					unique_designs[ i , 'fpc1' ] , 
-					') as a1 inner join c' ,
-					substr( unique_designs[ i , 'year' ] , 3 , 4 ) , 
-					'_dom_count_' ,
-					unique_designs[ i , 'type' ] , 
-					' as b1 on a1.' ,
-					unique_designs[ i , 'fpc3' ] , 
-					' = b1.' ,
-					unique_designs[ i , 'fpc3' ] , 
-					' AND a1.' ,
-					unique_designs[ i , 'fpc4' ] , 
-					' = b1.' ,
-					unique_designs[ i , 'fpc4' ] , 
-					' ) WITH DATA' )
-		
-			DBI::dbSendQuery( db , fpc_merge )
+			} else {
+				
+				final_merge <-
+					paste0( 
+						'create table c' , 
+						substr( unique_designs[ i , 'year' ] , 3 , 4 ) , 
+						'_' , 
+						unique_designs[ i , 'type' ] , 
+						' as (select a.* , b.sum_p001 as pes_fpc from c' , 
+						substr( unique_designs[ i , 'year' ] , 3 , 4 ) , 
+						'_pes_pre_fpc as a inner join c' , 
+						substr( unique_designs[ i , 'year' ] , 3 , 4 ) , 
+						'_pes_fpc as b on a.' ,
+						unique_designs[ i , 'fpc1' ] ,
+						' = b.' ,
+						unique_designs[ i , 'fpc1' ] ,
+						') WITH DATA'
+					)
+				
+				DBI::dbSendQuery( db , final_merge )
 			
-			DBI::dbSendQuery( db , paste0( 'ALTER TABLE c' , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , '_' , unique_designs[ i , 'type' ] , ' ADD COLUMN ' , unique_designs[ i , 'type' ] , '_wgt DOUBLE PRECISION' ) )
-
-			DBI::dbSendQuery( db , paste0( 'UPDATE c' , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , '_' , unique_designs[ i , 'type' ] , ' SET dom_wgt = ' , unique_designs[ i , 'fpc2' ] ) )
-
-			DBI::dbSendQuery( db , paste0( 'ALTER TABLE c' , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , '_' , unique_designs[ i , 'type' ] , ' DROP COLUMN ' , unique_designs[ i , 'fpc2' ] ) )
-
-
-			b.fields <- dbListFields( db , 'c00_fam' )[ !( dbListFields( db , 'c00_fam' ) %in% dbListFields( db , 'c00_dom' ) ) ]
-
-			semifinal.merge <-
-				paste0(
-					'create table c00_dom_fam as (SELECT a.* , b.' ,
-					paste( b.fields , collapse = ', b.' ) ,
-					' from c00_dom as a inner join c00_fam as b ON a.v0102 = b.v0102 AND a.v0300 = b.v0300) WITH DATA'
-				)
-				
-			dbSendQuery( db , semifinal.merge )
-
-
-			b.fields <- dbListFields( db , 'c00_pes' )[ !( dbListFields( db , 'c00_pes' ) %in% dbListFields( db , 'c00_dom_fam' ) ) ]
-
-			final.merge <-
-				paste0(
-					'create table c00 as (SELECT a.* , b.' ,
-					paste( b.fields , collapse = ', b.' ) ,
-					' from c00_dom_fam as a inner join c00_pes as b ON a.v0102 = b.v0102 AND a.v0300 = b.v0300 AND a.v0404 = b.v0404 ) WITH DATA'
-				)
-				
-			dbSendQuery( db , final.merge )
-
-			# now remove the dom + fam table,
-			# since that's not of much use
-			dbRemoveTable( db , 'c00_dom_fam' )
-
+			}
+		
 			# add columns named 'one' to each table..
-			dbSendQuery( db , 'alter table c00_dom add column one int' )
-			dbSendQuery( db , 'alter table c00_pes add column one int' )
-			dbSendQuery( db , 'alter table c00_fam add column one int' )
-			dbSendQuery( db , 'alter table c00 add column one int' )
-
-			# ..and fill them all with the number 1.
-			dbSendQuery( db , 'UPDATE c00_dom SET one = 1' )
-			dbSendQuery( db , 'UPDATE c00_pes SET one = 1' )
-			dbSendQuery( db , 'UPDATE c00_fam SET one = 1' )
-			dbSendQuery( db , 'UPDATE c00 SET one = 1' )
-
-
-			# now the current database contains four more tables than it did before
-				# c00_dom (household)
-				# c00_fam (family)
-				# c00_pes (person)
-				# c00 (merged)
-
-			# the current monet database should now contain
-			# all of the newly-added tables (in addition to meta-data tables)
-			print( dbListTables( db ) )		# print the tables stored in the current monet database to the screen
-
-
-			# confirm that the merged file has the same number of records as the person file
-			stopifnot( 
-				dbGetQuery( db , "select count(*) as count from c00_pes" ) == 
-				dbGetQuery( db , "select count(*) as count from c00" )
+			DBI::dbSendQuery( 
+				db , 
+				paste0( 
+					'alter table c' , 
+					substr( unique_designs[ i , 'year' ] , 3 , 4 ) , 
+					'_' , 
+					unique_designs[ i , 'type' ] , 
+					' add column one int' 
+				)
 			)
-
-
-			#################################################
-			# create a complex sample design object
-
-			# save a person-representative design of the 2000 censo
-			# warning: this command requires a long time, leave your computer on overnight.
-
-			bw_dom_00 <- 
-				bootweights( 
-					dbGetQuery( db , "SELECT areap FROM c00_dom" )[ , 1 ] ,
-					dbGetQuery( db , "SELECT v0300 FROM c00_dom" )[ , 1 ] ,
-					replicates = 80 ,
-					fpc = dbGetQuery( db , "SELECT dom_fpc FROM c00_dom" )[ , 1 ]
+			
+			
+			# ..and fill them all with the number 1.
+				db , 
+				paste0(
+					'UPDATE c' , 
+					substr( unique_designs[ i , 'year' ] , 3 , 4 ) , 
+					'_' , 
+					unique_designs[ i , 'type' ] , 
+					' SET one = 1' 
 				)
-
-			dom.design <-
-				svrepdesign(
-					weight = ~dom_wgt ,
-					repweights = bw_dom_00$repweights ,
-					combined.weights = FALSE ,
-					scale = bw_dom_00$scale ,
-					rscales = bw_dom_00$rscales ,
-					data = 'c00_dom' ,
-					dbtype = "MonetDBLite" ,
-					dbname = dbfolder
-				)
-
-		
-		
-		
-		
-		
-			# disconnect from the current monet database
-			DBI::dbDisconnect( db , shutdown = TRUE )
-
-			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'dbfolder' ] , "'\r\n\n" ) )
-		
+			)
+			
 		}
+		
+		# disconnect from the current monet database
+		DBI::dbDisconnect( db , shutdown = TRUE )
+
+		cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'dbfolder' ] , "'\r\n\n" ) )
 		
 		invisible( TRUE )
 
