@@ -87,7 +87,7 @@ get_catalog_censo <-
 	}
 
 lodown_censo <-
-	function( data_name = "censo" , catalog , path_to_7za = '7za' , ... ){
+	function( data_name = "censo" , catalog , ... ){
 
 		tf <- tempfile()
 
@@ -161,9 +161,9 @@ lodown_censo <-
 		pes_designs <- unique( catalog[ , c( "year" , "dbfolder" , "pes_design" , paste0( 'fpc' , 1:4 ) ) ] )
 		fam_designs <- unique( catalog[ , c( "year" , "dbfolder" , "fam_design" , paste0( 'fpc' , 1:4 ) ) ] )
 		
-		names( dom_designs ) <- c( "year" , 'dbfolder' , 'design' )
-		names( pes_designs ) <- c( "year" , 'dbfolder' , 'design' )
-		names( fam_designs ) <- c( "year" , 'dbfolder' , 'design' )
+		names( dom_designs ) <- c( "year" , 'dbfolder' , 'design' , paste0( 'fpc' , 1:4 ) )
+		names( pes_designs ) <- c( "year" , 'dbfolder' , 'design' , paste0( 'fpc' , 1:4 ) )
+		names( fam_designs ) <- c( "year" , 'dbfolder' , 'design' , paste0( 'fpc' , 1:4 ) )
 		
 		dom_designs$type <- 'dom'
 		pes_designs$type <- 'pes'
@@ -198,7 +198,7 @@ lodown_censo <-
 
 			DBI::dbSendQuery( db , this_stack )
 
-			this_fpc_create <-
+			this_create <-
 				paste0( 'create table c' , 
 					substr( unique_designs[ i , 'year' ] , 3 , 4 ) , 
 					'_' , 
@@ -215,52 +215,70 @@ lodown_censo <-
 					unique_designs[ i , 'fpc1' ] ,
 					') WITH DATA' )
 
-			DBI::dbSendQuery( db , this_fpc_create )
-
-			this_fpccreate <-
-				'create table c00_pes_fpc as (select areap , sum( p001 ) as sum_p001 from c00_pes_pre_fpc group by areap) WITH DATA'
-
-			dbSendQuery( db , pes.fpc.create )
-
-			fam.fpc.create <-
-				'create table c00_fam_fpc as (select areap , sum( p001 ) as sum_p001 from c00_fam_pre_fpc group by areap) WITH DATA'
-
-			dbSendQuery( db , fam.fpc.create )
+			DBI::dbSendQuery( db , this_create )
 
 
-			dom.count.create <-
-				'create table c00_dom_count_pes as (select v0102 , v0300 , count(*) as dom_count_pes from c00_pes_pre_fpc group by v0102 , v0300 ) WITH DATA'
+			count_create <-
+				paste0(
+					'create table c' ,
+					substr( unique_designs[ i , 'year' ] , 3 , 4 ) , 
+					'_dom_count_' ,
+					unique_designs[ i , 'type' ] , 
+					' as (select ' ,
+					unique_designs[ i , 'fpc3' ] , 
+					' , ' ,
+					unique_designs[ i , 'fpc4' ] ,
+					' , count(*) as dom_count_' ,
+					unique_designs[ i , 'type' ] ,
+					' from c' ,
+					substr( unique_designs[ i , 'year' ] , 3 , 4 ) ,
+					'_' ,
+					unique_designs[ i , 'type' ] ,
+					'_pre_fpc group by ' ,
+					unique_designs[ i , 'fpc3' ] , 
+					' , ' ,
+					unique_designs[ i , 'fpc4' ] ,
+					' ) WITH DATA' )
 
-			dbSendQuery( db , dom.count.create )
+			DBI::dbSendQuery( db , count_create )
 
+			fpc_merge <-
+				paste0( 'create table c' ,
+					substr( unique_designs[ i , 'year' ] , 3 , 4 ) , 
+					'_' ,
+					unique_designs[ i , 'type' ] , 
+					' as ( select a1.* , b1.dom_count_' ,
+					unique_designs[ i , 'type' ] , 
+					' from (select a2.* , b2.sum_fpc2 as sum_fpc from c' ,
+					substr( unique_designs[ i , 'year' ] , 3 , 4 ) , 
+					'_dom_pre_fpc' ,
+					' as a2 inner join c' ,
+					substr( unique_designs[ i , 'year' ] , 3 , 4 ) , 
+					'_fpc as b2 on a2.' ,
+					unique_designs[ i , 'fpc1' ] , 
+					' = b2.' ,
+					unique_designs[ i , 'fpc1' ] , 
+					') as a1 inner join c' ,
+					substr( unique_designs[ i , 'year' ] , 3 , 4 ) , 
+					'_dom_count_' ,
+					unique_designs[ i , 'type' ] , 
+					' as b1 on a1.' ,
+					unique_designs[ i , 'fpc3' ] , 
+					' = b1.' ,
+					unique_designs[ i , 'fpc3' ] , 
+					' AND a1.' ,
+					unique_designs[ i , 'fpc4' ] , 
+					' = b1.' ,
+					unique_designs[ i , 'fpc4' ] , 
+					' ) WITH DATA' )
+		
+			DBI::dbSendQuery( db , fpc_merge )
+			
+			DBI::dbSendQuery( db , paste0( 'ALTER TABLE c' , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , '_' , unique_designs[ i , 'type' ] , ' ADD COLUMN ' , unique_designs[ i , 'type' ] , '_wgt DOUBLE PRECISION' ) )
 
-			dom.fpc.merge <-
-				'create table c00_dom as ( select a1.* , b1.dom_count_pes from (select a2.* , b2.sum_p001 as dom_fpc from c00_dom_pre_fpc as a2 inner join c00_dom_fpc as b2 on a2.areap = b2.areap) as a1 inner join c00_dom_count_pes as b1 on a1.v0102 = b1.v0102 AND a1.v0300 = b1.v0300 ) WITH DATA'
-				
-			dbSendQuery( db , dom.fpc.merge )
+			DBI::dbSendQuery( db , paste0( 'UPDATE c' , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , '_' , unique_designs[ i , 'type' ] , ' SET dom_wgt = ' , unique_designs[ i , 'fpc2' ] ) )
 
-			pes.fpc.merge <-
-				'create table c00_pes as (select a.* , b.sum_p001 as pes_fpc from c00_pes_pre_fpc as a inner join c00_pes_fpc as b on a.areap = b.areap) WITH DATA'
-
-			dbSendQuery( db , pes.fpc.merge )
-
-			fam.fpc.merge <-
-				'create table c00_fam as (select a.* , b.sum_p001 as fam_fpc from c00_fam_pre_fpc as a inner join c00_fam_fpc as b on a.areap = b.areap) WITH DATA'
-
-			dbSendQuery( db , fam.fpc.merge )
-
-
-			dbSendQuery( db , 'ALTER TABLE c00_dom ADD COLUMN dom_wgt DOUBLE PRECISION' )
-			dbSendQuery( db , 'ALTER TABLE c00_pes ADD COLUMN pes_wgt DOUBLE PRECISION' )
-			dbSendQuery( db , 'ALTER TABLE c00_fam ADD COLUMN fam_wgt DOUBLE PRECISION' )
-
-			dbSendQuery( db , 'UPDATE c00_dom SET dom_wgt = p001' )
-			dbSendQuery( db , 'UPDATE c00_pes SET pes_wgt = p001' )
-			dbSendQuery( db , 'UPDATE c00_fam SET fam_wgt = p001' )
-
-			dbSendQuery( db , 'ALTER TABLE c00_dom DROP COLUMN p001' )
-			dbSendQuery( db , 'ALTER TABLE c00_pes DROP COLUMN p001' )
-			dbSendQuery( db , 'ALTER TABLE c00_fam DROP COLUMN p001' )
+			DBI::dbSendQuery( db , paste0( 'ALTER TABLE c' , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , '_' , unique_designs[ i , 'type' ] , ' DROP COLUMN ' , unique_designs[ i , 'fpc2' ] ) )
 
 
 			b.fields <- dbListFields( db , 'c00_fam' )[ !( dbListFields( db , 'c00_fam' ) %in% dbListFields( db , 'c00_dom' ) ) ]
