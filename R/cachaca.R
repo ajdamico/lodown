@@ -101,7 +101,7 @@ cachaca <-
 				gsub( "\\" , "/" , gettmpdir() , fixed = TRUE ) ,
 				"/" ,
 				urlhash ,
-				".Rdownloadercache"
+				".Rcache"
 			)
 
 		if( file.exists( cachefile ) ){

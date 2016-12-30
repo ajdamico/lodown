@@ -191,7 +191,7 @@ lodown_faers <-
 			}
 
 			# delete the temporary files
-			suppressWarnings( file.remove( tf , unzipped_files , paste0( catalog[ i , "output_folder" ] , "/unzips" ) ) )
+			suppressWarnings( file.remove( tf ) )
 
 			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'output_folder' ] , "'\r\n\n" ) )
 
