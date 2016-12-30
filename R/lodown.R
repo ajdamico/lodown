@@ -1,4 +1,4 @@
-#' @importFrom utils download.file read.csv unzip getFromNamespace write.csv
+#' @importFrom utils download.file read.csv unzip getFromNamespace write.csv read.table
 #' @importFrom stats as.formula
 NULL
 
@@ -27,6 +27,7 @@ NULL
 #' lodown( "brfss" , output_dir = "C:/My Directory/BRFSS" )
 #' lodown( "ces" , output_dir = "C:/My Directory/CES" )
 #' lodown( "ess" , output_dir = "C:/My Directory/ESS" , your_email = "email@address.com" )
+#' lodown( "faers" , output_dir = "C:/My Directory/FAERS" )
 #' lodown( "ncvs" , output_dir = "C:/My Directory/NCVS" ,
 #' 		your_email = "email@address.com" , your_password = "password" )
 #' lodown( "nhis" , output_dir = "C:/My Directory/NHIS" )
@@ -62,6 +63,8 @@ NULL
 #' lodown( "ces" , ces_cat[ 1:2 , ] )
 #' ess_cat <- get_catalog( "ess" , output_dir = "C:/My Directory/ESS" )
 #' lodown( "ess" , ess_cat[ 1:2 , ] , your_email = "email@address.com" )
+#' faers_cat <- get_catalog( "faers" , output_dir = "C:/My Directory/FAERS" )
+#' lodown( "faers" , faers_cat[ 1:2 , ] )
 #' ncvs_cat <- get_catalog( "ncvs" , output_dir = "C:/My Directory/NCVS" )
 #' lodown( "ncvs" , ncvs_cat[ 1:2 , ] ,
 #' 		your_email = "email@address.com" , your_password = "password" )
