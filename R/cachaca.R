@@ -162,7 +162,7 @@ cachaca <-
 						# did the download work?
 						success <- do.call( FUN , list( this_url , ... ) )
 
-						if( length( success ) != this_filesize && length( httr::content( success ) ) != this_filesize ){
+						if( !isTRUE( all.equal( length( success ) , this_filesize ) ) && !isTRUE( all.equal( length( httr::content( success ) ) , this_filesize ) ) ){
 
 							message( paste0( "downloaded binary url size (" , length( success ) , ") does not match server's content length (" , this_filesize , ")" ) )
 
@@ -188,7 +188,7 @@ cachaca <-
 													
 						}
 						
-						if( file.info( destfile )$size != this_filesize ){
+						if( !isTRUE( all.equal( file.info( destfile )$size , this_filesize ) ) ){
 
 							message( paste0( "downloaded file size on disk (" , file.info( destfile )$size , ") does not match server's content length (" , this_filesize , ")" ) )
 
