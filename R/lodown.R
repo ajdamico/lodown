@@ -1,5 +1,5 @@
 #' @importFrom utils download.file read.csv unzip getFromNamespace write.csv read.table
-#' @importFrom stats as.formula
+#' @importFrom stats as.formula vcov coef
 NULL
 
 #' locally download, import, prepare publicly-available microdata
@@ -42,6 +42,7 @@ NULL
 #' lodown( "pme" , output_dir = "C:/My Directory/PME" )
 #' lodown( "pnadc" , output_dir = "C:/My Directory/PNADC" )
 #' lodown( "pof" , output_dir = "C:/My Directory/POF" )
+#' lodown( "sbo" , output_dir = "C:/My Directory/SBO" )
 #' lodown( "scf" , output_dir = "C:/My Directory/SCF" )
 #' lodown( "yrbss" , output_dir = "C:/My Directory/YRBSS" )
 #'
@@ -91,6 +92,8 @@ NULL
 #' lodown( "pnadc" , pnadc_cat[ 1:2 , ] )
 #' pof_cat <- get_catalog( "pof" , output_dir = "C:/My Directory/POF" )
 #' lodown( "pof" , pof_cat[ 1:2 , ] )
+#' sbo_cat <- get_catalog( "sbo" , output_dir = "C:/My Directory/SBO" )
+#' lodown( "sbo" , sbo_cat[ 1:2 , ] )
 #' scf_cat <- get_catalog( "scf" , output_dir = "C:/My Directory/SCF" )
 #' lodown( "scf" , scf_cat[ 1:2 , ] )
 #' yrbss_cat <- get_catalog( "yrbss" , output_dir = "C:/My Directory/YRBSS" )
