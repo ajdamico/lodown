@@ -174,7 +174,7 @@ lodown_nsfg <-
 			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
 						
 			# this particular file has no line endings
-			if( grepl( "1988PregData.dat" , catalog[ i , 'full_url' ] , fixed = TRUE ) ){
+			if( grepl( "1988PregData|1988FemRespData" , catalog[ i , 'full_url' ] , fixed = TRUE ) ){
 
 				# start an empty object
 				fwf88 <- NULL
