@@ -21,7 +21,7 @@ get_catalog_censo <-
 			rbind( 
 				catalog ,
 				data.frame(
-					full_url = paste0( ftp_path_2010 , "/" , files_to_download_2010 ) ,
+					full_url = paste0( ftp_path_2010 , files_to_download_2010 ) ,
 					year = 2010 ,
 					db_table_prefix = gsub( ".zip" , "" , files_to_download_2010 , ignore.case = TRUE ) ,
 					dbfolder = paste0( output_dir , "/MonetDB" ) ,
@@ -34,6 +34,10 @@ get_catalog_censo <-
 					dom_ranc = NA ,
 					pes_ranc = NA ,
 					fam_ranc = NA ,
+					fpc1 = 'v0011' ,
+					fpc2 = 'v0010' ,
+					fpc3 = 'v0001' ,
+					fpc4 = 'v0300' ,
 					stringsAsFactors = FALSE
 				)
 			)
@@ -57,7 +61,7 @@ get_catalog_censo <-
 			rbind( 
 				catalog ,
 				data.frame(
-					full_url = paste0( ftp_path_2000 , "/" , files_to_download_2000 ) ,
+					full_url = paste0( ftp_path_2000 , files_to_download_2000 ) ,
 					year = 2000 ,
 					db_table_prefix = gsub( ".zip" , "" , files_to_download_2000 , ignore.case = TRUE ) ,
 					dbfolder = paste0( output_dir , "/MonetDB" ) ,
@@ -70,6 +74,10 @@ get_catalog_censo <-
 					dom_ranc = 170 ,
 					pes_ranc = 390 ,
 					fam_ranc = 118 ,
+					fpc1 = "areap" ,
+					fpc2 = "p001" ,
+					fpc3 = 'v0102' ,
+					fpc4 = 'v0300' ,
 					stringsAsFactors = FALSE
 				)
 			)
@@ -141,16 +149,215 @@ lodown_censo <-
 
 			}
 			
-			
-			
-			
 			# disconnect from the current monet database
 			DBI::dbDisconnect( db , shutdown = TRUE )
 
-			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'db_tablename' ] , "'\r\n\n" ) )
+			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'dbfolder' ] , "'\r\n\n" ) )
 
 		}
 		
+		# create unique survey designs
+		dom_designs <- unique( catalog[ , c( "year" , "dbfolder" , "dom_design" , paste0( 'fpc' , 1:4 ) ) ] )
+		pes_designs <- unique( catalog[ , c( "year" , "dbfolder" , "pes_design" , paste0( 'fpc' , 1:4 ) ) ] )
+		fam_designs <- unique( catalog[ , c( "year" , "dbfolder" , "fam_design" , paste0( 'fpc' , 1:4 ) ) ] )
+		
+		names( dom_designs ) <- c( "year" , 'dbfolder' , 'design' )
+		names( pes_designs ) <- c( "year" , 'dbfolder' , 'design' )
+		names( fam_designs ) <- c( "year" , 'dbfolder' , 'design' )
+		
+		dom_designs$type <- 'dom'
+		pes_designs$type <- 'pes'
+		fam_designs$type <- 'fam'
+		
+		unique_designs <- rbind( dom_designs , pes_designs , fam_designs )
+		
+		unique_designs <- unique_designs[ !is.na( unique_designs$design ) , ]
+		
+		for( i in seq_along( nrow( unique_designs ) ) ){
+
+			# open the connection to the monetdblite database
+			db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , unique_designs[ i , 'dbfolder' ] )
+
+			these_tables <- 
+				paste0( 
+					catalog[ catalog$dbfolder %in% unique_designs[ i , 'dbfolder' ] & catalog[ , paste0( unique_designs[ i , 'type' ] , "_design" ) ] %in% unique_designs[ i , 'design' ] , 'db_table_prefix' ] , 
+					"_" , 
+					unique_designs[ i , 'type' ] 
+				)
+			
+			this_stack <-
+				paste0(
+					'create table c' , 
+					substr( unique_designs[ i , 'year' ] , 3 , 4 ) , 
+					"_" , 
+					unique_designs[ i , 'type' ] , 
+					'_pre_fpc as (SELECT * FROM ' ,
+					paste0( these_tables , collapse = ') UNION ALL (SELECT * FROM ' ) ,
+					') WITH DATA'
+				)
+
+			DBI::dbSendQuery( db , this_stack )
+
+			this_fpc_create <-
+				paste0( 'create table c' , 
+					substr( unique_designs[ i , 'year' ] , 3 , 4 ) , 
+					'_' , 
+					unique_designs[ i , 'type' ] , 
+					'_fpc as (select ' , 
+					unique_designs[ i , 'fpc1' ] ,
+					' , sum( ' ,
+					unique_designs[ i , 'fpc2' ] ,
+					' ) as sum_fpc2 from c' , 
+					substr( unique_designs[ i , 'year' ] , 3 , 4 ) , 
+					'_' , 
+					unique_designs[ i , 'type' ] , 
+					'_pre_fpc group by ' , 
+					unique_designs[ i , 'fpc1' ] ,
+					') WITH DATA' )
+
+			DBI::dbSendQuery( db , this_fpc_create )
+
+			this_fpccreate <-
+				'create table c00_pes_fpc as (select areap , sum( p001 ) as sum_p001 from c00_pes_pre_fpc group by areap) WITH DATA'
+
+			dbSendQuery( db , pes.fpc.create )
+
+			fam.fpc.create <-
+				'create table c00_fam_fpc as (select areap , sum( p001 ) as sum_p001 from c00_fam_pre_fpc group by areap) WITH DATA'
+
+			dbSendQuery( db , fam.fpc.create )
+
+
+			dom.count.create <-
+				'create table c00_dom_count_pes as (select v0102 , v0300 , count(*) as dom_count_pes from c00_pes_pre_fpc group by v0102 , v0300 ) WITH DATA'
+
+			dbSendQuery( db , dom.count.create )
+
+
+			dom.fpc.merge <-
+				'create table c00_dom as ( select a1.* , b1.dom_count_pes from (select a2.* , b2.sum_p001 as dom_fpc from c00_dom_pre_fpc as a2 inner join c00_dom_fpc as b2 on a2.areap = b2.areap) as a1 inner join c00_dom_count_pes as b1 on a1.v0102 = b1.v0102 AND a1.v0300 = b1.v0300 ) WITH DATA'
+				
+			dbSendQuery( db , dom.fpc.merge )
+
+			pes.fpc.merge <-
+				'create table c00_pes as (select a.* , b.sum_p001 as pes_fpc from c00_pes_pre_fpc as a inner join c00_pes_fpc as b on a.areap = b.areap) WITH DATA'
+
+			dbSendQuery( db , pes.fpc.merge )
+
+			fam.fpc.merge <-
+				'create table c00_fam as (select a.* , b.sum_p001 as fam_fpc from c00_fam_pre_fpc as a inner join c00_fam_fpc as b on a.areap = b.areap) WITH DATA'
+
+			dbSendQuery( db , fam.fpc.merge )
+
+
+			dbSendQuery( db , 'ALTER TABLE c00_dom ADD COLUMN dom_wgt DOUBLE PRECISION' )
+			dbSendQuery( db , 'ALTER TABLE c00_pes ADD COLUMN pes_wgt DOUBLE PRECISION' )
+			dbSendQuery( db , 'ALTER TABLE c00_fam ADD COLUMN fam_wgt DOUBLE PRECISION' )
+
+			dbSendQuery( db , 'UPDATE c00_dom SET dom_wgt = p001' )
+			dbSendQuery( db , 'UPDATE c00_pes SET pes_wgt = p001' )
+			dbSendQuery( db , 'UPDATE c00_fam SET fam_wgt = p001' )
+
+			dbSendQuery( db , 'ALTER TABLE c00_dom DROP COLUMN p001' )
+			dbSendQuery( db , 'ALTER TABLE c00_pes DROP COLUMN p001' )
+			dbSendQuery( db , 'ALTER TABLE c00_fam DROP COLUMN p001' )
+
+
+			b.fields <- dbListFields( db , 'c00_fam' )[ !( dbListFields( db , 'c00_fam' ) %in% dbListFields( db , 'c00_dom' ) ) ]
+
+			semifinal.merge <-
+				paste0(
+					'create table c00_dom_fam as (SELECT a.* , b.' ,
+					paste( b.fields , collapse = ', b.' ) ,
+					' from c00_dom as a inner join c00_fam as b ON a.v0102 = b.v0102 AND a.v0300 = b.v0300) WITH DATA'
+				)
+				
+			dbSendQuery( db , semifinal.merge )
+
+
+			b.fields <- dbListFields( db , 'c00_pes' )[ !( dbListFields( db , 'c00_pes' ) %in% dbListFields( db , 'c00_dom_fam' ) ) ]
+
+			final.merge <-
+				paste0(
+					'create table c00 as (SELECT a.* , b.' ,
+					paste( b.fields , collapse = ', b.' ) ,
+					' from c00_dom_fam as a inner join c00_pes as b ON a.v0102 = b.v0102 AND a.v0300 = b.v0300 AND a.v0404 = b.v0404 ) WITH DATA'
+				)
+				
+			dbSendQuery( db , final.merge )
+
+			# now remove the dom + fam table,
+			# since that's not of much use
+			dbRemoveTable( db , 'c00_dom_fam' )
+
+			# add columns named 'one' to each table..
+			dbSendQuery( db , 'alter table c00_dom add column one int' )
+			dbSendQuery( db , 'alter table c00_pes add column one int' )
+			dbSendQuery( db , 'alter table c00_fam add column one int' )
+			dbSendQuery( db , 'alter table c00 add column one int' )
+
+			# ..and fill them all with the number 1.
+			dbSendQuery( db , 'UPDATE c00_dom SET one = 1' )
+			dbSendQuery( db , 'UPDATE c00_pes SET one = 1' )
+			dbSendQuery( db , 'UPDATE c00_fam SET one = 1' )
+			dbSendQuery( db , 'UPDATE c00 SET one = 1' )
+
+
+			# now the current database contains four more tables than it did before
+				# c00_dom (household)
+				# c00_fam (family)
+				# c00_pes (person)
+				# c00 (merged)
+
+			# the current monet database should now contain
+			# all of the newly-added tables (in addition to meta-data tables)
+			print( dbListTables( db ) )		# print the tables stored in the current monet database to the screen
+
+
+			# confirm that the merged file has the same number of records as the person file
+			stopifnot( 
+				dbGetQuery( db , "select count(*) as count from c00_pes" ) == 
+				dbGetQuery( db , "select count(*) as count from c00" )
+			)
+
+
+			#################################################
+			# create a complex sample design object
+
+			# save a person-representative design of the 2000 censo
+			# warning: this command requires a long time, leave your computer on overnight.
+
+			bw_dom_00 <- 
+				bootweights( 
+					dbGetQuery( db , "SELECT areap FROM c00_dom" )[ , 1 ] ,
+					dbGetQuery( db , "SELECT v0300 FROM c00_dom" )[ , 1 ] ,
+					replicates = 80 ,
+					fpc = dbGetQuery( db , "SELECT dom_fpc FROM c00_dom" )[ , 1 ]
+				)
+
+			dom.design <-
+				svrepdesign(
+					weight = ~dom_wgt ,
+					repweights = bw_dom_00$repweights ,
+					combined.weights = FALSE ,
+					scale = bw_dom_00$scale ,
+					rscales = bw_dom_00$rscales ,
+					data = 'c00_dom' ,
+					dbtype = "MonetDBLite" ,
+					dbname = dbfolder
+				)
+
+		
+		
+		
+		
+		
+			# disconnect from the current monet database
+			DBI::dbDisconnect( db , shutdown = TRUE )
+
+			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'dbfolder' ] , "'\r\n\n" ) )
+		
+		}
 		
 		invisible( TRUE )
 
