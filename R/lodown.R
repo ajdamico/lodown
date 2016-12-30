@@ -28,6 +28,7 @@ NULL
 #' lodown( "ces" , output_dir = "C:/My Directory/CES" )
 #' lodown( "ess" , output_dir = "C:/My Directory/ESS" , your_email = "email@address.com" )
 #' lodown( "faers" , output_dir = "C:/My Directory/FAERS" )
+#' lodown( "nbs" , output_dir = "C:/My Directory/NBS" )
 #' lodown( "ncvs" , output_dir = "C:/My Directory/NCVS" ,
 #' 		your_email = "email@address.com" , your_password = "password" )
 #' lodown( "nhis" , output_dir = "C:/My Directory/NHIS" )
@@ -68,6 +69,8 @@ NULL
 #' lodown( "ess" , ess_cat[ 1:2 , ] , your_email = "email@address.com" )
 #' faers_cat <- get_catalog( "faers" , output_dir = "C:/My Directory/FAERS" )
 #' lodown( "faers" , faers_cat[ 1:2 , ] )
+#' nbs_cat <- get_catalog( "nbs" , output_dir = "C:/My Directory/NBS" )
+#' lodown( "nbs" , nbs_cat[ 1:2 , ] )
 #' ncvs_cat <- get_catalog( "ncvs" , output_dir = "C:/My Directory/NCVS" )
 #' lodown( "ncvs" , ncvs_cat[ 1:2 , ] ,
 #' 		your_email = "email@address.com" , your_password = "password" )
