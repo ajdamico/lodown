@@ -169,7 +169,7 @@ lodown_hmda <-
 				read_SAScii_monetdb (
 					unzipped_files ,			# the url of the file to download
 					sas_ri ,			# the 
-					zipped = TRUE ,	# the ascii file is stored in a zipped file
+					zipped = FALSE ,	# the ascii file is stored in a zipped file
 					tl = TRUE ,		# convert all column names to lowercase
 					tablename = catalog[ i , 'db_tablename' ] ,
 					connection = db
