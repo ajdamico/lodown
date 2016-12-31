@@ -14,6 +14,7 @@ get_catalog_hmda <-
 				year = 2006:latest_hmda_year ,
 				type = 'hmda_lar' ,
 				full_url = paste0( "https://www.ffiec.gov/" , "hmda" , "rawdata/" , "LAR/National" , "/" , 2006:latest_hmda_year , "HMDA" , "lar%20-%20National" , ".zip" ) ,
+				merge_table = paste0( 'hmda_' , 2006:latest_hmda_year ) ,
 				stringsAsFactors = FALSE
 			)
 			
@@ -31,6 +32,7 @@ get_catalog_hmda <-
 				year = 2006:latest_hmda_year ,
 				type = 'hmda_inst' ,
 				full_url = paste0( "https://www.ffiec.gov/" , "hmda" , "rawdata/" , "OTHER" , "/" , 2006:latest_hmda_year , "HMDA" , "institutionrecords" , ".zip" ) ,
+				merge_table = paste0( 'hmda_' , 2006:latest_hmda_year ) ,
 				stringsAsFactors = FALSE
 			)
 			
