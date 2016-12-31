@@ -13,7 +13,7 @@ get_catalog_hmda <-
 			data.frame(
 				year = 2006:latest_hmda_year ,
 				type = 'hmda_lar' ,
-				full_url = paste0( "https://www.ffiec.gov/" , "hmda" , "rawdata/" , "LAR/National" , "/20" , 2006:latest_hmda_year , "HMDA" , "lar%20-%20National" , ".zip" ) ,
+				full_url = paste0( "https://www.ffiec.gov/" , "hmda" , "rawdata/" , "LAR/National" , "/" , 2006:latest_hmda_year , "HMDA" , "lar%20-%20National" , ".zip" ) ,
 				stringsAsFactors = FALSE
 			)
 			
@@ -21,7 +21,7 @@ get_catalog_hmda <-
 			data.frame(
 				year = 2006:latest_pmic_year ,
 				type = 'pmic_lar' ,
-				full_url = paste0( "https://www.ffiec.gov/" , "pmic" , "rawdata/" , "OTHER" , "/20" , 2006:latest_pmic_year , "PMIC" , "lar%20-%20National" , ".zip" ) ,
+				full_url = paste0( "https://www.ffiec.gov/" , "pmic" , "rawdata/" , "OTHER" , "/" , 2006:latest_pmic_year , "PMIC" , "lar%20-%20National" , ".zip" ) ,
 				stringsAsFactors = FALSE
 			)
 			
@@ -29,7 +29,7 @@ get_catalog_hmda <-
 			data.frame(
 				year = 2006:latest_hmda_year ,
 				type = 'hmda_inst' ,
-				full_url = paste0( "https://www.ffiec.gov/" , "hmda" , "rawdata/" , "LAR/National" , "/20" , 2006:latest_hmda_year , "HMDA" , "institutionrecords" , ".zip" ) ,
+				full_url = paste0( "https://www.ffiec.gov/" , "hmda" , "rawdata/" , "LAR/National" , "/" , 2006:latest_hmda_year , "HMDA" , "institutionrecords" , ".zip" ) ,
 				stringsAsFactors = FALSE
 			)
 			
@@ -37,7 +37,7 @@ get_catalog_hmda <-
 			data.frame(
 				year = 2006:latest_pmic_year ,
 				type = 'pmic_inst' ,
-				full_url = paste0( "https://www.ffiec.gov/" , "pmic" , "rawdata/" , "OTHER" , "/20" , 2006:latest_pmic_year , "PMIC" , "institutionrecords" , ".zip" ) ,
+				full_url = paste0( "https://www.ffiec.gov/" , "pmic" , "rawdata/" , "OTHER" , "/" , 2006:latest_pmic_year , "PMIC" , "institutionrecords" , ".zip" ) ,
 				stringsAsFactors = FALSE
 			)
 			
@@ -45,7 +45,7 @@ get_catalog_hmda <-
 			data.frame(
 				year = 2007:latest_hmda_year ,
 				type = 'hmda_reporter' ,
-				full_url = paste0( "https://www.ffiec.gov/" , "hmda" , "rawdata/OTHER/20" , 2007:latest_hmda_year , "HMDA" , "ReporterPanel.zip" ) ,
+				full_url = paste0( "https://www.ffiec.gov/" , "hmda" , "rawdata/OTHER/" , 2007:latest_hmda_year , "HMDA" , "ReporterPanel.zip" ) ,
 				stringsAsFactors = FALSE
 			)
 			
@@ -53,7 +53,7 @@ get_catalog_hmda <-
 			data.frame(
 				year = 2007:latest_pmic_year ,
 				type = 'pmic_reporter' ,
-				full_url = paste0( "https://www.ffiec.gov/" , "pmic" , "rawdata/OTHER/20" , 2007:latest_pmic_year , "PMIC" , "ReporterPanel.zip" ) ,
+				full_url = paste0( "https://www.ffiec.gov/" , "pmic" , "rawdata/OTHER/" , 2007:latest_pmic_year , "PMIC" , "ReporterPanel.zip" ) ,
 				stringsAsFactors = FALSE
 			)
 			
@@ -62,7 +62,7 @@ get_catalog_hmda <-
 			data.frame(
 				year = 2007:latest_hmda_year ,
 				type = 'hmda_msa' ,
-				full_url = paste0( "https://www.ffiec.gov/" , "hmda" , "rawdata/OTHER/20" , 2007:latest_hmda_year , "HMDA" , "MSAOffice.zip" ) ,
+				full_url = paste0( "https://www.ffiec.gov/" , "hmda" , "rawdata/OTHER/" , 2007:latest_hmda_year , "HMDA" , "MSAOffice.zip" ) ,
 				stringsAsFactors = FALSE
 			)
 			
@@ -70,7 +70,7 @@ get_catalog_hmda <-
 			data.frame(
 				year = 2007:latest_pmic_year ,
 				type = 'pmic_msa' ,
-				full_url = paste0( "https://www.ffiec.gov/" , "hmda" , "rawdata/OTHER/20" , 2007:latest_pmic_year , "HMDA" , "MSAOffice.zip" ) ,
+				full_url = paste0( "https://www.ffiec.gov/" , "hmda" , "rawdata/OTHER/" , 2007:latest_pmic_year , "HMDA" , "MSAOffice.zip" ) ,
 				stringsAsFactors = FALSE
 			)
 			
