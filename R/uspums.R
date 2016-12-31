@@ -48,7 +48,7 @@ get_catalog_uspums <-
 		
 		catalog$dbfolder <- paste0( output_dir , "/MonetDB" )
 		
-		catalog$merged_design <- paste0( output_dir , '/pums_' , catalog$year , '_' , catalog$percent , '_m.rda' )
+		catalog$design <- paste0( output_dir , '/pums_' , catalog$year , '_' , catalog$percent , '_m.rda' )
 		
 		catalog$merged_tablename <- paste0( 'pums_' , catalog$year , '_' , catalog$percent , '_m' )
 		catalog$household_tablename <- paste0( 'pums_' , catalog$year , '_' , catalog$percent , '_h' )
@@ -258,7 +258,7 @@ lodown_uspums <-
 		
 		
 		# dom first, fam second, pes third
-		unique_designs <- unique( catalog[ , c( 'merged_design' , 'hh_structure' , 'person_structure' , 'merged_tablename' , 'household_tablename' , 'person_tablename' , 'dbfolder' ) ] )
+		unique_designs <- unique( catalog[ , c( 'design' , 'hh_structure' , 'person_structure' , 'merged_tablename' , 'household_tablename' , 'person_tablename' , 'dbfolder' ) ] )
 		
 		for( i in seq_len( nrow( unique_designs ) ) ){
 
