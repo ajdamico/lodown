@@ -387,22 +387,247 @@ lodown_sipp <-
 			
 			if( catalog[ i , 'panel' ] == 2004 ){
 
+				# if the longitudinal weights flag has been set to TRUE above..
+				if ( catalog[ i , 'full_url' ] == "http://thedataweb.rm.census.gov/pub/sipp/2004/lgtwgt2004w12.zip" ){
+
+					# add the longitudinal weights to the database in a table 'w12'
+					read_SAScii_monetdb(
+						catalog[ i , 'full_url' ] ,
+						chop.suid( fix.ct( "http://thedataweb.rm.census.gov/pub/sipp/2004/lgtwgt2004w12.sas" ) ) ,
+						beginline = 5 ,
+						zipped = TRUE ,
+						tl = TRUE ,
+						tablename = catalog[ i , 'db_tablename' ] ,
+						connection = db
+					)
+				}
+					
+				# loop through each core wave..
+				if ( catalog[ i , 'full_url' ] %in% paste0( "http://thedataweb.rm.census.gov/pub/sipp/2004/l04puw" , 1:12 , ".zip" ) ){
+
+					# add the core wave to the database in a table w#
+					read_SAScii_monetdb (
+						catalog[ i , 'full_url' ] ,
+						chop.suid( fix.ct( "http://thedataweb.rm.census.gov/pub/sipp/2004/l04puw1.sas" ) ) ,
+						beginline = 5 ,
+						zipped = TRUE ,
+						tl = TRUE ,
+						tablename = catalog[ i , 'db_tablename' ] ,
+						connection = db
+					)
+					
+				}
+
+				# loop through each replicate weight wave..
+				if ( catalog[ i , 'full_url' ] %in% paste0( "http://thedataweb.rm.census.gov/pub/sipp/2004/rw04w" , 1:12 , ".zip" ) ){
+
+					# add the wave-specific replicate weight to the database in a table rw#
+					read_SAScii_monetdb (
+						catalog[ i , 'full_url' ] ,
+						chop.suid( fix.ct( "http://thedataweb.rm.census.gov/pub/sipp/2004/rw04wx.sas" ) ) ,
+						beginline = 5 ,
+						zipped = TRUE ,
+						tl = TRUE ,
+						tablename = catalog[ i , 'db_tablename' ] ,
+						connection = db
+					)
+					
+				}
+
+				# loop through each topical module..
+				if ( catalog[ i , 'full_url' ] %in% paste0( "http://thedataweb.rm.census.gov/pub/sipp/2004/p04putm" , 1:8 , ".zip" ) ){
+
+					# add each topical module to the database in a table tm#
+					read_SAScii_monetdb (
+						catalog[ i , 'full_url' ] ,
+						chop.suid( fix.ct( paste0( "http://thedataweb.rm.census.gov/pub/sipp/2004/p04putm" , catalog[ i , 'wave' ] , ".sas" ) ) ) ,
+						beginline = 5 ,
+						zipped = TRUE ,
+						tl = TRUE ,
+						tablename = catalog[ i , 'db_tablename' ] ,
+						connection = db
+					)
+					
+				}
+
+				# add the two sipp assets extracts to the database
+				if( catalog[ i , 'full_url' ] == "http://thedataweb.rm.census.gov/pub/sipp/2004/p04putm3_aoa.zip" ){
+
+					tm3_tablename <- catalog[ catalog$full_url == 'http://thedataweb.rm.census.gov/pub/sipp/2004/p04putm3.zip' , 'db_tablename' ]
+					
+					read_SAScii_monetdb (
+						catalog[ i , 'full_url' ] ,
+						chop.suid(fix.ct( "http://thedataweb.rm.census.gov/pub/sipp/2004/p04putm3_aoa.sas") ) ,
+						beginline = 5 ,
+						zipped = TRUE ,
+						tl = TRUE ,
+						tablename = catalog[ i , 'db_tablename' ] ,
+						connection = db
+					)
+
+					
+					aoa3.fields <- DBI::dbListFields( db , catalog[ i , 'db_tablename' ] )
+					aoa3.fields <- aoa3.fields[ !( aoa3.fields %in% c( 'ssuid' , 'epppnum' ) ) ]
+					tm3.nis <- DBI::dbListFields( db , tm3_tablename )[ !( DBI::dbListFields( db , tm3_tablename ) %in% aoa3.fields ) ]
+					tm3.ct <- 
+						paste( 
+							'create table temp_tm3 as select' ,
+							paste( tm3.nis , collapse = " , " ) ,
+							'from' , tm3_tablename
+						)
+					DBI::dbSendQuery( db , tm3.ct )
+					DBI::dbRemoveTable( db , tm3_tablename )
+					DBI::dbSendQuery( db , paste( 'create table' , tm3_tablename , 'as select * from temp_tm3' ) )
+					DBI::dbRemoveTable( db , 'temp_tm3' )
+					
+				}
+				
+				if( catalog[ i , 'full_url' ] == "http://thedataweb.rm.census.gov/pub/sipp/2004/p04putm6_aoa.zip" ){
+
+					tm6_tablename <- catalog[ catalog$full_url == 'http://thedataweb.rm.census.gov/pub/sipp/2004/p04putm6.zip' , 'db_tablename' ]
+					
+					read_SAScii_monetdb (
+						catalog[ i , 'full_url' ] ,
+						chop.suid(fix.ct( "http://thedataweb.rm.census.gov/pub/sipp/2004/p04putm6_aoa.sas") ) ,
+						beginline = 4 ,
+						zipped = TRUE ,
+						tl = TRUE ,
+						tablename = catalog[ i , 'db_tablename' ] ,
+						connection = db
+					)
+
+					aoa6.fields <- DBI::dbListFields( db , catalog[ i , 'db_tablename' ] )
+					aoa6.fields <- aoa6.fields[ !( aoa6.fields %in% c( 'ssuid' , 'epppnum' ) ) ]
+					tm6.nis <- DBI::dbListFields( db , tm6_tablename )[ !( DBI::dbListFields( db , 'tm6' ) %in% aoa6.fields ) ]
+					tm6.ct <- 
+						paste( 
+							'create table temp_tm6 as select' ,
+							paste( tm6.nis , collapse = " , " ) ,
+							'from' ,
+							tm6_tablename
+						)
+					
+					DBI::dbSendQuery( db , tm6.ct )
+					DBI::dbRemoveTable( db , tm6_tablename )
+					DBI::dbSendQuery( db , paste( 'create table' , tm6_tablename , 'as select * from temp_tm6' ) )
+					DBI::dbRemoveTable( db , 'temp_tm6' )
+					
+				}
+
+				# loop through each longitudinal replicate weight file..
+				if ( catalog[ i , 'full_url' ] %in% paste0( "http://thedataweb.rm.census.gov/pub/sipp/2004/lrw04_" , c( paste0( 'cy' , 1:4 ) , paste0( 'pnl' , 1:4 )  ) , ".zip" ) ){
+
+					# add each longitudinal replicate weight file to the database in a table cy1-4 or pnl1-4
+					read_SAScii_monetdb (
+						catalog[ i , 'full_url' ] ,
+						chop.suid( fix.ct( "http://thedataweb.rm.census.gov/pub/sipp/2004/lrw04_xx.sas" ) ) ,
+						beginline = 5 ,
+						zipped = TRUE ,
+						tl = TRUE ,
+						tablename = catalog[ i , 'db_tablename' ] ,
+						connection = db ,
+						try_best_effort = ( catalog[ i , 'full_url' ] == "http://thedataweb.rm.census.gov/pub/sipp/2004/lrw04_cy3.zip" )
+					)
+					
+				}
+				# the current working directory should now contain one database (.db) file
+
+
+			
+			
 			
 			
 			}
 			
 			if( catalog[ i , 'panel' ] == 2008 ){
 
-			
-			
+
+
+				# if the longitudinal weights flag has been set to TRUE above..
+				if ( catalog[ i , 'full_url' ] == "http://thedataweb.rm.census.gov/pub/sipp/2008/lgtwgt2008w16.zip" ){
+
+					# add the longitudinal weights to the database in a table 'wgtw14'
+					read_SAScii_monetdb(
+						catalog[ i , 'full_url' ] ,
+						chop.suid( fix.ct( "http://thedataweb.rm.census.gov/pub/sipp/2008/lgtwgt2008w16.sas" ) ) ,
+						beginline = 5 ,
+						zipped = TRUE ,
+						tl = TRUE ,
+						tablename = catalog[ i , 'db_tablename' ] ,
+						connection = db
+					)
+					
+				}
+					
+				# loop through each core wave..
+				if ( catalog[ i , 'full_url' ] %in% paste0( "http://thedataweb.rm.census.gov/pub/sipp/2008/l08puw" , 1:16 , ".zip" ) ){
+
+
+					# add the core wave to the database in a table w#
+					read_SAScii_monetdb (
+						catalog[ i , 'full_url' ] ,
+						chop.suid( fix.ct( "http://thedataweb.rm.census.gov/pub/sipp/2008/l08puw1.sas" ) ) ,
+						beginline = 5 ,
+						zipped = TRUE ,
+						tl = TRUE ,
+						tablename = catalog[ i , 'db_tablename' ] ,
+						connection = db
+					)
+					
+				}
+
+				# loop through each replicate weight wave..
+				if ( catalog[ i , 'full_url' ] %in% paste0( "http://thedataweb.rm.census.gov/pub/sipp/2008/rw08w" , 1:16 , ".zip" ) ){
+
+
+					# add the wave-specific replicate weight to the database in a table rw#
+					read_SAScii_monetdb (
+						catalog[ i , 'full_url' ] ,
+						chop.suid( fix.ct( "http://thedataweb.rm.census.gov/pub/sipp/2008/rw08wx.sas" ) ) ,
+						beginline = 5 ,
+						zipped = TRUE ,
+						tl = TRUE ,
+						tablename = catalog[ i , 'db_tablename' ] ,
+						connection = db
+					)
+					
+				}
+
+				# loop through each topical module..
+				if ( catalog[ i , 'full_url' ] %in% paste0( "http://thedataweb.rm.census.gov/pub/sipp/2008/p08putm" , c( 1:11 , 13 ) , ".zip" ) ){
+					
+					# add each topical module to the database in a table tm#
+					read_SAScii_monetdb (
+						catalog[ i , 'full_url' ] ,
+						chop.suid( fix.ct( paste0( "http://thedataweb.rm.census.gov/pub/sipp/2008/p08putm" , catalog[ i , 'wave' ] , ".sas" ) ) ) ,
+						beginline = 5 ,
+						zipped = TRUE ,
+						tl = TRUE ,
+						tablename = catalog[ i , 'db_tablename' ] ,
+						connection = db
+					)
+					
+				}
+
+				# loop through each longitudinal replicate weight file..
+				if ( catalog[ i , 'full_url' ] %in% paste0( "http://thedataweb.rm.census.gov/pub/sipp/2008/lrw08" , c( paste0( 'cy' , 1:5 ) , paste0( 'pn' , 1:5 ) ) , ".zip" ) ){
+
+					# add each longitudinal replicate weight file to the database in a table cy1-4 or pnl1-4
+					read_SAScii_monetdb (
+						catalog[ i , 'full_url' ] ,
+						chop.suid( fix.repwgt( "http://thedataweb.rm.census.gov/pub/sipp/2008/lrw08_xx.sas" ) ) ,
+						beginline = 7 ,
+						zipped = TRUE ,
+						tl = TRUE ,
+						tablename = catalog[ i , 'db_tablename' ] ,
+						connection = db
+					)
+					
+				}
+				# the current working directory should now contain one database (.db) file
+
+
 			}
-			
-			
-			
-			
-			
-			
-			
 			
 			
 			stopifnot( DBI::dbGetQuery( db , paste( 'select count(*) from' , catalog[ i , 'db_tablename' ] ) ) > 0 )
