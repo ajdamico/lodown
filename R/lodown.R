@@ -1,5 +1,4 @@
 #' @importFrom utils download.file read.csv unzip getFromNamespace write.csv read.table
-#' @importFrom datasets state.abb state.name
 #' @importFrom stats as.formula vcov coef
 NULL
 

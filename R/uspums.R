@@ -5,14 +5,14 @@ get_catalog_uspums <-
 			gsub(
 				" " ,
 				"_" ,
-				c( "District of Columbia" , state.name )
+				c( "District of Columbia" , datasets::state.name )
 			)
 
 		# same deal with state abbreviations..  and add in fips code with left-side zeroes for the one-digit ones.
 		st <-
 			data.frame(
 
-				state.abb = c( "DC" , state.abb ) ,
+				state.abb = c( "DC" , datasets::state.abb ) ,
 			
 				state.name = states.plus.dc ,
 				
