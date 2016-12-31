@@ -303,10 +303,15 @@ lodown_hmda <-
 		
 		unique_merge_tables <- unique( catalog$merge_table )
 		
+		unique_merge_tables <- unique_merge_tables[ !is.na( unique_merge_tables ) ]
+		
 		for( i in seq_along( unique_merge_tables ) ){
+			
+			# open the connection to the monetdblite database
+			db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , unique( catalog[ which( catalog$merge_table == unique_merge_tables[ i ] ) , 'dbfolder' ] ) )
 
-			ins.tablename <- catalog[ catalog$type == 'ins' & catalog$merge_table == unique_merge_tables[ i ] , 'db_tablename' ]
-			lar.tablename <- catalog[ catalog$type == 'lar' & catalog$merge_table == unique_merge_tables[ i ] , 'db_tablename' ]
+			ins.tablename <- catalog[ substr( catalog$type , 6 , 8 ) == 'ins' & catalog$merge_table == unique_merge_tables[ i ] , 'db_tablename' ]
+			lar.tablename <- catalog[ substr( catalog$type , 6 , 8 ) == 'lar' & catalog$merge_table == unique_merge_tables[ i ] , 'db_tablename' ]
 			new.tablename <- unique_merge_tables[ i ]
 			
 			# three easy steps #
@@ -495,6 +500,8 @@ lodown_hmda <-
 			# # finished with race and ethnicity recoding # #
 			# # # # # # # # # # # # # # # # # # # # # # # # #
 			
+			# disconnect from the current monet database
+			DBI::dbDisconnect( db , shutdown = TRUE )
 			
 			
 		}

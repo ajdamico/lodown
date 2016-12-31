@@ -30,6 +30,7 @@ NULL
 #' lodown( "ess" , output_dir = "C:/My Directory/ESS" , your_email = "email@address.com" )
 #' lodown( "faers" , output_dir = "C:/My Directory/FAERS" )
 #' lodown( "hmda" , output_dir = "C:/My Directory/HMDA" )
+#' lodown( "mlces" , output_dir = "C:/My Directory/MLCES" )
 #' lodown( "nbs" , output_dir = "C:/My Directory/NBS" )
 #' lodown( "ncvs" , output_dir = "C:/My Directory/NCVS" ,
 #' 		your_email = "email@address.com" , your_password = "password" )
@@ -43,6 +44,7 @@ NULL
 #' lodown( "nps" , output_dir = "C:/My Directory/NPS" )
 #' lodown( "nsduh" , output_dir = "C:/My Directory/NSDUH" , 
 #' 		your_email = "email@address.com" , your_password = "password" )
+#' lodown( "pls" , output_dir = "C:/My Directory/PLS" )
 #' lodown( "pme" , output_dir = "C:/My Directory/PME" )
 #' lodown( "pnadc" , output_dir = "C:/My Directory/PNADC" )
 #' lodown( "pof" , output_dir = "C:/My Directory/POF" )
@@ -77,6 +79,8 @@ NULL
 #' lodown( "faers" , faers_cat[ 1:2 , ] )
 #' hmda_cat <- get_catalog( "hmda" , output_dir = "C:/My Directory/HMDA" )
 #' lodown( "hmda" , hmda_cat[ 1:2 , ] )
+#' mlces_cat <- get_catalog( "mlces" , output_dir = "C:/My Directory/MLCES" )
+#' lodown( "mlces" , mlces_cat[ 1:2 , ] )
 #' nbs_cat <- get_catalog( "nbs" , output_dir = "C:/My Directory/NBS" )
 #' lodown( "nbs" , nbs_cat[ 1:2 , ] )
 #' ncvs_cat <- get_catalog( "ncvs" , output_dir = "C:/My Directory/NCVS" )
@@ -100,6 +104,8 @@ NULL
 #' nsduh_cat <- get_catalog( "nsduh" , output_dir = "C:/My Directory/NSDUH" )
 #' lodown( "nsduh" , nsduh_cat[ 1:2 , ] ,
 #' 		your_email = "email@address.com" , your_password = "password" )
+#' pls_cat <- get_catalog( "pls" , output_dir = "C:/My Directory/PLS" )
+#' lodown( "pls" , pls_cat[ 1:2 , ] )
 #' pme_cat <- get_catalog( "pme" , output_dir = "C:/My Directory/PME" )
 #' lodown( "pme" , pme_cat[ 1:2 , ] )
 #' pnadc_cat <- get_catalog( "pnadc" , output_dir = "C:/My Directory/PNADC" )
@@ -133,7 +139,7 @@ lodown <-
 
 		unique_directories <- unique( c( catalog$unzip_folder , if( 'output_filename' %in% names( catalog ) ) dirname( catalog$output_filename ) , catalog$dbfolder , catalog$output_folder ) )
 
-		for ( this_dir in unique_directories ) if( !file.exists( this_dir ) ) dir.create( this_dir , recursive = TRUE )
+		for ( this_dir in unique_directories ) if( !file.exists( this_dir ) ) dir.create( this_dir , recursive = TRUE , showWarnings = FALSE )
 
 		load_fun <- getFromNamespace( paste0( "lodown_" , data_name ) , "lodown" )
 
