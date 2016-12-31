@@ -97,7 +97,7 @@ lodown_hmda <-
 			db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog[ i , 'dbfolder' ] )
 
 			# download the file
-			cachaca( catalog[ i , "urls" ] , tf , mode = 'wb' )
+			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
 
 			unzipped_files <- unzip( tf , exdir = paste0( tempdir() , "/unzips" ) )
 
