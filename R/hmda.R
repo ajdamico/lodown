@@ -124,7 +124,7 @@ lodown_hmda <-
 		writeLines( office.lines , tf )
 
 		# ..and save the column names into a new object `office.names`
-		office.names <- tolower( parse.SAScii( tf )$varname )
+		office.names <- tolower( SAScii::parse.SAScii( tf )$varname )
 
 
 
