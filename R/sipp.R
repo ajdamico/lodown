@@ -135,7 +135,7 @@ lodown_sipp <-
 						zipped = TRUE ,
 						tl = TRUE ,
 						tablename = catalog[ i , 'db_tablename' ] ,
-						conn = db
+						connection = db
 					)
 					
 				}
@@ -152,7 +152,7 @@ lodown_sipp <-
 						zipped = TRUE ,
 						tl = TRUE ,
 						tablename = catalog[ i , 'db_tablename' ] ,
-						conn = db
+						connection = db
 					)
 						
 				}
@@ -167,7 +167,7 @@ lodown_sipp <-
 						zipped = TRUE ,
 						tl = TRUE ,
 						tablename = catalog[ i , 'db_tablename' ] ,
-						conn = db
+						connection = db
 					)
 
 				}
@@ -188,7 +188,7 @@ lodown_sipp <-
 						zipped = TRUE ,
 						tl = TRUE ,
 						tablename = catalog[ i , 'db_tablename' ] ,
-						conn = db
+						connection = db
 					)
 					
 				}
@@ -204,7 +204,7 @@ lodown_sipp <-
 						zipped = TRUE ,
 						tl = TRUE ,
 						tablename = catalog[ i , 'db_tablename' ] ,
-						conn = db
+						connection = db
 					)
 					
 				}
@@ -240,14 +240,14 @@ lodown_sipp <-
 					# end of fake SAS input script creation #
 					
 					# add the longitudinal weights to the database in a table 'hh' (household)
-					read.SAScii.monetdb(
+					read_SAScii_monetdb(
 						catalog[ i , 'full_url' ] ,
 						chop.suid( fix.ct( sas.import.with.at.signs.tf ) ) ,
-						# note no beginline = parameter in this read.SAScii.monetdb() call
+						# note no beginline = parameter in this read_SAScii_monetdb() call
 						zipped = TRUE ,
 						tl = TRUE ,
 						tablename = catalog[ i , 'db_tablename' ] ,
-						conn = db ,
+						connection = db ,
 						try_best_effort = TRUE
 					)
 					
@@ -257,14 +257,14 @@ lodown_sipp <-
 				if ( catalog[ i , 'full_url' ] == "http://thedataweb.rm.census.gov/pub/sipp/2001/p01putm8x.zip" ){
 
 					# add the longitudinal weights to the database in a table 'wf' (welfare)
-					read.SAScii.monetdb(
+					read_SAScii_monetdb(
 						catalog[ i , 'full_url' ] ,
 						chop.suid( fix.ct( "http://thedataweb.rm.census.gov/pub/sipp/2001/p01putm8x.sas" ) ) ,
 						beginline = 5 ,
 						zipped = TRUE ,
 						tl = TRUE ,
 						tablename = catalog[ i , 'db_tablename' ] ,
-						conn = db
+						connection = db
 					)
 					
 				}
@@ -299,14 +299,14 @@ lodown_sipp <-
 					# end of fake SAS input script creation #
 					
 					# add the longitudinal weights to the database in a table 'w9'
-					read.SAScii.monetdb(
+					read_SAScii_monetdb(
 						catalog[ i , 'full_url' ] ,
 						chop.suid( fix.ct( sas.import.with.at.signs.tf ) ) ,
-						# note no beginline = parameter in this read.SAScii.monetdb() call
+						# note no beginline = parameter in this read_SAScii_monetdb() call
 						zipped = TRUE ,
 						tl = TRUE ,
 						tablename = catalog[ i , 'db_tablename' ] ,
-						conn = db
+						connection = db
 					)
 					
 				}
@@ -315,14 +315,14 @@ lodown_sipp <-
 				if( catalog[ i , 'full_url' ] %in% paste0( "http://thedataweb.rm.census.gov/pub/sipp/2001/l01puw" , 1:9 , ".zip" ) ){
 
 					# add the core wave to the database in a table w#
-					read.SAScii.monetdb (
+					read_SAScii_monetdb (
 						catalog[ i , 'full_url' ] ,
 						chop.suid( fix.ct( "http://thedataweb.rm.census.gov/pub/sipp/2001/p01puw1.sas" ) ) ,
 						beginline = 5 ,
 						zipped = TRUE ,
 						tl = TRUE ,
 						tablename = catalog[ i , 'db_tablename' ] ,
-						conn = db
+						connection = db
 					)
 					
 				}
@@ -331,14 +331,14 @@ lodown_sipp <-
 				if( catalog[ i , 'full_url' ] %in% paste0( "http://thedataweb.rm.census.gov/pub/sipp/2001/rw01w" , 1:9 , ".zip" ) ){
 
 					# add the wave-specific replicate weight to the database in a table rw#
-					read.SAScii.monetdb (
+					read_SAScii_monetdb (
 						catalog[ i , 'full_url' ] ,
 						chop.suid( fix.ct( "http://thedataweb.rm.census.gov/pub/sipp/2001/rw01wx.sas" ) ) ,
 						beginline = 5 ,
 						zipped = TRUE ,
 						tl = TRUE ,
 						tablename = catalog[ i , 'db_tablename' ] ,
-						conn = db
+						connection = db
 					)
 
 				}
@@ -347,14 +347,14 @@ lodown_sipp <-
 				if ( catalog[ i , 'full_url' ] %in% paste0( "http://thedataweb.rm.census.gov/pub/sipp/2001/p01putm" , 1:9 , ".zip" ) ){
 						
 					# add each topical module to the database in a table tm#
-					read.SAScii.monetdb (
+					read_SAScii_monetdb (
 						catalog[ i , 'full_url' ] ,
 						chop.suid( fix.ct( paste0( "http://thedataweb.rm.census.gov/pub/sipp/2001/p01putm" , catalog[ i , 'wave' ] , ".sas" ) ) ) ,
 						beginline = 5 ,
 						zipped = TRUE ,
 						tl = TRUE ,
 						tablename = catalog[ i , 'db_tablename' ] ,
-						conn = db
+						connection = db
 					)
 
 				}
@@ -363,14 +363,14 @@ lodown_sipp <-
 				if ( catalog[ i , 'full_url' ] %in% paste0( "http://thedataweb.rm.census.gov/pub/sipp/2001/lgtwgt" , c( paste0( 'cy' , 1:3 ) , paste0( 'pnl' , 1:3 ) ) , ".zip" ) ){
 
 					# add each longitudinal replicate weight file to the database in a table cy1-3 or pnl1-3
-					read.SAScii.monetdb (
+					read_SAScii_monetdb (
 						catalog[ i , 'full_url' ] ,
 						fix.repwgt( "http://thedataweb.rm.census.gov/pub/sipp/2001/lrw01_xx.sas" ) ,
 						beginline = 7 ,
 						zipped = TRUE ,
 						tl = TRUE ,
 						tablename = catalog[ i , 'db_tablename' ] ,
-						conn = db
+						connection = db
 					)
 					
 				}
