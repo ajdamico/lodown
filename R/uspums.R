@@ -562,7 +562,7 @@ pums.import.merge.design <-
 		person.tfs <- as.character( fn[ 2 , ] )
 
 		# read one of the household-level files into RAM..
-		hh.h <- read.table( hh.tfs[3], header = TRUE , sep = '\t' , na.strings = "NA" )
+		hh.h <- read.table( hh.tfs[1], header = TRUE , sep = '\t' , na.strings = "NA" )
 		
 		# unique(sapply( hh.h , dbDataType , dbObj = db ))
 		
@@ -570,7 +570,7 @@ pums.import.merge.design <-
 		hh.lines <- sapply( hh.tfs , R.utils::countLines )
 
 		# read one of the person-level files into RAM..
-		person.h <- read.table( person.tfs[3], header = TRUE , sep = '\t' , na.strings = "NA" )
+		person.h <- read.table( person.tfs[1], header = TRUE , sep = '\t' , na.strings = "NA" )
 		
 		# unique(sapply( person.h , dbDataType , dbObj = db ))
 		
