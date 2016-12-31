@@ -125,6 +125,9 @@ lodown_uspums <-
 			hh.90.structure[ hh.90.structure$variable == 'sample' , 'variable' ] <- 'sample_'
 			person.90.structure[ person.90.structure$variable == 'sample' , 'variable' ] <- 'sample_'
 
+			hh.90.structure[ hh.90.structure$variable == 'value' , 'variable' ] <- 'value_'
+			person.90.structure[ person.90.structure$variable == 'value' , 'variable' ] <- 'value_'
+
 		}
 
 
@@ -173,6 +176,7 @@ lodown_uspums <-
 					
 					# remove fields that are invalid in monetdb
 					stru[ stru$variable == "sample" , 'variable' ] <- 'sample_'
+					stru[ stru$variable == "value" , 'variable' ] <- 'value_'
 			
 					hardcoded.numeric.columns <-
 						c( "serialno" , "hweight" , "persons" , "elec" , "gas" , "water" , "oil" , "rent" , "mrt1amt" , "mrt2amt" , "taxamt" , "insamt" , "condfee" , "mhcost" , "smoc" , "smocapi" , "grent" , "grapi" , "hinc" , "finc" , "pweight" , "age" , "ancfrst5" , "ancscnd5" , "yr2us" , "trvtime" , "weeks" , "hours" , "incws" , "incse" , "incint" , "incss" , "incssi" , "incpa" , "incret" , "incoth" , "inctot" , "earns" , "poverty" )
@@ -360,38 +364,11 @@ get.tsv <-
 		# does not complete properly, the program re-tries.
 		options( "warn" = 2 )
 		
-		# construct two missing objects
-		attempt1 <- attempt2 <- NA
-		
 		# specify a temporary file on the local disk
 		dlfile <- tempfile()
 		txt_file <- tempfile()
 		
-		# try to download the text file
-		attempt1 <- try( cachaca( fp , dlfile , mode = 'wb' ) , silent = TRUE )
-		
-		# if the first attempt returned an error..
-		if ( class( attempt1 ) == 'try-error' ) {
-		
-			# wait sixty seconds
-			Sys.sleep( 60 )
-			
-			# and try again
-			attempt2 <- try( cachaca( fp , dlfile , mode = 'wb' ) , silent = TRUE )
-			
-		}	
-		
-		# if the second attempt returned an error..
-		if ( class( attempt2 ) == 'try-error' ) {
-		
-			# wait two minutes
-			Sys.sleep( 120 )
-			
-			# and try one last time.
-			cachaca( fp , dlfile , mode = 'wb' )
-			# since there's no `try` function encapsulating this one,
-			# it will break the whole program if it doesn't work
-		}
+		cachaca( fp , dlfile , mode = 'wb' )
 		
 		# the warning breakage can end now..
 		options( "warn" = previous.warning.setting )
