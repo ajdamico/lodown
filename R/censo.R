@@ -480,7 +480,7 @@ ranc_censo <-
 
 			line.num <- 0
 			
-			while( length( line <- readLines( incon , 1 , skipNul = TRUE ) ) > 0 ){
+			while( length( line <- readLines( incon , 1 , skipNul = TRUE , warn = FALSE ) ) > 0 ){
 
 				# add blank spaces on the right side where they're absent.
 				line <- stringr::str_pad( line , width , side = "right" , pad = " " )
