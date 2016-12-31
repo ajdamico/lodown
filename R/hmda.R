@@ -234,7 +234,7 @@ lodown_hmda <-
 				# construct the monetdb COPY INTO command
 				sql.copy <- 
 					paste0( 
-						"copy records into " , 
+						"copy into " , 
 						catalog[ i , 'db_tablename' ] , 
 						" from '" , 
 						normalizePath( unzipped_files ) , 
