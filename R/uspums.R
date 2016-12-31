@@ -260,8 +260,6 @@ lodown_uspums <-
 		}
 
 		
-		
-		# dom first, fam second, pes third
 		unique_designs <- unique( catalog[ , c( 'year' , 'design' , 'hh_structure' , 'person_structure' , 'merged_tablename' , 'household_tablename' , 'person_tablename' , 'dbfolder' ) ] )
 		
 		for( i in seq_len( nrow( unique_designs ) ) ){
