@@ -180,7 +180,7 @@ lodown_censo <-
 		# dom first, fam second, pes third
 		unique_designs <- unique_designs[ order( unique_designs$type ) , ]
 		
-		for( i in seq_along( nrow( unique_designs ) ) ){
+		for( i in seq_len( nrow( unique_designs ) ) ){
 
 			# open the connection to the monetdblite database
 			db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , unique_designs[ i , 'dbfolder' ] )
@@ -423,7 +423,7 @@ lodown_censo <-
 			bootw <- 
 				survey::bootweights( 
 					DBI::dbGetQuery( db , paste0( "SELECT " , unique_designs[ i , 'fpc1' ] , " FROM c" , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , ifelse( unique_designs[ i , 'type' ] == 'pes' , "" , paste0( "_" , unique_designs[ i , 'type' ] ) ) ) )[ , 1 ] ,
-					DBI::dbGetQuery( db , paste0( "SELECT " , unique_designs[ i , 'fpc2' ] , " FROM c" , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , ifelse( unique_designs[ i , 'type' ] == 'pes' , "" , paste0( "_" , unique_designs[ i , 'type' ] ) ) ) )[ , 1 ] ,
+					DBI::dbGetQuery( db , paste0( "SELECT " , unique_designs[ i , 'fpc4' ] , " FROM c" , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , ifelse( unique_designs[ i , 'type' ] == 'pes' , "" , paste0( "_" , unique_designs[ i , 'type' ] ) ) ) )[ , 1 ] ,
 					replicates = 80 ,
 					fpc = DBI::dbGetQuery( db , paste0( "SELECT " , unique_designs[ i , 'type' ] , "_fpc FROM c" , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , ifelse( unique_designs[ i , 'type' ] == 'pes' , "" , paste0( "_" , unique_designs[ i , 'type' ] ) ) ) )[ , 1 ]
 				)
