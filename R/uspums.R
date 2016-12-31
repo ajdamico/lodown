@@ -84,7 +84,7 @@ lodown_uspums <-
 			of <- tempfile()
 			
 			# download the pums sas script provided by the census bureau
-			cachaca( "http://www2.census.gov/census_1990/1990_PUMS_A/TOOLS/sas/PUMS.SAS" , tf )
+			cachaca( "http://www2.census.gov/census_1990/1990_PUMS_A/TOOLS/sas/PUMS.SAS" , tf , mode = 'wb' , filesize_fun == 'httr' )
 			
 			# read the script into working memory
 			sas.90 <- readLines( tf )
@@ -137,7 +137,7 @@ lodown_uspums <-
 			pums.layout <- paste0( tempfile() , '.xls' )
 
 			# download the layout excel file
-			cachaca( "http://www2.census.gov/census_2000/datasets/PUMS/FivePercent/5%25_PUMS_record_layout.xls" ,	pums.layout , mode = 'wb' )
+			cachaca( "http://www2.census.gov/census_2000/datasets/PUMS/FivePercent/5%25_PUMS_record_layout.xls" , pums.layout , mode = 'wb' , filesize_fun == 'httr' )
 
 			# initiate a quick layout read-in function #
 			code.str <-
@@ -204,7 +204,7 @@ lodown_uspums <-
 			pums.layout <- paste0( tempfile() , ".xlsx" )
 
 			# download the layout excel file
-			cachaca( "http://www2.census.gov/census_2010/12-Stateside_PUMS/2010%20PUMS%20Record%20Layout.xlsx" ,	pums.layout , mode = 'wb' )
+			cachaca( "http://www2.census.gov/census_2010/12-Stateside_PUMS/2010%20PUMS%20Record%20Layout.xlsx" , pums.layout , mode = 'wb' , filesize_fun == 'httr' )
 
 			# initiate a quick layout read-in function #
 			code.str <-
