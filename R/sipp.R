@@ -17,7 +17,8 @@ get_catalog_sipp <-
 						"http://thedataweb.rm.census.gov/pub/sipp/1996/ctl_fer.zip" ,
 						paste0( "http://thedataweb.rm.census.gov/pub/sipp/1996/lrw96" , c( paste0( 'cy' , 1:4 ) , 'pnl' ) , ".zip" )
 					) ,
-				dbfolder = paste0( output_dir , "/MonetDB_1996" )
+				dbfolder = paste0( output_dir , "/MonetDB_1996" ) ,
+				stringsAsFactors = FALSE
 			)
 						
 		cat_2001 <-
@@ -36,7 +37,8 @@ get_catalog_sipp <-
 						"http://thedataweb.rm.census.gov/pub/sipp/2001/p01putm8x.zip" ,
 						paste0( "http://thedataweb.rm.census.gov/pub/sipp/2001/lgtwgt" , c( paste0( 'cy' , 1:3 ) , paste0( 'pnl' , 1:3 ) ) , ".zip" )
 					) ,
-				dbfolder = paste0( output_dir , "/MonetDB_2001" )
+				dbfolder = paste0( output_dir , "/MonetDB_2001" ) ,
+				stringsAsFactors = FALSE
 			)
 						
 				
@@ -56,7 +58,8 @@ get_catalog_sipp <-
 						"http://thedataweb.rm.census.gov/pub/sipp/2004/p04putm3_aoa.zip" ,
 						"http://thedataweb.rm.census.gov/pub/sipp/2004/p04putm6_aoa.zip"
 					) ,
-				dbfolder = paste0( output_dir , "/MonetDB_2004" )
+				dbfolder = paste0( output_dir , "/MonetDB_2004" ) ,
+				stringsAsFactors = FALSE
 			)
 						
 		
@@ -74,7 +77,8 @@ get_catalog_sipp <-
 						"http://thedataweb.rm.census.gov/pub/sipp/2008/lgtwgt2008w16.zip" ,
 						paste0( "http://thedataweb.rm.census.gov/pub/sipp/2008/lrw08" , c( paste0( 'cy' , 1:5 ) , paste0( 'pn' , 1:5 ) ) , ".zip" )
 					) ,
-				dbfolder = paste0( output_dir , "/MonetDB_2008" )
+				dbfolder = paste0( output_dir , "/MonetDB_2008" ) ,
+				stringsAsFactors = FALSE
 			)
 						
 		
