@@ -58,6 +58,7 @@ lodown( "pnadc" , output_dir = "C:/My Directory/PNADC" )
 lodown( "pof" , output_dir = "C:/My Directory/POF" )
 lodown( "sbo" , output_dir = "C:/My Directory/SBO" )
 lodown( "scf" , output_dir = "C:/My Directory/SCF" )
+lodown( "uspums" , output_dir = "C:/My Directory/USPUMS" )
 lodown( "yrbss" , output_dir = "C:/My Directory/YRBSS" )
 
 # examples to download only the first two records in the catalog
@@ -116,6 +117,8 @@ sbo_cat <- get_catalog( "sbo" , output_dir = "C:/My Directory/SBO" )
 lodown( "sbo" , sbo_cat[ 1:2 , ] )
 scf_cat <- get_catalog( "scf" , output_dir = "C:/My Directory/SCF" )
 lodown( "scf" , scf_cat[ 1:2 , ] )
+uspums_cat <- get_catalog( "uspums" , output_dir = "C:/My Directory/USPUMS" )
+lodown( "uspums" , uspums_cat[ 1:2 , ] )
 yrbss_cat <- get_catalog( "yrbss" , output_dir = "C:/My Directory/YRBSS" )
 lodown( "yrbss" , yrbss_cat[ 1:2 , ] )
 
