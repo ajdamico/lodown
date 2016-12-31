@@ -54,8 +54,8 @@ get_catalog_uspums <-
 		catalog$household_tablename <- paste0( 'pums_' , catalog$year , '_' , catalog$percent , '_h' )
 		catalog$person_tablename <- paste0( 'pums_' , catalog$year , '_' , catalog$percent , '_p' )
 		
-		catalog$hh_structure <- paste0( "hh." , catalog$year , ".structure" )
-		catalog$person_structure <- paste0( "person." , catalog$year , ".structure" )
+		catalog$hh_structure <- paste0( "hh." , substr( catalog$year , 3 , 4 ) , ".structure" )
+		catalog$person_structure <- paste0( "person." , substr( catalog$year , 3 , 4 ) , ".structure" )
 		
 		catalog
 
