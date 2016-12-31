@@ -373,7 +373,7 @@ lodown_censo <-
 				} else {
 				
 
-					b_fields <- DBI::dbListFields( db , 'c' , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , '_pes' )[ !( DBI::dbListFields( db , 'c' , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , '_pes' ) %in% DBI::dbListFields( db , 'c' , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , '_dom' ) ) ]
+					b_fields <- DBI::dbListFields( db , paste0( 'c' , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , '_pes' ) )[ !( DBI::dbListFields( db , paste0( 'c' , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , '_pes' ) ) %in% DBI::dbListFields( db , paste0( 'c' , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , '_dom' ) ) ) ]
 
 					final_merge <-
 						paste0(
