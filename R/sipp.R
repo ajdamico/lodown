@@ -130,7 +130,7 @@ lodown_sipp <-
 					# add the longitudinal weights to the database in a table 'w12'
 					read_SAScii_monetdb(
 						catalog[ i , 'full_url' ] ,
-						chop.suid_1996( fix.ct_1996( sas.import.with.at.signs.tf ) ) ,
+						chop.suid( fix.ct( sas.import.with.at.signs.tf ) ) ,
 						# note no beginline = parameter in this read_SAScii_monetdb() call
 						zipped = TRUE ,
 						tl = TRUE ,
@@ -147,7 +147,7 @@ lodown_sipp <-
 					# add the core wave to the database in a table w#
 					read_SAScii_monetdb (
 						catalog[ i , 'full_url' ] ,
-						chop.suid_1996( fix.ct_1996( "http://thedataweb.rm.census.gov/pub/sipp/1996/sip96lgt.sas" ) ) ,
+						chop.suid( fix.ct( "http://thedataweb.rm.census.gov/pub/sipp/1996/sip96lgt.sas" ) ) ,
 						beginline = 5 ,
 						zipped = TRUE ,
 						tl = TRUE ,
@@ -162,7 +162,7 @@ lodown_sipp <-
 					# add the wave-specific replicate weight to the database in a table rw#
 					read_SAScii_monetdb (
 						catalog[ i , 'full_url' ] ,
-						chop.suid_1996( fix.ct_1996( fix.repwgt_1996( "http://thedataweb.rm.census.gov/pub/sipp/1996/rw96wx.sas" ) ) ) ,
+						chop.suid( fix.ct( fix.repwgt( "http://thedataweb.rm.census.gov/pub/sipp/1996/rw96wx.sas" ) ) ) ,
 						beginline = 7 ,
 						zipped = TRUE ,
 						tl = TRUE ,
@@ -183,7 +183,7 @@ lodown_sipp <-
 					# add each topical module to the database in a table tm#
 					read_SAScii_monetdb (
 						catalog[ i , 'full_url' ] ,
-						chop.suid_1996( fix.ct_1996( paste0( "http://thedataweb.rm.census.gov/pub/sipp/1996/p96putm" , catalog[ i , 'wave' ] , ".sas" ) ) ) ,
+						chop.suid( fix.ct( paste0( "http://thedataweb.rm.census.gov/pub/sipp/1996/p96putm" , catalog[ i , 'wave' ] , ".sas" ) ) ) ,
 						beginline = 5 ,
 						zipped = TRUE ,
 						tl = TRUE ,
@@ -199,7 +199,7 @@ lodown_sipp <-
 					# add each longitudinal replicate weight file to the database in a table cy1-4 or pnl
 					read_SAScii_monetdb (
 						catalog[ i , 'full_url' ] ,
-						chop.suid_1996( fix.repwgt_1996( "http://thedataweb.rm.census.gov/pub/sipp/1996/lrw96_xx.sas" ) ) ,
+						chop.suid( fix.repwgt( "http://thedataweb.rm.census.gov/pub/sipp/1996/lrw96_xx.sas" ) ) ,
 						beginline = 7 ,
 						zipped = TRUE ,
 						tl = TRUE ,
@@ -213,7 +213,189 @@ lodown_sipp <-
 			}
 				
 			
+			if( catalog[ i , 'panel' ] == 2001 ){
+
+				if ( catalog[ i , 'full_url' ] == "http://thedataweb.rm.census.gov/pub/sipp/2001/hhldpuw1.zip" ){
+
+					# the census SIPP FTP site does not have a SAS input script,
+					# so create one using the dictionary at
+					# http://thedataweb.rm.census.gov/pub/sipp/2001/hhpuw1d.txt
+
+					# write an example SAS import script using the dash method
+					sas.import.with.at.signs <-
+						"INPUT
+							@1   SSUID   12.
+							@13   UHOWLGMT  $ 2.
+							@15   UHOWLGYR  $ 4.
+							@19   UWHNAPMT  $ 2.
+							@21   UWHNAPYR  $ 4.
+							@25   UWAITLST  $ 1.
+						;"
+						
+					# create a temporary file
+					sas.import.with.at.signs.tf <- tempfile()
+					# write the sas code above to that temporary file
+					writeLines ( sas.import.with.at.signs , con = sas.import.with.at.signs.tf )
+
+					# end of fake SAS input script creation #
+					
+					# add the longitudinal weights to the database in a table 'hh' (household)
+					read.SAScii.monetdb(
+						catalog[ i , 'full_url' ] ,
+						chop.suid( fix.ct( sas.import.with.at.signs.tf ) ) ,
+						# note no beginline = parameter in this read.SAScii.monetdb() call
+						zipped = TRUE ,
+						tl = TRUE ,
+						tablename = catalog[ i , 'db_tablename' ] ,
+						conn = db ,
+						try_best_effort = TRUE
+					)
+					
+				}
+					
+				# if the welfare reform module flag has been set to TRUE above..
+				if ( catalog[ i , 'full_url' ] == "http://thedataweb.rm.census.gov/pub/sipp/2001/p01putm8x.zip" ){
+
+					# add the longitudinal weights to the database in a table 'wf' (welfare)
+					read.SAScii.monetdb(
+						catalog[ i , 'full_url' ] ,
+						chop.suid( fix.ct( "http://thedataweb.rm.census.gov/pub/sipp/2001/p01putm8x.sas" ) ) ,
+						beginline = 5 ,
+						zipped = TRUE ,
+						tl = TRUE ,
+						tablename = catalog[ i , 'db_tablename' ] ,
+						conn = db
+					)
+					
+				}
+					
+				# if the longitudinal weights flag has been set to TRUE above..
+				if ( catalog[ i , 'full_url' ] == "http://thedataweb.rm.census.gov/pub/sipp/2001/lgtwgt2001w9.zip" ){
+
+					# the census SIPP FTP site does not have a SAS input script,
+					# so create one using the dictionary at
+					# http://thedataweb.rm.census.gov/pub/sipp/2001/lgtwt01d.txt
+
+					# write an example SAS import script using the dash method
+					sas.import.with.at.signs <-
+						"INPUT
+							@1 	   LGTKEY      8.
+							@9      SPANEL       4.
+							@13      SSUID      12.
+							@25      EPPPNUM      4.
+							@29      LGTPNWT1   10.
+							@39      LGTPNWT2   10.
+							@49      LGTPNWT3   10.
+							@59      LGTCY1WT   10.
+							@69      LGTCY2WT   10.
+							@79      LGTCY3WT   10.
+						;"
+						
+					# create a temporary file
+					sas.import.with.at.signs.tf <- tempfile()
+					# write the sas code above to that temporary file
+					writeLines ( sas.import.with.at.signs , con = sas.import.with.at.signs.tf )
+
+					# end of fake SAS input script creation #
+					
+					# add the longitudinal weights to the database in a table 'w9'
+					read.SAScii.monetdb(
+						catalog[ i , 'full_url' ] ,
+						chop.suid( fix.ct( sas.import.with.at.signs.tf ) ) ,
+						# note no beginline = parameter in this read.SAScii.monetdb() call
+						zipped = TRUE ,
+						tl = TRUE ,
+						tablename = catalog[ i , 'db_tablename' ] ,
+						conn = db
+					)
+					
+				}
+					
+				# loop through each core wave..
+				if( catalog[ i , 'full_url' ] %in% paste0( "http://thedataweb.rm.census.gov/pub/sipp/2001/l01puw" , 1:9 , ".zip" ) ){
+
+					# add the core wave to the database in a table w#
+					read.SAScii.monetdb (
+						catalog[ i , 'full_url' ] ,
+						chop.suid( fix.ct( "http://thedataweb.rm.census.gov/pub/sipp/2001/p01puw1.sas" ) ) ,
+						beginline = 5 ,
+						zipped = TRUE ,
+						tl = TRUE ,
+						tablename = catalog[ i , 'db_tablename' ] ,
+						conn = db
+					)
+					
+				}
+
+				# loop through each replicate weight wave..
+				if( catalog[ i , 'full_url' ] %in% paste0( "http://thedataweb.rm.census.gov/pub/sipp/2001/rw01w" , 1:9 , ".zip" ) ){
+
+					# add the wave-specific replicate weight to the database in a table rw#
+					read.SAScii.monetdb (
+						catalog[ i , 'full_url' ] ,
+						chop.suid( fix.ct( "http://thedataweb.rm.census.gov/pub/sipp/2001/rw01wx.sas" ) ) ,
+						beginline = 5 ,
+						zipped = TRUE ,
+						tl = TRUE ,
+						tablename = catalog[ i , 'db_tablename' ] ,
+						conn = db
+					)
+
+				}
+
+				# loop through each topical module..
+				for ( catalog[ i , 'full_url' ] %in% paste0( "http://thedataweb.rm.census.gov/pub/sipp/2001/p01putm" , 1:9 , ".zip" ) ){
+						
+					# add each topical module to the database in a table tm#
+					read.SAScii.monetdb (
+						catalog[ i , 'full_url' ] ,
+						chop.suid( fix.ct( paste0( "http://thedataweb.rm.census.gov/pub/sipp/2001/p01putm" , catalog[ i , 'wave' ] , ".sas" ) ) ) ,
+						beginline = 5 ,
+						zipped = TRUE ,
+						tl = TRUE ,
+						tablename = catalog[ i , 'db_tablename' ] ,
+						conn = db
+					)
+
+				}
+
+				# loop through each longitudinal replicate weight file..
+				for ( catalog[ i , 'full_url' ] %in% paste0( "http://thedataweb.rm.census.gov/pub/sipp/2001/lgtwgt" , c( paste0( 'cy' , 1:3 ) , paste0( 'pnl' , 1:3 ) ) , ".zip" ) ){
+
+					# add each longitudinal replicate weight file to the database in a table cy1-3 or pnl1-3
+					read.SAScii.monetdb (
+						catalog[ i , 'full_url' ] ,
+						fix.repwgt( "http://thedataweb.rm.census.gov/pub/sipp/2001/lrw01_xx.sas" ) ,
+						beginline = 7 ,
+						zipped = TRUE ,
+						tl = TRUE ,
+						tablename = catalog[ i , 'db_tablename' ] ,
+						conn = db
+					)
+					
+				}
+				# the current working directory should now contain one database (.db) file
+
 			
+			
+			
+			
+			
+			
+			
+			}
+			
+			if( catalog[ i , 'panel' ] == 2004 ){
+
+			
+			
+			}
+			
+			if( catalog[ i , 'panel' ] == 2008 ){
+
+			
+			
+			}
 			
 			
 			
@@ -231,7 +413,7 @@ lodown_sipp <-
 			# delete the temporary files
 			suppressWarnings( file.remove( tf ) )
 
-			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'db_tablename' ] , " of " , catalog[ i , 'dbfolder' ] , "'\r\n\n" ) )
+			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'db_tablename' ] , "' table of " , catalog[ i , 'dbfolder' ] , "'\r\n\n" ) )
 
 		}
 
@@ -254,7 +436,7 @@ lodown_sipp <-
 
 ##############################################################################
 # function to fix sas input scripts where census has the incorrect column type
-fix.ct_1996 <-
+fix.ct <-
 	function( sasfile ){
 		sas_lines <- readLines( sasfile )
 
@@ -279,7 +461,7 @@ fix.ct_1996 <-
 ###################################################################################
 # function to fix sas input scripts where repwgt values are collapsed into one line
 # (the SAScii function cannot currently handle this SAS configuration on its own
-fix.repwgt_1996 <-
+fix.repwgt <-
 	function( sasfile ){
 		sas_lines <- readLines( sasfile )
 
@@ -347,7 +529,7 @@ fix.repwgt_1996 <-
 # are incorrect.  the census bureau just left them in,
 # and the SAScii package won't just throw 'em out for ya.
 # so throw out the non-public lines manually.
-chop.suid_1996 <-
+chop.suid <-
 	function( sf ){
 
 		# create a temporary file
