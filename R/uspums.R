@@ -48,7 +48,14 @@ get_catalog_uspums <-
 		
 		catalog$dbfolder <- paste0( output_dir , "/MonetDB" )
 		
-		catalog$design <- paste0( output_dir , '/pums_' , catalog$year , '_' , catalog$percent , '_m.rda' )
+		catalog$merged_design <- paste0( output_dir , '/pums_' , catalog$year , '_' , catalog$percent , '_m.rda' )
+		
+		catalog$merged_tablename <- gsub( "\\.rda" , "" , basename( catalog$merged_design ) )
+		catalog$household_tablename <- gsub( "\\.rda" , "" , basename( catalog$household_design ) )
+		catalog$person_tablename <- gsub( "\\.rda" , "" , basename( catalog$person_design ) )
+		
+		catalog$hh_structure <- paste0( "hh." , catalog$year , ".structure" )
+		catalog$person_structure <- paste0( "person." , catalog$year , ".structure" )
 		
 		catalog
 
@@ -59,28 +66,249 @@ lodown_uspums <-
 	function( data_name = "uspums" , catalog , ... ){
 
 		if ( !requireNamespace( "gdata" , quietly = TRUE ) ) stop( "gdata needed for this function to work. to install it, type `install.packages( 'gdata' )`" , call. = FALSE )
+		
 		if ( !requireNamespace( "descr" , quietly = TRUE ) ) stop( "descr needed for this function to work. to install it, type `install.packages( 'descr' )`" , call. = FALSE )
 
-		tf <- tempfile()
+		# # # # # # # # # #
+		# structure files #
+		# # # # # # # # # #
 
 
-		for ( i in seq_len( nrow( catalog ) ) ){
+		# # # # # # 1990 # # # # # #
 
-			# download the file
-			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
+		# if 1990 was requested in either the 1% or 5% files..
+		if ( 1990 %in% catalog$year ){
 
-			unzipped_files <- unzip( tf , exdir = paste0( tempdir() , "/unzips" ) )
+			# create a temporary file on the local disk
+			tf <- tempfile()
+			of <- tempfile()
+			
+			# download the pums sas script provided by the census bureau
+			cachaca( "http://www2.census.gov/census_1990/1990_PUMS_A/TOOLS/sas/PUMS.SAS" , tf )
+			
+			# read the script into working memory
+			sas.90 <- readLines( tf )
 
+			# add a leading column (parse.SAScii cannot handle a sas importation script that doesn't start at the first position)
+			sas.90 <- gsub( "@2 SerialNo $ 7." , "@1 rectype $ 1 @2 SerialNo $ 7." , sas.90 , fixed = TRUE )
 
+			# write the script back to memory
+			writeLines( sas.90 , of )
 
+			# read in the household structure
+			hh.90.structure <- SAScii::parse.SAScii( of , beginline = 7 )
+			
+			# read in the person structure
+			person.90.structure <- SAScii::parse.SAScii( of , beginline = 125 )
+			
+			# convert both variables to lowercase
+			hh.90.structure$variable <- tolower( hh.90.structure$varname )
+			person.90.structure$variable <- tolower( person.90.structure$varname )
 
+			# find the starting and ending positions of all rows, in both tables (needed for monet.read.tsv later)
+			hh.90.structure$beg <- cumsum( abs( hh.90.structure$width ) ) - abs( hh.90.structure$width ) + 1
+			hh.90.structure$end <- cumsum( abs( hh.90.structure$width ) )
 
+			person.90.structure$beg <- cumsum( abs( person.90.structure$width ) ) - abs( person.90.structure$width ) + 1
+			person.90.structure$end <- cumsum( abs( person.90.structure$width ) )
 
-			# delete the temporary files
-			suppressWarnings( file.remove( tf , unzipped_files ) )
+			# rename all empty columns `blank_#` in both tables
+			if ( any( blanks <- is.na( hh.90.structure$variable ) ) ){
+				hh.90.structure[ is.na( hh.90.structure$variable ) , 'variable' ] <- paste0( "blank_" , 1:sum( blanks ) )
+			}
+
+			if ( any( blanks <- is.na( person.90.structure$variable ) ) ){
+				person.90.structure[ is.na( person.90.structure$variable ) , 'variable' ] <- paste0( "blank_" , 1:sum( blanks ) )
+			}
+
+			# `sample` is an illegal column name in monetdb, so change it in both tables
+			hh.90.structure[ hh.90.structure$variable == 'sample' , 'variable' ] <- 'sample_'
+			person.90.structure[ person.90.structure$variable == 'sample' , 'variable' ] <- 'sample_'
 
 		}
 
+
+		# # # # # # 2000 # # # # # #
+
+		# if 2000 was requested in either the 1% or 5% files..
+		if ( 2000 %in% catalog$year ){
+
+			# create a temporary file on the local disk
+			pums.layout <- paste0( tempfile() , '.xls' )
+
+			# download the layout excel file
+			cachaca( "http://www2.census.gov/census_2000/datasets/PUMS/FivePercent/5%25_PUMS_record_layout.xls" ,	pums.layout , mode = 'wb' )
+
+			# initiate a quick layout read-in function #
+			code.str <-
+				function( fn , sheet ){
+
+					# read the sheet (specified as a function input) to an object `stru
+					stru <- data.frame( gdata::read.xls( fn , sheet = sheet , skip = 1 ) )
+					
+					# make all column names of the `stru` data.frame lowercase
+					names( stru ) <- tolower( names( stru ) )
+					
+					# remove leading and trailing whitespace, and convert everything to lowercase
+					# in the `variable` column of the `stru` table
+					stru$variable <- stringr::str_trim( tolower( stru$variable ) )
+					
+					# coerce these two columns to numeric
+					stru[ c( 'beg' , 'end' ) ] <- sapply( stru[ c( 'beg' , 'end' ) ] , as.numeric )
+					
+					# keep only four columns, and only unique records from the `stru` table
+					stru <- unique( stru[ , c( 'beg' , 'end' , 'a.n' , 'variable' ) ] )
+					
+					# throw out records missing a beginning position
+					stru <- stru[ !is.na( stru$beg ) , ]
+					
+					# calculate the width of each field
+					stru <- transform( stru , width = end - beg + 1 )
+
+					# remove overlapping fields
+					stru <- 
+						stru[ 
+							!( stru$variable %in% 
+								c( 'ancfrst1' , 'ancscnd1' , 'lang1' , 'pob1' , 'migst1' , 'powst1' , 'occcen1' , 'occsoc1' , 'filler' ) ) , ]
+					
+					# remove fields that are invalid in monetdb
+					stru[ stru$variable == "sample" , 'variable' ] <- 'sample_'
+			
+					hardcoded.numeric.columns <-
+						c( "serialno" , "hweight" , "persons" , "elec" , "gas" , "water" , "oil" , "rent" , "mrt1amt" , "mrt2amt" , "taxamt" , "insamt" , "condfee" , "mhcost" , "smoc" , "smocapi" , "grent" , "grapi" , "hinc" , "finc" , "pweight" , "age" , "ancfrst5" , "ancscnd5" , "yr2us" , "trvtime" , "weeks" , "hours" , "incws" , "incse" , "incint" , "incss" , "incssi" , "incpa" , "incret" , "incoth" , "inctot" , "earns" , "poverty" )
+			
+					# add a logical `char` field to both of these data.frames
+					stru$char <- ( stru$a.n %in% 'A' & !( stru$variable %in% hardcoded.numeric.columns ) )
+								
+					# since this is the last line of the function `code.str`
+					# whatever this object `stru` is at the end of the function
+					# will be _returned_ by the function
+					stru
+				}
+
+			# read in the household file structure from excel sheet 1
+			hh.00.structure <- code.str( pums.layout , 1 )
+
+			# read in the person file structure from excel sheet 2
+			person.00.structure <- code.str( pums.layout , 2 )
+			
+		}
+
+
+		# # # # # # 2010 # # # # # #
+
+		# if 2010 was requested in the 10% files..
+		if ( 2010 %in% catalog$year ){
+
+			# create a temporary file on the local disk
+			pums.layout <- paste0( tempfile() , ".xlsx" )
+
+			# download the layout excel file
+			cachaca( "http://www2.census.gov/census_2010/12-Stateside_PUMS/2010%20PUMS%20Record%20Layout.xlsx" ,	pums.layout , mode = 'wb' )
+
+			# initiate a quick layout read-in function #
+			code.str <-
+				function( fn , sheet ){
+
+					# read the sheet (specified as a function input) to an object `stru
+					stru <- data.frame( gdata::read.xls( fn , sheet = sheet , skip = 1 ) )
+					
+					# make all column names of the `stru` data.frame lowercase
+					names( stru ) <- tolower( names( stru ) )
+					
+					# remove leading and trailing whitespace, and convert everything to lowercase
+					# in the `variable` column of the `stru` table
+					stru$variable <- stringr::str_trim( tolower( stru$variable ) )
+					
+					# keep only four columns, and only unique records from the `stru` table
+					stru <- unique( stru[ , c( 'beg' , 'end' , 'a.n' , 'variable' ) ] )
+					
+					# throw out records missing a beginning position
+					stru <- stru[ !is.na( stru$beg ) , ]
+					
+					# calculate the width of each field
+					stru$width <- stru$end - stru$beg + 1
+					
+					# remove racedet duplicate
+					stru <- stru[ !is.na( stru$beg ) , ]
+					
+					# remove fields that are invalid in monetdb
+					stru[ stru$variable == "sample" , 'variable' ] <- 'sample_'
+			
+					hardcoded.numeric.columns <-
+						c( "serialno" , "hweight" , "persons" , "elec" , "gas" , "water" , "oil" , "rent" , "mrt1amt" , "mrt2amt" , "taxamt" , "insamt" , "condfee" , "mhcost" , "smoc" , "smocapi" , "grent" , "grapi" , "hinc" , "finc" , "pweight" , "age" , "ancfrst5" , "ancscnd5" , "yr2us" , "trvtime" , "weeks" , "hours" , "incws" , "incse" , "incint" , "incss" , "incssi" , "incpa" , "incret" , "incoth" , "inctot" , "earns" , "poverty" )
+			
+					# add a logical `char` field to both of these data.frames
+					stru$char <- ( stru$a.n %in% 'A' & !( stru$variable %in% hardcoded.numeric.columns ) )
+								
+					# since this is the last line of the function `code.str`
+					# whatever this object `stru` is at the end of the function
+					# will be _returned_ by the function
+					stru
+				}
+
+			# read in the household file structure from excel sheet 1
+			hh.10.structure <- code.str( pums.layout , 1 )
+
+			# read in the person file structure from excel sheet 2
+			person.10.structure <- code.str( pums.layout , 2 )
+			
+		}
+
+		
+		
+		# dom first, fam second, pes third
+		unique_designs <- unique( catalog[ , c( 'merged_design' , 'hh_structure' , 'person_structure' , 'merged_tablename' , 'household_tablename' , 'person_tablename' , 'dbfolder' ) ] )
+		
+		for( i in seq_len( nrow( unique_designs ) ) ){
+
+			# open the connection to the monetdblite database
+			db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , unique_designs[ i , 'dbfolder' ] )
+
+		
+			these_files <- merge( catalog , unique_designs[ i , ] )[ , 'full_url' ]
+		
+				
+				
+			# run the `get.tsv` function on each of the files specified in the character vector (created above)
+			# and provide a corresponding file number parameter for each character string.
+			these_tsvs <-
+				mapply(
+					get.tsv ,
+					these_files ,
+					fileno = seq( length( these_files ) ) ,
+					MoreArgs = 
+						list(
+							zipped = TRUE ,
+							hh.stru = get( unique_designs[ i , "hh_structure" ] ) ,
+							person.stru = get( unique_designs[ i , "person_structure" ] )
+						)
+				)
+				
+
+			# using the monetdb connection, import each of the household- and person-level tab-separated value files
+			# into the database, naming the household, person, and also merged file with these character strings
+			this_design <-
+				pums.import.merge.design(
+					db = db , 
+					fn = these_tsvs, 
+					merged.tn = unique_designs[ i , "merged_tablename" ] , 
+					hh.tn = unique_designs[ i , "household_tablename" ] , 
+					person.tn = unique_designs[ i , "person_tablename" ] ,
+					hh.stru = get( unique_designs[ i , "hh_structure" ] ) ,
+					person.stru = get( unique_designs[ i , "person_structure" ] )
+				)
+
+			# save the monetdb-backed complex sample survey design object to the local disk		
+			save( this_design , file = unique_designs[ i , 'design' ] )
+			
+			# disconnect from the current monet database
+			DBI::dbDisconnect( db , shutdown = TRUE )
+
+			cat( paste0( data_name , " survey design entry " , i , " of " , nrow( unique_designs ) , " stored at '" , unique_designs[ i , 'design' ] , "'\r\n\n" ) )
+			
+		}
+		
 		invisible( TRUE )
 
 	}
