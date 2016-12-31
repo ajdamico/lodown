@@ -344,7 +344,7 @@ lodown_sipp <-
 				}
 
 				# loop through each topical module..
-				for ( catalog[ i , 'full_url' ] %in% paste0( "http://thedataweb.rm.census.gov/pub/sipp/2001/p01putm" , 1:9 , ".zip" ) ){
+				if ( catalog[ i , 'full_url' ] %in% paste0( "http://thedataweb.rm.census.gov/pub/sipp/2001/p01putm" , 1:9 , ".zip" ) ){
 						
 					# add each topical module to the database in a table tm#
 					read.SAScii.monetdb (
@@ -360,7 +360,7 @@ lodown_sipp <-
 				}
 
 				# loop through each longitudinal replicate weight file..
-				for ( catalog[ i , 'full_url' ] %in% paste0( "http://thedataweb.rm.census.gov/pub/sipp/2001/lgtwgt" , c( paste0( 'cy' , 1:3 ) , paste0( 'pnl' , 1:3 ) ) , ".zip" ) ){
+				if ( catalog[ i , 'full_url' ] %in% paste0( "http://thedataweb.rm.census.gov/pub/sipp/2001/lgtwgt" , c( paste0( 'cy' , 1:3 ) , paste0( 'pnl' , 1:3 ) ) , ".zip" ) ){
 
 					# add each longitudinal replicate weight file to the database in a table cy1-3 or pnl1-3
 					read.SAScii.monetdb (
