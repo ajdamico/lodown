@@ -105,7 +105,7 @@ lodown_uspums <-
 			hh.90.structure$variable <- tolower( hh.90.structure$varname )
 			person.90.structure$variable <- tolower( person.90.structure$varname )
 
-			# find the starting and ending positions of all rows, in both tables (needed for monet.read.tsv later)
+			# find the starting and ending positions of all rows, in both tables (needed for monet_read_tsv later)
 			hh.90.structure$beg <- cumsum( abs( hh.90.structure$width ) ) - abs( hh.90.structure$width ) + 1
 			hh.90.structure$end <- cumsum( abs( hh.90.structure$width ) )
 
@@ -554,9 +554,9 @@ pums.import.merge.design <-
 		# count the number of records in each file
 		person.lines <- sapply( person.tfs , R.utils::countLines )
 
-		# use the monet.read.tsv function
+		# use the monet_read_tsv function
 		# to read the household files into a table called `hh.tn` in the monet database
-		monet.read.tsv(
+		monet_read_tsv(
 			db ,
 			hh.tfs ,
 			hh.tn ,
@@ -566,9 +566,9 @@ pums.import.merge.design <-
 			lower.case.names = TRUE
 		)
 
-		# use the monet.read.tsv function
+		# use the monet_read_tsv function
 		# to read the household files into a table called `hh.tn` in the monet database
-		monet.read.tsv(
+		monet_read_tsv(
 			db ,
 			person.tfs ,
 			person.tn ,
@@ -625,9 +625,6 @@ pums.import.merge.design <-
 			DBI::dbGetQuery( db , paste( "select count(*) as count from" , merged.tn ) ) == 
 			DBI::dbGetQuery( db , paste( "select count(*) as count from" , person.tn ) )
 		)
-
-		print( paste( merged.tn , "created!" ) )
-		
 
 		# add a column containing all ones to the current table
 		DBI::dbSendQuery( db , paste0( 'alter table ' , merged.tn , ' add column one int' ) )
