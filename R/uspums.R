@@ -258,7 +258,7 @@ lodown_uspums <-
 		
 		
 		# dom first, fam second, pes third
-		unique_designs <- unique( catalog[ , c( 'design' , 'hh_structure' , 'person_structure' , 'merged_tablename' , 'household_tablename' , 'person_tablename' , 'dbfolder' ) ] )
+		unique_designs <- unique( catalog[ , c( 'year' , 'design' , 'hh_structure' , 'person_structure' , 'merged_tablename' , 'household_tablename' , 'person_tablename' , 'dbfolder' ) ] )
 		
 		for( i in seq_len( nrow( unique_designs ) ) ){
 
@@ -279,7 +279,7 @@ lodown_uspums <-
 					fileno = seq( length( these_files ) ) ,
 					MoreArgs = 
 						list(
-							zipped = TRUE ,
+							zipped = unique_designs[ i , 'year' ] == 1990 ,
 							hh.stru = get( unique_designs[ i , "hh_structure" ] ) ,
 							person.stru = get( unique_designs[ i , "person_structure" ] )
 						)
