@@ -80,6 +80,8 @@ get_catalog_hmda <-
 		
 		catalog$db_tablename <- paste0( catalog$type , "_" , catalog$year )
 		
+		catalog <- catalog[ order( catalog$year ) , ]
+		
 		catalog
 	}
 
@@ -195,6 +197,87 @@ lodown_hmda <-
 				
 			}
 			
+			
+					
+			# cycle through both institutional records and loan applications received microdata files
+			if ( grepl( "inst|lar" , catalog[ i , 'type' ] ) ){
+
+				if( grepl( "inst" , catalog[ i , 'type' ] ) ) rectype <- "institutionrecords"
+				
+				if( grepl( "lar" , catalog[ i , 'type' ] ) ) rectype <- "lar%20-%20National"
+				
+			
+				# strip just the first three characters from `rectype`
+				short.name <- substr( rectype , 1 , 3 )
+			
+				# pull the structure construction
+				col_str <- get( paste( short.name , "col" , sep = "_" ) )
+				
+				# design the monetdb table
+				sql.create <- sprintf( paste( "CREATE TABLE" , catalog[ i , 'db_tablename' ] , "(%s)" ) , paste( col_str , collapse = ", " ) )
+
+				# initiate the monetdb table
+				DBI::dbSendQuery( db , sql.create )
+
+				# find the url folder and the appropriate delimiter line for the monetdb COPY INTO command
+				if ( short.name == "lar" ){
+				
+					delim.line <- "' using delimiters ',','\\n','\"' NULL AS ''" 
+					
+				} else {
+				
+					delim.line <- "' using delimiters '\\t' NULL AS ''" 
+				
+				}
+				
+				
+				# construct the monetdb COPY INTO command
+				sql.copy <- 
+					paste0( 
+						"copy records into " , 
+						catalog[ i , 'db_tablename' ] , 
+						" from '" , 
+						normalizePath( csv.file ) , 
+						delim.line
+					)
+					
+				# actually execute the COPY INTO command
+				DBI::dbSendQuery( db , sql.copy )
+			
+				# conversion of numeric columns incorrectly stored as character strings #
+			
+				# initiate a character vector containing all columns that should be numeric types
+				revision.variables <- c( "sequencenumber" , "population" , "minoritypopulationpct" , "hudmedianfamilyincome" , "tracttomsa_mdincomepct" , "numberofowneroccupiedunits" , "numberof1to4familyunits" )
+
+				# determine whether any of those variables are in the current table
+				field.revisions <- DBI::dbListFields( db , catalog[ i , 'db_tablename' ] )[ tolower( DBI::dbListFields( db , catalog[ i , 'db_tablename' ] ) ) %in% revision.variables ]
+
+				# loop through each of those variables
+				for ( col.rev in field.revisions ){
+
+					# add a new `temp_double` column in the data table
+					DBI::dbSendQuery( db , paste( "ALTER TABLE" , catalog[ i , 'db_tablename' ] , "ADD COLUMN temp_double DOUBLE" ) )
+
+					# copy over the contents of the character-typed column so long as the column isn't a textual missing
+					DBI::dbSendQuery( db , paste( "UPDATE" , catalog[ i , 'db_tablename' ] , "SET temp_double = CAST(" , col.rev , " AS DOUBLE ) WHERE TRIM(" , col.rev , ") <> 'NA'" ) )
+					
+					# remove the character-typed column from the data table
+					DBI::dbSendQuery( db , paste( "ALTER TABLE" , catalog[ i , 'db_tablename' ] , "DROP COLUMN" , col.rev ) )
+					
+					# re-initiate the same column name, but as a numeric type
+					DBI::dbSendQuery( db , paste( "ALTER TABLE" , catalog[ i , 'db_tablename' ] , "ADD COLUMN" , col.rev , "DOUBLE" ) )
+					
+					# copy the corrected contents back to the original column name
+					DBI::dbSendQuery( db , paste( "UPDATE" , catalog[ i , 'db_tablename' ] , "SET" , col.rev , "= temp_double" ) )
+					
+					# remove the temporary column from the data table
+					DBI::dbSendQuery( db , paste( "ALTER TABLE" , catalog[ i , 'db_tablename' ] , "DROP COLUMN temp_double" ) )
+
+				}
+
+				# end of conversion of numeric columns incorrectly stored as character strings #
+
+			}
 			
 			
 
