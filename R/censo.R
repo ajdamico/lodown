@@ -23,7 +23,7 @@ get_catalog_censo <-
 				data.frame(
 					full_url = paste0( ftp_path_2010 , files_to_download_2010 ) ,
 					year = 2010 ,
-					db_table_prefix = tolower( gsub( ".zip" , "" , files_to_download_2010 , ignore.case = TRUE ) ) ,
+					db_table_prefix = tolower( gsub( ".zip" , "10" , files_to_download_2010 , ignore.case = TRUE ) ) ,
 					dbfolder = paste0( output_dir , "/MonetDB" ) ,
 					pes_design = paste0( output_dir , "/pes 2010 design.rda" ) ,
 					pes_sas = system.file("extdata", "SASinputPes.txt", package = "lodown") ,
@@ -65,7 +65,7 @@ get_catalog_censo <-
 				data.frame(
 					full_url = paste0( ftp_path_2000 , files_to_download_2000 ) ,
 					year = 2000 ,
-					db_table_prefix = tolower( gsub( ".zip" , "" , files_to_download_2000 , ignore.case = TRUE ) ) ,
+					db_table_prefix = tolower( gsub( ".zip" , "00" , files_to_download_2000 , ignore.case = TRUE ) ) ,
 					dbfolder = paste0( output_dir , "/MonetDB" ) ,
 					pes_design = paste0( output_dir , "/pes 2000 design.rda" ) ,
 					pes_sas = system.file("extdata", "LE_PESSOAS.sas", package = "lodown") ,
