@@ -50,9 +50,9 @@ get_catalog_uspums <-
 		
 		catalog$merged_design <- paste0( output_dir , '/pums_' , catalog$year , '_' , catalog$percent , '_m.rda' )
 		
-		catalog$merged_tablename <- gsub( "\\.rda" , "" , basename( catalog$merged_design ) )
-		catalog$household_tablename <- gsub( "\\.rda" , "" , basename( catalog$household_design ) )
-		catalog$person_tablename <- gsub( "\\.rda" , "" , basename( catalog$person_design ) )
+		catalog$merged_tablename <- paste0( 'pums_' , catalog$year , '_' , catalog$percent , '_m' )
+		catalog$household_tablename <- paste0( 'pums_' , catalog$year , '_' , catalog$percent , '_h' )
+		catalog$person_tablename <- paste0( 'pums_' , catalog$year , '_' , catalog$percent , '_p' )
 		
 		catalog$hh_structure <- paste0( "hh." , catalog$year , ".structure" )
 		catalog$person_structure <- paste0( "person." , catalog$year , ".structure" )
@@ -163,8 +163,8 @@ lodown_uspums <-
 					stru <- stru[ !is.na( stru$beg ) , ]
 					
 					# calculate the width of each field
-					stru <- transform( stru , width = end - beg + 1 )
-
+					stru$width <- stru$end - stru$beg + 1
+					
 					# remove overlapping fields
 					stru <- 
 						stru[ 
