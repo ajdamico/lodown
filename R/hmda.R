@@ -237,7 +237,7 @@ lodown_hmda <-
 						"copy records into " , 
 						catalog[ i , 'db_tablename' ] , 
 						" from '" , 
-						normalizePath( csv.file ) , 
+						normalizePath( unzipped_files ) , 
 						delim.line
 					)
 					
