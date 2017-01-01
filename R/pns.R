@@ -62,10 +62,10 @@ lodown_pns <-
 			ps <- grep( "PESPNS(.*)\\.sas" , unzipped_files , value = TRUE )
 
 			# create a data.frame object `dom` containing one record per household
-			dom <- read_SAScii( dd , ds )
+			dom <- read_SAScii( dd , ds , na = ".")
 
 			# create a data.frame object `pes` containing one record per person
-			pes <- read_SAScii( pd , ps )
+			pes <- read_SAScii( pd , ps , na = "." )
 
 			# convert all columns to lowercase
 			names( dom ) <- tolower( names( dom ) )
