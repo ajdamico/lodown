@@ -72,7 +72,10 @@ get_catalog_meps <-
 		catalog <- catalog[ grepl( "\\.zip$" , catalog$full_url , ignore.case = TRUE ) , ]
 			
 		catalog$output_filename <- gsub( " data| public use| file" , "" , catalog$output_filename )
-			
+		
+		# skip broken files
+		catalog <- catalog[ !( catalog$table_id %in% c( "HC-009" ) ) , ]
+		
 		catalog
 		
 	}
