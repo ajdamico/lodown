@@ -67,7 +67,7 @@ get_catalog_meps <-
 				ifelse( grepl( "Longitudinal" , catalog$file_name ) , paste0( catalog$year , " " ) , "" ) ,
 				
 				ifelse( !grepl( "-" , catalog$year ) ,
-					gsub( "[0-9][0-9][0-9][0-9] " , tolower( gsub( "[^A-z0-9 -]" , "" , catalog$file_name ) ) ) ,
+					gsub( "[0-9][0-9][0-9][0-9] " , ""  , tolower( gsub( "[^A-z0-9 -]" , "" , catalog$file_name ) ) ) ,
 					tolower( gsub( "[^A-z0-9 -]" , "" , catalog$file_name ) )
 				) ,
 				
