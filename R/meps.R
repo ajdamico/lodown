@@ -89,7 +89,7 @@ lodown_meps <-
 			RCurl::getURLContent( catalog[ i , "full_url" ] , ssl.verifypeer = FALSE ) 
 			
 			# download the file
-			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
+			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' , filesize_fun = 'unzip_verify' )
 
 			unzipped_files <- unzip( tf , exdir = paste0( tempdir() , "/unzips" ) )
 
