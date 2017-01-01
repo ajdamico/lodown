@@ -346,13 +346,17 @@ lodown_pisa <-
 					# the sas importation script is screwey too.
 					sri <- pisa_sas_is_evil( catalog[ i , 'sas_ri' ] )
 					# fix it.
+					
 				} else {
+					
+					fp <- catalog[ i , 'full_url' ]
 					sri <- catalog[ i , 'sas_ri' ]
 					zipped <- TRUE
+					
 				}
 			
 				read_SAScii_monetdb ( 
-					catalog[ i , 'full_url' ] ,
+					fp ,
 					sas_ri = pisa_find_chars( pisa_add_decimals( pisa_remove_tabs( sri ) ) ) , 
 					zipped = zipped ,
 					tl = TRUE ,
@@ -399,7 +403,7 @@ lodown_pisa <-
 					# this one is annoying.
 					# just read it into RAM (it fits under 4GB)
 					# then save to MonetDB
-					ism <- read_SAScii( fp , sri , zipped = TRUE )
+					ism <- read_SAScii( catalog[ i , 'full_url' ] , sri , zipped = TRUE )
 					
 					# convert all column names to lowercase
 					names( ism ) <- tolower( names( ism ) )
