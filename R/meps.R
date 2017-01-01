@@ -86,6 +86,8 @@ lodown_meps <-
 
 		for ( i in seq_len( nrow( catalog ) ) ){
 
+			RCurl::getURLContent( catalog[ i , "full_url" ] , ssl.verifypeer = FALSE ) 
+			
 			# download the file
 			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
 
