@@ -30,6 +30,7 @@ NULL
 #' lodown( "ess" , output_dir = "C:/My Directory/ESS" , your_email = "email@address.com" )
 #' lodown( "faers" , output_dir = "C:/My Directory/FAERS" )
 #' lodown( "hmda" , output_dir = "C:/My Directory/HMDA" )
+#' lodown( "meps" , output_dir = "C:/My Directory/MEPS" )
 #' lodown( "mlces" , output_dir = "C:/My Directory/MLCES" )
 #' lodown( "nbs" , output_dir = "C:/My Directory/NBS" )
 #' lodown( "ncvs" , output_dir = "C:/My Directory/NCVS" ,
@@ -84,6 +85,8 @@ NULL
 #' lodown( "faers" , faers_cat[ 1:2 , ] )
 #' hmda_cat <- get_catalog( "hmda" , output_dir = "C:/My Directory/HMDA" )
 #' lodown( "hmda" , hmda_cat[ 1:2 , ] )
+#' meps_cat <- get_catalog( "meps" , output_dir = "C:/My Directory/MEPS" )
+#' lodown( "meps" , meps_cat[ 1:2 , ] )
 #' mlces_cat <- get_catalog( "mlces" , output_dir = "C:/My Directory/MLCES" )
 #' lodown( "mlces" , mlces_cat[ 1:2 , ] )
 #' nbs_cat <- get_catalog( "nbs" , output_dir = "C:/My Directory/NBS" )
