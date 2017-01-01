@@ -1,5 +1,5 @@
 #' @importFrom utils download.file read.csv unzip getFromNamespace write.csv read.table
-#' @importFrom stats as.formula vcov coef
+#' @importFrom stats as.formula vcov coef pf update
 NULL
 
 #' locally download, import, prepare publicly-available microdata
