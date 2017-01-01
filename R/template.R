@@ -26,7 +26,7 @@
 		# for ( i in seq_len( nrow( catalog ) ) ){
 
 			# # download the file
-			# cachaca( catalog[ i , "urls" ] , tf , mode = 'wb' )
+			# cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
 
 			# unzipped_files <- unzip( tf , exdir = paste0( tempdir() , "/unzips" ) )
 
