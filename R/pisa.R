@@ -77,7 +77,7 @@ get_catalog_pisa <-
 				year = 2003 ,
 				full_url = paste0( http.pre , files_2003 , ".zip" ) ,
 				sas_ri = paste0( http.pre , sas_2003 , ".sas" ) ,
-				design = c( paste0( output_dir , "/2003 " , "int_cogn_2003" , " design.rda" )  , rep( NA , 2 ) ) ,
+				design = c( NA , paste0( output_dir , "/2003 " , "int_cogn_2003" , " design.rda" )  , NA ) ,
 				stringsAsFactors = FALSE
 			)
 			
