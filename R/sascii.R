@@ -13,7 +13,7 @@ read_SAScii <-
 		if (zipped) {
 			tf <- tempfile()
 			cachaca( dat_path , tf , mode = "wb" )
-			dat_path <- unzip( tf , overwrite = TRUE )
+			dat_path <- unzip( tf , exdir = paste0( tempdir() , "/unzips" ) , overwrite = TRUE )
 			if( length( dat_path ) != 1 ) stop( "zipped file does not contain exactly one file" )
 		}
 		
