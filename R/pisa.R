@@ -44,7 +44,7 @@ get_catalog_pisa <-
 				db_tablename = tolower( files_2009 ) ,
 				year = 2009 ,
 				full_url = paste0( http.pre , files_2009 , ".zip" ) ,
-				sas_ri = paste0( http.pre , sas_2012 , ".sas" ) ,
+				sas_ri = paste0( http.pre , sas_2009 , ".sas" ) ,
 				design = c( paste0( output_dir , "/2009 " , "int_stq09_dec11" , " design.rda" ) , rep( NA , 4 ) ) ,
 				stringsAsFactors = FALSE
 			)
@@ -321,14 +321,14 @@ lodown_pisa <-
 				
 					zipped <- FALSE
 					
-					tf <- tempfile() ; tf2 <- tempfile() ; td <- tempdir()
+					tf2 <- tempfile()
 					
-					download.file( fp , tf , mode = 'wb' )
-					
-					tf3 <- unzip( tf , exdir = td )
-					
+					cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
+
+					unzipped_files <- unzip( tf , exdir = paste0( tempdir() , "/unzips" ) )
+
 					# read-only file connection "r" - pointing to the ASCII file
-					incon <- file( tf3 , "r")
+					incon <- file( unzipped_files , "r")
 
 					# write-only file connections "w"
 					outcon <- file( tf2 , "w" )
@@ -533,7 +533,7 @@ lodown_pisa <-
 			DBI::dbDisconnect( db , shutdown = TRUE )
 			
 			# delete the temporary files
-			suppressWarnings( file.remove( tf , unzipped_files ) )
+			suppressWarnings( file.remove( tf , if( exists( "unzipped_files" ) ) unzipped_files ) )
 
 			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'dbfolder' ] , "'\r\n\n" ) )
 
@@ -987,7 +987,7 @@ pisa_construct.pisa.survey.designs <-
 				type = 'JK1' ,
 				data = mitools::imputationList( datasets = as.list( paste0( table.name , "_imp" , seq( implicates ) ) ) , dbtype = "MonetDBLite" ) ,
 				dbtype = "MonetDBLite" ,
-				dbname = DBI::dbGetInfo( conn )$gdk_path
+				dbname = DBI::dbGetInfo( conn )$gdk_dbpath
 			)
 		
 		# workaround for a bug in survey::svrepdesign.character
