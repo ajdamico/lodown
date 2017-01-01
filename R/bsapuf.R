@@ -63,6 +63,8 @@ lodown_bsapuf <-
 
 			unzipped_files <- unzip( tf , exdir = paste0( tempdir() , "/unzips" ) )
 
+			unzipped_files <- unzipped_files[ !grepl( "\\.xlsx$" , unzipped_files , ignore.case = TRUE ) ]
+			
 			stopifnot( length( unzipped_files ) == 1 )
 			
 			DBI::dbWriteTable( db , catalog[ i , 'db_tablename' ] , unzipped_files , lower.case.names = TRUE , append = TRUE , nrow.check = 250000 )
