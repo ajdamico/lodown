@@ -65,7 +65,7 @@ lodown_bsapuf <-
 
 			stopifnot( length( unzipped_files ) == 1 )
 			
-			DBI::dbWriteTable( db , catalog[ i , 'db_tablename' ] , unzipped_files , lower.case.names = TRUE , append = TRUE , nrow.check = 50000 )
+			DBI::dbWriteTable( db , catalog[ i , 'db_tablename' ] , unzipped_files , lower.case.names = TRUE , append = TRUE , nrow.check = 250000 )
 
 			# delete the temporary files
 			suppressWarnings( file.remove( tf , unzipped_files ) )
