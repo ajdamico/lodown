@@ -2,7 +2,7 @@
 
 
 read_SAScii <-
-	function( dat_path , sas_path , beginline = 1 , lrecl = NULL , skip_decimal_division = NULL , ... ){
+	function( dat_path , sas_path , beginline = 1 , lrecl = NULL , skip_decimal_division = NULL , zipped = FALSE , ... ){
 
 		sasc <- SAScii::parse.SAScii( sas_path , beginline = beginline , lrecl = lrecl )
 
@@ -10,6 +10,13 @@ read_SAScii <-
 		
 		sasc$varname[ is.na( sasc$varname ) ] <- paste0( "toss" , seq( sum( is.na( sasc$varname ) ) ) )
 
+		if (zipped) {
+			tf <- tempfile()
+			cachaca( dat_path , tf , mode = "wb" )
+			dat_path <- unzip( tf , overwrite = TRUE )
+			if( length( dat_path ) != 1 ) stop( "zipped file does not contain exactly one file" )
+		}
+		
 		# read in the fixed-width file..
 		x <-
 			readr::read_fwf(

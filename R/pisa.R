@@ -344,13 +344,16 @@ lodown_pisa <-
 					fp <- tf2
 					
 					# the sas importation script is screwey too.
-					sri <- pisa_sas_is_evil( sri )
+					sri <- pisa_sas_is_evil( catalog[ i , 'sas_ri' ] )
 					# fix it.
-				} else zipped <- TRUE
+				} else {
+					sri <- catalog[ i , 'sas_ri' ]
+					zipped <- TRUE
+				}
 			
 				read_SAScii_monetdb ( 
 					catalog[ i , 'full_url' ] ,
-					sas_ri = pisa_find_chars( pisa_add_decimals( pisa_remove_tabs( catalog[ i , 'sas_ri' ] ) ) ) , 
+					sas_ri = pisa_find_chars( pisa_add_decimals( pisa_remove_tabs( sri ) ) ) , 
 					zipped = zipped ,
 					tl = TRUE ,
 					tablename = catalog[ i , 'db_tablename' ] ,
@@ -917,9 +920,7 @@ pisa_construct.pisa.survey.designs <-
 
 		# loop through each of the five variables..
 		for ( i in seq( implicates ) ){
-
-			print( paste( 'currently working on implicate' , i , 'from table' , table.name ) )
-
+		
 			implicate.name <- paste0( table.name , "_imp" , i )
 			
 			# build a sql string to create all five implicates
