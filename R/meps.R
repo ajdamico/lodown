@@ -68,7 +68,7 @@ get_catalog_meps <-
 				
 				ifelse( !grepl( "-" , catalog$year ) ,
 					gsub( paste0( catalog$year , " " ) , "" , tolower( gsub( "[^A-z0-9 -]" , "" , catalog$file_name ) ) ) ,
-					tolower( gsub( "[^A-z0-9 -]" , "" , catalog$file_name ) ) ,
+					tolower( gsub( "[^A-z0-9 -]" , "" , catalog$file_name ) )
 				) ,
 				
 				ifelse( is.na( catalog$file_num ) , "" , paste0( " f" , catalog$file_num ) ) ,
