@@ -74,7 +74,7 @@ get_catalog_meps <-
 		catalog$output_filename <- gsub( " data| public use| file" , "" , catalog$output_filename )
 		
 		# skip broken files
-		catalog <- catalog[ !( catalog$table_id %in% c( "HC-009" ) ) , ]
+		catalog <- catalog[ !( catalog$table_id %in% c( "HC-009" , "HC-049" ) ) , ]
 		
 		catalog
 		
