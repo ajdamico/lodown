@@ -23,7 +23,7 @@ get_catalog_seer <-
 
 
 lodown_seer <-
-	function( data_name = "seer" , catalog , your_username , your_password , ... ){
+	function( data_name = "seer" , catalog , ... ){
 
 		if( nrow( catalog ) != 1 ) stop( "seer catalog must be exactly one record" )
 	
