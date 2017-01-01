@@ -40,6 +40,8 @@ get_catalog_bsapuf <-
 				stringsAsFactors = FALSE
 			)
 
+		catalog$full_url <- gsub( "http://" , "https://" , catalog$full_url , fixed = TRUE )
+			
 		catalog
 
 	}
