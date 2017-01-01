@@ -403,7 +403,7 @@ lodown_pisa <-
 					# this one is annoying.
 					# just read it into RAM (it fits under 4GB)
 					# then save to MonetDB
-					ism <- read_SAScii( catalog[ i , 'full_url' ] , sri , zipped = TRUE )
+					ism <- read_SAScii( catalog[ i , 'full_url' ] , sri , zipped = TRUE , na = c( "NA" , "." ) )
 					
 					# convert all column names to lowercase
 					names( ism ) <- tolower( names( ism ) )
@@ -760,7 +760,7 @@ pisa_find_chars <-
 	function( sas_ri ){
 		
 		# test if this is necessary
-		z <- SAScii::parse.SAScii( sas_ri )
+		suppressWarnings( z <- SAScii::parse.SAScii( sas_ri ) )
 		
 		# if there are ZERO character fields (that's not possible)
 		# they need to be pulled from the "length" segment
@@ -790,7 +790,7 @@ pisa_find_chars <-
 			writeLines( z , tf )
 			
 			# for a special-read in of those fields
-			z <- SAScii::parse.SAScii( tf )
+			suppressWarnings( z <- SAScii::parse.SAScii( tf ) )
 			
 
 			# but just do that to take note of the character fields

@@ -165,7 +165,7 @@ lodown_nsfg <-
 			
 			
 			# figure out the column positions
-			sasc <- SAScii::parse.SAScii( tf2 , beginline = catalog[ i , 'beginline' ] )
+			suppressWarnings( sasc <- SAScii::parse.SAScii( tf2 , beginline = catalog[ i , 'beginline' ] ) )
 
 			# fix widths on 2011_2015 weights file
 			if( grepl( "2011_2015_4YearWeightSetup.sas" , catalog[ i , "sas_ri" ] , fixed = TRUE ) ) sasc$width <- 12

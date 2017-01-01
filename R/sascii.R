@@ -4,7 +4,7 @@
 read_SAScii <-
 	function( dat_path , sas_path , beginline = 1 , lrecl = NULL , skip_decimal_division = NULL , zipped = FALSE , ... ){
 
-		sasc <- SAScii::parse.SAScii( sas_path , beginline = beginline , lrecl = lrecl )
+		suppressWarnings( sasc <- SAScii::parse.SAScii( sas_path , beginline = beginline , lrecl = lrecl ) )
 
 		y <- sasc[ !is.na( sasc[ , "varname" ] ) , ]
 		
@@ -134,7 +134,7 @@ read_SAScii_monetdb <-
 		# otherwise, just copy it over.
 		} else tf_sri <- sas_ri
 		
-		x <- SAScii::parse.SAScii( tf_sri , beginline , lrecl )
+		suppressWarnings( x <- SAScii::parse.SAScii( tf_sri , beginline , lrecl ) )
 	
 	} else {
 	

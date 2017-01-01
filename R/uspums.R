@@ -96,10 +96,10 @@ lodown_uspums <-
 			writeLines( sas.90 , of )
 
 			# read in the household structure
-			hh.90.structure <- SAScii::parse.SAScii( of , beginline = 7 )
+			suppressWarnings( hh.90.structure <- SAScii::parse.SAScii( of , beginline = 7 ) )
 			
 			# read in the person structure
-			person.90.structure <- SAScii::parse.SAScii( of , beginline = 125 )
+			suppressWarnings( person.90.structure <- SAScii::parse.SAScii( of , beginline = 125 ) )
 			
 			# convert both variables to lowercase
 			hh.90.structure$variable <- tolower( hh.90.structure$varname )
