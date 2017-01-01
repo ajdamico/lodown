@@ -15,7 +15,8 @@ get_catalog_meps <-
 		possible_years <- unique( as.numeric( strsplit( gsub( " +" , " " , gsub( "[^0-9]" , " " , possible_years ) ) , " " )[[1]] ) )
 
 		possible_years <- possible_years[ !is.na( possible_years ) ]
-
+		
+		possible_years <- possible_years[ possible_years != 1996 ]
 
 		for( this_year in possible_years ){
 
