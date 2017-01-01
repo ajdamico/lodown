@@ -74,9 +74,6 @@ get_catalog_meps <-
 			
 		catalog$output_filename <- gsub( " data| public use| file" , "" , catalog$output_filename )
 		
-		# skip broken files
-		catalog <- catalog[ !( catalog$table_id %in% c( "HC-009" , "HC-075" , "HC-013" , "HC-053" ) ) , ]
-		
 		catalog
 		
 	}
@@ -100,13 +97,18 @@ lodown_meps <-
 
 			if( length( unzipped_files ) != 1 ) stop( "expecting a single sas transport file" )
 
-			x <- foreign::read.xport( unzipped_files )
+			import_result <-
+				try({
+					x <- foreign::read.xport( unzipped_files )
 
-			# convert all column names to lowercase
-			names( x ) <- tolower( names( x ) )
+					# convert all column names to lowercase
+					names( x ) <- tolower( names( x ) )
 
-			save( x , file = catalog[ i , 'output_filename' ] )
-
+					save( x , file = catalog[ i , 'output_filename' ] )
+				} , silent = TRUE )
+				
+			if( class( import_result ) == 'try-error' ) cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " failed.'\r\n\n" ) )
+				
 			# delete the temporary files
 			suppressWarnings( file.remove( tf , unzipped_files ) )
 
