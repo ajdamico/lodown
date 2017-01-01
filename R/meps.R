@@ -63,7 +63,8 @@ get_catalog_meps <-
 		catalog$output_filename <- 
 			paste0( 
 				output_dir , "/" , 
-				ifelse( grepl( "-" , catalog$year ) & !grepl( "Longitudinal" , catalog$file_name ) , "" , paste0( catalog$year , "/" ) ) ,
+				ifelse( grepl( "-" , catalog$year ) , "" , paste0( catalog$year , "/" ) ) ,
+				ifelse( grepl( "Longitudinal" , catalog$file_name ) , paste0( catalog$year , " " ) , "" ) ,
 				tolower( gsub( "[^A-z0-9 -]" , "" , catalog$file_name ) ) ,
 				ifelse( is.na( catalog$file_num ) , "" , paste0( " f" , catalog$file_num ) ) ,
 				".rda"
@@ -74,7 +75,7 @@ get_catalog_meps <-
 		catalog$output_filename <- gsub( " data| public use| file" , "" , catalog$output_filename )
 		
 		# skip broken files
-		catalog <- catalog[ !( catalog$table_id %in% c( "HC-009" , "HC-049" ) ) , ]
+		catalog <- catalog[ !( catalog$table_id %in% c( "HC-009" , "HC-075" , "HC-013" ) ) , ]
 		
 		catalog
 		
