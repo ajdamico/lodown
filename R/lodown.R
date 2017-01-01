@@ -45,6 +45,7 @@ NULL
 #' lodown( "nsduh" , output_dir = "C:/My Directory/NSDUH" , 
 #' 		your_email = "email@address.com" , your_password = "password" )
 #' lodown( "piaac" , output_dir = "C:/My Directory/PIAAC" )
+#' lodown( "pisa" , output_dir = "C:/My Directory/PISA" )
 #' lodown( "pls" , output_dir = "C:/My Directory/PLS" )
 #' lodown( "pme" , output_dir = "C:/My Directory/PME" )
 #' lodown( "pns" , output_dir = "C:/My Directory/PNS" )
@@ -110,6 +111,8 @@ NULL
 #' 		your_email = "email@address.com" , your_password = "password" )
 #' piaac_cat <- get_catalog( "piaac" , output_dir = "C:/My Directory/PIAAC" )
 #' lodown( "piaac" , piaac_cat[ 1:2 , ] )
+#' pisa_cat <- get_catalog( "pisa" , output_dir = "C:/My Directory/PISA" )
+#' lodown( "pisa" , pisa_cat[ 1:2 , ] )
 #' pls_cat <- get_catalog( "pls" , output_dir = "C:/My Directory/PLS" )
 #' lodown( "pls" , pls_cat[ 1:2 , ] )
 #' pme_cat <- get_catalog( "pme" , output_dir = "C:/My Directory/PME" )
