@@ -138,8 +138,6 @@ cachaca <-
 
 		if( filesize_fun != 'unzip_verify' && this_filesize == 0 ) stop( "remote server lists file size as zero" )
 
-		if( filesize_fun == 'unzip_verify' & is.null( destfile ) ) stop( "the unzip_verify option only allowed when there's a destination file" )
-		
 		# start out with a failed attempt, so the while loop below commences
 		failed.attempt <- try( stop() , silent = TRUE )
 
@@ -162,6 +160,21 @@ cachaca <-
 						# did the download work?
 						success <- do.call( FUN , list( this_url , ... ) )
 
+						if( filesize_fun == 'unzip_verify' ){
+						
+							unzip_tf <- tempfile()
+							
+							writeBin( httr::content( success ) , unzip_tf )
+						
+							tryCatch( unzipped_files <- unzip( unzip_tf , exdir = paste0( tempdir() , "/unzips" ) ) , warning = function(w) { stop( "unzip_verify failed: " , conditionMessage( w ) ) } )
+							
+							# if the unzip worked without issue, then the file size is correct
+							this_filesize <- file.info( destfile )$size
+							
+							file.remove( unzip_tf , unzipped_files )
+													
+						}
+												
 						if( !isTRUE( all.equal( length( success ) , this_filesize ) ) && !isTRUE( all.equal( length( httr::content( success ) ) , this_filesize ) ) ){
 
 							message( paste0( "downloaded binary url size (" , length( success ) , ") does not match server's content length (" , this_filesize , ")" ) )
