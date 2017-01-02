@@ -86,13 +86,13 @@ get_catalog_hrs <-
 					
 						which_file <- grep( "distribution set" , this_table[[ which_table ]][ , which_column ] , ignore.case = TRUE )
 						
-						this_cat[ which_file , 'output_directory' ] <- gsub( "\\.zip" , "" , this_cat[ which_file , 'output_filename' ] , ignore.case = TRUE )
+						this_cat[ which_file , 'output_folder' ] <- gsub( "\\.zip" , "" , this_cat[ which_file , 'output_filename' ] , ignore.case = TRUE )
 					
-					} else this_cat$output_directory <- NA
+					} else this_cat$output_folder <- NA
 					
 				} else {
 				
-					this_cat$output_directory <- ifelse( grepl( "sta\\.zip$|stata\\.zip$" , this_cat$output_filename , ignore.case = TRUE ) , gsub( "\\.zip" , "" , this_cat$output_filename , ignore.case = TRUE ) , NA )
+					this_cat$output_folder <- ifelse( grepl( "sta\\.zip$|stata\\.zip$" , this_cat$output_filename , ignore.case = TRUE ) , gsub( "\\.zip" , "" , this_cat$output_filename , ignore.case = TRUE ) , NA )
 
 				}
 
@@ -143,7 +143,7 @@ lodown_hrs <-
 
 			writeBin( httr::content( this_file , "raw" ) , catalog[ i , "output_filename" ] )
 			
-			if( !is.na( catalog[ i , 'output_directory' ] ) ){
+			if( !is.na( catalog[ i , 'output_folder' ] ) ){
 							
 				unzipped_files <- unzip( catalog[ i , "output_filename" ] , exdir = paste0( tempdir() , "/unzips" ) )
 
@@ -159,7 +159,7 @@ lodown_hrs <-
 					# convert all column names to lowercase
 					names( x ) <- tolower( names( x ) )
 
-					save( x , file = paste0( catalog[ i , 'output_directory' ] , "/" , gsub( "\\.dta" , ".rda" , basename( unzipped_files ) , ignore.case = TRUE ) ) )
+					save( x , file = paste0( catalog[ i , 'output_folder' ] , "/" , gsub( "\\.dta" , ".rda" , basename( unzipped_files ) , ignore.case = TRUE ) ) )
 
 				} else {
 				
@@ -224,7 +224,7 @@ lodown_hrs <-
 						# convert all column names to lowercase
 						names( x ) <- tolower( names( x ) )
 
-						save( x , file = paste0( catalog[ i , 'output_directory' ] , "/" , gsub( "\\.dta" , ".rda" , basename( this_dat ) , ignore.case = TRUE ) ) )
+						save( x , file = paste0( catalog[ i , 'output_folder' ] , "/" , gsub( "\\.dta" , ".rda" , basename( this_dat ) , ignore.case = TRUE ) ) )
 
 					}
 					
@@ -234,7 +234,7 @@ lodown_hrs <-
 				# delete the temporary files
 				suppressWarnings( file.remove( unzipped_files ) )
 
-				cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'output_directory' ] , "'\r\n\n" ) )
+				cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'output_folder' ] , "'\r\n\n" ) )
 
 			} else {
 			
