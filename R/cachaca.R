@@ -169,7 +169,7 @@ cachaca <-
 							tryCatch( unzipped_files <- unzip( unzip_tf , exdir = paste0( tempdir() , "/unzips" ) ) , warning = function(w) { stop( "unzip_verify failed: " , conditionMessage( w ) ) } )
 							
 							# if the unzip worked without issue, then the file size is correct
-							this_filesize <- file.info( destfile )$size
+							this_filesize <- file.info( unzip_tf )$size
 							
 							file.remove( unzip_tf , unzipped_files )
 													
