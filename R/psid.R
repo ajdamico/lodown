@@ -5,7 +5,7 @@ get_catalog_psid <-
 
 		zipsmain <- xml2::read_html( "http://simba.isr.umich.edu/Zips/ZipMain.aspx" )
 		
-		table_urls <- xml2::url_absolute( rvest::html_attr( rvest::html_nodes( zipsmain , ".rtIn" ) , "href") , url )
+		table_urls <- xml2::url_absolute( rvest::html_attr( rvest::html_nodes( zipsmain , ".rtIn" ) , "href") , "http://simba.isr.umich.edu/Zips/" )
 		  
 		table_text <- rvest::html_text( rvest::html_nodes( zipsmain , ".rtIn" ) )
 
@@ -23,7 +23,7 @@ get_catalog_psid <-
 		
 		catalog$type <- ifelse( grepl( "^[0-9][0-9][0-9][0-9] Wealth$" , catalog$table_name ) , "Wealth Files" , catalog$directory )
 
-		catalog$output_filename <- paste0( output_dir , "/" , tolower( catalog$type ) , "/" , gsub( ":|,|\\(|\\)" , "" , tolower( catalog$table_name ) ) , ".rda" )
+		catalog$output_filename <- paste0( output_dir , "/" , gsub( ":|,|\\(|\\)" , "" , tolower( catalog$type ) ) , "/" , gsub( ":|,|\\(|\\)" , "" , tolower( catalog$table_name ) ) , ".rda" )
 
 		catalog
 
