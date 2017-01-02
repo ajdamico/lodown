@@ -105,6 +105,8 @@ get_catalog_hrs <-
 			
 		}
 		
+		catalog <- catalog[ !is.na( catalog$output_folder ) , ]
+		
 		catalog
 		
 	}
@@ -152,14 +154,16 @@ lodown_hrs <-
 				# stata or sascii
 				if( grepl( "sta\\.zip$|stata\\.zip$" , catalog[ i , 'output_filename' ] , ignore.case = TRUE ) ){
 				
-					stopifnot( length( unzipped_files ) == 1 )
-				
-					x <- data.frame( haven::read_dta( unzipped_files ) )
+					for( this_stata in grep( "\\.dta$" , unzipped_files , value = TRUE ) ){
 					
-					# convert all column names to lowercase
-					names( x ) <- tolower( names( x ) )
+						x <- data.frame( haven::read_dta( this_stata ) )
+						
+						# convert all column names to lowercase
+						names( x ) <- tolower( names( x ) )
 
-					save( x , file = paste0( catalog[ i , 'output_folder' ] , "/" , gsub( "\\.dta" , ".rda" , basename( unzipped_files ) , ignore.case = TRUE ) ) )
+						save( x , file = paste0( catalog[ i , 'output_folder' ] , "/" , tolower( gsub( "\\.dta" , ".rda" , basename( this_stata ) , ignore.case = TRUE ) ) ) )
+						
+					}
 
 				} else {
 				
@@ -169,9 +173,9 @@ lodown_hrs <-
 										
 					for( this_dat in dat_files ){
 
-						this_sas <- sas_files[ gsub( "\\.sas" , "" , basename( sas_files ) , ignore.case = TRUE ) == gsub( "\\.da" , "" , basename( this_dat ) , ignore.case = TRUE ) ]
+						this_sas <- sas_files[ tolower( gsub( "\\.sas" , "" , basename( sas_files ) , ignore.case = TRUE ) ) == tolower( gsub( "\\.da" , "" , basename( this_dat ) , ignore.case = TRUE ) ) ]
 					
-						x <- read_SAScii( this_dat , this_sas )		
+						x <- read_SAScii( this_dat , this_sas , na = c( 'NA' , '' , '.' ) )		
 	
 						# note that the SAS script included a number of IF statements
 						# that are not appropriately handled by the R SAScii package
@@ -196,35 +200,40 @@ lodown_hrs <-
 						# find the fourth element of the list, which contains the values to overwrite
 						val <- sapply( sas.split , `[[` , 4 )
 
+						if( identical( overwrites , list() ) ) overwrites <- NULL
+						
 						# loop through every 'overwrite' column instructed by the SAS script..
-						for ( j in seq( length( overwrites ) ) ){
+						for ( j in seq_along( overwrites ) ){
 
-							# if the line is 'greater than or equal to'..
-							if ( eoge[ j ] == 'GE' ){
+							try( {
+								# if the line is 'greater than or equal to'..
+								if ( eoge[ j ] == 'GE' ){
 
-								# overwrite all records with values >= than the stated value with NA
-								x[ no.na( x[ , overwrites[ j ] ] >= val[ j ] ) , overwrites[ j ] ] <- NA
+									# overwrite all records with values >= than the stated value with NA
+									x[ no.na( x[ , overwrites[ j ] ] >= val[ j ] ) , overwrites[ j ] ] <- NA
 
-							} else {
-
-								# if the line is just 'equal to'..
-								if ( eoge[ j ] == '=' ){
-
-									# overwrite all records with values == to the stated value with NA
-									x[ no.na( x[ , overwrites[ j ] ] == val[ j ] ) , overwrites[ j ] ] <- NA
-									
-								# otherwise..
 								} else {
-									# there's something else going on in the script that needs to be human-viewed
-									stop( "eoge isn't GE or =" )
+
+									# if the line is just 'equal to'..
+									if ( eoge[ j ] == '=' ){
+
+										# overwrite all records with values == to the stated value with NA
+										x[ no.na( x[ , overwrites[ j ] ] == val[ j ] ) , overwrites[ j ] ] <- NA
+										
+									# otherwise..
+									} else {
+										# there's something else going on in the script that needs to be human-viewed
+										stop( "eoge isn't GE or =" )
+									}
 								}
-							}
+							} , silent = TRUE )
+							
 						}
 						
 						# convert all column names to lowercase
 						names( x ) <- tolower( names( x ) )
 
-						save( x , file = paste0( catalog[ i , 'output_folder' ] , "/" , gsub( "\\.dta" , ".rda" , basename( this_dat ) , ignore.case = TRUE ) ) )
+						save( x , file = paste0( catalog[ i , 'output_folder' ] , "/" , tolower( gsub( "\\.da" , ".rda" , basename( this_dat ) , ignore.case = TRUE ) ) ) )
 
 					}
 					
