@@ -31,6 +31,8 @@ NULL
 #' lodown( "ess" , output_dir = "C:/My Directory/ESS" , your_email = "email@address.com" )
 #' lodown( "faers" , output_dir = "C:/My Directory/FAERS" )
 #' lodown( "hmda" , output_dir = "C:/My Directory/HMDA" )
+#' lodown( "hrs" , output_dir = "C:/My Directory/HRS" , 
+#' 		your_username = "username" , your_password = "password" )
 #' lodown( "meps" , output_dir = "C:/My Directory/MEPS" )
 #' lodown( "mlces" , output_dir = "C:/My Directory/MLCES" )
 #' lodown( "nbs" , output_dir = "C:/My Directory/NBS" )
@@ -88,6 +90,10 @@ NULL
 #' lodown( "faers" , faers_cat[ 1:2 , ] )
 #' hmda_cat <- get_catalog( "hmda" , output_dir = "C:/My Directory/HMDA" )
 #' lodown( "hmda" , hmda_cat[ 1:2 , ] )
+#' hrs_cat <- get_catalog( "hrs" , output_dir = "C:/My Directory/HRS" , 
+#' 		your_username = "username" , your_password = "password" )
+#' lodown( "hrs" , hrs_cat[ 1:2 , ] , 
+#' 		your_username = "username" , your_password = "password" )
 #' meps_cat <- get_catalog( "meps" , output_dir = "C:/My Directory/MEPS" )
 #' lodown( "meps" , meps_cat[ 1:2 , ] )
 #' mlces_cat <- get_catalog( "mlces" , output_dir = "C:/My Directory/MLCES" )
