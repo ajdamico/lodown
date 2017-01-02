@@ -59,28 +59,51 @@ get_catalog_hrs <-
 			these_versids <- paste0( "https://ssl.isr.umich.edu/hrs/" , link_refs[ grepl( 'filedownload2\\.php\\?d' , link_refs ) ] )
 			
 			this_text <- stringr::str_trim( link_text[ grepl( 'filedownload2\\.php\\?d' , link_refs ) ] )
-			
-			catalog <-
-				rbind(
-					catalog ,
-					data.frame(
-						file_title = versid_text[ this_page ] ,
-						file_name = this_text ,
-						full_url = these_versids ,
-						stringsAsFactors = FALSE
-					)
+
+			this_cat <-
+				data.frame(
+					file_title = versid_text[ this_page ] ,
+					file_name = this_text ,
+					full_url = these_versids ,
+					stringsAsFactors = FALSE
 				)
+		
+			if( nrow( this_cat ) > 0 ){
+			
+				this_cat$year <- ifelse( grepl( "^[0-9][0-9][0-9][0-9]" , this_cat$file_title ) , substr( this_cat$file_title , 1 , 4 ) , NA )
+			
+				this_cat$output_filename <- paste0( output_dir , "/" , ifelse( is.na( this_cat$year ) , "" , paste0( this_cat$year , "/" ) ) , this_cat$file_name )
+						
+				if( !any( grepl( "rand" , this_cat$output_filename , ignore.case = TRUE ) ) & !any( grepl( "rand" , this_cat$file_title , ignore.case = TRUE ) ) ){
+
+					this_table <- rvest::html_table( httr::content( this_resp ) , fill = TRUE )
+					
+					which_table <- which( unlist( lapply( this_table , function( z ) any( grepl( "distribution set" , z , ignore.case = TRUE ) ) ) ) )
 				
+					if( length( which_table ) == 1 ){
+				
+						which_column <- sapply( this_table[[ which_table ]] , function( z ) any( grepl( "distribution set" , z , ignore.case = TRUE ) ) )
+					
+						which_file <- grep( "distribution set" , this_table[[ which_table ]][ , which_column ] , ignore.case = TRUE )
+						
+						this_cat[ which_file , 'output_directory' ] <- gsub( "\\.zip" , "" , this_cat[ which_file , 'output_filename' ] , ignore.case = TRUE )
+					
+					} else this_cat$output_directory <- NA
+					
+				} else {
+				
+					this_cat$output_directory <- ifelse( grepl( "sta\\.zip$|stata\\.zip$" , this_cat$output_filename , ignore.case = TRUE ) , gsub( "\\.zip" , "" , this_cat$output_filename , ignore.case = TRUE ) , NA )
+
+				}
+
+			
+				this_cat <- this_cat[ grepl( "\\.zip$" , this_cat$file_name , ignore.case = TRUE ) , ]
+				
+				catalog <- rbind( catalog , this_cat )
+			
+			}
+			
 		}
-		
-		catalog$year <- ifelse( grepl( "^[0-9][0-9][0-9][0-9]" , catalog$file_title ) , substr( catalog$file_title , 1 , 4 ) , NA )
-		
-		catalog$output_filename <- paste0( output_dir , "/" , ifelse( is.na( catalog$year ) , "" , paste0( catalog$year , "/" ) ) , catalog$file_name )
-		
-		# import the stata files to rda files
-		catalog$rda_filename <- ifelse( grepl( "sta" , catalog$file_name , ignore.case = TRUE ) , gsub( "\\.zip" , ".rda" , catalog$output_filename , ignore.case = TRUE ) , NA )
-		
-		catalog <- catalog[ grepl( "\\.zip$" , catalog$file_name , ignore.case = TRUE ) , ]
 		
 		catalog
 		
@@ -120,23 +143,98 @@ lodown_hrs <-
 
 			writeBin( httr::content( this_file , "raw" ) , catalog[ i , "output_filename" ] )
 			
-			if( !is.na( catalog[ i , 'rda_filename' ] ) ){
+			if( !is.na( catalog[ i , 'output_directory' ] ) ){
 							
 				unzipped_files <- unzip( catalog[ i , "output_filename" ] , exdir = paste0( tempdir() , "/unzips" ) )
 
-				stopifnot( length( unzipped_files ) == 1 )
+				for( this_zip in grep( "\\.zip" , unzipped_files , ignore.case = TRUE , value = TRUE ) ) unzipped_files <- c( unzipped_files , unzip( this_zip , exdir = paste0( tempdir() , "/unzips" ) ) )
+								
+				# stata or sascii
+				if( grepl( "sta\\.zip$|stata\\.zip$" , catalog[ i , 'output_filename' ] , ignore.case = TRUE ) ){
 				
-				x <- data.frame( haven::read_dta( unzipped_files ) )
+					stopifnot( length( unzipped_files ) == 1 )
+				
+					x <- data.frame( haven::read_dta( unzipped_files ) )
+					
+					# convert all column names to lowercase
+					names( x ) <- tolower( names( x ) )
 
-				# convert all column names to lowercase
-				names( x ) <- tolower( names( x ) )
+					save( x , file = paste0( catalog[ i , 'output_directory' ] , "/" , gsub( "\\.dta" , ".rda" , basename( unzipped_files ) , ignore.case = TRUE ) ) )
 
-				save( x , file = catalog[ i , 'rda_filename' ] )
+				} else {
+				
+					dat_files <- grep( "\\.da$" , unzipped_files , value = TRUE , ignore.case = TRUE )
+					
+					sas_files <- grep( "\\.sas$" , unzipped_files , value = TRUE , ignore.case = TRUE )
+										
+					for( this_dat in dat_files ){
 
+						this_sas <- sas_files[ gsub( "\\.sas" , "" , basename( sas_files ) , ignore.case = TRUE ) == gsub( "\\.da" , "" , basename( this_dat ) , ignore.case = TRUE ) ]
+					
+						x <- read_SAScii( this_dat , this_sas )		
+	
+						# note that the SAS script included a number of IF statements
+						# that are not appropriately handled by the R SAScii package
+						# in every case, these IF statements specify certain cases where
+						# values should be overwritten with missing values instead.
+
+						# load the SAS input script into memory as a big character string
+						saslines <- readLines( this_sas )
+
+						# keep only lines beginning with IF
+						saslines <- saslines[ substr( saslines , 1 , 2 ) == "IF" ]
+
+						# split them up by spaces
+						sas.split <- strsplit( saslines , " " )
+
+						# find the second element of the list, which contains the variable to overwrite
+						overwrites <- sapply( sas.split , `[[` , 2 )
+
+						# find the third element of the list, which contains equal or GE (>=)
+						eoge <- sapply( sas.split , `[[` , 3 )
+
+						# find the fourth element of the list, which contains the values to overwrite
+						val <- sapply( sas.split , `[[` , 4 )
+
+						# loop through every 'overwrite' column instructed by the SAS script..
+						for ( j in seq( length( overwrites ) ) ){
+
+							# if the line is 'greater than or equal to'..
+							if ( eoge[ j ] == 'GE' ){
+
+								# overwrite all records with values >= than the stated value with NA
+								x[ no.na( x[ , overwrites[ j ] ] >= val[ j ] ) , overwrites[ j ] ] <- NA
+
+							} else {
+
+								# if the line is just 'equal to'..
+								if ( eoge[ j ] == '=' ){
+
+									# overwrite all records with values == to the stated value with NA
+									x[ no.na( x[ , overwrites[ j ] ] == val[ j ] ) , overwrites[ j ] ] <- NA
+									
+								# otherwise..
+								} else {
+									# there's something else going on in the script that needs to be human-viewed
+									stop( "eoge isn't GE or =" )
+								}
+							}
+						}
+						
+						# convert all column names to lowercase
+						names( x ) <- tolower( names( x ) )
+
+						save( x , file = paste0( catalog[ i , 'output_directory' ] , "/" , gsub( "\\.dta" , ".rda" , basename( this_dat ) , ignore.case = TRUE ) ) )
+
+					}
+					
+				
+				}
+					
 				# delete the temporary files
 				suppressWarnings( file.remove( unzipped_files ) )
 
-				cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , catalog[ i , 'rda_filename' ] , "'\r\n\n" ) )
+				cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'output_directory' ] , "'\r\n\n" ) )
 
 			} else {
 			
