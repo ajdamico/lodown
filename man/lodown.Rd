@@ -66,6 +66,8 @@ lodown( "pme" , output_dir = "C:/My Directory/PME" )
 lodown( "pns" , output_dir = "C:/My Directory/PNS" )
 lodown( "pnadc" , output_dir = "C:/My Directory/PNADC" )
 lodown( "pof" , output_dir = "C:/My Directory/POF" )
+lodown( "psid" , output_dir = "C:/My Directory/PSID" , 
+		your_email = "email@address.com" , your_password = "password" )
 lodown( "sbo" , output_dir = "C:/My Directory/SBO" )
 lodown( "scf" , output_dir = "C:/My Directory/SCF" )
 lodown( "seer" , output_dir = "C:/My Directory/SEER" ,
@@ -146,6 +148,9 @@ pnadc_cat <- get_catalog( "pnadc" , output_dir = "C:/My Directory/PNADC" )
 lodown( "pnadc" , pnadc_cat[ 1:2 , ] )
 pof_cat <- get_catalog( "pof" , output_dir = "C:/My Directory/POF" )
 lodown( "pof" , pof_cat[ 1:2 , ] )
+psid_cat <- get_catalog( "psid" , output_dir = "C:/My Directory/PSID" )
+lodown( "psid" , psid_cat[ 1:2 , ] ,
+		your_email = "email@address.com" , your_password = "password" )
 sbo_cat <- get_catalog( "sbo" , output_dir = "C:/My Directory/SBO" )
 lodown( "sbo" , sbo_cat[ 1:2 , ] )
 scf_cat <- get_catalog( "scf" , output_dir = "C:/My Directory/SCF" )

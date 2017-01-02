@@ -164,7 +164,7 @@ cachaca <-
 						
 							unzip_tf <- tempfile()
 							
-							writeBin( httr::content( success ) , unzip_tf )
+							if( identical( FUN , RCurl::getBinaryURL ) ) writeBin( success , unzip_tf ) else writeBin( httr::content( success ) , unzip_tf )
 						
 							tryCatch( unzipped_files <- unzip( unzip_tf , exdir = paste0( tempdir() , "/unzips" ) ) , warning = function(w) { stop( "unzip_verify failed: " , conditionMessage( w ) ) } )
 							
