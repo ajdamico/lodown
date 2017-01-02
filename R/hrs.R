@@ -80,6 +80,8 @@ get_catalog_hrs <-
 		# import the stata files to rda files
 		catalog$rda_filename <- ifelse( grepl( "sta" , catalog$file_name , ignore.case = TRUE ) , gsub( "\\.zip" , ".rda" , catalog$output_filename , ignore.case = TRUE ) , NA )
 		
+		catalog <- catalog[ grepl( "\\.zip$" , catalog$file_name , ignore.case = TRUE ) , ]
+		
 		catalog
 		
 	}
@@ -114,7 +116,7 @@ lodown_hrs <-
 		for ( i in seq_len( nrow( catalog ) ) ){
 
 			# download the file
-			this_file <- cachaca( catalog[ i , "full_url" ] , FUN = httr::GET , filesize_fun = 'httr' )
+			this_file <- cachaca( catalog[ i , "full_url" ] , FUN = httr::GET , filesize_fun = 'unzip_verify' )
 
 			writeBin( httr::content( this_file , "raw" ) , catalog[ i , "output_filename" ] )
 			
