@@ -40,6 +40,10 @@ get_catalog_hrs <-
 		
 		versid_text <- stringr::str_trim( link_text[ grepl( 'versid' , link_refs ) ] )
 		
+		versid_text <- versid_text[ !grepl( "versid=107$|versid=139$" , valid_versids ) ]
+		
+		valid_versids <- valid_versids[ !grepl( "versid=107$|versid=139$" , valid_versids ) ]
+		
 		for( this_page in seq_along( valid_versids ) ){
 		
 			this_resp <- httr::GET( valid_versids[ this_page ] , query = values )
@@ -72,6 +76,9 @@ get_catalog_hrs <-
 		catalog$year <- ifelse( grepl( "^[0-9][0-9][0-9][0-9]" , catalog$file_title ) , substr( catalog$file_title , 1 , 4 ) , NA )
 		
 		catalog$output_filename <- paste0( output_dir , "/" , ifelse( is.na( catalog$year ) , "" , paste0( catalog$year , "/" ) ) , catalog$file_name )
+		
+		# import the stata files to rda files
+		catalog$rda_filename <- ifelse( grepl( "sta" , catalog$file_name , ignore.case = TRUE ) , gsub( "\\.zip" , ".rda" , catalog$output_filename , ignore.case = TRUE ) , NA )
 		
 		catalog
 		
@@ -111,8 +118,32 @@ lodown_hrs <-
 
 			writeBin( httr::content( this_file , "raw" ) , catalog[ i , "output_filename" ] )
 			
-			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , catalog[ i , 'output_filename' ] , "'\r\n\n" ) )
+			if( !is.na( catalog[ i , 'rda_filename' ] ) ){
+							
+				unzipped_files <- unzip( catalog[ i , "output_filename" ] , exdir = paste0( tempdir() , "/unzips" ) )
 
+				stopifnot( length( unzipped_files ) == 1 )
+				
+				x <- data.frame( haven::read_dta( unzipped_files ) )
+
+				# convert all column names to lowercase
+				names( x ) <- tolower( names( x ) )
+
+				save( x , file = catalog[ i , 'rda_filename' ] )
+
+				# delete the temporary files
+				suppressWarnings( file.remove( unzipped_files ) )
+
+				cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , catalog[ i , 'rda_filename' ] , "'\r\n\n" ) )
+
+			} else {
+			
+				cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , catalog[ i , 'output_filename' ] , "'\r\n\n" ) )
+			
+			}
+			
+			suppressWarnings( file.remove( tf ) )
+			
 		}
 
 		invisible( TRUE )
