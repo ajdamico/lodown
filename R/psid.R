@@ -23,7 +23,7 @@ get_catalog_psid <-
 		
 		catalog$type <- ifelse( grepl( "^[0-9][0-9][0-9][0-9] Wealth$" , catalog$table_name ) , "Wealth Files" , catalog$directory )
 
-		catalog$output_filename <- paste0( output_dir , "/" , gsub( ":|,|\\(|\\)" , "" , tolower( catalog$type ) ) , "/" , gsub( ":|,|\\(|\\)" , "" , tolower( catalog$table_name ) ) , ".rda" )
+		catalog$output_folder <- paste0( output_dir , "/" , gsub( ":|,|\\(|\\)" , "" , tolower( catalog$type ) ) , "/" )
 
 		catalog
 
@@ -97,21 +97,31 @@ lodown_psid <-
 
 
 			# figure out which file contains the data (so no readmes or technical docs)
-			fn <- unzipped_files[ grepl( ".txt" , tolower( unzipped_files ) , fixed = TRUE ) & ! grepl( "_vdm|readme|doc|errata" , tolower( unzipped_files ) ) ]
+			dat_files <- unzipped_files[ grepl( ".txt" , tolower( unzipped_files ) , fixed = TRUE ) & ! grepl( "_vdm|readme|doc|errata" , tolower( unzipped_files ) ) ]
 			
 			# figure out which file contains the sas importation script
-			sas_ri <- unzipped_files[ grepl( '.sas' , unzipped_files , fixed = TRUE ) ]
+			sas_files <- unzipped_files[ grepl( '.sas' , unzipped_files , fixed = TRUE ) ]
 
-			# read the text file directly into an R data frame with `read.SAScii`
-			x <- read_SAScii( fn , sas_ri )
-
-			# add a `one` column
-			x$one <- 1
+			for( this_dat in seq_along( dat_files ) ){
 			
-			# convert all column names to lowercase
-			names( x ) <- tolower( names( x ) )
+				sas_name <- tolower( gsub( "\\.txt" , "" , basename( this_dat ) , ignore.case = TRUE ) )
+				
+				this_sas <- sas_files[ grep( sas_name , sas_files , ignore.case = TRUE ) ]
+				
+				# read the text file directly into an R data frame with `read.SAScii`
+				x <- read_SAScii( this_dat , this_sas , na = c( "NA" , "." , "" ) )
 
-			save( x , file = catalog[ i , 'output_filename' ] )
+				# add a `one` column
+				x$one <- 1
+				
+				# convert all column names to lowercase
+				names( x ) <- tolower( names( x ) )
+
+				save_name <- paste0( cataog[ i , 'output_folder' ] , "/" , gsub( ":|,|\\(|\\)" , "" , tolower( catalog[ i , 'table_name' ] ) ) , if( length( this_dat ) > 1 ) paste0( " " , sas_name ) , ".rda" )
+				
+				save( x , file = save_name )
+				
+			}
 
 			# delete the temporary files
 			suppressWarnings( file.remove( tf , unzipped_files ) )
