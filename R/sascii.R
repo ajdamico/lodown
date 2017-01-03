@@ -2,7 +2,7 @@
 
 
 read_SAScii <-
-	function( dat_path , sas_path , beginline = 1 , lrecl = NULL , skip_decimal_division = NULL , zipped = FALSE , ... ){
+	function( dat_path , sas_path , beginline = 1 , lrecl = NULL , skip_decimal_division = NULL , zipped = FALSE , na_values = c( "NA" , "" , "." ) , ... ){
 
 		suppressWarnings( sasc <- SAScii::parse.SAScii( sas_path , beginline = beginline , lrecl = lrecl ) )
 
@@ -26,6 +26,9 @@ read_SAScii <-
 				readr::fwf_widths( abs( sasc$width ) , col_names = sasc[ , 'varname' ] ) ,
 				# using the parsed sas column types
 				col_types = paste0( ifelse( grepl( "^toss" , sasc$varname ) , "_" , ifelse( sasc$char , "c" , "d" ) ) , collapse = "" ) ,
+				
+				na = na_values ,
+				
 				# passed in from read_SAScii
 				...
 			)
