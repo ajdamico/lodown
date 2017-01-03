@@ -108,6 +108,8 @@ lodown_psid <-
 				
 				this_sas <- sas_files[ grep( sas_name , sas_files , ignore.case = TRUE ) ]
 				
+				if( length( this_sas ) > 1 ) this_sas <- this_sas[ gsub( "\\.sas" , "" , basename( this_sas ) , ignore.case = TRUE ) == gsub( "\\.txt" , "" , basename( dat_files[ dat_num ] ) , ignore.case = TRUE ) ]
+				
 				# read the text file directly into an R data frame with `read.SAScii`
 				x <- read_SAScii( dat_files[ dat_num ] , this_sas , na = c( "NA" , "." , "" ) )
 
