@@ -117,7 +117,7 @@ lodown_psid <-
 				# convert all column names to lowercase
 				names( x ) <- tolower( names( x ) )
 
-				save_name <- paste0( cataog[ i , 'output_folder' ] , "/" , gsub( ":|,|\\(|\\)" , "" , tolower( catalog[ i , 'table_name' ] ) ) , if( length( dat_files ) > 1 ) tolower( paste0( " " , sas_name ) ) , ".rda" )
+				save_name <- paste0( catalog[ i , 'output_folder' ] , "/" , gsub( ":|,|\\(|\\)" , "" , tolower( catalog[ i , 'table_name' ] ) ) , if( length( dat_files ) > 1 ) tolower( paste0( " " , sas_name ) ) , ".rda" )
 				
 				save( x , file = save_name )
 				
