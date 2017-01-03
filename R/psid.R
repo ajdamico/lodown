@@ -18,7 +18,25 @@ get_catalog_psid <-
 		for( this_row in seq( nrow( catalog ) ) ) catalog[ this_row , 'directory' ] <- ifelse( grepl( "/NA$" , catalog[ this_row , 'full_url' ] ) , catalog[ this_row , 'table_name' ] , catalog[ this_row - 1 , 'directory' ] )
 			
 		catalog <- catalog[ !grepl( "/NA$" , catalog[ , 'full_url' ] ) , ]
-				
+		
+		follow_urls <- !grepl( "GetFile" , catalog$full_url )
+		
+		for( this_url in which( follow_urls ) ){
+		
+			link_refs <- rvest::html_attr( rvest::html_nodes( xml2::read_html( catalog[ this_url , 'full_url' ] ) , "a" ) , "href" )
+			
+			getfiles <- link_refs[ grep( "GetFile" , link_refs ) ]
+		
+			all_panes <- gsub( "(.*)pane=" , "" , getfiles )
+			
+			desired_pane <- gsub( "(.*)pane=" , "" , catalog[ this_url , 'full_url' ] )
+			
+			desired_url <- paste0( "http://simba.isr.umich.edu/Zips/" , getfiles[ all_panes == desired_pane ] )
+			
+			catalog[ this_url , 'full_url' ] <- desired_url
+			
+		}
+		
 		catalog$year = ifelse( grepl( "^[0-9][0-9][0-9][0-9]" , catalog$table_name ) , substr( catalog$table_name , 1 , 4 ) , NA )
 		
 		catalog$type <- ifelse( grepl( "^[0-9][0-9][0-9][0-9] Wealth$" , catalog$table_name ) , "Wealth Files" , catalog$directory )
@@ -124,7 +142,32 @@ lodown_psid <-
 				save( x , file = save_name )
 				
 			}
+			
+			if( length( dat_files ) == 0 ){
+			
+				sas7bdat_files <- unzipped_files[ grepl( ".sas7bdat" , tolower( unzipped_files ) , fixed = TRUE ) & ! grepl( "_vdm|readme|doc|errata" , tolower( unzipped_files ) ) ]
 
+				for( this_sas in sas7bdat_files ){
+				
+					sas_name <- gsub( "\\.sas7bdat" , "" , basename( this_sas ) , ignore.case = TRUE )
+				
+					x <- data.frame( haven::read_sas( this_sas ) )
+					
+					# add a `one` column
+					x$one <- 1
+					
+					# convert all column names to lowercase
+					names( x ) <- tolower( names( x ) )
+
+					save_name <- paste0( catalog[ i , 'output_folder' ] , "/" , gsub( ":|,|\\(|\\)" , "" , tolower( catalog[ i , 'table_name' ] ) ) , if( length( sas7bdat_files ) > 1 ) tolower( paste0( " " , sas_name ) ) , ".rda" )
+					
+					save( x , file = save_name )
+					
+				}
+				
+			}
+			
+				
 			# delete the temporary files
 			suppressWarnings( file.remove( tf , unzipped_files ) )
 
