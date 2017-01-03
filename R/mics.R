@@ -55,6 +55,8 @@ lodown_mics <-
 
 			unzipped_files <- unzip( tf , exdir = paste0( tempdir() , "/unzips" ) )
 
+			for( this_zip in grep( "\\.zip$" , unzipped_files , value = TRUE , ignore.case = TRUE ) ) unzipped_files <- c( unzipped_files , unzip( this_zip , exdir = paste0( tempdir() , "/unzips" ) ) )
+							
 			sav_files <- grep( "\\.sav$" , unzipped_files , ignore.case = TRUE , value = TRUE )
 			
 			if( length( sav_files ) == 0 ) stop( "zero files to import" )
