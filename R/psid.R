@@ -102,14 +102,14 @@ lodown_psid <-
 			# figure out which file contains the sas importation script
 			sas_files <- unzipped_files[ grepl( '.sas' , unzipped_files , fixed = TRUE ) ]
 
-			for( this_dat in seq_along( dat_files ) ){
+			for( dat_num in seq_along( dat_files ) ){
 			
-				sas_name <- tolower( gsub( "\\.txt" , "" , basename( this_dat ) , ignore.case = TRUE ) )
+				sas_name <- gsub( "\\.txt" , "" , basename( dat_files[ dat_num ] ) , ignore.case = TRUE )
 				
 				this_sas <- sas_files[ grep( sas_name , sas_files , ignore.case = TRUE ) ]
 				
 				# read the text file directly into an R data frame with `read.SAScii`
-				x <- read_SAScii( this_dat , this_sas , na = c( "NA" , "." , "" ) )
+				x <- read_SAScii( dat_files[ dat_num ] , this_sas , na = c( "NA" , "." , "" ) )
 
 				# add a `one` column
 				x$one <- 1
@@ -117,7 +117,7 @@ lodown_psid <-
 				# convert all column names to lowercase
 				names( x ) <- tolower( names( x ) )
 
-				save_name <- paste0( cataog[ i , 'output_folder' ] , "/" , gsub( ":|,|\\(|\\)" , "" , tolower( catalog[ i , 'table_name' ] ) ) , if( length( this_dat ) > 1 ) paste0( " " , sas_name ) , ".rda" )
+				save_name <- paste0( cataog[ i , 'output_folder' ] , "/" , gsub( ":|,|\\(|\\)" , "" , tolower( catalog[ i , 'table_name' ] ) ) , if( length( dat_files ) > 1 ) tolower( paste0( " " , sas_name ) ) , ".rda" )
 				
 				save( x , file = save_name )
 				
