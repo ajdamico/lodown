@@ -57,6 +57,8 @@ lodown_mics <-
 
 			sav_files <- grep( "\\.sav$" , unzipped_files , ignore.case = TRUE , value = TRUE )
 			
+			if( length( sav_files ) == 0 ) stop( "zero files to import" )
+			
 			for( this_sav in sav_files ){
 			
 				x <- data.frame( haven::read_spss( this_sav ) )
