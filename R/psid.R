@@ -129,7 +129,7 @@ lodown_psid <-
 				if( length( this_sas ) > 1 ) this_sas <- this_sas[ gsub( "\\.sas" , "" , basename( this_sas ) , ignore.case = TRUE ) == gsub( "\\.txt" , "" , basename( dat_files[ dat_num ] ) , ignore.case = TRUE ) ]
 				
 				# read the text file directly into an R data frame with `read.SAScii`
-				x <- read_SAScii( dat_files[ dat_num ] , this_sas , na = c( "NA" , "." , "" ) )
+				x <- read_SAScii( dat_files[ dat_num ] , this_sas )
 
 				# add a `one` column
 				x$one <- 1

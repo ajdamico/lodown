@@ -45,7 +45,7 @@ lodown_ahrf <-
 
       dat_path <- grep( "\\.asc$" , unzipped_files , value = TRUE )
 
-	  x <- read_SAScii( dat_path , sas_path , na = "." )
+	  x <- read_SAScii( dat_path , sas_path , na_values = "." )
 
       # convert all column names to lowercase
       names( x ) <- tolower( names( x ) )

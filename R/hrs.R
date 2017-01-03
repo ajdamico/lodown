@@ -175,7 +175,7 @@ lodown_hrs <-
 
 						this_sas <- sas_files[ tolower( gsub( "\\.sas" , "" , basename( sas_files ) , ignore.case = TRUE ) ) == tolower( gsub( "\\.da" , "" , basename( this_dat ) , ignore.case = TRUE ) ) ]
 					
-						x <- read_SAScii( this_dat , this_sas , na = c( 'NA' , '' , '.' ) )		
+						x <- read_SAScii( this_dat , this_sas )		
 	
 						# note that the SAS script included a number of IF statements
 						# that are not appropriately handled by the R SAScii package

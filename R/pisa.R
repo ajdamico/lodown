@@ -403,7 +403,7 @@ lodown_pisa <-
 					# this one is annoying.
 					# just read it into RAM (it fits under 4GB)
 					# then save to MonetDB
-					ism <- read_SAScii( catalog[ i , 'full_url' ] , sri , zipped = TRUE , na = c( "NA" , "." ) )
+					ism <- read_SAScii( catalog[ i , 'full_url' ] , sri , zipped = TRUE , na_values = c( "NA" , "." ) )
 					
 					# convert all column names to lowercase
 					names( ism ) <- tolower( names( ism ) )
