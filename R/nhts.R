@@ -56,7 +56,7 @@ lodown_nhts <-
 			# read in csv and asc files
 			for( this_csv in grep( "\\.csv$|\\.asc$" , unzipped_files , value = TRUE , ignore.case = TRUE ) ){
 			
-				db_tablename <- paste0( tolower( gsub( "(.*)\\.(.*)" , "\\1" , basename( this_csv ) ) ) , catalog[ i , 'year' ] )
+				db_tablename <- paste0( tolower( gsub( "[0-9]+" , "" , gsub( "(.*)\\.(.*)" , "\\1" , basename( this_csv ) ) ) ) , catalog[ i , 'year' ] )
 				
 				DBI::dbWriteTable( db , db_tablename , this_csv , header = TRUE , row.names = NULL , nrow.check = 250000 , lower.case.names = TRUE , newline = '\\r\\n' )
 			
@@ -65,7 +65,7 @@ lodown_nhts <-
 			# read in sas7bdat files
 			for( this_sas in grep( "\\.sas7bdat$" , unzipped_files , value = TRUE , ignore.case = TRUE ) ){
 		
-				db_tablename <- paste0( tolower( gsub( "(.*)\\.(.*)" , "\\1" , basename( this_sas ) ) ) , catalog[ i , 'year' ] )
+				db_tablename <- paste0( tolower( gsub( "[0-9]+" , "" , gsub( "(.*)\\.(.*)" , "\\1" , basename( this_sas ) ) ) ) , catalog[ i , 'year' ] )
 				
 				x <- data.frame( haven::read_sas( this_sas ) )
 
@@ -78,7 +78,7 @@ lodown_nhts <-
 			# read in sas transport files
 			for( this_xpt in grep( "\\.xpt$" , unzipped_files , value = TRUE , ignore.case = TRUE ) ){
 		
-				db_tablename <- paste0( tolower( gsub( "(.*)\\.(.*)" , "\\1" , basename( this_xpt ) ) ) , catalog[ i , 'year' ] )
+				db_tablename <- paste0( tolower( gsub( "[0-9]+" , "" , gsub( "(.*)\\.(.*)" , "\\1" , basename( this_xpt ) ) ) ) , catalog[ i , 'year' ] )
 				
 				x <- foreign::read.xport( this_xpt )
 
