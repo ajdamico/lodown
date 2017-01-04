@@ -26,7 +26,7 @@ get_catalog_nhts <-
 				stringsAsFactors = FALSE
 			)
 
-		catalog$output_file <- ifelse( grepl( "ascii\\.zip" , catalog$csv_refs , ignore.case = TRUE ) , paste0( output_dir , "/" , catalog$year , " designs.rda" ) , NA )
+		catalog$output_file <- ifelse( grepl( "ascii\\.zip" , csv_refs , ignore.case = TRUE ) , paste0( output_dir , "/" , catalog$year , " designs.rda" ) , NA )
 
 		catalog <- catalog[ !( catalog$year >= 2009 & grepl( "tripchaining\\.zip" , basename( catalog$full_url ) , ignore.case = TRUE ) ) , ]
 			
