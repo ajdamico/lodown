@@ -163,21 +163,23 @@ lodown_nhts <-
 			}
 			
 			
-					
-			# find all tables from this catalog[ i , 'year' ]
-			tables.this.year <- grep( catalog[ i , 'year' ] , DBI::dbListTables( db ) , value = TRUE )
-			
-			# convert all tables to lowercase..
-			for ( this_table in tables.this.year ){
-
-				new.tablename <- gsub( catalog[ i , 'year' ] , paste0( '_' , catalog[ i , 'year' ] ) , this_table )
-
-				prefix <- strsplit( new.tablename , '_' )[[1]][1]
+			if( ( i == max( which( catalog$year == catalog[ i , 'year' ] ) ) ) ){
 				
-				nhts_sql_process( db , this_table  , new.tablename )
+				# find all tables from this catalog[ i , 'year' ]
+				tables.this.year <- grep( catalog[ i , 'year' ] , DBI::dbListTables( db ) , value = TRUE )
+				
+				# convert all tables to lowercase..
+				for ( this_table in tables.this.year ){
 
+					new.tablename <- gsub( catalog[ i , 'year' ] , paste0( '_' , catalog[ i , 'year' ] ) , this_table )
+
+					prefix <- strsplit( new.tablename , '_' )[[1]][1]
+					
+					nhts_sql_process( db , this_table  , new.tablename )
+
+				}
+				
 			}
-
 
 			# last catalog entry of 2001?
 			# remove missing weights in 2001
@@ -198,7 +200,7 @@ lodown_nhts <-
 			
 			# more stuff that's only available in the years where replicate weights
 			# are freely available as csv files.
-			if ( ( catalog[ i , 'year' ] > 1995 ) & ( catalog[ i , 'year' ] == max( which( catalog$year == catalog[ i , 'year' ] ) ) ) ){ 
+			if ( ( catalog[ i , 'year' ] > 1995 ) & ( i == max( which( catalog$year == catalog[ i , 'year' ] ) ) ) ){ 
 
 				if ( catalog[ i , 'year' ] == 2001 ){
 				
@@ -238,7 +240,7 @@ lodown_nhts <-
 			
 
 				# last catalog entry of 2001
-				if ( catalog[ i , 'year' ] == max( which( catalog$year == 2001 ) ) ){
+				if ( i == max( which( catalog$year == 2001 ) ) ){
 							
 					# merge the `ldt` table with the ldt weights
 					nonmatching.fields <- nhts_nmf( db , 'ldt50wt' , 'ldtpub' , catalog[ i , 'year' ] )
@@ -285,7 +287,7 @@ lodown_nhts <-
 				
 				
 				# last catalog entry of the year
-				if( ( catalog[ i , 'year' ] == max( which( catalog$year == catalog[ i , 'year' ] ) ) )  ){
+				if( i == max( which( catalog$year == catalog[ i , 'year' ] ) ) ){
 
 					# merge the `day` table with the person-level weights
 					nonmatching.fields <- nhts_nmf( db , wt.table , day.table , catalog[ i , 'year' ] )
