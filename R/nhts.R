@@ -58,7 +58,21 @@ lodown_nhts <-
 			
 				db_tablename <- paste0( tolower( gsub( "[0-9]+" , "" , gsub( "(.*)\\.(.*)" , "\\1" , basename( this_csv ) ) ) ) , catalog[ i , 'year' ] )
 				
-				DBI::dbWriteTable( db , db_tablename , this_csv , header = TRUE , row.names = NULL , nrow.check = 250000 , lower.case.names = TRUE , newline = '\\r\\n' )
+				if( catalog[ i , 'year' ] == 1983 ){
+				
+					x <- read.csv( this_csv , stringsAsFactors = FALSE )
+					
+					names( x ) <- tolower( names( x ) )
+					
+					for ( j in tolower( getFromNamespace( "reserved_monetdb_keywords" , "MonetDBLite" ) ) ) names( x ) <- gsub( j , paste0( j , "_" ) , names( x ) )
+					
+					DBI::dbWriteTable( db , db_tablename , x , header = TRUE , row.names = NULL , nrow.check = 250000 , lower.case.names = TRUE , newline = '\\r\\n' )
+						
+				} else {
+					
+					DBI::dbWriteTable( db , db_tablename , this_csv , header = TRUE , row.names = NULL , nrow.check = 250000 , lower.case.names = TRUE , newline = '\\r\\n' )
+					
+				}
 			
 			}
 			
@@ -185,7 +199,7 @@ lodown_nhts <-
 
 			# last catalog entry of 2001?
 			# remove missing weights in 2001
-			if( catalog[ i , 'year' ] == max( which( catalog$year == 2001 ) ) ){
+			if( ( 2001 %in% catalog$year ) && ( catalog[ i , 'year' ] == max( which( catalog$year == 2001 ) ) ) ){
 
 				DBI::dbSendQuery( db , "UPDATE daypub_2001 SET wttrdntl = 0 WHERE wttrdntl IS NULL" )
 				DBI::dbSendQuery( db , "UPDATE perpub_2001 SET wtprntl = 0 WHERE wtprntl IS NULL" )
@@ -242,7 +256,7 @@ lodown_nhts <-
 			
 
 				# last catalog entry of 2001
-				if ( i == max( which( catalog$year == 2001 ) ) ){
+				if ( ( 2001 %in% catalog$year ) && ( i == max( which( catalog$year == 2001 ) ) ) ){
 							
 					# merge the `ldt` table with the ldt weights
 					nonmatching.fields <- nhts_nmf( db , 'ldtwt' , 'ldtpub' , catalog[ i , 'year' ] )
@@ -259,7 +273,7 @@ lodown_nhts <-
 							'_' ,
 							catalog[ i , 'year' ] ,
 							' as a inner join ' ,
-							'ldt50wt' ,
+							'ldtwt' ,
 							'_' ,
 							catalog[ i , 'year' ] ,
 							' as b on a.houseid = b.houseid AND CAST( a.personid AS INTEGER ) = CAST( b.personid AS INTEGER ) WITH DATA' 
