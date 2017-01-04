@@ -26,7 +26,7 @@ get_catalog_nhts <-
 				stringsAsFactors = FALSE
 			)
 
-		catalog$output_file <- ifelse( grepl( "ascii\\.zip" , csv_refs , ignore.case = TRUE ) , paste0( output_dir , "/" , catalog$year , " designs.rda" ) , NA )
+		catalog$output_filename <- paste0( output_dir , "/" , catalog$year , " designs.rda" )
 
 		catalog <- catalog[ !( catalog$year >= 2009 & grepl( "tripchaining\\.zip" , basename( catalog$full_url ) , ignore.case = TRUE ) ) , ]
 			
@@ -189,9 +189,9 @@ lodown_nhts <-
 				DBI::dbSendQuery( db , "UPDATE perpub_2001 SET wtprntl = 0 WHERE wtprntl IS NULL" )
 				DBI::dbSendQuery( db , "UPDATE hhpub_2001 SET wthhntl = 0 WHERE wthhntl IS NULL" )
 				
-				for( this_wgt in grep( "wttdfn[0-9]" , DBI::dbListFields( db , 'pr50wt_2001' ) , value = TRUE ) ) DBI::dbSendQuery( db , paste( "UPDATE pr50wt_2001 SET" , this_wgt , "= 0 WHERE" , this_wgt , "IS NULL" ) )
-				for( this_wgt in grep( "wtpfin[0-9]" , DBI::dbListFields( db , 'pr50wt_2001' ) , value = TRUE ) ) DBI::dbSendQuery( db , paste( "UPDATE pr50wt_2001 SET" , this_wgt , "= 0 WHERE" , this_wgt , "IS NULL" ) )
-				for( this_wgt in grep( "wthfin[0-9]" , DBI::dbListFields( db , 'hh50wt_2001' ) , value = TRUE ) ) DBI::dbSendQuery( db , paste( "UPDATE hh50wt_2001 SET" , this_wgt , "= 0 WHERE" , this_wgt , "IS NULL" ) )
+				for( this_wgt in grep( "wttdfn[0-9]" , DBI::dbListFields( db , 'prwt_2001' ) , value = TRUE ) ) DBI::dbSendQuery( db , paste( "UPDATE prwt_2001 SET" , this_wgt , "= 0 WHERE" , this_wgt , "IS NULL" ) )
+				for( this_wgt in grep( "wtpfin[0-9]" , DBI::dbListFields( db , 'prwt_2001' ) , value = TRUE ) ) DBI::dbSendQuery( db , paste( "UPDATE prwt_2001 SET" , this_wgt , "= 0 WHERE" , this_wgt , "IS NULL" ) )
+				for( this_wgt in grep( "wthfin[0-9]" , DBI::dbListFields( db , 'hhwt_2001' ) , value = TRUE ) ) DBI::dbSendQuery( db , paste( "UPDATE hhwt_2001 SET" , this_wgt , "= 0 WHERE" , this_wgt , "IS NULL" ) )
 				
 			}
 
@@ -205,7 +205,7 @@ lodown_nhts <-
 				if ( catalog[ i , 'year' ] == 2001 ){
 				
 					day.table <- 'daypub'
-					wt.table <- 'pr50wt'
+					wt.table <- 'prwt'
 					per.table <- 'perpub'
 					hh.table <- 'hhpub'
 					
@@ -222,7 +222,7 @@ lodown_nhts <-
 				} else {
 				
 					day.table <- 'dayvpub'
-					wt.table <- 'per50wt'
+					wt.table <- 'perwt'
 					per.table <- 'pervpub'
 					hh.table <- 'hhvpub'
 
@@ -243,7 +243,7 @@ lodown_nhts <-
 				if ( i == max( which( catalog$year == 2001 ) ) ){
 							
 					# merge the `ldt` table with the ldt weights
-					nonmatching.fields <- nhts_nmf( db , 'ldt50wt' , 'ldtpub' , catalog[ i , 'year' ] )
+					nonmatching.fields <- nhts_nmf( db , 'ldtwt' , 'ldtpub' , catalog[ i , 'year' ] )
 					
 					DBI::dbSendQuery( 
 						db , 
@@ -285,148 +285,144 @@ lodown_nhts <-
 				
 				}
 				
+
+				# merge the `day` table with the person-level weights
+				nonmatching.fields <- nhts_nmf( db , wt.table , day.table , catalog[ i , 'year' ] )
 				
-				# last catalog entry of the year
-				if( i == max( which( catalog$year == catalog[ i , 'year' ] ) ) ){
-
-					# merge the `day` table with the person-level weights
-					nonmatching.fields <- nhts_nmf( db , wt.table , day.table , catalog[ i , 'year' ] )
-					
-					DBI::dbSendQuery( 
-						db , 
-						paste0(
-							'create table day_m_' , 
-							catalog[ i , 'year' ] , 
-							' as select a.* , ' ,
-							paste( "b." , nonmatching.fields , collapse = ", " , sep = "" ) , 
-							' from ' ,
-							day.table ,
-							'_' ,
-							catalog[ i , 'year' ] ,
-							' as a inner join ' ,
-							wt.table ,
-							'_' ,
-							catalog[ i , 'year' ] ,
-							' as b on a.houseid = b.houseid AND CAST( a.personid AS INTEGER ) = CAST( b.personid AS INTEGER ) WITH DATA' 
-						)
+				DBI::dbSendQuery( 
+					db , 
+					paste0(
+						'create table day_m_' , 
+						catalog[ i , 'year' ] , 
+						' as select a.* , ' ,
+						paste( "b." , nonmatching.fields , collapse = ", " , sep = "" ) , 
+						' from ' ,
+						day.table ,
+						'_' ,
+						catalog[ i , 'year' ] ,
+						' as a inner join ' ,
+						wt.table ,
+						'_' ,
+						catalog[ i , 'year' ] ,
+						' as b on a.houseid = b.houseid AND CAST( a.personid AS INTEGER ) = CAST( b.personid AS INTEGER ) WITH DATA' 
 					)
-					# table `day_m_YYYY` now available for analysis!
-					
-					# immediately make the person-day-level survey::svrepdesign object.
-					nhts.day.design <-
-						survey::svrepdesign(
-							weight = day.wt ,
-							repweights = day.repwt ,
-							scale = sca ,
-							rscales = rsc ,
-							degf = 99 ,
-							type = 'JK1' ,
-							mse = TRUE ,
-							data = paste0( 'day_m_' , catalog[ i , 'year' ] ) , 	# use the person-day-merge data table
-							dbtype = "MonetDBLite" ,
-							dbname = catalog[ i , 'dbfolder' ]
-						)
-
-					# workaround for a bug in survey::survey::svrepdesign.character
-					nhts.day.design$mse <- TRUE
-					
-						
-					# merge the person table with the person-level weights
-					nonmatching.fields <- nhts_nmf( db , wt.table , per.table , catalog[ i , 'year' ] )
-					
-					DBI::dbSendQuery( 
-						db , 
-						paste0(
-							'create table per_m_' ,
-							catalog[ i , 'year' ] ,
-							' as select a.* , ' ,
-							paste( "b." , nonmatching.fields , collapse = ", " , sep = "" ) , 
-							' from ' ,
-							per.table , 
-							'_' ,
-							catalog[ i , 'year' ] , 
-							' as a inner join ' ,
-							wt.table ,
-							'_' ,
-							catalog[ i , 'year' ] ,
-							' as b on a.houseid = b.houseid AND CAST( a.personid AS INTEGER ) = CAST( b.personid AS INTEGER ) WITH DATA' 
-						)
-					)
-					# table `per_m_YYYY` now available for analysis!
-					
-					# immediately make the person-level survey::svrepdesign object.
-					nhts.per.design <-
-						survey::svrepdesign(
-							weight = per.wt ,
-							repweights = per.repwt ,
-							scale = sca ,
-							rscales = rsc ,
-							degf = 99 ,
-							type = 'JK1' ,
-							mse = TRUE ,
-							data = paste0( 'per_m_' , catalog[ i , 'year' ] ) , 	# use the person-merge data table
-							dbtype = "MonetDBLite" ,
-							dbname = catalog[ i , 'dbfolder' ]
-						)
-
-					# workaround for a bug in survey::survey::svrepdesign.character
-					nhts.per.design$mse <- TRUE
-					
+				)
+				# table `day_m_YYYY` now available for analysis!
 				
-					# merge the household table with the household-level weights
-					nonmatching.fields <- nhts_nmf( db , 'hh50wt' , hh.table , catalog[ i , 'year' ] )
-					
-					DBI::dbSendQuery( 
-						db , 
-						paste0(
-							'create table hh_m_' ,
-							catalog[ i , 'year' ] ,
-							' as select a.* , ' ,
-							paste( "b." , nonmatching.fields , collapse = ", " , sep = "" ) , 
-							' from ' ,
-							hh.table ,
-							'_' ,
-							catalog[ i , 'year' ] ,
-							' as a inner join hh50wt_' ,
-							catalog[ i , 'year' ] ,
-							' as b on a.houseid = b.houseid WITH DATA' 
-						)
+				# immediately make the person-day-level survey::svrepdesign object.
+				nhts.day.design <-
+					survey::svrepdesign(
+						weight = day.wt ,
+						repweights = day.repwt ,
+						scale = sca ,
+						rscales = rsc ,
+						degf = 99 ,
+						type = 'JK1' ,
+						mse = TRUE ,
+						data = paste0( 'day_m_' , catalog[ i , 'year' ] ) , 	# use the person-day-merge data table
+						dbtype = "MonetDBLite" ,
+						dbname = catalog[ i , 'dbfolder' ]
 					)
-					# table `hh_m_YYYY` now available for analysis!
 
-					
-					# immediately make the household-level survey::svrepdesign object.
-					nhts.hh.design <-
-						survey::svrepdesign(
-							weight = hh.wt ,
-							repweights = hh.repwt ,
-							scale = sca ,
-							rscales = rsc ,
-							degf = 99 ,
-							type = 'JK1' ,
-							mse = TRUE ,
-							data = paste0( 'hh_m_' , catalog[ i , 'year' ] ) , 	# use the household-merge data table
-							dbtype = "MonetDBLite" ,
-							dbname = catalog[ i , 'dbfolder' ]
-						)
-
-						
-						
-					# workaround for a bug in survey::survey::svrepdesign.character
-					nhts.hh.design$mse <- TRUE
-
-					# done.  phew.  save all the objects to the current working directory
-					if ( catalog[ i , 'year' ] == 2001 ){
-
-						save( nhts.ldt.design , nhts.day.design , nhts.per.design , nhts.hh.design , file = catalog[ i , 'output_filename' ] )
-						
-					} else {
-					
-						save( nhts.day.design , nhts.per.design , nhts.hh.design , file = catalog[ i , 'output_filename' ] )
-						
-					}
+				# workaround for a bug in survey::survey::svrepdesign.character
+				nhts.day.design$mse <- TRUE
 				
+					
+				# merge the person table with the person-level weights
+				nonmatching.fields <- nhts_nmf( db , wt.table , per.table , catalog[ i , 'year' ] )
+				
+				DBI::dbSendQuery( 
+					db , 
+					paste0(
+						'create table per_m_' ,
+						catalog[ i , 'year' ] ,
+						' as select a.* , ' ,
+						paste( "b." , nonmatching.fields , collapse = ", " , sep = "" ) , 
+						' from ' ,
+						per.table , 
+						'_' ,
+						catalog[ i , 'year' ] , 
+						' as a inner join ' ,
+						wt.table ,
+						'_' ,
+						catalog[ i , 'year' ] ,
+						' as b on a.houseid = b.houseid AND CAST( a.personid AS INTEGER ) = CAST( b.personid AS INTEGER ) WITH DATA' 
+					)
+				)
+				# table `per_m_YYYY` now available for analysis!
+				
+				# immediately make the person-level survey::svrepdesign object.
+				nhts.per.design <-
+					survey::svrepdesign(
+						weight = per.wt ,
+						repweights = per.repwt ,
+						scale = sca ,
+						rscales = rsc ,
+						degf = 99 ,
+						type = 'JK1' ,
+						mse = TRUE ,
+						data = paste0( 'per_m_' , catalog[ i , 'year' ] ) , 	# use the person-merge data table
+						dbtype = "MonetDBLite" ,
+						dbname = catalog[ i , 'dbfolder' ]
+					)
+
+				# workaround for a bug in survey::survey::svrepdesign.character
+				nhts.per.design$mse <- TRUE
+				
+			
+				# merge the household table with the household-level weights
+				nonmatching.fields <- nhts_nmf( db , 'hhwt' , hh.table , catalog[ i , 'year' ] )
+				
+				DBI::dbSendQuery( 
+					db , 
+					paste0(
+						'create table hh_m_' ,
+						catalog[ i , 'year' ] ,
+						' as select a.* , ' ,
+						paste( "b." , nonmatching.fields , collapse = ", " , sep = "" ) , 
+						' from ' ,
+						hh.table ,
+						'_' ,
+						catalog[ i , 'year' ] ,
+						' as a inner join hhwt_' ,
+						catalog[ i , 'year' ] ,
+						' as b on a.houseid = b.houseid WITH DATA' 
+					)
+				)
+				# table `hh_m_YYYY` now available for analysis!
+
+				
+				# immediately make the household-level survey::svrepdesign object.
+				nhts.hh.design <-
+					survey::svrepdesign(
+						weight = hh.wt ,
+						repweights = hh.repwt ,
+						scale = sca ,
+						rscales = rsc ,
+						degf = 99 ,
+						type = 'JK1' ,
+						mse = TRUE ,
+						data = paste0( 'hh_m_' , catalog[ i , 'year' ] ) , 	# use the household-merge data table
+						dbtype = "MonetDBLite" ,
+						dbname = catalog[ i , 'dbfolder' ]
+					)
+
+					
+					
+				# workaround for a bug in survey::survey::svrepdesign.character
+				nhts.hh.design$mse <- TRUE
+
+				# done.  phew.  save all the objects to the current working directory
+				if ( catalog[ i , 'year' ] == 2001 ){
+
+					save( nhts.ldt.design , nhts.day.design , nhts.per.design , nhts.hh.design , file = catalog[ i , 'output_filename' ] )
+					
+				} else {
+				
+					save( nhts.day.design , nhts.per.design , nhts.hh.design , file = catalog[ i , 'output_filename' ] )
+					
 				}
+				
 			
 			}
 						
