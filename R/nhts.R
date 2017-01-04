@@ -168,6 +168,8 @@ lodown_nhts <-
 				# find all tables from this catalog[ i , 'year' ]
 				tables.this.year <- grep( catalog[ i , 'year' ] , DBI::dbListTables( db ) , value = TRUE )
 				
+				tables.this.year <- tables.this.year[ !grepl( "tour|chn" , tables.this.year ) ]
+				
 				# convert all tables to lowercase..
 				for ( this_table in tables.this.year ){
 
