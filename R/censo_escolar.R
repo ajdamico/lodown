@@ -30,6 +30,9 @@ get_catalog_censo_escolar <-
 		censoesc_files <- grep( "censo_escolar.*zip$" , w , value = TRUE )
 		catalog$full_url <- censoesc_files
 
+		# have not completed testing prior to 2008
+		catalog <- catalog[ catalog$year >= 2008 , ]
+		
 		catalog
 
 	}
