@@ -36,7 +36,7 @@ get_catalog_censo_escolar <-
 
 
 lodown_censo_escolar <-
-	function( data_name = "censo_escolar" , catalog , path_to_7z = if( .Platform$OS.type != 'windows' ) '7z' else normalizePath( "C:/Program Files/7-zip/7z.exe" ) , ... ){
+	function( data_name = "censo_escolar" , catalog , path_to_7z = if( .Platform$OS.type != 'windows' ) '7za' else normalizePath( "C:/Program Files/7-zip/7z.exe" ) , ... ){
 
 	  if( system( paste0( '"' , path_to_7z , '" -h' ) , show.output.on.console = FALSE ) != 0 ) stop( paste0( "you need to install 7-zip.  if you already have it, include a parameter like path_to_7z='" , path_to_7z , "'" ) )
 
@@ -50,62 +50,44 @@ lodown_censo_escolar <-
 			# download the file
 			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
 
-			unzipped_files <- unzip( tf , exdir = paste0( tempdir() , "/unzips" ) )
+			unzipped_files <- unzip( tf , exdir = catalog[ i , "output_folder" ] )
 
-			rar_files <- grep( ".rar$", unzipped_files, value = TRUE )
+			rar_files <- grep( "\\.rar$", unzipped_files, value = TRUE , ignore.case = TRUE )
 
-			for( table.data in c( "docente", "matricula", "turma", "escola" ) ) {
+			for( this_table_type in c( "docente", "matricula", "turma", "escola" ) ) {
 
-			  tabelas <- grep( table.data, rar_files, value = TRUE, ignore.case = TRUE )
+				tabelas <- grep( this_table_type , rar_files, value = TRUE, ignore.case = TRUE )
 
-			  for ( j in seq_along( tabelas ) ) {
+				for ( j in seq_along( tabelas ) ) {
 
-			    # build the string to send to DOS
-			    dos.command <- paste0( '"' , path_to_7z , '" x "' , normalizePath( tabelas[ j ] ) , '" -o"' , normalizePath( paste0( tempdir() , '\\unzips' ) ) , '"' )
+					# build the string to send to DOS
+					dos.command <- paste0( '"' , path_to_7z , '" x "' , normalizePath( tabelas[ j ] ) , '" -o"' , normalizePath( catalog[ i , "output_folder" ] ) , '"' )
 
-			    # extract the file
-			    system( dos.command , show.output.on.console = FALSE )
+					system( dos.command , show.output.on.console = FALSE )
 
-			    # get csv data file:
-			    data.file <- list.files( path = paste0( tempdir() , '\\unzips' ), full.names = TRUE )
-			    data.file <- grep( "csv", data.file, value = TRUE, ignore.case = TRUE )
+					this_data_file <- list.files( catalog[ i , "output_folder" ] , full.names = TRUE )
+					
+					this_data_file <- grep( "\\.csv$", this_data_file, value = TRUE, ignore.case = TRUE )
 
-			    # read csv into monetdb database
-			    if ( length( tabelas ) == 1 ) {
-			      DBI::dbWriteTable( db,
-			                         name = paste0( table.data, catalog[ i , "year" ] ),
-			                         data.file,
-			                         sep = "|",
-			                         best.effort = TRUE,
-			                         lower.case.names = TRUE,
-			                         nrow.check = 5000 )
-			    } else {
-			      DBI::dbWriteTable( db,
-			                         name = paste0( table.data, catalog[ i , "year" ], "_", j ),
-			                         data.file,
-			                         sep = "|",
-			                         best.effort = TRUE,
-			                         lower.case.names = TRUE,
-			                         nrow.check = 5000 )
-			    }
+					DBI::dbWriteTable( 
+						db,
+						paste0( this_table_type , catalog[ i , "year" ] ) ,
+						this_data_file ,
+						sep = "|" ,
+						best.effort = TRUE ,
+						lower.case.names = TRUE ,
+						append = TRUE ,
+						nrow.check = 500000 
+					)
+					
+					file.remove( this_data_file )
 
-			    unlink( c( data.file ) )
-
-			  }
+				}
 
 			}
 
-			# now the files are unzipped.. read them into the monetdb table using tablename
-
-				# catalog[ i , 'db_tablename' ]
-
-
-			# also save the documentation in the
-				# catalog[ i , 'output_folder' ]
-
-
 			# delete the temporary files?  or move some docs to a save folder?
-			# suppressWarnings( file.remove( tf , unzipped_files ) )
+			suppressWarnings( file.remove( tf ) )
 
 			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'dbfolder' ] , "'\r\n\n" ) )
 
