@@ -77,7 +77,7 @@ lodown_censo_escolar <-
 						best.effort = TRUE ,
 						lower.case.names = TRUE ,
 						append = TRUE ,
-						nrow.check = 500000 
+						nrow.check = 1000
 					)
 					
 					file.remove( this_data_file )
