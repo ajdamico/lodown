@@ -36,11 +36,9 @@ get_catalog_censo_escolar <-
 
 
 lodown_censo_escolar <-
-	function( data_name = "censo_escolar" , catalog , path_to_7za = if( .Platform$OS.type != 'windows' ) '7za' else normalizePath( "C:/Program Files/7-zip/7z.exe" ) , ... ){
+	function( data_name = "censo_escolar" , catalog , path_to_7z = if( .Platform$OS.type != 'windows' ) '7z' else normalizePath( "C:/Program Files/7-zip/7z.exe" ) , ... ){
 
-	  if( system( paste0( '"' , path_to_7za , '" -h' ) , show.output.on.console = FALSE ) != 0 ) stop( paste0( "you need to install 7-zip.  if you already have it, include a parameter like path_to_7za='" , path_to_7za , "'" ) )
-
-	  if ( !requireNamespace( "gdata" , quietly = TRUE ) ) stop( "gdata needed for this function to work. to install it, type `install.packages( 'gdata' )`" , call. = FALSE )
+	  if( system( paste0( '"' , path_to_7z , '" -h' ) , show.output.on.console = FALSE ) != 0 ) stop( paste0( "you need to install 7-zip.  if you already have it, include a parameter like path_to_7z='" , path_to_7z , "'" ) )
 
 		tf <- tempfile()
 
@@ -60,20 +58,39 @@ lodown_censo_escolar <-
 
 			  tabelas <- grep( table.data, rar_files, value = TRUE, ignore.case = TRUE )
 
-			  for ( j in length( tabelas ) ) {
-			    td2 <- paste0( tempdir(), "\\temptable" )
-			    dir.create( td2 )
+			  for ( j in seq_along( tabelas ) ) {
 
 			    # build the string to send to DOS
-			    dos.command <- paste0( '"' , path_to_7za , '" x "' , normalizePath( tabelas[j] ) , '" -o"' , normalizePath( paste0( tempdir() , '\\unzips' ) ) , '"' )
+			    dos.command <- paste0( '"' , path_to_7z , '" x "' , normalizePath( tabelas[ j ] ) , '" -o"' , normalizePath( paste0( tempdir() , '\\unzips' ) ) , '"' )
 
 			    # extract the file
-			    system( dos.command , show.output.on.console = TRUE )
+			    system( dos.command , show.output.on.console = FALSE )
 
-			    # find the name of the final ASCII data file to be imported
-			    curfile <- paste0( tempdir() , '/unzips/' , gsub( ".7z" , ".txt" , basename( data.file ) ) )
+			    # get csv data file:
+			    data.file <- list.files( path = paste0( tempdir() , '\\unzips' ), full.names = TRUE )
+			    data.file <- grep( "csv", data.file, value = TRUE, ignore.case = TRUE )
 
-			    z2 <- unzip( tabelas[j], exdir = td2 )
+			    # read csv into monetdb database
+			    if ( length( tabelas ) == 1 ) {
+			      DBI::dbWriteTable( db,
+			                         name = paste0( table.data, catalog[ i , "year" ] ),
+			                         data.file,
+			                         sep = "|",
+			                         best.effort = TRUE,
+			                         lower.case.names = TRUE,
+			                         nrow.check = 5000 )
+			    } else {
+			      DBI::dbWriteTable( db,
+			                         name = paste0( table.data, catalog[ i , "year" ], "_", j ),
+			                         data.file,
+			                         sep = "|",
+			                         best.effort = TRUE,
+			                         lower.case.names = TRUE,
+			                         nrow.check = 5000 )
+			    }
+
+			    unlink( c( data.file ) )
+
 			  }
 
 			}
