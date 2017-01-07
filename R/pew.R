@@ -195,7 +195,7 @@ lodown_pew <-
 				
 				file.remove( macosx )
 				
-				unzipped_files <- unzipped_files[ unzipped_files != macosx ]
+				unzipped_files <- unzipped_files[ !( unzipped_files %in% macosx ) ]
 				
 				sav_files <- grep( "\\.sav$" , unzipped_files , ignore.case = TRUE , value = TRUE )
 							
