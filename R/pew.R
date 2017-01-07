@@ -89,15 +89,17 @@ get_catalog_pew <-
 					
 					for( incomplete_url in which( grepl( year_link_refs[ year_num ] , these_data_refs ) ) ){
 					
-						this_data_page <- xml2::read_html( these_data_refs[ incomplete_url ] )
+						# this_data_page <- xml2::read_html( these_data_refs[ incomplete_url ] )
 							
-						input_tags <- rvest::html_nodes( this_data_page , "input" )
+						# input_tags <- rvest::html_nodes( this_data_page , "input" )
 							
-						tag_names <- rvest::html_attr( input_tags , "name" )
+						# tag_names <- rvest::html_attr( input_tags , "name" )
 						
-						tag_values <- rvest::html_attr( input_tags , "value" )
+						# tag_values <- rvest::html_attr( input_tags , "value" )
 						
-						these_data_refs[ incomplete_url ] <- gsub( year_link_refs[ year_num ] , "" , paste0( these_data_refs[ incomplete_url ] , "?download=" , tag_values[ tag_names %in% "download_id" ] ) )
+						# these_data_refs[ incomplete_url ] <- gsub( year_link_refs[ year_num ] , "" , paste0( these_data_refs[ incomplete_url ] , "?download=" , tag_values[ tag_names %in% "download_id" ] ) )
+						
+						these_data_refs[ incomplete_url ] <- gsub( year_link_refs[ year_num ] , "" , paste0( these_data_refs[ incomplete_url ] , "?submitted" ] ) )
 						
 					}
 					
