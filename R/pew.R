@@ -191,6 +191,12 @@ lodown_pew <-
 				
 				unzipped_files <- unzip( tf , exdir = catalog[ i , "output_folder" ] )
 
+				macosx <- grep( "MACOSX" , unzipped_files , value = TRUE )
+				
+				file.remove( macosx )
+				
+				unzipped_files <- unzipped_files[ unzipped_files != macosx ]
+				
 				sav_files <- grep( "\\.sav$" , unzipped_files , ignore.case = TRUE , value = TRUE )
 							
 			} else {
@@ -201,7 +207,7 @@ lodown_pew <-
 				
 			}
 
-			stopifnot( length( sav_files ) > 0 )
+			if( length( sav_files ) == 0 ) warning( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " unzipped in '" , catalog[ i , 'output_folder' ] , "' has no spss files\r\n\n" ) )
 			
 			for( this_sav in sav_files ){
 
