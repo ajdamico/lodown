@@ -30,6 +30,14 @@ get_catalog_pew <-
 
 			year_link_text <- to_link_text[ grep( "^[0-9][0-9][0-9][0-9]$" , to_link_text ) ]
 
+			if( length( year_link_refs ) == 0 ){
+				
+				year_link_text <- ra_link_text[ topic_num ]
+				
+				year_link_refs <- ra_link_refs[ topic_num ]
+				
+			}
+						
 			for( year_num in seq_along( year_link_text ) ){
 
 				# figure out pages #
@@ -56,13 +64,28 @@ get_catalog_pew <-
 					these_data_link_text <- rvest::html_text( rvest::html_nodes( these_data_page , "a" ) )
 
 
-					these_data_text <- these_data_link_text[ grep( "\\?download=[0-9]+$" , these_data_link_refs ) ]
+					these_data_text <- these_data_link_text[ ( grepl( "\\?download=[0-9]+$" , these_data_link_refs ) ) | ( grepl( "/datasets/" , these_data_link_refs ) & !grepl( "/page/" , these_data_link_refs ) ) ]
 
-					these_data_text <- lapply( strsplit( these_data_text , "\n" ) , function( z ) { a <- stringr::str_trim( z ) ; a[ a!='' ] } )
+					these_data_text <- lapply( strsplit( these_data_text , "\n" ) , function( z ) { a <- stringr::str_trim( z ) ; a[ a!='' & !grepl("^[A-z]+ [0-9]+, [0-9][0-9][0-9][0-9]$" , a ) ] } )
 					
-					these_data_refs <- these_data_link_refs[ grep( "\\?download=[0-9]+$" , these_data_link_refs ) ]
+					these_data_refs <- these_data_link_refs[ ( grepl( "\\?download=[0-9]+$" , these_data_link_refs ) ) | ( grepl( "/datasets/" , these_data_link_refs ) & !grepl( "/page/" , these_data_link_refs ) ) ]
 
 					these_data_info <- if( all( sapply( these_data_text , length ) >= 2 ) ) sapply( these_data_text , "[[" , 2 ) else NA
+					
+					for( incomplete_url in which( grepl( year_link_refs[ year_num ] , these_data_refs ) ) ){
+					
+						this_data_page <- xml2::read_html( these_data_refs[ incomplete_url ] )
+							
+						input_tags <- rvest::html_nodes( this_data_page , "input" )
+							
+						tag_names <- rvest::html_attr( input_tags , "name" )
+						
+						tag_values <- rvest::html_attr( input_tags , "value" )
+						
+						these_data_refs[ incomplete_url ] <- paste0( these_data_refs[ incomplete_url ] , "?download=" , tag_values[ tag_names %in% "download_id" ] )
+						
+					}
+					
 					
 					this_catalog <-
 						data.frame(
@@ -74,7 +97,9 @@ get_catalog_pew <-
 							info = these_data_info ,
 							stringsAsFactors = FALSE
 						)
-						
+					
+					this_catalog[ this_catalog$topic == this_catalog$year , 'year' ] <- substr( this_catalog[ this_catalog$topic == this_catalog$year , 'name' ] , 1 , 4 )
+					
 					catalog <- rbind( catalog , this_catalog )
 					
 					cat( paste0( "loading " , data_name , " catalog from " , these_data_webpage , "\r\n\n" ) )
@@ -85,9 +110,7 @@ get_catalog_pew <-
 
 		}
 
-		catalog$output_folder <- paste0( output_dir , "/" , catalog$topic , "/" , catalog$year , "/" , catalog$name , "/" )
-		
-		catalog$output_folder <- gsub( "’" , "" , paste0( output_dir , "/" , catalog$topic , "/" , catalog$year , "/" , gsub( "/|:|\\(|\\)" , "_" , catalog$name ) , "/" ) )
+		catalog$output_folder <- gsub( "’" , "" , paste0( output_dir , "/" , catalog$topic , "/" , catalog$year , "/" , gsub( "/|:|\\(|\\)" , "_" , catalog$name ) ) )
 		
 		catalog
 
@@ -141,21 +164,37 @@ lodown_pew <-
 			
 			writeBin( this_file$content , tf )
 
-			unzipped_files <- unzip( tf , exdir = catalog[ i , "output_folder" ] )
+			if( grepl( "\\.zip$" , resp$url , ignore.case = TRUE ) ){
+				
+				unzipped_files <- unzip( tf , exdir = catalog[ i , "output_folder" ] )
 
-			sav_file <- grep( "\\.sav$" , unzipped_files , ignore.case = TRUE , value = TRUE )
+				sav_files <- grep( "\\.sav$" , unzipped_files , ignore.case = TRUE , value = TRUE )
+							
+			} else {
+				
+				sav_files <- paste0( catalog[ i , "output_folder" ] , "/" , gsub( "%20" , " " , basename( resp$url ) ) )
+				
+				file.copy( tf , sav_files )
+				
+			}
+
+			stopifnot( length( sav_files ) > 0 )
 			
-			x <- data.frame( haven::read_spss( sav_file ) )
+			for( this_sav in sav_files ){
 
-			# convert all column names to lowercase
-			names( x ) <- tolower( names( x ) )
+				x <- data.frame( haven::read_spss( this_sav ) )
 
-			save( x , file = gsub( "\\.sav$" , ".rda" , sav_file , ignore.case = TRUE ) )
+				# convert all column names to lowercase
+				names( x ) <- tolower( names( x ) )
 
+				save( x , file = gsub( "\\.sav$" , ".rda" , this_sav , ignore.case = TRUE ) )
+
+			}
+				
 			# delete the temporary files
 			suppressWarnings( file.remove( tf ) )
 
-			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , catalog[ i , 'output_filename' ] , "'\r\n\n" ) )
+			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'output_folder' ] , "'\r\n\n" ) )
 
 		}
 
