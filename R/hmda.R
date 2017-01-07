@@ -101,10 +101,10 @@ lodown_hmda <-
 
 		tf <- tempfile()
 		
-		ins_sas <- system.file("extdata", "ins_str.csv", package = "lodown")
-		lar_sas <- system.file("extdata", "lar_str.csv", package = "lodown")
-		rp_sas <- system.file("extdata", "Reporter_Panel_2010.sas", package = "lodown")
-		pr_str <- system.file("extdata", "Reporter_Panel_Pre-2010.sas", package = "lodown")
+		ins_sas <- system.file("extdata", "hmda/ins_str.csv", package = "lodown")
+		lar_sas <- system.file("extdata", "hmda/lar_str.csv", package = "lodown")
+		rp_sas <- system.file("extdata", "hmda/Reporter_Panel_2010.sas", package = "lodown")
+		pr_str <- system.file("extdata", "hmda/Reporter_Panel_Pre-2010.sas", package = "lodown")
 
 		# read in the loan application record structure file
 		lar_str <- read.csv( lar_sas )
