@@ -69,7 +69,7 @@ lodown_pnadc <-
 			# download the file
 			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
 
-			unzipped_files <- unzip( tf , exdir = paste0( tempdir() , "/unzips" ) )
+			unzipped_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) )
 
 				
 			# if the year is 2012-2014 or 2015Q1-Q3, use the first sas import file..

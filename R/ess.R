@@ -160,7 +160,7 @@ lodown_ess <-
 
 		writeBin( httr::content( current.file ) , tf )
 	  
-		spss.files <- unzip( tf , exdir = paste0( tempdir() , "/unzips" ) )
+		spss.files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) )
 		
 		if( catalog[ i , 'directory' ] == 'docs' ){
 		

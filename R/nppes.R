@@ -37,7 +37,7 @@ lodown_nppes <-
 		# extract the file, platform-specific
 		if ( .Platform$OS.type == 'windows' ){
 
-			unzipped_files <- unzip( tf , exdir = tempdir() )
+			unzipped_files <- unzip_warn_fail( tf , exdir = tempdir() )
 
 		} else {
 

@@ -39,7 +39,7 @@ lodown_ahrf <-
       # and (at the same time) create an object called
       # `unzipped_files` that contains the paths on
       # your local computer to each of the unzipped files
-      unzipped_files <- unzip( tf , exdir = dirname( catalog[ i , 'output_filename' ] ) )
+      unzipped_files <- unzip_warn_fail( tf , exdir = dirname( catalog[ i , 'output_filename' ] ) )
 
       sas_path <- grep( "\\.sas$" , unzipped_files , value = TRUE )
 

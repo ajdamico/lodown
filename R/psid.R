@@ -111,7 +111,7 @@ lodown_psid <-
 
 			writeBin( this_file , tf )
 			
-			unzipped_files <- unzip( tf , exdir = paste0( tempdir() , "/unzips" ) )
+			unzipped_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) )
 
 
 			# figure out which file contains the data (so no readmes or technical docs)

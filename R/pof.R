@@ -40,11 +40,11 @@ lodown_pof <-
 
 			cachaca( catalog[ i , "full_urls" ] , tf , mode = 'wb' )
 
-			unzipped_files <- unzip( tf , exdir = paste0( tempdir() , "/unzips" ) )
+			unzipped_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) )
 			
 			cachaca( catalog[ i , "documentation" ] , tf , mode = 'wb' )
 
-			doc_files <- unzip( tf , exdir = paste0( tempdir() , "/unzips" ) )
+			doc_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) )
 
 			files <- c( unzipped_files , doc_files )
 			
@@ -54,7 +54,7 @@ lodown_pof <-
 
 				cachaca( catalog[ i , "aliment_file" ] , tf , mode = 'wb' )
 
-				ali_files <- unzip( tf , exdir = paste0( tempdir() , "/unzips" ) )
+				ali_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) )
 
 				Encoding( ali_files ) <- 'latin1'
 					
@@ -220,7 +220,7 @@ lodown_pof <-
 					data.file <- data.file[ grep( '.zip' , tolower( data.file ) , fixed = TRUE ) ]
 					
 					# ..unzip it, and overwrite `data.file` with the new filepath
-					data.file <- unzip( data.file , exdir = tempdir() )
+					data.file <- unzip_warn_fail( data.file , exdir = tempdir() )
 				}
 				
 			

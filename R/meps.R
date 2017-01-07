@@ -98,7 +98,7 @@ lodown_meps <-
 			# download the file
 			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' , filesize_fun = 'unzip_verify' )
 
-			unzipped_files <- unzip( tf , exdir = paste0( tempdir() , "/unzips" ) )
+			unzipped_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) )
 
 			if( length( unzipped_files ) != 1 ) stop( "expecting a single sas transport file" )
 

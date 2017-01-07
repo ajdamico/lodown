@@ -378,7 +378,7 @@ get.tsv <-
 		
 			tf_zip <- tempfile()
 		
-			tf_zip <- unzip( dlfile , exdir = tempdir() )
+			tf_zip <- unzip_warn_fail( dlfile , exdir = tempdir() )
 			
 			txt_file <- tf_zip
 		

@@ -102,7 +102,7 @@ lodown_censo <-
 
 			cachaca( catalog[ i , 'full_url' ] , tf , mode = 'wb' )
 			
-			unzipped_files <- unzip( tf , exdir = tempdir() )
+			unzipped_files <- unzip_warn_fail( tf , exdir = tempdir() )
 
 			dom_file <- unzipped_files[ grep( 'DOM' , unzipped_files , useBytes = TRUE , ignore.case = TRUE ) ]
 			pes_file <- unzipped_files[ grep( 'PES' , unzipped_files , useBytes = TRUE , ignore.case = TRUE ) ]

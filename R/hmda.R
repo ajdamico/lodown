@@ -149,7 +149,7 @@ lodown_hmda <-
 			
 			if ( .Platform$OS.type == 'windows' ){
 
-				unzipped_files <- unzip( tf , exdir = paste0( tempdir() , "/unzips" ) , overwrite = TRUE )
+				unzipped_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) , overwrite = TRUE )
 
 			} else {
 			

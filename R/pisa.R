@@ -127,7 +127,7 @@ lodown_pisa <-
 				# extract the file, platform-specific
 				if ( .Platform$OS.type == 'windows' ){
 
-					unzipped_files <- unzip( tf , exdir = paste0( tempdir() , "/unzips" ) )
+					unzipped_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) )
 
 				} else {
 
@@ -325,7 +325,7 @@ lodown_pisa <-
 					
 					cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
 
-					unzipped_files <- unzip( tf , exdir = paste0( tempdir() , "/unzips" ) )
+					unzipped_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) )
 
 					# read-only file connection "r" - pointing to the ASCII file
 					incon <- file( unzipped_files , "r")

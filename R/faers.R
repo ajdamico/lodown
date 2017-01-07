@@ -92,7 +92,7 @@ lodown_faers <-
 			# download the file
 			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
 
-			unzipped_files <- unzip( tf , exdir = paste0( catalog[ i , "output_folder" ] , "/unzips" ) )
+			unzipped_files <- unzip_warn_fail( tf , exdir = paste0( catalog[ i , "output_folder" ] , "/unzips" ) )
 
 			# limit the character vector containing all files to only the ones ending in `.txt`
 			text.files <- unzipped_files[ grep( "\\.txt$" , tolower( unzipped_files ) ) ]

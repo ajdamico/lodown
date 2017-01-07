@@ -192,7 +192,7 @@ lodown_pew <-
 
 			if( grepl( "\\.zip$" , resp$url , ignore.case = TRUE ) ){
 				
-				unzipped_files <- unzip( tf , exdir = catalog[ i , "output_folder" ] , junkpaths = TRUE )
+				unzipped_files <- unzip_warn_fail( tf , exdir = catalog[ i , "output_folder" ] , junkpaths = TRUE )
 
 				macosx <- grep( "\\._" , unzipped_files , value = TRUE )
 				

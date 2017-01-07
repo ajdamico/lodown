@@ -84,7 +84,7 @@ lodown_pme <-
 
 		cachaca( "ftp://ftp.ibge.gov.br/Trabalho_e_Rendimento/Pesquisa_Mensal_de_Emprego/Microdados/documentacao/Documentacao.zip" , tf )
 
-		unzipped_files <- unzip( tf , exdir = unique( dirname( catalog$output_filename ) )  )
+		unzipped_files <- unzip_warn_fail( tf , exdir = unique( dirname( catalog$output_filename ) )  )
 
 		# hold onto only the filename containing the word `INPUT`
 		input <- unzipped_files[ grep( "INPUT" , unzipped_files ) ]
@@ -94,7 +94,7 @@ lodown_pme <-
 			# download the file
 			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
 
-			unzipped_files <- unzip( tf , exdir = paste0( tempdir() , '/unzips' ) )
+			unzipped_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , '/unzips' ) )
 
 			# ..and read that text file directly into an R data.frame
 			# using the sas importation script downloaded before this big fat loop

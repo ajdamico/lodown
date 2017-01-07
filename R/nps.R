@@ -68,7 +68,7 @@ lodown_nps <-
 			# download the file
 			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
 
-			unzipped_files <- unzip( tf , exdir = paste0( tempdir() , "/unzips" ) )
+			unzipped_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) )
 
 			# and if the zipped file contains more than one file, this program needs to be updated ;)
 			if ( length( unzipped_files ) > 1 ) stop( 'multi-file zipped' )

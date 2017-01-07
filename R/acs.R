@@ -80,7 +80,7 @@ lodown_acs <-
 				
 				cachaca( wyoming_unix , tf , mode = 'wb' )
 
-				unzipped_files <- unzip( tf , exdir = paste0( tempdir() , "/unzips" ) )
+				unzipped_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) )
 
 				wyoming_table <- haven::read_sas( unzipped_files[ grep( 'sas7bdat' , unzipped_files ) ] )
 				
@@ -104,7 +104,7 @@ lodown_acs <-
 					# extract the file, platform-specific
 					if ( .Platform$OS.type == 'windows' ){
 
-						tfn <- unzip( tf , exdir = tempdir() , overwrite = TRUE )
+						tfn <- unzip_warn_fail( tf , exdir = tempdir() , overwrite = TRUE )
 
 					} else {
 					

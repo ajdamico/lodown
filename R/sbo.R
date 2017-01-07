@@ -24,7 +24,7 @@ lodown_sbo <-
 	
 		cachaca( catalog$full_url , tf , mode = 'wb' )
 		
-		unzipped_files <- unzip( tf , exdir = tempdir() )
+		unzipped_files <- unzip_warn_fail( tf , exdir = tempdir() )
 	
 		# connect to the MonetDBLite database (.db)
 		db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog$dbfolder )

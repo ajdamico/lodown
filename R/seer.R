@@ -39,7 +39,7 @@ lodown_seer <-
 
 		cachaca( paste0( "https://" , your_username , ":" , your_password , "@" , catalog$at_url ) , tf , mode = 'wb' , filesize_fun = "httr" )
 
-		unzipped_files <- unzip( tf , exdir = paste0( tempdir() , "/unzips" ) )
+		unzipped_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) )
 
 
 

@@ -53,7 +53,7 @@ lodown_censo_escolar <-
 			# download the file
 			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
 
-			unzipped_files <- unzip( tf , exdir = catalog[ i , "output_folder" ] )
+			unzipped_files <- unzip_warn_fail( tf , exdir = catalog[ i , "output_folder" ] )
 
 			rar_files <- grep( "\\.rar$", unzipped_files, value = TRUE , ignore.case = TRUE )
 

@@ -13,7 +13,7 @@ read_SAScii <-
 		if (zipped) {
 			tf <- tempfile()
 			cachaca( dat_path , tf , mode = "wb" )
-			dat_path <- unzip( tf , exdir = paste0( tempdir() , "/unzips" ) , overwrite = TRUE )
+			dat_path <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) , overwrite = TRUE )
 			if( length( dat_path ) != 1 ) stop( "zipped file does not contain exactly one file" )
 		}
 		
@@ -177,7 +177,7 @@ read_SAScii_monetdb <-
 		#download the CPS repwgts zipped file
 		cachaca( fn , tf , mode = "wb" )
 		#unzip the file's contents and store the file name within the temporary directory
-		fn <- unzip( tf , exdir = td , overwrite = T )
+		fn <- unzip_warn_fail( tf , exdir = td , overwrite = T )
 		
 		on.exit( file.remove( tf ) )
 	}

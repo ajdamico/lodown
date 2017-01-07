@@ -67,7 +67,7 @@ lodown_anes <-
 
 			writeBin( this_file$content , tf ) ; rm( this_file )
 			
-			unzipped_files <- unzip( tf , exdir = paste0( tempdir() , "/unzips" ) )
+			unzipped_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) )
 
 			for( stata12 in grep( "stata12" , unzipped_files , value = TRUE , ignore.case = TRUE ) ){
 				

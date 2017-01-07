@@ -147,7 +147,7 @@ lodown_hrs <-
 			
 			if( !is.na( catalog[ i , 'output_folder' ] ) ){
 							
-				unzipped_files <- unzip( catalog[ i , "output_filename" ] , exdir = paste0( tempdir() , "/unzips" ) )
+				unzipped_files <- unzip_warn_fail( catalog[ i , "output_filename" ] , exdir = paste0( tempdir() , "/unzips" ) )
 
 				for( this_zip in grep( "\\.zip" , unzipped_files , ignore.case = TRUE , value = TRUE ) ) unzipped_files <- c( unzipped_files , unzip( this_zip , exdir = paste0( tempdir() , "/unzips" ) ) )
 								

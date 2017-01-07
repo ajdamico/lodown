@@ -96,7 +96,7 @@ lodown_atus <-
       # and (at the same time) create an object called
       # `unzipped_files` that contains the paths on
       # your local computer to each of the unzipped files
-      unzipped_files <- unzip( tf , exdir = paste0( tempdir() , "/unzips" ) )
+      unzipped_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) )
 
       # find the data file
       csv_file <- unzipped_files[ grep( ".dat" , unzipped_files , fixed = TRUE ) ]
