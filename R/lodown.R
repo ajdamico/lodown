@@ -192,8 +192,16 @@ lodown <-
 
 		unique_directories <- unique( c( catalog$unzip_folder , if( 'output_filename' %in% names( catalog ) ) dirname( catalog$output_filename ) , catalog$dbfolder , catalog$output_folder ) )
 
-		for ( this_dir in unique_directories ) if( !file.exists( this_dir ) ) dir.create( this_dir , recursive = TRUE , showWarnings = FALSE )
-
+		for ( this_dir in unique_directories ){
+			if( !dir.exists( this_dir ) ){
+				tryCatch( { 
+					dir.create( this_dir , recursive = TRUE , showWarnings = TRUE ) 
+					} , 
+					warning = function( w ) stop( "while creating directory " , this_dir , conditionMessage( w ) ) 
+				)
+			}
+		}
+		
 		load_fun <- getFromNamespace( paste0( "lodown_" , data_name ) , "lodown" )
 
 		cat( paste0( "locally downloading " , data_name , "\r\n\n" ) )
