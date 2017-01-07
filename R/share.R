@@ -28,7 +28,7 @@ get_catalog_share <-
 		catalog <-
 			data.frame(
 				output_folder = paste0( output_dir , "/" , gsub( ":" , "" , stata_names ) ) ,
-				full_url = paste0( "https://share-project.centerdata.nl/" , stata_link_refs ) ,
+				full_url = paste0( "https://share-project.centerdata.nl" , stata_link_refs ) ,
 				stringsAsFactors = FALSE
 			)
 
