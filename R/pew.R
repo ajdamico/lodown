@@ -87,6 +87,8 @@ get_catalog_pew <-
 
 		catalog$output_folder <- paste0( output_dir , "/" , catalog$topic , "/" , catalog$year , "/" , catalog$name , "/" )
 		
+		catalog$output_folder <- gsub( "[^A-Za-z0-9_- &]" , "_" , catalog$output_folder )
+		
 		catalog
 
 	}
