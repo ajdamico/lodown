@@ -135,6 +135,9 @@ get_catalog_pew <-
 		
 		catalog$output_folder <- gsub( 'a\\?|\\"' , '' , catalog$output_folder )
 		
+		# broken link
+		catalog <- catalog[ !( catalog$full_url %in% "http://www.pewforum.org/datasets/a-portrait-of-jewish-americans/?submitted" ) , ]
+		
 		catalog
 
 	}
@@ -209,7 +212,7 @@ lodown_pew <-
 
 			if( length( sav_files ) == 0 ){
 				
-				warning( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " unzipped in '" , catalog[ i , 'output_folder' ] , "' but zero spss files to import\r\n\n" ) )
+				cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " unzipped in '" , catalog[ i , 'output_folder' ] , "' but zero spss files to import\r\n\n" ) )
 				
 			} else {
 				
