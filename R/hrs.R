@@ -149,7 +149,7 @@ lodown_hrs <-
 							
 				unzipped_files <- unzip_warn_fail( catalog[ i , "output_filename" ] , exdir = paste0( tempdir() , "/unzips" ) )
 
-				for( this_zip in grep( "\\.zip" , unzipped_files , ignore.case = TRUE , value = TRUE ) ) unzipped_files <- c( unzipped_files , unzip( this_zip , exdir = paste0( tempdir() , "/unzips" ) ) )
+				for( this_zip in grep( "\\.zip" , unzipped_files , ignore.case = TRUE , value = TRUE ) ) unzipped_files <- c( unzipped_files , unzip_warn_fail( this_zip , exdir = paste0( tempdir() , "/unzips" ) ) )
 								
 				# stata or sascii
 				if( grepl( "sta\\.zip$|stata\\.zip$" , catalog[ i , 'output_filename' ] , ignore.case = TRUE ) ){

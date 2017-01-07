@@ -192,7 +192,7 @@ cachaca <-
 
 						if( filesize_fun == 'unzip_verify' ){
 						
-							tryCatch( unzipped_files <- unzip( destfile , exdir = paste0( tempdir() , "/unzips" ) ) , warning = function(w) { stop( "unzip_verify failed: " , conditionMessage( w ) ) } )
+							tryCatch( unzipped_files <- unzip_warn_fail( destfile , exdir = paste0( tempdir() , "/unzips" ) ) , warning = function(w) { stop( "unzip_verify failed: " , conditionMessage( w ) ) } )
 							
 							# if the unzip worked without issue, then the file size is correct
 							this_filesize <- file.info( destfile )$size

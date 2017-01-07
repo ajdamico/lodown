@@ -68,7 +68,7 @@ lodown_icpsr <-
 
 			cachaca( dp , tf , FUN = download_to_filename, curl=curl, filesize_fun = 'unzip_verify' )
 
-			unzip( tf , exdir =  gsub( "/$" , "" , catalog[ i , "unzip_folder" ] ) , junkpaths = TRUE )
+			unzip_warn_fail( tf , exdir =  gsub( "/$" , "" , catalog[ i , "unzip_folder" ] ) , junkpaths = TRUE )
 
 			# delete the temporary files
 			file.remove( tf )
