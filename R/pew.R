@@ -189,9 +189,9 @@ lodown_pew <-
 
 			if( grepl( "\\.zip$" , resp$url , ignore.case = TRUE ) ){
 				
-				unzipped_files <- unzip( tf , exdir = catalog[ i , "output_folder" ] )
+				unzipped_files <- unzip( tf , exdir = catalog[ i , "output_folder" ] , junkpaths = TRUE )
 
-				macosx <- grep( "MACOSX" , unzipped_files , value = TRUE )
+				macosx <- grep( "\\._" , unzipped_files , value = TRUE )
 				
 				file.remove( macosx )
 				
@@ -207,23 +207,29 @@ lodown_pew <-
 				
 			}
 
-			if( length( sav_files ) == 0 ) warning( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " unzipped in '" , catalog[ i , 'output_folder' ] , "' has no spss files\r\n\n" ) )
-			
-			for( this_sav in sav_files ){
+			if( length( sav_files ) == 0 ){
+				
+				warning( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " unzipped in '" , catalog[ i , 'output_folder' ] , "' but zero spss files to import\r\n\n" ) )
+				
+			} else {
+				
+				for( this_sav in sav_files ){
 
-				x <- data.frame( haven::read_spss( this_sav ) )
+					x <- data.frame( haven::read_spss( this_sav ) )
 
-				# convert all column names to lowercase
-				names( x ) <- tolower( names( x ) )
+					# convert all column names to lowercase
+					names( x ) <- tolower( names( x ) )
 
-				save( x , file = gsub( "\\.sav$" , ".rda" , this_sav , ignore.case = TRUE ) )
+					save( x , file = gsub( "\\.sav$" , ".rda" , this_sav , ignore.case = TRUE ) )
+
+				}
+					
+				cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'output_folder' ] , "'\r\n\n" ) )
 
 			}
-				
+			
 			# delete the temporary files
 			suppressWarnings( file.remove( tf ) )
-
-			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'output_folder' ] , "'\r\n\n" ) )
 
 		}
 
