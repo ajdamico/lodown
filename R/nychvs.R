@@ -46,6 +46,7 @@ get_catalog_nychvs <-
 							'_rev' , 
 							web 
 						) , 
+						ifelse( year == 2014 , "_b" , "" ) ,
 						ifelse( 
 							year == 2011 & filetype == 'vac' , 
 							".txt" , 
