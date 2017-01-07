@@ -136,7 +136,7 @@ get_catalog_pew <-
 		catalog$output_folder <- gsub( 'a\\?|\\"' , '' , catalog$output_folder )
 		
 		# broken link
-		catalog <- catalog[ !( catalog$full_url %in% "http://www.pewforum.org/datasets/a-portrait-of-jewish-americans/?submitted" ) , ]
+		catalog <- catalog[ !( catalog$full_url %in% c( "http://www.people-press.org/category/datasets/2014/?download=20054530" , "http://www.pewforum.org/datasets/a-portrait-of-jewish-americans/?submitted" ) ) , ]
 		
 		catalog
 
