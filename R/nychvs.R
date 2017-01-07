@@ -46,7 +46,7 @@ get_catalog_nychvs <-
 							'_rev' , 
 							web 
 						) , 
-						ifelse( year == 2014 , "_b" , "" ) ,
+						ifelse( year == 2014 & filetype != 'vac' , "_b" , "" ) ,
 						ifelse( 
 							( year == 2011 & filetype == 'vac' ) | ( year == 2014 & filetype != 'vac' ) , 
 							".txt" , 
@@ -120,7 +120,7 @@ lodown_nychvs <-
 			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
 
 			# read the file into a data frame
-			x <- read_SAScii( tf , cleaned.sas.script , beginline = catalog[ i , 'beginline' ] , na = c( "NA" , "" , "." , "-" ) )
+			x <- read_SAScii( tf , cleaned.sas.script , beginline = catalog[ i , 'beginline' ] )
 
 			# convert all column names to lowercase
 			names( x ) <- tolower( names( x ) )
