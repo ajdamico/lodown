@@ -35,8 +35,10 @@ get_catalog_pew <-
 				year_link_text <- ra_link_text[ topic_num ]
 				
 				year_link_refs <- ra_link_refs[ topic_num ]
-				
-			}
+
+				year_filters <- FALSE
+			
+			} else year_filters <- TRUE
 						
 			for( year_num in seq_along( year_link_text ) ){
 
@@ -62,14 +64,23 @@ get_catalog_pew <-
 					these_data_link_refs <- rvest::html_attr( rvest::html_nodes( these_data_page , "a" ) , "href" )
 						
 					these_data_link_text <- rvest::html_text( rvest::html_nodes( these_data_page , "a" ) )
+					
+					if( year_filters ){
 
-
-					these_data_text <- these_data_link_text[ ( grepl( "\\?download=[0-9]+$" , these_data_link_refs ) ) | ( grepl( "/datasets/" , these_data_link_refs ) & !grepl( "/page/" , these_data_link_refs ) ) ]
-
+						these_data_text <- these_data_link_text[ ( grepl( "\\?download=[0-9]+$" , these_data_link_refs ) ) ]
+					
+						these_data_refs <- these_data_link_refs[ ( grepl( "\\?download=[0-9]+$" , these_data_link_refs ) ) ]
+					
+					} else {
+					
+						these_data_text <- these_data_link_text[ ( grepl( "/datasets/" , these_data_link_refs ) & !grepl( "/page/" , these_data_link_refs ) ) ]
+					
+						these_data_refs <- these_data_link_refs[ ( grepl( "/datasets/" , these_data_link_refs ) & !grepl( "/page/" , these_data_link_refs ) ) ]
+					
+					}
+					
 					these_data_text <- lapply( strsplit( these_data_text , "\n" ) , function( z ) { a <- stringr::str_trim( z ) ; a[ a!='' & !grepl("^[A-z]+ [0-9]+, [0-9][0-9][0-9][0-9]$" , a ) ] } )
 					
-					these_data_refs <- these_data_link_refs[ ( grepl( "\\?download=[0-9]+$" , these_data_link_refs ) ) | ( grepl( "/datasets/" , these_data_link_refs ) & !grepl( "/page/" , these_data_link_refs ) ) ]
-
 					these_data_info <- if( all( sapply( these_data_text , length ) >= 2 ) ) sapply( these_data_text , "[[" , 2 ) else NA
 					
 					these_data_text <- these_data_text[ these_data_refs != year_link_refs[ year_num ] ]
@@ -86,7 +97,7 @@ get_catalog_pew <-
 						
 						tag_values <- rvest::html_attr( input_tags , "value" )
 						
-						these_data_refs[ incomplete_url ] <- paste0( these_data_refs[ incomplete_url ] , "?download=" , tag_values[ tag_names %in% "download_id" ] )
+						these_data_refs[ incomplete_url ] <- gsub( year_link_refs[ year_num ] , "" , paste0( these_data_refs[ incomplete_url ] , "?download=" , tag_values[ tag_names %in% "download_id" ] ) )
 						
 					}
 					
@@ -102,7 +113,9 @@ get_catalog_pew <-
 							stringsAsFactors = FALSE
 						)
 					
-					this_catalog[ this_catalog$topic == this_catalog$year , 'year' ] <- substr( this_catalog[ this_catalog$topic == this_catalog$year , 'name' ] , 1 , 4 )
+					this_catalog[ this_catalog$topic == this_catalog$year , 'year' ] <- gsub( "(.*)([0-9][0-9][0-9][0-9])(.*)" , "\\2" , this_catalog[ this_catalog$topic == this_catalog$year , 'name' ] )
+					
+					this_catalog[ !grepl( "^[0-9][0-9][0-9][0-9]$" , this_catalog$year ) , 'year' ] <- NA
 					
 					catalog <- rbind( catalog , this_catalog )
 					
@@ -116,7 +129,7 @@ get_catalog_pew <-
 
 		catalog$output_folder <- gsub( "’" , "" , paste0( output_dir , "/" , catalog$topic , "/" , catalog$year , "/" , gsub( "/|:|\\(|\\)" , "_" , catalog$name ) ) )
 		
-		catalog$output_folder <- iconv( catalog$output_folder , "" , "ASCII" , sub = " " )
+		catalog$output_folder <- gsub( " +" , " " , iconv( catalog$output_folder , "" , "ASCII" , sub = " " ) )
 		
 		catalog
 

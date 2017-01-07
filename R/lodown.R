@@ -197,7 +197,7 @@ lodown <-
 				tryCatch( { 
 					dir.create( this_dir , recursive = TRUE , showWarnings = TRUE ) 
 					} , 
-					warning = function( w ) stop( "while creating directory " , this_dir , conditionMessage( w ) ) 
+					warning = function( w ) stop( "while creating directory " , this_dir , "\n" , conditionMessage( w ) ) 
 				)
 			}
 		}
