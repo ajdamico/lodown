@@ -129,9 +129,9 @@ get_catalog_pew <-
 
 		}
 
-		catalog$output_folder <- gsub( "’" , "" , paste0( output_dir , "/" , catalog$topic , "/" , catalog$year , "/" , gsub( "/|:|\\(|\\)" , "_" , catalog$name ) ) )
+		catalog$output_folder <- paste0( output_dir , "/" , catalog$topic , "/" , catalog$year , "/" , gsub( "/|:|\\(|\\)" , "_" , catalog$name ) )
 		
-		catalog$output_folder <- gsub( " +" , " " , iconv( catalog$output_folder , "" , "ASCII" , sub = " " ) )
+		catalog$output_folder <- gsub( " +" , " " , iconv( catalog$output_folder , "" , "ASCII//TRANSLIT" , sub = " " ) )
 		
 		catalog
 
