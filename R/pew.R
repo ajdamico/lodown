@@ -72,6 +72,10 @@ get_catalog_pew <-
 
 					these_data_info <- if( all( sapply( these_data_text , length ) >= 2 ) ) sapply( these_data_text , "[[" , 2 ) else NA
 					
+					these_data_text <- these_data_text[ these_data_refs != year_link_refs[ year_num ] ]
+					these_data_info <- these_data_info[ these_data_refs != year_link_refs[ year_num ] ]
+					these_data_refs <- these_data_refs[ these_data_refs != year_link_refs[ year_num ] ]
+					
 					for( incomplete_url in which( grepl( year_link_refs[ year_num ] , these_data_refs ) ) ){
 					
 						this_data_page <- xml2::read_html( these_data_refs[ incomplete_url ] )
@@ -111,6 +115,8 @@ get_catalog_pew <-
 		}
 
 		catalog$output_folder <- gsub( "’" , "" , paste0( output_dir , "/" , catalog$topic , "/" , catalog$year , "/" , gsub( "/|:|\\(|\\)" , "_" , catalog$name ) ) )
+		
+		catalog$output_folder <- iconv( catalog$output_folder , "" , "ASCII" , sub = " " )
 		
 		catalog
 
