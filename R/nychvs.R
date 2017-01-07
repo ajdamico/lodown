@@ -48,7 +48,7 @@ get_catalog_nychvs <-
 						) , 
 						ifelse( year == 2014 , "_b" , "" ) ,
 						ifelse( 
-							year == 2011 & filetype == 'vac' , 
+							( year == 2011 & filetype == 'vac' ) | ( year == 2014 & filetype != 'vac' ) , 
 							".txt" , 
 							".dat" 
 						)
