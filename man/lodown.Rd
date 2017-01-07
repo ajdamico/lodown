@@ -80,6 +80,8 @@ lodown( "sbo" , output_dir = "C:/My Directory/SBO" )
 lodown( "scf" , output_dir = "C:/My Directory/SCF" )
 lodown( "seer" , output_dir = "C:/My Directory/SEER" ,
 	your_username = "username" , your_password = "password" )
+lodown( "share" , output_dir = "C:/My Directory/SHARE" ,
+		your_username = "username" , your_password = "password" )
 lodown( "sipp" , output_dir = "C:/My Directory/SIPP" )
 lodown( "uspums" , output_dir = "C:/My Directory/USPUMS" )
 lodown( "yrbss" , output_dir = "C:/My Directory/YRBSS" )
@@ -179,6 +181,10 @@ lodown( "scf" , scf_cat[ 1:2 , ] )
 seer_cat <- get_catalog( "seer" , output_dir = "C:/My Directory/SEER" )
 lodown( "seer" , seer_cat[ 1:2 , ] ,
 	your_username = "username" , your_password = "password" )
+share_cat <- get_catalog( "share" , output_dir = "C:/My Directory/SHARE" ,
+		your_username = "username" , your_password = "password" )
+lodown( "share" , share_cat[ 1:2 , ] ,
+		your_username = "username" , your_password = "password" )
 sipp_cat <- get_catalog( "sipp" , output_dir = "C:/My Directory/SIPP" )
 lodown( "sipp" , sipp_cat[ 1:2 , ] )
 uspums_cat <- get_catalog( "uspums" , output_dir = "C:/My Directory/USPUMS" )
