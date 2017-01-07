@@ -63,6 +63,10 @@ lodown( "nppes" , output_dir = "C:/My Directory/NPPES" )
 lodown( "nps" , output_dir = "C:/My Directory/NPS" )
 lodown( "nsduh" , output_dir = "C:/My Directory/NSDUH" , 
 		your_email = "email@address.com" , your_password = "password" )
+lodown( "pew" , output_dir = "C:/My Directory/PEW" ,
+		your_name = "your name" , your_org = "your organization" ,
+		your_phone = "555 555 5555" , your_email = "email@address.com" ,
+		agree_to_terms = FALSE )
 lodown( "piaac" , output_dir = "C:/My Directory/PIAAC" )
 lodown( "pisa" , output_dir = "C:/My Directory/PISA" )
 lodown( "pls" , output_dir = "C:/My Directory/PLS" )
@@ -146,6 +150,11 @@ lodown( "nsfg" , nsfg_cat[ 1:2 , ] )
 nsduh_cat <- get_catalog( "nsduh" , output_dir = "C:/My Directory/NSDUH" )
 lodown( "nsduh" , nsduh_cat[ 1:2 , ] ,
 		your_email = "email@address.com" , your_password = "password" )
+pew_cat <- get_catalog( "pew" , output_dir = "C:/My Directory/PEW" )
+lodown( "pew" , pew_cat[ 1:2 , ] ,
+		your_name = "your name" , your_org = "your organization" ,
+		your_phone = "555 555 5555" , your_email = "email@address.com" ,
+		agree_to_terms = FALSE )
 piaac_cat <- get_catalog( "piaac" , output_dir = "C:/My Directory/PIAAC" )
 lodown( "piaac" , piaac_cat[ 1:2 , ] )
 pisa_cat <- get_catalog( "pisa" , output_dir = "C:/My Directory/PISA" )

@@ -55,7 +55,7 @@ NULL
 #' 		your_email = "email@address.com" , your_password = "password" )
 #' lodown( "pew" , output_dir = "C:/My Directory/PEW" ,
 #' 		your_name = "your name" , your_org = "your organization" ,
-#' 		your_phone = "555 555 5555" , your_email = "email@address.com ,
+#' 		your_phone = "555 555 5555" , your_email = "email@address.com" ,
 #' 		agree_to_terms = FALSE )
 #' lodown( "piaac" , output_dir = "C:/My Directory/PIAAC" )
 #' lodown( "pisa" , output_dir = "C:/My Directory/PISA" )
@@ -143,7 +143,7 @@ NULL
 #' pew_cat <- get_catalog( "pew" , output_dir = "C:/My Directory/PEW" )
 #' lodown( "pew" , pew_cat[ 1:2 , ] ,
 #' 		your_name = "your name" , your_org = "your organization" ,
-#' 		your_phone = "555 555 5555" , your_email = "email@address.com ,
+#' 		your_phone = "555 555 5555" , your_email = "email@address.com" ,
 #' 		agree_to_terms = FALSE )
 #' piaac_cat <- get_catalog( "piaac" , output_dir = "C:/My Directory/PIAAC" )
 #' lodown( "piaac" , piaac_cat[ 1:2 , ] )

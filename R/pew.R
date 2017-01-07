@@ -58,17 +58,20 @@ get_catalog_pew <-
 
 					these_data_text <- these_data_link_text[ grep( "\\?download=[0-9]+$" , these_data_link_refs ) ]
 
-					these_data_text <- stringr::str_trim( gsub( "\n" , " " , these_data_text ) )
-
+					these_data_text <- lapply( strsplit( these_data_text , "\n" ) , function( z ) { a <- stringr::str_trim( z ) ; a[ a!='' ] } )
+					
 					these_data_refs <- these_data_link_refs[ grep( "\\?download=[0-9]+$" , these_data_link_refs ) ]
 
+					these_data_info <- if( all( sapply( these_data_text , length ) >= 2 ) ) sapply( these_data_text , "[[" , 2 ) else NA
+					
 					this_catalog <-
 						data.frame(
 							full_url = paste0( year_link_refs[ year_num ] , these_data_refs ) ,
-							name = these_data_text ,
+							name = sapply( these_data_text , '[[' , 1 ) ,
 							download_id = gsub( "(.*)\\?download=" , "" , these_data_refs ) ,
 							year = year_link_text[ year_num ] ,
 							topic = ra_link_text[ topic_num ] ,
+							info = these_data_info ,
 							stringsAsFactors = FALSE
 						)
 						
