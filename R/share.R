@@ -55,8 +55,10 @@ lodown_share <-
 		for ( i in seq_len( nrow( catalog ) ) ){
 
 			# download the file
-			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
+			this_file <- cachaca( catalog[ i , "full_url" ] , FUN = GET , filesize_fun = 'httr' )
 
+			writeBin( httr::content( this_file , "raw" ) , tf )
+			
 			unzipped_files <- unzip_warn_fail( tf , exdir = catalog[ i , 'output_folder' ] )
 
 			for( this_stata in grep( "\\.dta$" , unzipped_files , ignore.case = TRUE , value = TRUE ) ){
