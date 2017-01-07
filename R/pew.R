@@ -99,7 +99,7 @@ get_catalog_pew <-
 						
 						# these_data_refs[ incomplete_url ] <- gsub( year_link_refs[ year_num ] , "" , paste0( these_data_refs[ incomplete_url ] , "?download=" , tag_values[ tag_names %in% "download_id" ] ) )
 						
-						these_data_refs[ incomplete_url ] <- gsub( year_link_refs[ year_num ] , "" , paste0( these_data_refs[ incomplete_url ] , "?submitted" ] ) )
+						these_data_refs[ incomplete_url ] <- gsub( year_link_refs[ year_num ] , "" , paste0( these_data_refs[ incomplete_url ] , "?submitted" ) )
 						
 					}
 					
