@@ -94,23 +94,6 @@ lodown_enem <-
 
 			csvfile <- grep( "\\.csv|\\.CSV" , z , value = TRUE )
 
-			# save school math perfomance 
-
-			xlsfile <- grep( "\\.xls|\\.XLS" , z , value = TRUE )
-
-			school_file <- grep( "PLAN" , xlsfile , value = TRUE )
-
-			if( length( school_file ) > 0 ){
-				
-				x <- readxl::read_excel( school_file , sheet = 3 , skip = 1 )
-				
-				names( x ) <- tolower( names( x ) )
-				
-				save( x , file = paste0( catalog[ i , 'output_folder' ] , "/" , paste0( "mat" , catalog[ i , 'year' ] , ".rda" ) ) )
-				
-			}
-
-
 			if( length( csvfile ) > 0 ){
 
 				for( this_file in csvfile ){
