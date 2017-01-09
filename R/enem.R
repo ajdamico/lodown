@@ -17,7 +17,6 @@ get_catalog_enem <-
 			data.frame(
 				year = enem_years ,
 				full_url = NA ,
-				db_tablename = paste0( "x" , enem_years ) ,
 				dbfolder = paste0( output_dir , "/MonetDB" ) ,
 				output_folder = paste0( output_dir , "/" , enem_years ) ,
 				stringsAsFactors = FALSE
@@ -163,7 +162,7 @@ lodown_enem <-
 						tf2 , 
 						zipped = FALSE , 
 						tl = TRUE ,
-						tablename = catalog[ i , 'db_tablename' ] ,
+						tablename = paste0( "enem" , catalog[ i , 'year' ] ) ,
 						connection = db
 					)
 					
@@ -182,7 +181,7 @@ lodown_enem <-
 							tf2 , 
 							zipped = FALSE , 
 							tl = TRUE ,
-							tablename = catalog[ i , 'db_tablename' ] ,
+							tablename = paste0( "enem" , catalog[ i , 'year' ] ) ,
 							connection = db ,
 							try_best_effort = TRUE
 						)
@@ -194,7 +193,7 @@ lodown_enem <-
 							tf2 , 
 							zipped = FALSE , 
 							tl = TRUE ,
-							tablename = catalog[ i , 'db_tablename' ] ,
+							tablename = paste0( "enem" , catalog[ i , 'year' ] ) ,
 							connection = db
 						)
 
@@ -202,7 +201,7 @@ lodown_enem <-
 
 				}
 
-				if( row_check ) stopifnot( R.utils::countLines( dfile ) %in% ( DBI::dbGetQuery( db , paste0( "SELECT COUNT(*) FROM " , catalog[ i , 'db_tablename' ] ) )[ 1 , 1 ] + -5:5 ) )
+				if( row_check ) stopifnot( R.utils::countLines( dfile ) %in% ( DBI::dbGetQuery( db , paste0( "SELECT COUNT(*) FROM " , paste0( "enem" , catalog[ i , 'year' ] ) ) )[ 1 , 1 ] + -5:5 ) )
 
 			}
 
