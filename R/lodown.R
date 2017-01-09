@@ -32,6 +32,7 @@ NULL
 #' lodown( "ces" , output_dir = "C:/My Directory/CES" )
 #' lodown( "ess" , output_dir = "C:/My Directory/ESS" , your_email = "email@address.com" )
 #' lodown( "faers" , output_dir = "C:/My Directory/FAERS" )
+#' lodown( "gss" , output_dir = "C:/My Directory/GSS" )
 #' lodown( "hmda" , output_dir = "C:/My Directory/HMDA" )
 #' lodown( "hrs" , output_dir = "C:/My Directory/HRS" , 
 #' 		your_username = "username" , your_password = "password" )
@@ -105,6 +106,8 @@ NULL
 #' lodown( "ess" , ess_cat[ 1:2 , ] , your_email = "email@address.com" )
 #' faers_cat <- get_catalog( "faers" , output_dir = "C:/My Directory/FAERS" )
 #' lodown( "faers" , faers_cat[ 1:2 , ] )
+#' gss_cat <- get_catalog( "gss" , output_dir = "C:/My Directory/GSS" )
+#' lodown( "gss" , gss_cat[ 1:2 , ] )
 #' hmda_cat <- get_catalog( "hmda" , output_dir = "C:/My Directory/HMDA" )
 #' lodown( "hmda" , hmda_cat[ 1:2 , ] )
 #' hrs_cat <- get_catalog( "hrs" , output_dir = "C:/My Directory/HRS" , 
