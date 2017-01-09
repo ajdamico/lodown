@@ -42,6 +42,7 @@ NULL
 #' lodown( "nbs" , output_dir = "C:/My Directory/NBS" )
 #' lodown( "ncvs" , output_dir = "C:/My Directory/NCVS" ,
 #' 		your_email = "email@address.com" , your_password = "password" )
+#' lodown( "nhanes" , output_dir = "C:/My Directory/NHANES" )
 #' lodown( "nhis" , output_dir = "C:/My Directory/NHIS" )
 #' lodown( "nhts" , output_dir = "C:/My Directory/NHTS" )
 #' lodown( "nis" , output_dir = "C:/My Directory/NIS" )
@@ -123,6 +124,8 @@ NULL
 #' ncvs_cat <- get_catalog( "ncvs" , output_dir = "C:/My Directory/NCVS" )
 #' lodown( "ncvs" , ncvs_cat[ 1:2 , ] ,
 #' 		your_email = "email@address.com" , your_password = "password" )
+#' nhanes_cat <- get_catalog( "nhanes" , output_dir = "C:/My Directory/NHANES" )
+#' lodown( "nhanes" , nhanes_cat[ 1:2 , ] )
 #' nhis_cat <- get_catalog( "nhis" , output_dir = "C:/My Directory/NHIS" )
 #' lodown( "nhis" , nhis_cat[ 1:2 , ] )
 #' nhts_cat <- get_catalog( "nhts" , output_dir = "C:/My Directory/NHTS" )

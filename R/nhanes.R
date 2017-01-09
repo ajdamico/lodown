@@ -1,0 +1,61 @@
+get_catalog_nhanes <-
+	function( data_name = "nhanes" , output_dir , ... ){
+
+		data_page <- "https://wwwn.cdc.gov/nchs/nhanes/search/DataPage.aspx"
+		
+		data_html <- xml2::read_html( data_page )
+		
+		this_table <- rvest::html_table( data_html )[[2]]
+	
+		names( this_table ) <- c( 'years' , 'data_name' , 'doc_name' , 'file_name' , 'date_published' )
+
+		
+		all_links <- rvest::html_nodes( data_html , "a" )
+		
+		link_text <- rvest::html_text( all_links )
+		
+		link_refs <- rvest::html_attr( all_links , "href" )
+		
+		this_table$full_url <- link_refs[ match( this_table$file_name , link_text ) ]
+
+		this_table$doc_url <- link_refs[ match( this_table$doc_name , link_text ) ]
+
+		this_table[ c( 'full_url' , 'doc_url' ) ] <- sapply( this_table[ c( 'full_url' , 'doc_url' ) ] , function( w ) ifelse( is.na( w ) , NA , paste0( "https://wwwn.cdc.gov" , w ) ) )
+		
+		catalog <- this_table[ this_table$file_name != 'RDC Only' & this_table$date_published != 'Withdrawn' , ]
+
+		catalog$output_filename <- paste0( output_dir , "/" , catalog$years , "/" , tolower( gsub( "\\.xpt" , ".rda" , basename( catalog$full_url ) , ignore.case = TRUE ) ) )
+		
+		catalog
+
+	}
+
+
+lodown_nhanes <-
+	function( data_name = "nhanes" , catalog , ... ){
+
+		tf <- tempfile()
+
+		for ( i in seq_len( nrow( catalog ) ) ){
+
+			# download the file
+			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
+
+			x <- foreign::read.xport( tf )
+
+			# convert all column names to lowercase
+			names( x ) <- tolower( names( x ) )
+
+			save( x , file = catalog[ i , 'output_filename' ] )
+
+			# delete the temporary files
+			suppressWarnings( file.remove( tf ) )
+
+			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , catalog[ i , 'output_filename' ] , "'\r\n\n" ) )
+
+		}
+
+		invisible( TRUE )
+
+	}
+
