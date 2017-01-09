@@ -60,6 +60,16 @@ lodown_nhanes <-
 			# download the file
 			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
 
+			if( grepl( "\\.zip$" , catalog[ i , "full_url" ] , ignore.case = TRUE ) ){
+				
+				unzipped_files <- unzip( tf , exdir = tempdir() )
+				
+				file.remove( tf )
+				
+				tf <- unzipped_files
+				
+			}
+			
 			x <- foreign::read.xport( tf )
 
 			# convert all column names to lowercase
