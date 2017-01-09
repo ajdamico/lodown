@@ -41,7 +41,7 @@ lodown_gss <-
 
 			unzipped_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) )
 
-			stopifnot( length( this_sav <- grep( "\\.sav$" , unzipped_files , ignore.case = TRUE ) ) == 1 )
+			stopifnot( length( this_sav <- grep( "\\.sav$" , unzipped_files , ignore.case = TRUE , value = TRUE ) ) == 1 )
 			
 			x <- data.frame( haven::read_spss( this_sav ) )
 
