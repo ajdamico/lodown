@@ -70,7 +70,9 @@ lodown_nhanes <-
 				
 			}
 			
-			x <- foreign::read.xport( tf )
+			xport_attempt <- try( x <- foreign::read.xport( tf ) , silent = TRUE )
+			
+			if( class( xport_attempt ) == 'try-error' ) x <- data.frame( haven::read_sas( tf ) )
 
 			# convert all column names to lowercase
 			names( x ) <- tolower( names( x ) )
