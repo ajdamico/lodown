@@ -87,6 +87,7 @@ lodown( "seer" , output_dir = "C:/My Directory/SEER" ,
 lodown( "share" , output_dir = "C:/My Directory/SHARE" ,
 		your_username = "username" , your_password = "password" )
 lodown( "sipp" , output_dir = "C:/My Directory/SIPP" )
+lodown( "ssa" , output_dir = "C:/My Directory/SSA" )
 lodown( "uspums" , output_dir = "C:/My Directory/USPUMS" )
 lodown( "yrbss" , output_dir = "C:/My Directory/YRBSS" )
 
@@ -199,6 +200,8 @@ lodown( "share" , share_cat[ 1:2 , ] ,
 		your_username = "username" , your_password = "password" )
 sipp_cat <- get_catalog( "sipp" , output_dir = "C:/My Directory/SIPP" )
 lodown( "sipp" , sipp_cat[ 1:2 , ] )
+ssa_cat <- get_catalog( "ssa" , output_dir = "C:/My Directory/SSA" )
+lodown( "ssa" , ssa_cat[ 1:2 , ] )
 uspums_cat <- get_catalog( "uspums" , output_dir = "C:/My Directory/USPUMS" )
 lodown( "uspums" , uspums_cat[ 1:2 , ] )
 yrbss_cat <- get_catalog( "yrbss" , output_dir = "C:/My Directory/YRBSS" )
