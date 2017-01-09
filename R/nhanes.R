@@ -64,10 +64,10 @@ lodown_nhanes <-
 				
 				unzipped_files <- unzip( tf , exdir = tempdir() )
 				
-				file.remove( tf )
+				suppressWarnings( file.remove( tf ) )
 				
 				tf <- unzipped_files
-				
+
 			}
 			
 			xport_attempt <- try( x <- foreign::read.xport( tf ) , silent = TRUE )
