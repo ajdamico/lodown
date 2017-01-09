@@ -24,10 +24,10 @@ get_catalog_censo_escolar <-
 			)
 
 		# get real full_urls
-		w <- rvest::html_attr(
-		  rvest::html_nodes( xml2::read_html( "http://portal.inep.gov.br/basica-levantamentos-acessar" ) , "a" ) , "href" )
+		w <- rvest::html_attr( rvest::html_nodes( xml2::read_html( inep_portal ) , "a" ) , "href" )
 
-		censoesc_files <- grep( "censo_escolar.*zip$" , w , value = TRUE )
+		censoesc_files <- grep( "censo_escolar(.*)zip$" , basename( w ) , value = TRUE , ignore.case = TRUE )
+		
 		catalog$full_url <- censoesc_files
 
 		# have not completed testing prior to 2008
@@ -88,6 +88,9 @@ lodown_censo_escolar <-
 				}
 
 			}
+
+			# disconnect from the current monet database
+			DBI::dbDisconnect( db , shutdown = TRUE )
 
 			# delete the temporary files?  or move some docs to a save folder?
 			suppressWarnings( file.remove( tf ) )
