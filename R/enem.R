@@ -120,13 +120,13 @@ lodown_enem <-
 
 					soc <- grepl( "," , readLines( this_file , 1 ) )
 
-					attempt_one <- try( monetdb.read.csv( db , this_file , tablename , lower.case.names = TRUE , delim = ifelse( soc , "," , ";" ) ) , silent = TRUE )
+					attempt_one <- try( MonetDBLite::monetdb.read.csv( db , this_file , tablename , lower.case.names = TRUE , delim = ifelse( soc , "," , ";" ) ) , silent = TRUE )
 
 					if( class( attempt_one ) == 'try-error' ){
 
 						this_file <- enem_ranc( this_file )
 
-						monetdb.read.csv( db , this_file , tablename , lower.case.names = TRUE , delim = ifelse( soc , "," , ";" ) , best.effort = tablename == "microdados_enem_2013" )
+						MonetDBLite::monetdb.read.csv( db , this_file , tablename , lower.case.names = TRUE , delim = ifelse( soc , "," , ";" ) , best.effort = tablename == "microdados_enem_2013" )
 
 					}
 
@@ -164,7 +164,7 @@ lodown_enem <-
 						zipped = FALSE , 
 						tl = TRUE ,
 						tablename = catalog[ i , 'db_tablename' ] ,
-						conn = db
+						connection = db
 					)
 					
 				} , silent = TRUE )
@@ -183,7 +183,7 @@ lodown_enem <-
 							zipped = FALSE , 
 							tl = TRUE ,
 							tablename = catalog[ i , 'db_tablename' ] ,
-							conn = db ,
+							connection = db ,
 							try_best_effort = TRUE
 						)
 
@@ -195,7 +195,7 @@ lodown_enem <-
 							zipped = FALSE , 
 							tl = TRUE ,
 							tablename = catalog[ i , 'db_tablename' ] ,
-							conn = db
+							connection = db
 						)
 
 					}
