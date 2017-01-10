@@ -2,10 +2,15 @@
 
 
 read_SAScii <-
-	function( dat_path , sas_path , beginline = 1 , lrecl = NULL , skip_decimal_division = NULL , zipped = FALSE , na_values = c( "NA" , "" , "." ) , ... ){
+	function( dat_path , sas_path = NULL , beginline = 1 , lrecl = NULL , skip_decimal_division = NULL , zipped = FALSE , na_values = c( "NA" , "" , "." ) , sas_stru = NULL , ... ){
 
-		suppressWarnings( sasc <- SAScii::parse.SAScii( sas_path , beginline = beginline , lrecl = lrecl ) )
+		if( is.null( sas_path ) & is.null( sas_stru ) ) stop( "either sas_path= or sas_stru= must be specified" )
+		if( !is.null( sas_path ) & !is.null( sas_stru ) ) stop( "either sas_path= or sas_stru= must be specified, but not both" )
 
+		if( is.null( sas_stru ) ){
+			suppressWarnings( sasc <- SAScii::parse.SAScii( sas_path , beginline = beginline , lrecl = lrecl ) )
+		} else sasc <- sas_stru
+			
 		y <- sasc[ !is.na( sasc[ , "varname" ] ) , ]
 		
 		sasc$varname[ is.na( sasc$varname ) ] <- paste0( "toss" , seq( sum( is.na( sasc$varname ) ) ) )
