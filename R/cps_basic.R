@@ -160,7 +160,7 @@ cps_dd_parser <-
 		the_dd <- gsub( "\t" , " " , the_dd )
 		
 		# look for lines indicating divisor
-		idp <- grep( "([0-9]+) implied decimal" , the_dd , ignore.case = TRUE )
+		idp <- grep( "([0-9]+) implied" , the_dd , ignore.case = TRUE )
 		
 		decimal_lines <- gsub( "[^0-9]" , "" , the_dd[idp] )
 		
