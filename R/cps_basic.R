@@ -69,7 +69,7 @@ lodown_cps_basic <-
 
 			sas_lines <- cps_dd_parser( catalog[ i , 'dd' ] )
 			
-			x <- read_SAScii( unzipped_files , sas_stru = sas_lines )
+			x <- read_SAScii( unzipped_files , sas_stru = sas_lines , na_values = c( "NA" , "" , "." , "*" , "-" ) )
 
 			# convert all column names to lowercase
 			names( x ) <- tolower( names( x ) )
@@ -95,7 +95,7 @@ cps_dd_parser <-
 	function( dd_url ){
 
 		# read in the data dictionary
-		the_lines <- readLines ( dd_url , encoding = 'ASCII' )
+		the_lines <- readLines ( dd_url , encoding = 'ASCII' , skipNul = TRUE )
 
 		the_lines <- gsub( "\\(|\\)" , "" , the_lines )
 		

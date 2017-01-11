@@ -50,7 +50,7 @@ read_SAScii <-
 			
 			cols_to_multiply <- no_decimal_points & !y[ , "char" ] & y[ , "divisor" ] != 1
 			
-			x[ cols_to_multiply ] <- data.frame( t( t( x[ cols_to_multiply ] ) * y[ , "divisor" ] ) )
+			x[ cols_to_multiply ] <- data.frame( t( t( x[ cols_to_multiply ] ) * y[ cols_to_multiply , "divisor" ] ) )
 			
 			options(scipen = user.defined.scipen)
 			
@@ -60,7 +60,7 @@ read_SAScii <-
 
 				cols_to_multiply <- !y[ , "char" ] & y[ , "divisor" ] != 1
 			
-				x[ cols_to_multiply ] <- data.frame( t( t( x[ cols_to_multiply ] ) * y[ , "divisor" ] ) )
+				x[ cols_to_multiply ] <- data.frame( t( t( x[ cols_to_multiply ] ) * y[ cols_to_multiply , "divisor" ] ) )
 			
 
 			}
