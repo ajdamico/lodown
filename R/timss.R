@@ -121,9 +121,9 @@ lodown_timss <-
 						
 						if( nrow( x ) > 0 ){
 						
-							if ( !is.null( y ) & catalog[ i , 'year' ] == 2003 & any( !( names( x ) %in% names( y ) ) ) ) for ( i in names( x )[ !( names( x ) %in% names( y ) ) ] ) y[ , i ] <- NA
+							if ( !is.null( y ) & catalog[ i , 'year' ] == 2003 & any( !( names( x ) %in% names( y ) ) ) ) for ( j in names( x )[ !( names( x ) %in% names( y ) ) ] ) y[ , j ] <- NA
 							
-							if ( !is.null( y ) & catalog[ i , 'year' ] == 2003 & any( !( names( y ) %in% names( x ) ) ) ) for ( i in names( y )[ !( names( y ) %in% names( x ) ) ] ) x[ , i ] <- NA
+							if ( !is.null( y ) & catalog[ i , 'year' ] == 2003 & any( !( names( y ) %in% names( x ) ) ) ) for ( j in names( y )[ !( names( y ) %in% names( x ) ) ] ) x[ , j ] <- NA
 					
 							# stack it
 							y <- rbind( y , x ) ; rm( x ) ; gc()
