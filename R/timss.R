@@ -1,4 +1,4 @@
-get_catalog_template <-
+get_catalog_timss <-
 	function( data_name = "timss" , output_dir , ... ){
 
 		catalog <-
@@ -16,7 +16,7 @@ get_catalog_template <-
 	}
 
 
-lodown_template <-
+lodown_timss <-
 	function( data_name = "timss" , catalog , ... ){
 
 		tf <- tempfile()
