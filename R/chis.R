@@ -69,7 +69,7 @@ lodown_chis <-
 			
 			for( this_dta in dta_file ){
 				
-				if( grepl( "f\\.dta" , this_dta ) ) savename <- gsub( "\\.rda" , "f.rda" , catalog[ i , 'output_filename' ] ) else savename <- catalog[ i , 'output_filename' ]
+				if( grepl( "f\\.dta" , this_dta , ignore.case = TRUE ) ) savename <- gsub( "\\.rda" , "f.rda" , catalog[ i , 'output_filename' ] ) else savename <- catalog[ i , 'output_filename' ]
 				
 				if( file.exists( savename ) ) stop( "rda file already exists. delete the contents of your output_dir= and try again" )
 				
