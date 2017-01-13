@@ -39,7 +39,10 @@ read_SAScii <-
 			)
 
 		x <- data.frame( x )
-				
+			
+		# if the table has zero records, stop here.
+		if( nrow( x ) == 0 ) return( x )
+			
 		if (is.null(skip_decimal_division)) {
 			
 			user.defined.scipen <- getOption("scipen")
@@ -47,9 +50,6 @@ read_SAScii <-
 			options(scipen = 1e+06)
 			
 			no_decimal_points <- unlist( sapply( x , function( z ) ( sum( grepl( "." , z , fixed = TRUE ) ) == 0 ) ) )
-			
-			# if there are zero records, then there are zero decimal points
-			if( is.null( no_decimal_points ) ) no_decimal_points <- TRUE
 			
 			cols_to_multiply <- no_decimal_points & !y[ , "char" ] & y[ , "divisor" ] != 1
 			
