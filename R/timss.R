@@ -255,13 +255,13 @@ lodown_timss <-
 						}
 						
 						# save the implicate
-						DBI::dbWriteTable( db , paste0( dfx , this.year , j ) , y )
+						DBI::dbWriteTable( db , paste0( dfx , catalog[ i , 'year' ] , j ) , y )
 						
 					}
 					
 				} else {	
 				
-					DBI::dbWriteTable( db , paste0( dfx , this.year ) , get( dfx ) )
+					DBI::dbWriteTable( db , paste0( dfx , catalog[ i , 'year' ] ) , get( dfx ) )
 				
 				}
 				
@@ -292,7 +292,7 @@ lodown_timss <-
 							survey::svrepdesign( 
 								weights = as.formula( paste( "~" , wgt ) )  , 
 								repweights = z , 
-								data = mitools::imputationList( datasets = as.list( paste0( dfx , this.year , 1:5 ) ) , dbtype = "MonetDBLite" ) , 
+								data = mitools::imputationList( datasets = as.list( paste0( dfx , catalog[ i , 'year' ] , 1:5 ) ) , dbtype = "MonetDBLite" ) , 
 								type = "other" ,
 								combined.weights = TRUE , 
 								dbtype = "MonetDBLite" ,
@@ -314,7 +314,7 @@ lodown_timss <-
 							survey::svrepdesign( 
 								weights = as.formula( paste( "~" , wgt ) )  , 
 								repweights = z , 
-								data = paste0( dfx , this.year ) , 
+								data = paste0( dfx , catalog[ i , 'year' ] ) , 
 								type = "other" ,
 								combined.weights = TRUE ,
 								dbtype = "MonetDBLite" ,
@@ -328,7 +328,7 @@ lodown_timss <-
 						
 					assign( paste0( dfx , "_design" ) , design )
 					
-					save( list = paste0( dfx , "_design" ) , file = paste0( './' , this.year , '/' , dfx , '_design.rda' ) )
+					save( list = paste0( dfx , "_design" ) , file = paste0( catalog[ i , 'output_folder' ] , '/' , dfx , '_design.rda' ) )
 					
 				}
 				
