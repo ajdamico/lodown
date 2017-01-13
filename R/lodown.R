@@ -3,16 +3,16 @@
 #' @importFrom graphics plot rasterImage
 NULL
 
-#' locally download, import, prepare publicly-available microdata
+#' locally download and prepare publicly-available microdata
 #'
 #' get_catalog retrieves a listing of all available extracts for a microdata set
 #'
 #' @param data_name a character vector with a microdata abbreviation
 #' @param catalog \code{data.frame} detailing available microdata extracts
 #' @param output_dir directory on your local computer to save the microdata
-#' @param ... passed to \code{get_catalog} and \code{lodown_}
+#' @param ... passed to \code{get_catalog} and \code{lodown_*}
 #'
-#' @return TRUE, and also the microdata in either the folder you specified or your working directory
+#' @return the microdata you asked for in the folder you specified (or your current working directory)
 #'
 #' @examples
 #'

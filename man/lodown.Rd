@@ -3,7 +3,7 @@
 \name{lodown}
 \alias{get_catalog}
 \alias{lodown}
-\title{locally download, import, prepare publicly-available microdata}
+\title{locally download and prepare publicly-available microdata}
 \usage{
 lodown(data_name, catalog = NULL, ...)
 
@@ -14,12 +14,12 @@ get_catalog(data_name, output_dir = getwd(), ...)
 
 \item{catalog}{\code{data.frame} detailing available microdata extracts}
 
-\item{...}{passed to \code{get_catalog} and \code{lodown_}}
+\item{...}{passed to \code{get_catalog} and \code{lodown_*}}
 
 \item{output_dir}{directory on your local computer to save the microdata}
 }
 \value{
-TRUE, and also the microdata in either the folder you specified or your working directory
+the microdata you asked for in the folder you specified (or your current working directory)
 }
 \description{
 get_catalog retrieves a listing of all available extracts for a microdata set
