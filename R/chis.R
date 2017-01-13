@@ -32,7 +32,7 @@ get_catalog_chis <-
 		
 		catalog$full_url <- paste0( "http://healthpolicy.ucla.edu/chis/data/public-use-data-file/Documents/chis" , substr( catalog$year , 3 , 4 ) , "_" , catalog$type , "_stata.zip" )
 		
-		catalog$output_folder <- paste0( output_dir , "/" , catalog$year , "/" , catalog$type , "/" )
+		catalog$output_filename <- paste0( output_dir , "/" , catalog$year , " " , catalog$type , ".rda" )
 		
 		catalog
 
@@ -65,9 +65,12 @@ lodown_chis <-
 
 			unzipped_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) )
 
-			# loop through all .dta files that were unzipped
-			for( this_dta in grep( "\\.dta$" , unzipped_files , value = TRUE ) ){
+			dta_file <- grep( "\\.dta$" , unzipped_files , value = TRUE )
 			
+			for( this_dta in dta_file ){
+				
+				if( grepl( "f\\.dta" , this_dta ) ) savename <- gsub( "\\.rda" , "f.rda" , catalog[ i , 'output_filename' ] ) else savename <- catalog[ i , 'output_filename' ]
+				
 				# load the .dta file as an R `data.frame` object
 				x <- data.frame( haven::read_dta( this_dta ) )
 				
@@ -75,10 +78,10 @@ lodown_chis <-
 				names( x ) <- tolower( names( x ) )
 				
 				# store the `data.frame` object as an .rda file on the local disk
-				save( x , file = paste0( catalog[ i , 'output_folder' ] , "/" , tolower( gsub( "\\.dta$" , ".rda" , basename( this_dta ) ) ) ) )
-
+				save( x , file = savename )
+				
 			}
-			
+				
 			# delete the temporary files
 			suppressWarnings( file.remove( tf , unzipped_files ) )
 
