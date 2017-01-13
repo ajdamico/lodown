@@ -40,6 +40,8 @@ lodown( "bsapuf" , output_dir = "C:/My Directory/BSAPUF" )
 lodown( "censo" , output_dir = "C:/My Directory/CENSO" )
 lodown( "censo_escolar" , output_dir = "C:/My Directory/CENSO_ESCOLAR" )
 lodown( "ces" , output_dir = "C:/My Directory/CES" )
+lodown( "chis" , output_dir = "C:/My Directory/CHIS" ,
+		your_username = "username" , your_password = "password" )
 lodown( "cps_basic" , output_dir = "C:/My Directory/CPS_BASIC" )
 lodown( "ess" , output_dir = "C:/My Directory/ESS" , your_email = "email@address.com" )
 lodown( "enem" , output_dir = "C:/My Directory/ENEM" )
@@ -116,6 +118,10 @@ censo_escolar_cat <- get_catalog( "censo_escolar" , output_dir = "C:/My Director
 lodown( "censo_escolar" , censo_escolar_cat[ 1:2 , ] )
 ces_cat <- get_catalog( "ces" , output_dir = "C:/My Directory/CES" )
 lodown( "ces" , ces_cat[ 1:2 , ] )
+chis_cat <- get_catalog( "chis" , output_dir = "C:/My Directory/CHIS" ,
+		your_username = "username" , your_password = "password" )
+lodown( "chis" , chis_cat[ 1:2 , ]  ,
+		your_username = "username" , your_password = "password" )
 cps_basic_cat <- get_catalog( "cps_basic" , output_dir = "C:/My Directory/CPS_BASIC" )
 lodown( "cps_basic" , cps_basic_cat[ 1:2 , ] )
 ess_cat <- get_catalog( "ess" , output_dir = "C:/My Directory/ESS" )
