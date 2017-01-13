@@ -28,9 +28,9 @@ get_catalog_chis <-
 		
 		names( catalog ) <- c( 'year' , 'type' )
 		
-		catalog[ catalog$year == 2014 & catalog$type == 'teen' , 'type' ] <- 'adolescent'
-		
 		catalog$full_url <- paste0( "http://healthpolicy.ucla.edu/chis/data/public-use-data-file/Documents/chis" , substr( catalog$year , 3 , 4 ) , "_" , catalog$type , "_stata.zip" )
+		
+		catalog[ catalog$year == 2014 & catalog$type == 'teen' , 'full_url' ] <- gsub( 'teen' , 'adolescent' , catalog[ catalog$year == 2014 & catalog$type == 'teen' , 'full_url' ] )
 		
 		catalog$output_filename <- paste0( output_dir , "/" , catalog$year , " " , catalog$type , ".rda" )
 		
@@ -70,6 +70,8 @@ lodown_chis <-
 			for( this_dta in dta_file ){
 				
 				if( grepl( "f\\.dta" , this_dta ) ) savename <- gsub( "\\.rda" , "f.rda" , catalog[ i , 'output_filename' ] ) else savename <- catalog[ i , 'output_filename' ]
+				
+				if( file.exists( savename ) ) stop( "rda file already exists. delete the contents of your output_dir= and try again" )
 				
 				# load the .dta file as an R `data.frame` object
 				x <- data.frame( haven::read_dta( this_dta ) )
