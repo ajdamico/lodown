@@ -76,8 +76,18 @@ lodown_timss <-
 				# loop through each prefix
 				for ( p in prefixes ){
 				
-					# initiate an empty object
-					y <- NULL
+					if( file.exists( paste0( catalog[ i , 'output_folder' ] , '/' , p , '.rda' ) ) ) {
+					
+						load( paste0( catalog[ i , 'output_folder' ] , '/' , p , '.rda' ) )
+						y <- get( p )
+					
+					} else {
+					
+						# initiate an empty object
+						y <- NULL
+						
+					}
+				
 				
 					# loop through each saved file matching the prefix pattern
 					for ( this.file in unzipped_files[ substr( basename( unzipped_files ) , 1 , 3 ) == p ] ){
@@ -144,10 +154,19 @@ lodown_timss <-
 							if( length( this.sas ) > 1 ) this.sas <- this.sas[ grep( "ctrm" , tolower( this.sas ) ) ]
 							
 						}
+								
+						if( file.exists( paste0( catalog[ i , 'output_folder' ] , '/' , p , '.rda' ) ) ) {
+						
+							load( paste0( catalog[ i , 'output_folder' ] , '/' , p , '.rda' ) )
+							y <- get( p )
+						
+						} else {
+						
+							# initiate an empty object
+							y <- NULL
 							
-						# initiate an empty object
-						y <- NULL
-					
+						}
+						
 						# loop through each saved file matching the prefix and suffix pattern
 						for ( this.file in files[ substr( basename( files ) , 1 , 3 ) == p & substr( basename( files ) , 7 , se ) == s ] ){
 					
@@ -176,131 +195,131 @@ lodown_timss <-
 							# save that single all-country stack-a-mole
 							save( list = paste0( p , s ) , file = paste0( catalog[ i , 'output_folder' ] , '/' , p , '.rda' ) )
 							
-						rdas <- c( rdas , paste0( catalog[ i , 'output_folder' ] , '/' , p , '.rda' ) )
+							rdas <- c( rdas , paste0( catalog[ i , 'output_folder' ] , '/' , p , '.rda' ) )
 						
 						}
 					}
 				}
 			}
 			
-			
-			for( this_rda in rdas ){
-			
-				dfx <- load( this_rda )
-				
-				ppv <- grep( "(.*)0[1-5]$" , names( get( dfx ) ) , value = TRUE )
-				
-				ppv <- unique( gsub( "0[1-5]$" , "" , ppv ) )
-				
-				# actual plausible values
-				pv <- NULL
-				
-				# confirm '01' thru '05' are in the data set.
-				for ( j in ppv ) if ( all( paste0( j , '0' , 1:5 ) %in% names( get( dfx ) ) ) ) pv <- c( pv , j )
-				
-				# if there are any plausible values variables,
-				# the survey design needs to be both multiply-imputed and replicate-weighted.
-				if( length( pv ) > 0 ){
-				
-					# loop through all five iterations of the plausible value
-					for ( j in 1:5 ){
-							
-						y <- get( dfx )
-				
-						# loop through each plausible value variable
-						for ( vn in pv ){
-						
-							# copy over the correct iteration into the main variable
-							y[ , vn ] <- y[ , paste0( vn , '0' , j ) ]
-							
-							# erase all five originals
-							y <- y[ , !( names( y ) %in% paste0( vn , '0' , 1:5 ) ) ]
-
-						}
-						
-						# save the implicate
-						DBI::dbWriteTable( db , paste0( dfx , catalog[ i , 'year' ] , j ) , y )
-						
-						rm( y ) ; gc()
-						
-					}
+			# if this is the last catalog entry for the year.
+			if( ( i == max( which( catalog$year == catalog[ i , 'year' ] ) ) ) ){
 					
-				} else {	
+				for( this_rda in rdas ){
 				
-					DBI::dbWriteTable( db , paste0( dfx , catalog[ i , 'year' ] ) , get( dfx ) )
-				
-				}
-				
-				# make the replicate weights table, make the survey design
-				if( 'totwgt' %in% names( get( dfx ) ) | 'tchwgt' %in% names( get( dfx ) ) ){
+					dfx <- load( this_rda )
 					
-					if( 'totwgt' %in% names( get( dfx ) ) ) wgt <- 'totwgt' else wgt <- 'tchwgt'
-				
-					z <- get( dfx )[ , c( wgt , 'jkrep' , 'jkzone' ) ]
-
-					rm( list = dfx ) ; gc()
-
-					for ( j in 1:75 ){
-						z[ z$jkzone != j , paste0( 'rw' , j ) ] <- z[ z$jkzone != j , wgt ]
-						z[ z$jkzone == j & z$jkrep == 1 , paste0( 'rw' , j ) ] <- z[ z$jkzone == j & z$jkrep == 1 , wgt ] * 2
-						z[ z$jkzone == j & z$jkrep == 0 , paste0( 'rw' , j ) ] <- 0
-					}
-
-					z <- z[ , paste0( 'rw' , 1:75 ) ]
-									
-					# where there any imputed variables?
+					ppv <- grep( "(.*)0[1-5]$" , names( get( dfx ) ) , value = TRUE )
+					
+					ppv <- unique( gsub( "0[1-5]$" , "" , ppv ) )
+					
+					# actual plausible values
+					pv <- NULL
+					
+					# confirm '01' thru '05' are in the data set.
+					for ( j in ppv ) if ( all( paste0( j , '0' , 1:5 ) %in% names( get( dfx ) ) ) ) pv <- c( pv , j )
+					
+					# if there are any plausible values variables,
+					# the survey design needs to be both multiply-imputed and replicate-weighted.
 					if( length( pv ) > 0 ){
 					
-						# if so, construct a multiply-imputed,
-						# database-backed, replicate-weighted
-						# complex sample survey design.
-						design <- 
-							survey::svrepdesign( 
-								weights = as.formula( paste( "~" , wgt ) )  , 
-								repweights = z , 
-								data = mitools::imputationList( datasets = as.list( paste0( dfx , catalog[ i , 'year' ] , 1:5 ) ) , dbtype = "MonetDBLite" ) , 
-								type = "other" ,
-								combined.weights = TRUE , 
-								dbtype = "MonetDBLite" ,
-								dbname = catalog[ i , 'dbfolder' ]
-							)
-
-
-						# workaround for a bug in survey::svrepdesign.character
-						design$mse <- TRUE
-											
-
-					} else {
+						# loop through all five iterations of the plausible value
+						for ( j in 1:5 ){
+								
+							y <- get( dfx )
 					
-						# otherwise, construct a
-						# database-backed, replicate-weighted
-						# complex sample survey design
-						# without the multiple imputation.
-						design <- 
-							survey::svrepdesign( 
-								weights = as.formula( paste( "~" , wgt ) )  , 
-								repweights = z , 
-								data = paste0( dfx , catalog[ i , 'year' ] ) , 
-								type = "other" ,
-								combined.weights = TRUE ,
-								dbtype = "MonetDBLite" ,
-								dbname = catalog[ i , 'dbfolder' ]
-							)
+							# loop through each plausible value variable
+							for ( vn in pv ){
 							
-						# workaround for a bug in survey::svrepdesign.character
-						design$mse <- TRUE
+								# copy over the correct iteration into the main variable
+								y[ , vn ] <- y[ , paste0( vn , '0' , j ) ]
+								
+								# erase all five originals
+								y <- y[ , !( names( y ) %in% paste0( vn , '0' , 1:5 ) ) ]
 
+							}
+							
+							# save the implicate
+							DBI::dbWriteTable( db , paste0( dfx , catalog[ i , 'year' ] , j ) , y )
+							
+						}
+						
+					} else {	
+					
+						DBI::dbWriteTable( db , paste0( dfx , catalog[ i , 'year' ] ) , get( dfx ) )
+					
 					}
 					
-					assign( paste0( dfx , "_design" ) , design )
+					# make the replicate weights table, make the survey design
+					if( 'totwgt' %in% names( get( dfx ) ) | 'tchwgt' %in% names( get( dfx ) ) ){
+						
+						if( 'totwgt' %in% names( get( dfx ) ) ) wgt <- 'totwgt' else wgt <- 'tchwgt'
 					
-					save( list = paste0( dfx , "_design" ) , file = paste0( catalog[ i , 'output_folder' ] , '/' , dfx , '_design.rda' ) )
-					
-					
+						z <- get( dfx )[ , c( wgt , 'jkrep' , 'jkzone' ) ]
+
+						for ( j in 1:75 ){
+							z[ z$jkzone != j , paste0( 'rw' , j ) ] <- z[ z$jkzone != j , wgt ]
+							z[ z$jkzone == j & z$jkrep == 1 , paste0( 'rw' , j ) ] <- z[ z$jkzone == j & z$jkrep == 1 , wgt ] * 2
+							z[ z$jkzone == j & z$jkrep == 0 , paste0( 'rw' , j ) ] <- 0
+						}
+
+						z <- z[ , paste0( 'rw' , 1:75 ) ]
+										
+						# where there any imputed variables?
+						if( length( pv ) > 0 ){
+						
+							# if so, construct a multiply-imputed,
+							# database-backed, replicate-weighted
+							# complex sample survey design.
+							design <- 
+								survey::svrepdesign( 
+									weights = as.formula( paste( "~" , wgt ) )  , 
+									repweights = z , 
+									data = mitools::imputationList( datasets = as.list( paste0( dfx , catalog[ i , 'year' ] , 1:5 ) ) , dbtype = "MonetDBLite" ) , 
+									type = "other" ,
+									combined.weights = TRUE , 
+									dbtype = "MonetDBLite" ,
+									dbname = catalog[ i , 'dbfolder' ]
+								)
+
+
+							# workaround for a bug in survey::svrepdesign.character
+							design$mse <- TRUE
+												
+
+						} else {
+						
+							# otherwise, construct a
+							# database-backed, replicate-weighted
+							# complex sample survey design
+							# without the multiple imputation.
+							design <- 
+								survey::svrepdesign( 
+									weights = as.formula( paste( "~" , wgt ) )  , 
+									repweights = z , 
+									data = paste0( dfx , catalog[ i , 'year' ] ) , 
+									type = "other" ,
+									combined.weights = TRUE ,
+									dbtype = "MonetDBLite" ,
+									dbname = catalog[ i , 'dbfolder' ]
+								)
+								
+							# workaround for a bug in survey::svrepdesign.character
+							design$mse <- TRUE
+
+						}
+						
+						assign( paste0( dfx , "_design" ) , design )
+						
+						save( list = paste0( dfx , "_design" ) , file = paste0( catalog[ i , 'output_folder' ] , '/' , dfx , '_design.rda' ) )
+						
+						
+					}
+				
 				}
 			
 			}
-		
+			
 			# disconnect from the current monet database
 			DBI::dbDisconnect( db , shutdown = TRUE )
 
