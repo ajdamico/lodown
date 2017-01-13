@@ -120,6 +120,7 @@ lodown_timss <-
 						x <- as.data.frame( x , optional = TRUE )
 						
 						if ( !is.null( y ) & catalog[ i , 'year' ] == 2003 & any( !( names( x ) %in% names( y ) ) ) ) for ( i in names( x )[ !( names( x ) %in% names( y ) ) ] ) y[ , i ] <- NA
+						
 						if ( !is.null( y ) & catalog[ i , 'year' ] == 2003 & any( !( names( y ) %in% names( x ) ) ) ) for ( i in names( y )[ !( names( y ) %in% names( x ) ) ] ) x[ , i ] <- NA
 				
 						# stack it
