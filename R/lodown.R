@@ -215,13 +215,7 @@ NULL
 lodown <-
 	function( data_name , catalog = NULL , ... ){
 
-		if( is.null( catalog ) ){
-
-			cat( paste0( "building catalog for " , data_name , "\r\n\n" ) )
-
-			catalog <- get_catalog( data_name , ... )
-
-		}
+		if( is.null( catalog ) ) catalog <- get_catalog( data_name , ... )
 
 		unique_directories <- unique( c( catalog$unzip_folder , if( 'output_filename' %in% names( catalog ) ) dirname( catalog$output_filename ) , catalog$dbfolder , catalog$output_folder ) )
 
@@ -253,6 +247,8 @@ get_catalog <-
 	function( data_name , output_dir = getwd() , ... ){
 
 		cat_fun <- getFromNamespace( paste0( "get_catalog_" , data_name ) , "lodown" )
+
+		cat( paste0( "building catalog for " , data_name , "\r\n\n" ) )
 
 		cat_fun( data_name = data_name , output_dir = output_dir , ... )
 
