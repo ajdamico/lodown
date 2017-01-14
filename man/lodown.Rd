@@ -42,6 +42,7 @@ lodown( "censo_escolar" , output_dir = "C:/My Directory/CENSO_ESCOLAR" )
 lodown( "ces" , output_dir = "C:/My Directory/CES" )
 lodown( "chis" , output_dir = "C:/My Directory/CHIS" ,
 		your_username = "username" , your_password = "password" )
+lodown( "cps_asec" , output_dir = "C:/My Directory/CPS_ASEC" )
 lodown( "cps_basic" , output_dir = "C:/My Directory/CPS_BASIC" )
 lodown( "ess" , output_dir = "C:/My Directory/ESS" , your_email = "email@address.com" )
 lodown( "enem" , output_dir = "C:/My Directory/ENEM" )
@@ -70,6 +71,7 @@ lodown( "nppes" , output_dir = "C:/My Directory/NPPES" )
 lodown( "nps" , output_dir = "C:/My Directory/NPS" )
 lodown( "nsduh" , output_dir = "C:/My Directory/NSDUH" , 
 		your_email = "email@address.com" , your_password = "password" )
+lodown( "nvss" , output_dir = "C:/My Directory/NVSS" )
 lodown( "nychvs" , output_dir = "C:/My Directory/NYCHVS" )
 lodown( "pew" , output_dir = "C:/My Directory/PEW" ,
 		your_name = "your name" , your_org = "your organization" ,
@@ -125,6 +127,8 @@ chis_cat <- get_catalog( "chis" , output_dir = "C:/My Directory/CHIS" ,
 		your_username = "username" , your_password = "password" )
 lodown( "chis" , chis_cat[ 1:2 , ]  ,
 		your_username = "username" , your_password = "password" )
+cps_asec_cat <- get_catalog( "cps_asec" , output_dir = "C:/My Directory/CPS_ASEC" )
+lodown( "cps_asec" , cps_asec_cat[ 1:2 , ] )
 cps_basic_cat <- get_catalog( "cps_basic" , output_dir = "C:/My Directory/CPS_BASIC" )
 lodown( "cps_basic" , cps_basic_cat[ 1:2 , ] )
 ess_cat <- get_catalog( "ess" , output_dir = "C:/My Directory/ESS" )
@@ -178,6 +182,8 @@ lodown( "nsfg" , nsfg_cat[ 1:2 , ] )
 nsduh_cat <- get_catalog( "nsduh" , output_dir = "C:/My Directory/NSDUH" )
 lodown( "nsduh" , nsduh_cat[ 1:2 , ] ,
 		your_email = "email@address.com" , your_password = "password" )
+nvss_cat <- get_catalog( "nvss" , output_dir = "C:/My Directory/NVSS" )
+lodown( "nvss" , nvss_cat[ 1:2 , ] )
 nychvs_cat <- get_catalog( "nychvs" , output_dir = "C:/My Directory/NYCHVS" )
 lodown( "nychvs" , nychvs_cat[ 1:2 , ] )
 pew_cat <- get_catalog( "pew" , output_dir = "C:/My Directory/PEW" )

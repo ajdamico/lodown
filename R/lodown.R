@@ -61,6 +61,7 @@ NULL
 #' lodown( "nps" , output_dir = "C:/My Directory/NPS" )
 #' lodown( "nsduh" , output_dir = "C:/My Directory/NSDUH" , 
 #' 		your_email = "email@address.com" , your_password = "password" )
+#' lodown( "nvss" , output_dir = "C:/My Directory/NVSS" )
 #' lodown( "nychvs" , output_dir = "C:/My Directory/NYCHVS" )
 #' lodown( "pew" , output_dir = "C:/My Directory/PEW" ,
 #' 		your_name = "your name" , your_org = "your organization" ,
@@ -171,6 +172,8 @@ NULL
 #' nsduh_cat <- get_catalog( "nsduh" , output_dir = "C:/My Directory/NSDUH" )
 #' lodown( "nsduh" , nsduh_cat[ 1:2 , ] ,
 #' 		your_email = "email@address.com" , your_password = "password" )
+#' nvss_cat <- get_catalog( "nvss" , output_dir = "C:/My Directory/NVSS" )
+#' lodown( "nvss" , nvss_cat[ 1:2 , ] )
 #' nychvs_cat <- get_catalog( "nychvs" , output_dir = "C:/My Directory/NYCHVS" )
 #' lodown( "nychvs" , nychvs_cat[ 1:2 , ] )
 #' pew_cat <- get_catalog( "pew" , output_dir = "C:/My Directory/PEW" )

@@ -172,13 +172,13 @@ lodown_nvss <-
 			if ( sum( catalog$type == 'periodlinked' ) > 0 ){
 
 				# point to the period-linked sas file stored on github
-				sas_ri <- system.file("extdata", "nvss/nchs_period_linked.sas", package = "lodown")
+				sas_ri_linked <- system.file("extdata", "nvss/nchs_period_linked.sas", package = "lodown")
 				
 				# create a temporary file
 				den.tf <- tempfile()
 
 				# also read it into working memory
-				pl.txt <- readLines( sas_ri )
+				pl.txt <- readLines( sas_ri_linked )
 
 				# add a semicolon after the FLGND field in order to indicate
 				# that's the end of the numerator
@@ -188,13 +188,13 @@ lodown_nvss <-
 				writeLines( pl.den , den.tf )
 				
 				# point to the period-linked 2003 sas file stored on github
-				sas_ri <- system.file("extdata", "nvss/nchs_period_linked_2003.sas", package = "lodown")
+				sas_ri_03 <- system.file("extdata", "nvss/nchs_period_linked_2003.sas", package = "lodown")
 
 				# create a temporary file
 				den03.tf <- tempfile()
 
 				# also read it into working memory
-				pl03.txt <- readLines( sas_ri )
+				pl03.txt <- readLines( sas_ri_03 )
 
 				# add a semicolon after the FLGND field in order to indicate
 				# that's the end of the numerator
@@ -202,6 +202,7 @@ lodown_nvss <-
 
 				# export that revised sas script to the second temporary file
 				writeLines( pl03.den , den03.tf )
+				
 			}
 
 
@@ -216,7 +217,7 @@ lodown_nvss <-
 				nchs_download( period.linked , catalog[ i , 'output_folder' ] , path.to.winrar = path_to_winrar , path.to.7z = path_to_7za )
 
 				# create a character vector containing all files in the current working directory
-				all.files <- list.files( catalog[ i , 'output_folder' ] , recursive = T , full.names = TRUE )
+				all.files <- list.files( catalog[ i , 'output_folder' ] , recursive = TRUE , full.names = TRUE )
 				
 				# extract the filepaths of the nationwide period-linked unlinked files
 				periodlinked.us.unl <- all.files[ grep( 'periodlinked/us/unl' , all.files ) ]
@@ -241,29 +242,30 @@ lodown_nvss <-
 				if ( catalog[ i , 'year' ] > 2003 ){
 				
 					# use the period-linked sas import script
-					sas_ri <- pl.tf
+					sas_ri <- sas_ri_linked
 				
 				# ..otherwise, if the year is 2003..
 				} else if ( catalog[ i , 'year' ] == 2003 ) {
 					
 					# use the 2003 period-linked sas import script
-					sas_ri <- pl03.tf
+					sas_ri <- sas_ri_03
 					
 				# otherwise..
 				} else {
-					
-						# if the year is pre-1999, use a capital letter in the filepath's crispity-crunchity center
-						file.middle <- ifelse( catalog[ i , 'year' ] < 1999 , "/data/Num" , "/data/num" )
-					
-						# build the full sas filepath to the period-linked numerator
-						sas_ri <- 
-							paste0( 
-								"http://www.nber.org/perinatal/" , 
-								catalog[ i , 'year' ] ,
-								file.middle ,
-								substr( catalog[ i , 'year' ] , 3 , 4 ) ,
-								".sas"
-							)
+				
+					# if the year is pre-1999, use a capital letter in the filepath's crispity-crunchity center
+					file.middle <- ifelse( catalog[ i , 'year' ] < 1999 , "/data/Num" , "/data/num" )
+				
+					# build the full sas filepath to the period-linked numerator
+					sas_ri <- 
+						paste0( 
+							"http://www.nber.org/perinatal/" , 
+							catalog[ i , 'year' ] ,
+							file.middle ,
+							substr( catalog[ i , 'year' ] , 3 , 4 ) ,
+							".sas"
+						)
+						
 				}	
 				
 
@@ -288,13 +290,13 @@ lodown_nvss <-
 				if ( catalog[ i , 'year' ] > 2003 ){
 				
 					# use the period-linked sas import script
-					sas_ri <- pl.tf
+					sas_ri <- sas_ri_linked
 					
 				# ..otherwise, if the year is 2003..
 				} else if ( catalog[ i , 'year' ] == 2003 ) {
 					
 					# use the 2003 period-linked sas import script
-					sas_ri <- pl03.tf
+					sas_ri <- sas_ri_03
 					
 				# otherwise..
 				} else {
