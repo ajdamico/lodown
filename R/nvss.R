@@ -706,7 +706,7 @@ nchs_import <-
 	){
 
 		# figure out tablename from the files.to.import
-		tablenames <- gsub( ".dat" , "" , basename( files.to.import ) , fixed = TRUE , ignore.case = TRUE )
+		tablenames <- gsub( "\\.dat" , "" , basename( files.to.import ) , ignore.case = TRUE )
 	
 		tablenames <- paste0( ifelse( grepl( "us/" , files.to.import ) , "us_" , "ps_" ) , tablenames )
 	
