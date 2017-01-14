@@ -133,14 +133,7 @@ lodown_saeb <-
 				names( x ) <- tolower( names( x ) )
 				
 				# do not use monetdb reserved words
-				for ( j in names( x )[ toupper( names( x ) ) %in% getFromNamespace( "reserved_monetdb_keywords" , "MonetDBLite" ) ] ){
-				
-					print( paste0( 'warning: variable named ' , j , ' not allowed in monetdb' ) )
-					print( paste0( 'changing column name to ' , j , '_' ) )
-					names( x )[ names( x ) == j ] <- paste0( j , "_" )
-
-				}
-				
+				for ( j in names( x )[ toupper( names( x ) ) %in% getFromNamespace( "reserved_monetdb_keywords" , "MonetDBLite" ) ] ) names( x )[ names( x ) == j ] <- paste0( j , "_" )
 				
 				# store the `x` data.frame object in sqlite database as well
 				DBI::dbWriteTable( db , tnwy , x )

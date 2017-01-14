@@ -74,6 +74,7 @@ NULL
 #' lodown( "pof" , output_dir = "C:/My Directory/POF" )
 #' lodown( "psid" , output_dir = "C:/My Directory/PSID" , 
 #' 		your_email = "email@address.com" , your_password = "password" )
+#' lodown( "saeb" , output_dir = "C:/My Directory/SAEB" )
 #' lodown( "sbo" , output_dir = "C:/My Directory/SBO" )
 #' lodown( "scf" , output_dir = "C:/My Directory/SCF" )
 #' lodown( "seer" , output_dir = "C:/My Directory/SEER" ,
@@ -190,6 +191,8 @@ NULL
 #' psid_cat <- get_catalog( "psid" , output_dir = "C:/My Directory/PSID" )
 #' lodown( "psid" , psid_cat[ 1:2 , ] ,
 #' 		your_email = "email@address.com" , your_password = "password" )
+#' saeb_cat <- get_catalog( "saeb" , output_dir = "C:/My Directory/SAEB" )
+#' lodown( "saeb" , saeb_cat[ 1:2 , ] )
 #' sbo_cat <- get_catalog( "sbo" , output_dir = "C:/My Directory/SBO" )
 #' lodown( "sbo" , sbo_cat[ 1:2 , ] )
 #' scf_cat <- get_catalog( "scf" , output_dir = "C:/My Directory/SCF" )
