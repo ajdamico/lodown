@@ -97,7 +97,7 @@ lodown_nvss <-
 				natality.ps <- all.files[ grep( 'natality/ps/' , all.files ) ]
 
 				# throw out all non-digits to extract the year from the data file
-				year.plus.data <- years <- gsub( "\\D" , "" , natality.us )
+				year.plus.data <- years <- gsub( "\\D" , "" , basename( natality.us ) )
 
 				# the pre-2006 files have an extra "/data" in the filepath of the sas import script
 				year.plus.data[ as.numeric( year.plus.data ) %in% 1991:2005 ] <- 
@@ -414,7 +414,7 @@ lodown_nvss <-
 				cohortlinked.ps.den <- all.files[ grep( 'cohortlinked/ps/den' , all.files ) ]
 
 				# throw out all non-digits to extract the year from the data file
-				years <- gsub( "\\D" , "" , cohortlinked.us.num )
+				years <- gsub( "\\D" , "" , basename( cohortlinked.us.num ) )
 
 				# for years after 2004, simply use the 2004 sas import scripts
 				years[ years > 2004 ] <- 2004
@@ -536,7 +536,7 @@ lodown_nvss <-
 				mortality.ps <- all.files[ grep( 'mortality/ps/' , all.files ) ]
 
 				# throw out all non-digits to extract the year from the data file
-				year.plus.data <- years <- gsub( "\\D" , "" , mortality.us )
+				year.plus.data <- years <- gsub( "\\D" , "" , basename( mortality.us ) )
 
 				# the pre-2006 files have an extra "/data" in the filepath of the sas import script
 				year.plus.data[ as.numeric( year.plus.data ) <= 2005 ] <- 
@@ -548,7 +548,7 @@ lodown_nvss <-
 				sas_ri <- paste0( "http://www.nber.org/mortality/" , year.plus.data , "/mort" , years , ".sas" )
 
 				# throw out all non-digits to extract the year from the mortality territory file
-				cap.at.1995 <- as.numeric( gsub( "\\D" , "" , mortality.ps ) )
+				cap.at.1995 <- as.numeric( gsub( "\\D" , "" , basename( mortality.ps ) ) )
 
 				# if the year is after named filepath..
 				if ( catalog[ i , 'year' ] > cap.at.1995 ){
