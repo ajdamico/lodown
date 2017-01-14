@@ -61,21 +61,21 @@ lodown_cps_asec <-
 				names( hhld ) <- tolower( names( hhld ) )
 				for ( j in names( hhld ) ) hhld[ , j ] <- as.numeric( hhld[ , j ] )
 				hhld$hsup_wgt <- hhld$hsup_wgt / 100
-				dbWriteTable( db , 'hhld' , hhld )
+				DBI::dbWriteTable( db , 'hhld' , hhld )
 				rm( hhld ) ; gc() ; file.remove( tf1 )
 				
 				fmly <- data.frame( haven::read_sas( tf2 ) )
 				names( fmly ) <- tolower( names( fmly ) )
 				for ( j in names( fmly ) ) fmly[ , j ] <- as.numeric( fmly[ , j ] )
 				fmly$fsup_wgt <- fmly$fsup_wgt / 100
-				dbWriteTable( db , 'family' , fmly )
+				DBI::dbWriteTable( db , 'family' , fmly )
 				rm( fmly ) ; gc() ; file.remove( tf2 )
 				
 				prsn <- data.frame( haven::read_sas( tf3 ) )
 				names( prsn ) <- tolower( names( prsn ) )
 				for ( j in names( prsn ) ) prsn[ , j ] <- as.numeric( prsn[ , j ] )
 				for ( j in c( 'marsupwt' , 'a_ernlwt' , 'a_fnlwgt' ) ) prsn[ , j ] <- prsn[ , j ] / 100
-				dbWriteTable( db , 'person' , prsn )
+				DBI::dbWriteTable( db , 'person' , prsn )
 				rm( prsn ) ; gc() ; file.remove( tf3 )
 
 				mmf <- DBI::dbListFields( db , 'person' )[ !( DBI::dbListFields( db , 'person' ) %in% DBI::dbListFields( db , 'family' ) ) ]
@@ -273,7 +273,7 @@ lodown_cps_asec <-
 						zipped = FALSE ,
 						tl = TRUE ,
 						tablename = 'household' ,
-						conn = db
+						connection = db
 					)
 
 					# store CPS ASEC march family records as a MonetDB database
@@ -284,7 +284,7 @@ lodown_cps_asec <-
 						zipped = FALSE ,
 						tl = TRUE ,
 						tablename = 'family' ,
-						conn = db
+						connection = db
 					)
 
 					# store CPS ASEC march person records as a MonetDB database
@@ -295,7 +295,7 @@ lodown_cps_asec <-
 						zipped = FALSE ,
 						tl = TRUE ,
 						tablename = 'person' ,
-						conn = db
+						connection = db
 					)
 				} else {
 					# store CPS ASEC march household records as a MonetDB database
@@ -305,7 +305,7 @@ lodown_cps_asec <-
 						zipped = FALSE ,
 						tl = TRUE ,
 						tablename = 'household' ,
-						conn = db
+						connection = db
 					)
 
 					# store CPS ASEC march family records as a MonetDB database
@@ -315,7 +315,7 @@ lodown_cps_asec <-
 						zipped = FALSE ,
 						tl = TRUE ,
 						tablename = 'family' ,
-						conn = db
+						connection = db
 					)
 
 					# store CPS ASEC march person records as a MonetDB database
@@ -325,7 +325,7 @@ lodown_cps_asec <-
 						zipped = FALSE ,
 						tl = TRUE ,
 						tablename = 'person' ,
-						conn = db
+						connection = db
 					)
 				}
 
@@ -351,7 +351,7 @@ lodown_cps_asec <-
 					zipped = FALSE ,
 					tl = TRUE ,
 					tablename = 'xwalk' ,
-					conn = db
+					connection = db
 				)
 				
 				# clear up RAM
@@ -472,7 +472,7 @@ lodown_cps_asec <-
 				
 				ot_ac_of <- merge( ot_ac , offer , by.x = c( 'ph_seq' , 'ppposold' ) , by.y = c( 'h_seq' , 'ppposold' ) )
 				
-				dbWriteTable( db , 'ot_ac_of' , ot_ac_of )
+				DBI::dbWriteTable( db , 'ot_ac_of' , ot_ac_of )
 				
 				rm( ot , ac , ot_ac , ot_ac_of ) ; gc()
 				
@@ -585,7 +585,7 @@ lodown_cps_asec <-
 					zipped = zip_file , 
 					tl = TRUE ,
 					tablename = 'rw' ,
-					conn = db
+					connection = db
 				)
 
 
@@ -667,7 +667,7 @@ lodown_cps_asec <-
 
 				sp <- sp[ , !( names( sp ) %in% overlapping.spm.fields ) ]
 
-				dbWriteTable( db , paste0( catalog[ i , 'db_tablename' ] , "_sp" ) , sp )
+				DBI::dbWriteTable( db , paste0( catalog[ i , 'db_tablename' ] , "_sp" ) , sp )
 				
 				
 				rm( sp ) ; gc()
@@ -715,7 +715,7 @@ lodown_cps_asec <-
 			# delete the temporary files
 			suppressWarnings( file.remove( tf ) )
 
-			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , catalog[ i , 'output_filename' ] , "'\r\n\n" ) )
+			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'db_tablename' ] , "'\r\n\n" ) )
 
 		}
 
@@ -794,7 +794,7 @@ cps_asec_dd_parser <-
 			stopifnot( cumsum( j$width )[ nrow( j ) - 1 ] == j[ nrow( j ) , 'position' ] - 1 )
 
 			# confirm that the last variable is filler and can be tossed
-			if ( catalog[ i , 'year' ] != 2015 ){
+			if ( !grepl( "2015" , url ) ){
 			
 				stopifnot( j[ nrow( j ) , 'varname' ] == 'FILLER' )
 			
@@ -840,7 +840,7 @@ cps_asec_dd_parser <-
 		}
 		
 		
-		list( hh_stru , fm_stru , pn_stru )
+		mget( c( "hh_stru" , "fm_stru" , "pn_stru" ) )
 		
 	}
 	

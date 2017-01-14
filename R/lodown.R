@@ -1,4 +1,4 @@
-#' @importFrom utils download.file read.csv unzip getFromNamespace write.csv read.table
+#' @importFrom utils download.file read.csv unzip getFromNamespace write.csv read.table read.fwf
 #' @importFrom stats as.formula vcov coef pf update
 #' @importFrom graphics plot rasterImage
 NULL
@@ -32,6 +32,7 @@ NULL
 #' lodown( "ces" , output_dir = "C:/My Directory/CES" )
 #' lodown( "chis" , output_dir = "C:/My Directory/CHIS" ,
 #' 		your_username = "username" , your_password = "password" )
+#' lodown( "cps_asec" , output_dir = "C:/My Directory/CPS_ASEC" )
 #' lodown( "cps_basic" , output_dir = "C:/My Directory/CPS_BASIC" )
 #' lodown( "ess" , output_dir = "C:/My Directory/ESS" , your_email = "email@address.com" )
 #' lodown( "enem" , output_dir = "C:/My Directory/ENEM" )
@@ -115,6 +116,8 @@ NULL
 #' 		your_username = "username" , your_password = "password" )
 #' lodown( "chis" , chis_cat[ 1:2 , ]  ,
 #' 		your_username = "username" , your_password = "password" )
+#' cps_asec_cat <- get_catalog( "cps_asec" , output_dir = "C:/My Directory/CPS_ASEC" )
+#' lodown( "cps_asec" , cps_asec_cat[ 1:2 , ] )
 #' cps_basic_cat <- get_catalog( "cps_basic" , output_dir = "C:/My Directory/CPS_BASIC" )
 #' lodown( "cps_basic" , cps_basic_cat[ 1:2 , ] )
 #' ess_cat <- get_catalog( "ess" , output_dir = "C:/My Directory/ESS" )
