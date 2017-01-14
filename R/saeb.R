@@ -149,15 +149,6 @@ lodown_saeb <-
 			# loop through each available csv (also data) file..
 			for ( this.csv in csv.files ){
 			
-				# the 2015 TS_DIRETOR csv file is delimited by dots in the first row
-				if( catalog[ i , 'year' ] >= 2015 & grepl( "DADOS/TS_DIRETOR\\.csv" , this.csv ) ){
-				
-					csv_lines <- readLines( this.csv )
-					csv_lines[ 1 ] <- gsub( "\\." , ";" , csv_lines[ 1 ] )
-					writeLines( csv_lines , this.csv )
-					
-				}
-			
 				# remove the `.csv` to determine the name of the current table
 				tnwy <- paste0( gsub( "\\.csv$" , "" , tolower( basename( this.csv ) ) ) , "_" , catalog[ i , 'year' ] )
 
@@ -168,20 +159,21 @@ lodown_saeb <-
 				input <- file( this.csv , "r")
 
 				# read in the first chunk
-				headers <- read.csv( input , sep = ";" , dec = "," , na.strings = "." , nrows = chunk_size )
+				headers <- 
+					read.csv( 
+						input , 
+						sep = if( catalog[ i , 'year' ] >= 2015 ) "," else ";" , 
+						dec = if( catalog[ i , 'year' ] >= 2015 ) "." else "," , 
+						na.strings = if( catalog[ i , 'year' ] >= 2015 ) "" else "." , 
+						nrows = chunk_size 
+					)
 				
 				# convert column names to lowercase
 				names( headers ) <- tolower( names( headers ) )
 				
 				# do not use monetdb reserved words
-				for ( j in names( headers )[ toupper( names( headers ) ) %in% getFromNamespace( "reserved_monetdb_keywords" , "MonetDBLite" ) ] ){
-				
-					print( paste0( 'warning: variable named ' , j , ' not allowed in monetdb' ) )
-					print( paste0( 'changing column name to ' , j , '_' ) )
-					names( headers )[ names( headers ) == j ] <- paste0( j , "_" )
+				for ( j in names( headers )[ toupper( names( headers ) ) %in% getFromNamespace( "reserved_monetdb_keywords" , "MonetDBLite" ) ] ) names( headers )[ names( headers ) == j ] <- paste0( j , "_" )
 
-				}
-				
 				cc <- sapply( headers , class )
 
 				# initiate the current table
@@ -195,9 +187,9 @@ lodown_saeb <-
 							input , 
 							header = FALSE ,
 							nrows = chunk_size , 
-							sep = ";" ,
-							dec = "," ,
-							na.strings = "." , 
+							sep = if( catalog[ i , 'year' ] >= 2015 ) "," else ";" ,
+							dec = if( catalog[ i , 'year' ] >= 2015 ) "." else "," ,
+							na.strings = if( catalog[ i , 'year' ] >= 2015 ) "" else "." , 
 							colClasses = cc
 						)
 						
