@@ -632,13 +632,13 @@ lodown_nvss <-
 					)
 					
 				# read the fetal death territory zipped file directly into RAM with the sas importation script
-				ps <- read_SAScii( fn , fd.tf , zipped = TRUE )
+				ps <- read_SAScii( fn , sas_ri , zipped = TRUE )
 
 				# convert all column names to lowercase
 				names( ps ) <- tolower( names( ps ) )
 
 				# save both data.frame objects to an R data file
-				save( us , ps , file = paste0( "./fetal death " , catalog[ i , 'year' ] , ".rda" ) )
+				save( us , ps , file = paste0( catalog[ i , 'output_folder' ] , "/fetal death " , catalog[ i , 'year' ] , ".rda" ) )
 
 			}
 
