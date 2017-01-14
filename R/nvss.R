@@ -524,7 +524,7 @@ lodown_nvss <-
 				nchs_download( mortality , catalog[ i , 'output_folder' ] , path.to.winrar = path_to_winrar , path.to.7z = path_to_7za )
 
 				# create a character vector containing all files in the current working directory
-				all.files <- paste0( catalog[ i , 'output_folder' ] , "/" , list.files( '.' , recursive = T ) )
+				all.files <- list.files( catalog[ i , 'output_folder' ] , recursive = TRUE , full.names = TRUE )
 
 				# remove pdfs from possible identifier files
 				all.files <- all.files[ !grepl( "\\.pdf$" , tolower( all.files ) ) ]
@@ -644,9 +644,6 @@ lodown_nvss <-
 
 			# disconnect from the current monet database
 			DBI::dbDisconnect( db , shutdown = TRUE )
-
-			# delete the temporary files
-			suppressWarnings( file.remove( tf ) )
 
 			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'output_folder' ] , "'\r\n\n" ) )
 
