@@ -923,11 +923,11 @@ nchs_download <-
 		
 		on.exit( unlink( tf ) )
 		
-		dir.create( y$name )
+		dir.create( paste0( output_dir , "/" , y$name ) )
 		
-		dir.create( paste( y$name , "us" , sep = "/" ) )
+		dir.create( paste( output_dir , y$name , "us" , sep = "/" ) )
 		
-		dir.create( paste( y$name , "ps" , sep = "/" ) )
+		dir.create( paste( output_dir , y$name , "ps" , sep = "/" ) )
 		
 		for ( i in c( y$us , y$ps ) ){
 			
