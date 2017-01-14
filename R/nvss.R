@@ -66,7 +66,7 @@ lodown_nvss <-
 				natality <- nchs_extract_files( files[ grep( catalog[ i , 'year' ] , files ) ] , 'natality' )
 				
 				# download the natality file to the local working directory
-				nchs_download( natality , catalog[ i , 'output_folder' ] )
+				nchs_download( natality , catalog[ i , 'output_folder' ] , path.to.winrar = path.to.winrar , path.to.7z = path_to_7za )
 
 				# create a character vector containing all files in the current working directory
 				all.files <- list.files( catalog[ i , 'output_folder' ] , recursive = T , full.names = TRUE )
@@ -205,7 +205,7 @@ lodown_nvss <-
 				period.linked <- nchs_extract_files( files[ grep( catalog[ i , 'year' ] , files ) ] , 'periodlinked' )
 				
 				# download the period-linked file to the local working directory
-				nchs_download( period.linked , catalog[ i , 'output_folder' ] )
+				nchs_download( period.linked , catalog[ i , 'output_folder' ] , path.to.winrar = path.to.winrar , path.to.7z = path_to_7za )
 
 				# create a character vector containing all files in the current working directory
 				all.files <- list.files( catalog[ i , 'output_folder' ] , recursive = T , full.names = TRUE )
@@ -379,7 +379,7 @@ lodown_nvss <-
 				cohort.linked <- nchs_extract_files( files[ grep( catalog[ i , 'year' ] , files ) ]  , 'cohortlinked' )
 				
 				# download the cohort-linked file to the local working directory
-				nchs_download( cohort.linked , catalog[ i , 'output_folder' ] )
+				nchs_download( cohort.linked , catalog[ i , 'output_folder' ] , path.to.winrar = path.to.winrar , path.to.7z = path_to_7za )
 
 				# create a character vector containing all files in the current working directory
 				all.files <- list.files( catalog[ i , 'output_folder' ] , recursive = TRUE , full.names = TRUE )
@@ -513,7 +513,7 @@ lodown_nvss <-
 				mortality <- nchs_extract_files( files[ grep( catalog[ i , 'year' ] , files ) ] , 'mortality' )
 				
 				# download the mortality file to the local working directory
-				nchs_download( mortality , catalog[ i , 'output_folder' ] )
+				nchs_download( mortality , catalog[ i , 'output_folder' ] , path.to.winrar = path.to.winrar , path.to.7z = path_to_7za )
 
 				# create a character vector containing all files in the current working directory
 				all.files <- paste0( catalog[ i , 'output_folder' ] , "/" , list.files( '.' , recursive = T ) )
@@ -957,7 +957,7 @@ nchs_remove_overlap <-
 # this function downloads a specified zipped file to the local disk
 # and unzips everything according to a straightforward pattern
 nchs_download <-
-	function( y , output_folder ){
+	function( y , output_folder , path.to.winrar , path.to.7z ){
 		
 		tf <- tempfile() ; td <- tempdir()
 		
