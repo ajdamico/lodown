@@ -144,10 +144,10 @@ lodown_nvss <-
 				)
 
 				# delete all files in the "/natality/us" directory (the fifty states plus DC)
-				file.remove( list.files( paste0( catalog[ i , 'output_folder' ] , '/natality/us/' ) , recursive = TRUE , full.names = TRUE ) ) )
+				file.remove( list.files( paste0( catalog[ i , 'output_folder' ] , '/natality/us/' ) , recursive = TRUE , full.names = TRUE ) )
 				
 				# delete all files in the "/natality/ps" directory (the territories)
-				file.remove( list.files( paste0( catalog[ i , 'output_folder' ] , '/natality/ps/' ) , recursive = TRUE , full.names = TRUE ) ) )
+				file.remove( list.files( paste0( catalog[ i , 'output_folder' ] , '/natality/ps/' ) , recursive = TRUE , full.names = TRUE ) )
 				
 			}
 
@@ -363,10 +363,10 @@ lodown_nvss <-
 				)
 
 				# delete all files in the "/periodlinked/us" directory (the fifty states plus DC)
-				file.remove( list.files( paste0( catalog[ i , 'output_folder' ] , '/periodlinked/us/' ) , recursive = TRUE , full.names = TRUE ) ) )
+				file.remove( list.files( paste0( catalog[ i , 'output_folder' ] , '/periodlinked/us/' ) , recursive = TRUE , full.names = TRUE ) )
 
 				# delete all files in the "/periodlinked/ps" directory (the fifty states plus DC)
-				file.remove( list.files( paste0( catalog[ i , 'output_folder' ] , '/periodlinked/ps/' ) , recursive = TRUE , full.names = TRUE ) ) )
+				file.remove( list.files( paste0( catalog[ i , 'output_folder' ] , '/periodlinked/ps/' ) , recursive = TRUE , full.names = TRUE ) )
 
 			}
 
@@ -497,10 +497,10 @@ lodown_nvss <-
 				)
 				
 				# delete all files in the "/cohortlinked/us" directory (the fifty states plus DC)
-				file.remove( list.files( paste0( catalog[ i , 'output_folder' ] , '/cohortlinked/us/' ) , recursive = TRUE , full.names = TRUE ) ) )
+				file.remove( list.files( paste0( catalog[ i , 'output_folder' ] , '/cohortlinked/us/' ) , recursive = TRUE , full.names = TRUE ) )
 				
 				# delete all files in the "/cohortlinked/ps" directory (the fifty states plus DC)
-				file.remove( list.files( paste0( catalog[ i , 'output_folder' ] , '/cohortlinked/ps/' ) , recursive = TRUE , full.names = TRUE ) ) )
+				file.remove( list.files( paste0( catalog[ i , 'output_folder' ] , '/cohortlinked/ps/' ) , recursive = TRUE , full.names = TRUE ) )
 				
 			}
 
@@ -580,10 +580,10 @@ lodown_nvss <-
 				)
 
 				# delete all files in the "/mortality/us" directory (the fifty states plus DC)
-				file.remove( list.files( paste0( catalog[ i , 'output_folder' ] , '/mortality/us/' ) , recursive = TRUE , full.names = TRUE ) ) )
+				file.remove( list.files( paste0( catalog[ i , 'output_folder' ] , '/mortality/us/' ) , recursive = TRUE , full.names = TRUE ) )
 				
 				# delete all files in the "/mortality/ps" directory (the fifty states plus DC)
-				file.remove( list.files( paste0( catalog[ i , 'output_folder' ] , '/mortality/ps/' ) , recursive = TRUE , full.names = TRUE ) ) )
+				file.remove( list.files( paste0( catalog[ i , 'output_folder' ] , '/mortality/ps/' ) , recursive = TRUE , full.names = TRUE ) )
 				
 			}
 
@@ -640,38 +640,10 @@ lodown_nvss <-
 
 			}
 
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-			# download the file
-			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
-
-			unzipped_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) )
-
-
-
-
-
-
-			# convert all column names to lowercase
-			names( x ) <- tolower( names( x ) )
-
-			save( x , file = catalog[ i , 'output_filename' ] )
-
 			# delete the temporary files
-			suppressWarnings( file.remove( tf , unzipped_files ) )
+			suppressWarnings( file.remove( tf ) )
 
-			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , catalog[ i , 'output_filename' ] , "'\r\n\n" ) )
+			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'output_folder' ] , "'\r\n\n" ) )
 
 		}
 
