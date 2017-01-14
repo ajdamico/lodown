@@ -713,7 +713,7 @@ lodown_cps_asec <-
 			DBI::dbDisconnect( db , shutdown = TRUE )
 
 			# delete the temporary files
-			suppressWarnings( file.remove( tf , unzipped_files ) )
+			suppressWarnings( file.remove( tf ) )
 
 			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , catalog[ i , 'output_filename' ] , "'\r\n\n" ) )
 
