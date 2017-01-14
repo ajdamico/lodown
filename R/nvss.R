@@ -711,6 +711,8 @@ nchs_import <-
 		# figure out tablename from the files.to.import
 		tablenames <- gsub( ".dat" , "" , basename( files.to.import ) , fixed = TRUE , ignore.case = TRUE )
 	
+		tablenames <- paste0( ifelse( grepl( "us/" , files.to.import ) , "us_" , "ps_" ) , tablenames )
+	
 		for ( i in seq( length( tablenames ) ) ){
 	
 			fti <- clear.goofy.characters( files.to.import[ i ] , fl = force.length )
