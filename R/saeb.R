@@ -153,7 +153,7 @@ lodown_saeb <-
 				if( catalog[ i , 'year' ] >= 2015 & grepl( "DADOS/TS_DIRETOR\\.csv" , this.csv ) ){
 				
 					csv_lines <- readLines( this.csv )
-					csv_lines[ 1 ] <- gsub( "\\." , "," , csv_lines[ 1 ] )
+					csv_lines[ 1 ] <- gsub( "\\." , ";" , csv_lines[ 1 ] )
 					writeLines( csv_lines , this.csv )
 					
 				}
