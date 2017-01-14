@@ -12,7 +12,6 @@ get_catalog_saeb <-
 		catalog <-
 			data.frame(
 				year = saeb_years ,
-				full_url = NA ,
 				dbfolder = paste0( output_dir , "/MonetDB" ) ,
 				output_folder = paste0( output_dir , "/" , saeb_years ) ,
 				full_url = these_links ,
