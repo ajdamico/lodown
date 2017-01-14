@@ -162,9 +162,9 @@ lodown_saeb <-
 				headers <- 
 					read.csv( 
 						input , 
-						sep = if( catalog[ i , 'year' ] >= 2015 ) "," else ";" , 
-						dec = if( catalog[ i , 'year' ] >= 2015 ) "." else "," , 
-						na.strings = if( catalog[ i , 'year' ] >= 2015 ) "" else "." , 
+						sep = if( catalog[ i , 'year' ] >= 2013 ) "," else ";" , 
+						dec = if( catalog[ i , 'year' ] >= 2013 ) "." else "," , 
+						na.strings = if( catalog[ i , 'year' ] >= 2013 ) "" else "." , 
 						nrows = chunk_size 
 					)
 				
@@ -187,9 +187,9 @@ lodown_saeb <-
 							input , 
 							header = FALSE ,
 							nrows = chunk_size , 
-							sep = if( catalog[ i , 'year' ] >= 2015 ) "," else ";" ,
-							dec = if( catalog[ i , 'year' ] >= 2015 ) "." else "," ,
-							na.strings = if( catalog[ i , 'year' ] >= 2015 ) "" else "." , 
+							sep = if( catalog[ i , 'year' ] >= 2013 ) "," else ";" ,
+							dec = if( catalog[ i , 'year' ] >= 2013 ) "." else "," ,
+							na.strings = if( catalog[ i , 'year' ] >= 2013 ) "" else "." , 
 							colClasses = cc
 						)
 						
