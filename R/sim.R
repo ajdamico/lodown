@@ -67,6 +67,8 @@ get_catalog_sim <-
 lodown_sim <-
   function( data_name = "sim" , catalog , ... ){
 
+	if ( !requireNamespace( "read.dbc" , quietly = TRUE ) ) stop( "read.dbc needed for this function to work. to install it, type `install.packages( 'read.dbc' )`" , call. = FALSE )
+
     tf <- tempfile()
 
     for ( i in seq_len( nrow( catalog ) ) ){
