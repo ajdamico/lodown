@@ -321,7 +321,7 @@ lodown_nvss <-
 				nchs_import( 
 					periodlinked.ps.unl , 
 					sas.scripts = sas_ri ,
-					db
+					db = db
 				)
 				
 				# if the year is 2004 and beyond..	
@@ -364,7 +364,7 @@ lodown_nvss <-
 				nchs_import( 
 					periodlinked.ps.den , 
 					sas.scripts = sas_ri ,
-					db
+					db = db
 				)
 
 				# delete all files in the "/periodlinked/us" directory (the fifty states plus DC)
@@ -481,7 +481,7 @@ lodown_nvss <-
 				nchs_import( 
 					cohortlinked.ps.num , 
 					sas.scripts = num_ri ,
-					db
+					db = db
 				)
 
 				# prepare the downloaded data-file and the sas importation script
@@ -489,7 +489,7 @@ lodown_nvss <-
 				nchs_import( 
 					cohortlinked.ps.den , 
 					sas.scripts = den_ri ,
-					db
+					db = db
 				)
 
 				# prepare the downloaded data-file and the sas importation script
@@ -497,7 +497,7 @@ lodown_nvss <-
 				nchs_import( 
 					cohortlinked.ps.unl , 
 					sas.scripts = unl_ri ,
-					db ,
+					db = db ,
 					azr = ( catalog[ i , 'year' ] == 2005 )
 				)
 				
@@ -581,7 +581,7 @@ lodown_nvss <-
 				nchs_import( 
 					mortality.ps , 
 					sas.scripts = nchs_order_at_signs( sas_ri , add.blank = TRUE ) ,
-					db
+					db = db
 				)
 
 				# delete all files in the "/mortality/us" directory (the fifty states plus DC)
