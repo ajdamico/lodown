@@ -102,16 +102,16 @@ lodown_saeb <-
 			Encoding( sas.files ) <- ''
 			
 			# loop through each available sas importation file..
-			for ( i in sas.files ){
+			for ( this_sas in sas.files ){
 				
 				# write the file to the disk
-				w <- readLines( i )
+				w <- readLines( this_sas )
 				
 				# remove all tab characters
 				w <- gsub( '\t' , ' ' , w )
 				
 				# overwrite the file on the disk with the newly de-tabbed text
-				writeLines( w , i )
+				writeLines( w , this_sas )
 			}
 
 			# loop through each available txt (data) file..
