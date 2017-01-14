@@ -943,12 +943,12 @@ nchs_download <-
 			# extract the file, platform-specific
 			
 			if ( .Platform$OS.type == 'windows' ){
-				dos.command <- paste0( '"' , path.to.winrar , '" x ' , tf , ' ' , winrar.dir )
-				shell( dos.command ) 
+				sys.command <- paste0( '"' , path.to.winrar , '" x ' , tf , ' "' , winrar.dir , '"' )
 			} else {
 				sys.command <- paste0( '"' , path.to.7z , '" x ' , tf , ' -o"' , winrar.dir , '"' )
-				system( sys.command )
 			}
+			
+			system( sys.command )
 
 			suppressWarnings( while( any( file.remove( tf ) ) ) Sys.sleep( 1 ) )
 			
