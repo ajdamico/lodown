@@ -75,6 +75,7 @@ lodown( "pew" , output_dir = "C:/My Directory/PEW" ,
 		your_phone = "555 555 5555" , your_email = "email@address.com" ,
 		agree_to_terms = FALSE )
 lodown( "piaac" , output_dir = "C:/My Directory/PIAAC" )
+lodown( "pirls" , output_dir = "C:/My Directory/PIRLS" )
 lodown( "pisa" , output_dir = "C:/My Directory/PISA" )
 lodown( "pls" , output_dir = "C:/My Directory/PLS" )
 lodown( "pme" , output_dir = "C:/My Directory/PME" )
@@ -182,6 +183,8 @@ lodown( "pew" , pew_cat[ 1:2 , ] ,
 		agree_to_terms = FALSE )
 piaac_cat <- get_catalog( "piaac" , output_dir = "C:/My Directory/PIAAC" )
 lodown( "piaac" , piaac_cat[ 1:2 , ] )
+pirls_cat <- get_catalog( "pirls" , output_dir = "C:/My Directory/PIRLS" )
+lodown( "pirls" , pirls_cat[ 1:2 , ] )
 pisa_cat <- get_catalog( "pisa" , output_dir = "C:/My Directory/PISA" )
 lodown( "pisa" , pisa_cat[ 1:2 , ] )
 pls_cat <- get_catalog( "pls" , output_dir = "C:/My Directory/PLS" )

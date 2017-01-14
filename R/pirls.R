@@ -221,7 +221,7 @@ pirls_pvsd <-
 					rscales = rep( 1 , 75 ) ,
 					scale = 1 ,
 					type = 'other' ,
-					data = mitools::imputationList( lapply( paste0( "x" , 1:5 ) , get ) ) ,
+					data = mitools::imputationList( mget( paste0( "x" , 1:5 ) ) ) ,
 					mse = TRUE
 				)
 				
