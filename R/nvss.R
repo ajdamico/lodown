@@ -708,26 +708,11 @@ nchs_import <-
 		azr = FALSE
 	){
 
-		gc()
-	
 		# figure out tablename from the files.to.import
-		tablenames <-
-			gsub( "./" , "" , files.to.import , fixed = TRUE )
-		
-		tablenames <-
-			gsub( ".dat" , "" , tablenames , fixed = TRUE )
-
-		tablenames <-
-			gsub( "/x" , "/" , tablenames , fixed = TRUE )
-
-		tablenames <-
-			gsub( "/" , "_" , tablenames , fixed = TRUE )
-			
+		tablenames <- gsub( ".dat" , "" , basename( files.to.import ) , fixed = TRUE , ignore.case = TRUE )
 	
 		for ( i in seq( length( tablenames ) ) ){
 	
-			cat( 'currently working on' , tablenames[ i ] , '\r' )
-			
 			fti <- clear.goofy.characters( files.to.import[ i ] , fl = force.length )
 			
 			on.exit( suppressWarnings( while( any( unlink( fti ) ) ) Sys.sleep( 1 ) ) )
