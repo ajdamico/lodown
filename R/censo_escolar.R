@@ -19,8 +19,8 @@ get_catalog_censo_escolar <-
 				stringsAsFactors = FALSE
 			)
 
-		# have not completed testing prior to 2008
-		catalog <- catalog[ catalog$year >= 2008 , ]
+		# have not completed testing prior to 2006
+		catalog <- catalog[ catalog$year >= 2006 , ]
 		
 		catalog
 
