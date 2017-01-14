@@ -1,31 +1,22 @@
 get_catalog_enem <-
 	function( data_name = "enem" , output_dir , ... ){
 
-		inep_portal <- "http://portal.inep.gov.br/basica-levantamentos-acessar"
+		inep_portal <- "http://portal.inep.gov.br/microdados"
 
-		portal_table <- rvest::html_table( xml2::read_html( inep_portal ) , fill = TRUE )[[1]]
+		w <- rvest::html_attr( rvest::html_nodes( xml2::read_html( inep_portal ) , "a" ) , "href" )
+		
+		these_links <- w[ grep( "enem(.*)zip$|enem(.*)rar$" , basename( w ) , ignore.case = TRUE ) ]
 
-		year_lines <- portal_table[ portal_table$X1 == "Microdados Enem" , 'X2' ]
-
-		year_lines <- iconv( year_lines , "" , "ASCII" , sub = " " )
-
-		year_lines <- gsub( " +" , " " , year_lines )
-
-		enem_years <- strsplit( year_lines , " " )[[1]]
+		enem_years <- gsub( "[^0-9]" , "" , these_links )
 
 		catalog <-
 			data.frame(
 				year = enem_years ,
-				full_url = NA ,
+				full_url = these_links ,
 				dbfolder = paste0( output_dir , "/MonetDB" ) ,
 				output_folder = paste0( output_dir , "/" , enem_years ) ,
 				stringsAsFactors = FALSE
 			)
-
-		# get real full_urls
-		w <- rvest::html_attr( rvest::html_nodes( xml2::read_html( inep_portal ) , "a" ) , "href" )
-
-		catalog$full_url <- w[ grep( "enem(.*)zip$|enem(.*)rar$" , basename( w ) , ignore.case = TRUE ) ]
 
 		catalog
 

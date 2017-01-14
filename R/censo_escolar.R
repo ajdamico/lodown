@@ -1,34 +1,23 @@
 get_catalog_censo_escolar <-
 	function( data_name = "censo_escolar" , output_dir , ... ){
 
-		inep_portal <- "http://portal.inep.gov.br/basica-levantamentos-acessar"
+		inep_portal <- "http://portal.inep.gov.br/microdados"
 
-		portal_table <- rvest::html_table( xml2::read_html( inep_portal ) , fill = TRUE )[[1]]
+		w <- rvest::html_attr( rvest::html_nodes( xml2::read_html( inep_portal ) , "a" ) , "href" )
+		
+		these_links <- grep( "censo_escolar(.*)zip$" , w , value = TRUE , ignore.case = TRUE )
 
-		year_lines <- portal_table[ portal_table$X1 == "Microdados Censo Escolar" , 'X2' ]
-
-		year_lines <- iconv( year_lines , "" , "ASCII" , sub = " " )
-
-		year_lines <- gsub( " +" , " " , year_lines )
-
-		censo_escolar_years <- strsplit( year_lines , " " )[[1]]
+		censo_escolar_years <- gsub( "[^0-9]" , "" , these_links )
 
 		catalog <-
 			data.frame(
 				year = censo_escolar_years ,
-				full_url = NA ,
 				db_tablename = paste0( "x" , censo_escolar_years ) ,
 				dbfolder = paste0( output_dir , "/MonetDB" ) ,
 				output_folder = paste0( output_dir , "/" , censo_escolar_years ) ,
+				full_url = these_links ,
 				stringsAsFactors = FALSE
 			)
-
-		# get real full_urls
-		w <- rvest::html_attr( rvest::html_nodes( xml2::read_html( inep_portal ) , "a" ) , "href" )
-
-		censoesc_files <- grep( "censo_escolar(.*)zip$" , basename( w ) , value = TRUE , ignore.case = TRUE )
-		
-		catalog$full_url <- censoesc_files
 
 		# have not completed testing prior to 2008
 		catalog <- catalog[ catalog$year >= 2008 , ]
