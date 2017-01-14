@@ -59,7 +59,7 @@ get_catalog_sim <-
     # create full catalog
     catalog <- rbind( catalog_pt1 , catalog_pt2 )
 
-    catalog
+    catalog[ with( catalog, order( type, uf , year ) ) , ]
 
   }
 
