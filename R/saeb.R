@@ -5,7 +5,7 @@ get_catalog_saeb <-
 
 		w <- rvest::html_attr( rvest::html_nodes( xml2::read_html( inep_portal ) , "a" ) , "href" )
 		
-		these_links <- grep( "saeb(.*)zip$" , w , value = TRUE , ignore.case = TRUE )
+		these_links <- grep( "(aneb|saeb)(.*)zip$" , w , value = TRUE , ignore.case = TRUE )
 
 		saeb_years <- gsub( "[^0-9]" , "" , these_links )
 
