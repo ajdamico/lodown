@@ -149,6 +149,15 @@ lodown_saeb <-
 			# loop through each available csv (also data) file..
 			for ( this.csv in csv.files ){
 			
+				# the 2015 TS_DIRETOR csv file is delimited by dots in the first row
+				if( catalog[ i , 'year' ] >= 2015 & grepl( "DADOS/TS_DIRETOR\\.csv" , this.csv ) ){
+				
+					csv_lines <- readLInes( this.csv )
+					csv_lines[ 1 ] <- gsub( "\\." , "," , csv_lines[ 1 ] )
+					writeLines( csv_lines , this.csv )
+					
+				}
+			
 				# remove the `.csv` to determine the name of the current table
 				tnwy <- paste0( gsub( "\\.csv$" , "" , tolower( basename( this.csv ) ) ) , "_" , catalog[ i , 'year' ] )
 
