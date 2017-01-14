@@ -71,6 +71,9 @@ lodown_nvss <-
 		for ( i in seq_len( nrow( catalog ) ) ){
 
 					
+			# open the connection to the monetdblite database
+			db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog[ i , 'dbfolder' ] )
+
 			# loop through every year specified by the user
 			if( catalog[ i , 'type' ] == 'natality' ){
 
@@ -638,6 +641,9 @@ lodown_nvss <-
 				save( us , ps , file = paste0( "./fetal death " , catalog[ i , 'year' ] , ".rda" ) )
 
 			}
+
+			# disconnect from the current monet database
+			DBI::dbDisconnect( db , shutdown = TRUE )
 
 			# delete the temporary files
 			suppressWarnings( file.remove( tf ) )
