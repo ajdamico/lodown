@@ -1001,7 +1001,7 @@ nchs_download <-
 		}	
 		
 		
-		for ( i in y$pdfs ){
+		for ( i in y$pdfs[ !is.na( y$pdfs ) ] ){
 		
 				
 			attempt.one <- try( cachaca( i , paste( output_folder , y$name , basename( i ) , sep = "/" ) , mode = 'wb' ) , silent = TRUE )
