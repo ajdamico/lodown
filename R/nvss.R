@@ -41,6 +41,19 @@ lodown_nvss <-
 		
 		if( ( .Platform$OS.type == 'windows' ) && ( system( paste0('"', path_to_winrar , '" rar help' ) , show.output.on.console = FALSE ) != 0 ) ) stop( "you need to install winrar.  if you already have it, include a path_to_winrar='C:/directory/winrar.exe' parameter" )
 		
+		# create winrar extraction directories
+		unique_directories <- unique( paste0( catalog$output_folder , "/winrar" ) )
+
+		for ( this_dir in unique_directories ){
+			if( !dir.exists( this_dir ) ){
+				tryCatch( { 
+					dir.create( this_dir , recursive = TRUE , showWarnings = TRUE ) 
+					} , 
+					warning = function( w ) stop( "while creating directory " , this_dir , "\n" , conditionMessage( w ) ) 
+				)
+			}
+		}
+		
 
 		# create a character string containing the cdc's vital statistics website
 		url.with.data <- "https://www.cdc.gov/nchs/data_access/vitalstatsonline.htm"
@@ -153,20 +166,16 @@ lodown_nvss <-
 
 
 			# if any period-linked data sets are queued up to be downloaded..
-			if ( !is.null( periodlinked.sets.to.download ) ){
+			if ( sum( catalog$type == 'periodlinked' ) > 0 ){
 
 				# point to the period-linked sas file stored on github
 				sas_ri <- system.file("extdata", "nvss/nchs_period_linked.sas", package = "lodown")
 				
-				# create two temporary files
-				pl.tf <- tempfile() ; den.tf <- tempfile()
+				# create a temporary file
+				den.tf <- tempfile()
 
-				# download the sas import script directly to the first temporary file
-				cachaca( sas_ri , pl.tf , FUN = downloader::download )
-				# that's the file (sas layout) used for the numerator and unlinked files.
-				
 				# also read it into working memory
-				pl.txt <- readLines( pl.tf )
+				pl.txt <- readLines( sas_ri )
 
 				# add a semicolon after the FLGND field in order to indicate
 				# that's the end of the numerator
@@ -178,15 +187,11 @@ lodown_nvss <-
 				# point to the period-linked 2003 sas file stored on github
 				sas_ri <- system.file("extdata", "nvss/nchs_period_linked_2003.sas", package = "lodown")
 
-				# create two temporary files
-				pl03.tf <- tempfile() ; den03.tf <- tempfile()
+				# create a temporary file
+				den03.tf <- tempfile()
 
-				# download the sas import script directly to the first temporary file
-				cachaca( sas_ri , pl03.tf , FUN = downloader::download )
-				# that's the file (sas layout) used for the numerator and unlinked files.
-				
 				# also read it into working memory
-				pl03.txt <- readLines( pl03.tf )
+				pl03.txt <- readLines( sas_ri )
 
 				# add a semicolon after the FLGND field in order to indicate
 				# that's the end of the numerator
@@ -599,13 +604,7 @@ lodown_nvss <-
 						system.file("extdata", "nvss/nchs_fetal_death_2007.sas", package = "lodown") ,
 						system.file("extdata", "nvss/nchs_fetal_death_2006.sas", package = "lodown")
 					)
-
-				# create a temporary file
-				fd.tf <- tempfile()
-
-				# download the sas importation script to the local disk
-				cachaca( sas_ri , fd.tf , FUN = downloader::download )
-
+					
 				# build the full filepath of the fetal death zipped file
 				fn <- 
 					paste0( 
@@ -615,7 +614,7 @@ lodown_nvss <-
 					)
 					
 				# read the fetal death nationwide zipped file directly into RAM with the sas importation script
-				us <- read_SAScii( fn , fd.tf , zipped = TRUE )
+				us <- read_SAScii( fn , sas_ri , zipped = TRUE )
 				
 				# convert all column names to lowercase
 				names( us ) <- tolower( names( us ) )
