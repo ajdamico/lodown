@@ -165,7 +165,8 @@ lodown_saeb <-
 						sep = if( catalog[ i , 'year' ] >= 2013 ) "," else ";" , 
 						dec = if( catalog[ i , 'year' ] >= 2013 ) "." else "," , 
 						na.strings = if( catalog[ i , 'year' ] >= 2013 ) "" else "." , 
-						nrows = chunk_size 
+						nrows = chunk_size ,
+						stringsAsFactors = FALSE
 					)
 				
 				# convert column names to lowercase
@@ -192,6 +193,9 @@ lodown_saeb <-
 							na.strings = if( catalog[ i , 'year' ] >= 2013 ) "" else "." , 
 							colClasses = cc
 						)
+						
+						# coerce logical columns to character
+						part[ sapply( part , class ) == 'logical' ] <- sapply( part[ sapply( part , class ) == 'logical' ] , as.character )
 						
 					   DBI::dbWriteTable( db , tnwy , part , append = TRUE , row.names = FALSE )
 				   }
