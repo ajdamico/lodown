@@ -162,10 +162,11 @@ lodown_saeb <-
 				headers <- 
 					read.csv( 
 						input , 
-						sep = if( catalog[ i , 'year' ] >= 2015 ) "," else ";" , 
-						dec = if( catalog[ i , 'year' ] >= 2015 ) "." else "," , 
-						na.strings = if( catalog[ i , 'year' ] >= 2015 ) "" else "." , 
-						nrows = chunk_size 
+						sep = if( catalog[ i , 'year' ] >= 2013 ) "," else ";" , 
+						dec = if( catalog[ i , 'year' ] >= 2013 ) "." else "," , 
+						na.strings = if( catalog[ i , 'year' ] >= 2013 ) "" else "." , 
+						nrows = chunk_size ,
+						stringsAsFactors = FALSE
 					)
 				
 				# convert column names to lowercase
@@ -187,11 +188,14 @@ lodown_saeb <-
 							input , 
 							header = FALSE ,
 							nrows = chunk_size , 
-							sep = if( catalog[ i , 'year' ] >= 2015 ) "," else ";" ,
-							dec = if( catalog[ i , 'year' ] >= 2015 ) "." else "," ,
-							na.strings = if( catalog[ i , 'year' ] >= 2015 ) "" else "." , 
+							sep = if( catalog[ i , 'year' ] >= 2013 ) "," else ";" ,
+							dec = if( catalog[ i , 'year' ] >= 2013 ) "." else "," ,
+							na.strings = if( catalog[ i , 'year' ] >= 2013 ) "" else "." , 
 							colClasses = cc
 						)
+						
+						# coerce logical columns to character
+						part[ sapply( part , class ) == 'logical' ] <- sapply( part[ sapply( part , class ) == 'logical' ] , as.character )
 						
 					   DBI::dbWriteTable( db , tnwy , part , append = TRUE , row.names = FALSE )
 				   }
