@@ -144,11 +144,11 @@ lodown_nvss <-
 				)
 
 				# delete all files in the "/natality/us" directory (the fifty states plus DC)
-				file.remove( paste0( "./natality/us/" , list.files( 'natality/us/' , recursive = T ) ) )
+				file.remove( list.files( paste0( catalog[ i , 'output_folder' ] , '/natality/us/' ) , recursive = TRUE , full.names = TRUE ) ) )
 				
 				# delete all files in the "/natality/ps" directory (the territories)
-				file.remove( paste0( "./natality/ps/" , list.files( 'natality/ps/' , recursive = T ) ) )
-
+				file.remove( list.files( paste0( catalog[ i , 'output_folder' ] , '/natality/ps/' ) , recursive = TRUE , full.names = TRUE ) ) )
+				
 			}
 
 
@@ -363,10 +363,10 @@ lodown_nvss <-
 				)
 
 				# delete all files in the "/periodlinked/us" directory (the fifty states plus DC)
-				file.remove( paste0( "./periodlinked/us/" , list.files( 'periodlinked/us/' , recursive = T ) ) )
-				
+				file.remove( list.files( paste0( catalog[ i , 'output_folder' ] , '/periodlinked/us/' ) , recursive = TRUE , full.names = TRUE ) ) )
+
 				# delete all files in the "/periodlinked/ps" directory (the fifty states plus DC)
-				file.remove( paste0( "./periodlinked/ps/" , list.files( 'periodlinked/ps/' , recursive = T ) ) )
+				file.remove( list.files( paste0( catalog[ i , 'output_folder' ] , '/periodlinked/ps/' ) , recursive = TRUE , full.names = TRUE ) ) )
 
 			}
 
@@ -497,10 +497,10 @@ lodown_nvss <-
 				)
 				
 				# delete all files in the "/cohortlinked/us" directory (the fifty states plus DC)
-				file.remove( paste0( "./cohortlinked/us/" , list.files( 'cohortlinked/us/' , recursive = T ) ) )
+				file.remove( list.files( paste0( catalog[ i , 'output_folder' ] , '/cohortlinked/us/' ) , recursive = TRUE , full.names = TRUE ) ) )
 				
 				# delete all files in the "/cohortlinked/ps" directory (the fifty states plus DC)
-				file.remove( paste0( "./cohortlinked/ps/" , list.files( 'cohortlinked/ps/' , recursive = T ) ) )
+				file.remove( list.files( paste0( catalog[ i , 'output_folder' ] , '/cohortlinked/ps/' ) , recursive = TRUE , full.names = TRUE ) ) )
 				
 			}
 
@@ -580,11 +580,11 @@ lodown_nvss <-
 				)
 
 				# delete all files in the "/mortality/us" directory (the fifty states plus DC)
-				file.remove( paste0( "./mortality/us/" , list.files( 'mortality/us/' , recursive = T ) ) )
+				file.remove( list.files( paste0( catalog[ i , 'output_folder' ] , '/mortality/us/' ) , recursive = TRUE , full.names = TRUE ) ) )
 				
 				# delete all files in the "/mortality/ps" directory (the fifty states plus DC)
-				file.remove( paste0( "./mortality/ps/" , list.files( 'mortality/ps/' , recursive = T ) ) )
-
+				file.remove( list.files( paste0( catalog[ i , 'output_folder' ] , '/mortality/ps/' ) , recursive = TRUE , full.names = TRUE ) ) )
+				
 			}
 
 
@@ -604,7 +604,7 @@ lodown_nvss <-
 				fd.tf <- tempfile()
 
 				# download the sas importation script to the local disk
-				download( sas_ri , fd.tf )
+				cachaca( sas_ri , fd.tf , FUN = downloader::download )
 
 				# build the full filepath of the fetal death zipped file
 				fn <- 
@@ -615,12 +615,7 @@ lodown_nvss <-
 					)
 					
 				# read the fetal death nationwide zipped file directly into RAM with the sas importation script
-				us <-
-					read.SAScii(
-						fn ,
-						fd.tf ,
-						zipped = TRUE
-					)
+				us <- read_SAScii( fn , fd.tf , zipped = TRUE )
 				
 				# convert all column names to lowercase
 				names( us ) <- tolower( names( us ) )
@@ -635,12 +630,7 @@ lodown_nvss <-
 					)
 					
 				# read the fetal death territory zipped file directly into RAM with the sas importation script
-				ps <-
-					read.SAScii(
-						fn ,
-						fd.tf ,
-						zipped = TRUE
-					)
+				ps <- read_SAScii( fn , fd.tf , zipped = TRUE )
 
 				# convert all column names to lowercase
 				names( ps ) <- tolower( names( ps ) )
@@ -648,11 +638,6 @@ lodown_nvss <-
 				# save both data.frame objects to an R data file
 				save( us , ps , file = paste0( "./fetal death " , catalog[ i , 'year' ] , ".rda" ) )
 
-				# remove both nationwide and territory data.frame object
-				rm( us , ps )
-				
-				# clear up RAM
-				gc()
 			}
 
 		
@@ -1061,7 +1046,7 @@ nchs_download <-
 			# wait one minute before each download
 			Sys.sleep( 60 )
 				
-			attempt.one <- try( cachaca( i , paste( "." , y$name , basename( i ) , sep = "/" ) , mode = 'wb' ) , silent = TRUE )
+			attempt.one <- try( cachaca( i , paste( output_folder , y$name , basename( i ) , sep = "/" ) , mode = 'wb' ) , silent = TRUE )
 			
 			if ( class( attempt.one ) == 'try-error' ) {
 				Sys.sleep( 60 )
