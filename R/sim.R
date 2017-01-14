@@ -23,6 +23,8 @@ get_catalog_sim <-
 
     catalog_pt1 <-
       data.frame(
+        type = tod_lines,
+        uf = NA,
         year = year_lines ,
         full_url = full_url ,
         db_tablename = paste0( tod_lines , year_lines ) ,
@@ -43,6 +45,8 @@ get_catalog_sim <-
 
     catalog_pt2 <-
       data.frame(
+        type = "geral" ,
+        uf = substr( filenames , 3, 4 ),
         year = year_lines ,
         full_url = full_url ,
         db_tablename = paste0( "geral", year_lines ) ,
