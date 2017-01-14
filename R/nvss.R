@@ -916,9 +916,9 @@ nchs_remove_overlap <-
 nchs_download <-
 	function( y , output_folder , path.to.winrar , path.to.7z ){
 		
-		tf <- tempfile() ; td <- tempdir()
+		tf <- tempfile()
 		
-		winrar.dir <- normalizePath( paste( td , "winrar" , sep = "/" ) )
+		winrar.dir <- normalizePath( paste( output_folder , "winrar" , sep = "/" ) )
 		
 		dir.create( winrar.dir )
 		
@@ -1015,8 +1015,6 @@ nchs_download <-
 		
 		for ( i in y$pdfs ){
 		
-			# wait one minute before each download
-			Sys.sleep( 60 )
 				
 			attempt.one <- try( cachaca( i , paste( output_folder , y$name , basename( i ) , sep = "/" ) , mode = 'wb' ) , silent = TRUE )
 			
