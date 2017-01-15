@@ -350,7 +350,7 @@ lodown_ahs <-
 					}
 
 					# copy all files over to their appropriate filepaths
-					file.copy( tf , this.filename )
+					file.copy( tf[ this_ext ] , this.filename[ this_ext ] )
 					# so now unloaded files get saved on the local disk as well.
 			
 				}
