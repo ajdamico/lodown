@@ -114,6 +114,7 @@ lodown_wvs <-
 			GETDATA <- ( curlconverter::make_req( curlconverter::straighten( browserGET ) ) )[[1]]()
 
 
+
 			GETPDF <- paste0( "curl '" , catalog[ i , 'full_url' ] , "' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' -H 'Accept-Encoding: gzip, deflate' -H 'Accept-Language: en-US,en;q=0.5' -H 'Connection: keep-alive' -H 'Cookie: JSESSIONID=59558DE631D107B61F528C952FC6E21F' -H 'Host: www.worldvaluessurvey.org' -H 'Referer: http://www.worldvaluessurvey.org/AJDocumentationSmpl.jsp' -H 'Upgrade-Insecure-Requests: 1' -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:49.0) Gecko/20100101 Firefox/49.0'" )
 			appIP <- curlconverter::straighten(GETPDF)
 			# replace cookie
