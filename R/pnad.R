@@ -263,9 +263,9 @@ lodown_pnad <-
 			# missing level blank-outs #
 			# this section loops through the non-response values & variables for all years
 			# and sets those variables to NULL.
-			cat( 'non-response variable blanking-out only occurs on numeric variables\n' )
-			cat( 'categorical variable blanks are usually 9 in the pnad\n' )
-			cat( 'thanks for listening\n' )
+			# cat( 'non-response variable blanking-out only occurs on numeric variables\n' )
+			# cat( 'categorical variable blanks are usually 9 in the pnad\n' )
+			# cat( 'thanks for listening\n' )
 			
 			# loop through each row in the missing household-level  codes table
 			for ( curRow in seq( nrow( household.nr ) ) ){
@@ -379,34 +379,13 @@ lodown_pnad <-
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 			# disconnect from the current monet database
 			DBI::dbDisconnect( db , shutdown = TRUE )
 
 			# delete the temporary files
 			suppressWarnings( file.remove( tf , unzipped_files ) )
 
-			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , catalog[ i , 'output_filename' ] , "'\r\n\n" ) )
+			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored as '" , catalog[ i , 'db_tablename' ] , "' in '" , catalog[ i , 'dbfolder' ] , "'\r\n\n" ) )
 
 		}
 

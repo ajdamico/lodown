@@ -73,6 +73,7 @@ NULL
 #' lodown( "pls" , output_dir = "C:/My Directory/PLS" )
 #' lodown( "pme" , output_dir = "C:/My Directory/PME" )
 #' lodown( "pns" , output_dir = "C:/My Directory/PNS" )
+#' lodown( "pnad" , output_dir = "C:/My Directory/PNAD" )
 #' lodown( "pnadc" , output_dir = "C:/My Directory/PNADC" )
 #' lodown( "pof" , output_dir = "C:/My Directory/POF" )
 #' lodown( "psid" , output_dir = "C:/My Directory/PSID" , 
@@ -193,6 +194,8 @@ NULL
 #' lodown( "pme" , pme_cat[ 1:2 , ] )
 #' pns_cat <- get_catalog( "pns" , output_dir = "C:/My Directory/PNS" )
 #' lodown( "pns" , pns_cat[ 1:2 , ] )
+#' pnad_cat <- get_catalog( "pnad" , output_dir = "C:/My Directory/PNAD" )
+#' lodown( "pnad" , pnad_cat[ 1:2 , ] )
 #' pnadc_cat <- get_catalog( "pnadc" , output_dir = "C:/My Directory/PNADC" )
 #' lodown( "pnadc" , pnadc_cat[ 1:2 , ] )
 #' pof_cat <- get_catalog( "pof" , output_dir = "C:/My Directory/POF" )
