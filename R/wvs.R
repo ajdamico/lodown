@@ -84,7 +84,13 @@ get_catalog_wvs <-
 		
 		my_cookie <- wvs_valid_cookie()
 		
-		for( this_entry in seq( nrow( catalog ) ) ) catalog[ this_entry , 'full_url' ] <- wvs_getFileById( catalog[ this_entry , 'this_id' ] , my_cookie )
+		for( this_entry in seq( nrow( catalog ) ) ){
+		
+			if( this_entry == 1 || catalog[ this_entry , 'wave' ] != catalog[ this_entry - 1 , 'wave' ] ) cat( paste0( "loading " , data_name , " catalog for wave " , catalog[ this_entry , 'wave' ] , "\r\n\n" ) )
+			
+			catalog[ this_entry , 'full_url' ] <- wvs_getFileById( catalog[ this_entry , 'this_id' ] , my_cookie )
+			
+		}
 
 		catalog$output_folder <- paste0( output_dir , "/wave " , catalog$wave , "/" )
 		
