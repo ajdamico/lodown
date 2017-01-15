@@ -92,7 +92,7 @@ get_catalog_wvs <-
 			
 		}
 
-		catalog$output_folder <- paste0( output_dir , "/wave " , catalog$wave , "/" )
+		catalog$output_folder <- paste0( output_dir , ifelse( catalog$wave == -1 , "/longitudinal/" , paste0( "/wave " , catalog$wave , "/" ) ) )
 		
 		catalog
 
