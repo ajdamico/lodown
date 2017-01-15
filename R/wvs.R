@@ -132,9 +132,7 @@ lodown_wvs <-
 
 			if(catalog[ i , 'wave' ] == -1 & this_fn == "04-25.xls") this_fn = "WVS_Values Surveys Integrated Dictionary_TimeSeries_v_2014-04-25.xls"
 			
-			# copy the temporary file over to the current subdirectory
-			file.copy( tf , paste0( catalog[ i , 'output_folder' ] , "/" , this_fn ) )
-
+			
 			# if the file is a zipped file..
 			if( tools::file_ext( this_fn ) == 'zip' ){
 
@@ -144,8 +142,6 @@ lodown_wvs <-
 				# confirm that the unzipped file length is one or it is not an rda/dta/sav file
 				stopifnot ( length( unzipped_files ) == 1 | !( grepl( 'stata_dta|spss|rdata' , this_fn ) ) ) 
 
-				suppressWarnings( rm( x ) )
-				
 				# if it's a stata file, import with `read.dta`
 				if( grepl( 'stata_dta' , tolower( this_fn ) ) ) try( x <- foreign::read.dta( unzipped_files , convert.factors = FALSE ) , silent = TRUE )
 				
@@ -159,7 +155,7 @@ lodown_wvs <-
 					dfn <- load( unzipped_files )
 					
 					# if multiple objects were loaded..  check their `class`
-					dfc <- sapply( dfn , function( z ) get( class( z ) ) )
+					dfc <- sapply( dfn , function( z ) class( get( z ) ) )
 					
 					# confirm only one `data.frame` object exists
 					stopifnot( sum( dfc == 'data.frame' ) == 1 )
@@ -183,7 +179,16 @@ lodown_wvs <-
 					save( x , file = rfn )
 
 				}
-					
+
+				suppressWarnings( rm( x ) )				
+				
+				suppressWarnings( rm( list = dfn ) )
+				
+			} else {
+			
+				# copy the temporary file over to the current subdirectory
+				file.copy( tf , paste0( catalog[ i , 'output_folder' ] , "/" , this_fn ) )
+
 			}
 
 			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'output_folder' ] , "'\r\n\n" ) )
