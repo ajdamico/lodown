@@ -132,10 +132,10 @@ get_catalog_ahs <-
 lodown_ahs <-
 	function( data_name = "ahs" , catalog , ... ){
 
-		tf <- tempfile()
-
 		for ( i in seq_len( nrow( catalog ) ) ){
-			
+				
+			tf <- tempfile()
+
 			# clear up the `data.loaded` object
 			data.loaded <- NULL
 			
@@ -435,14 +435,12 @@ lodown_ahs <-
 								
 				
 				# end of data.frame merge #
-				
-				
-			}
-		
-	
-			# delete the temporary files
-			suppressWarnings( file.remove( tf ) )
+					
+				# delete the temporary files
+				suppressWarnings( file.remove( tf ) )
 
+			}
+	
 			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'output_folder' ] , "'\r\n\n" ) )
 
 		}

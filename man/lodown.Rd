@@ -33,6 +33,7 @@ lodown( "acs" , output_dir = "C:/My Directory/ACS" )
 lodown( "addhealth" , output_dir = "C:/My Directory/AddHealth" , 
 		your_email = "email@address.com" , your_password = "password" )
 lodown( "ahrf" , output_dir = "C:/My Directory/AHRF" )
+lodown( "ahs" , output_dir = "C:/My Directory/AHS" )
 lodown( "anes" , output_dir = "C:/My Directory/ANES" , your_email = "email@address.com" )
 lodown( "atus" , output_dir = "C:/My Directory/ATUS" )
 lodown( "brfss" , output_dir = "C:/My Directory/BRFSS" )
@@ -109,6 +110,8 @@ lodown( "addhealth" , addhealth_cat ,
 		your_email = "email@address.com" , your_password = "password" )
 ahrf_cat <- get_catalog( "ahrf" , output_dir = "C:/My Directory/AHRF" )
 lodown( "ahrf" , ahrf_cat[ 1:2 , ] )
+ahs_cat <- get_catalog( "ahs" , output_dir = "C:/My Directory/AHS" )
+lodown( "ahs" , ahs_cat[ 1:2 , ] )
 anes_cat <- get_catalog( "anes" , output_dir = "C:/My Directory/ANES" , 
 		your_email = "email@address.com" )
 lodown( "anes" , anes_cat , your_email = "email@address.com" )
