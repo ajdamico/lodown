@@ -31,20 +31,15 @@ get_catalog_ahs <-
 
 			# isolate all puf lines
 			puf.lines <- gsub('(.*)href=\"(.*)\" title(.*)' , '\\2' , grep( "href(.*)Public Use" , readLines( tf ) , value = TRUE ) )
-
-			# starting in 2013, public use file pages are broken into two
-			if( year >= 2013 ){
 				
-				download.file( paste0( "http://www.census.gov/" , puf.lines ) , tf , mode = 'wb' )
-				
-				these_lines <- gsub('(.*)href=\"(.*)\" title(.*)' , '\\2' , grep( "href(.*)Public Use" , readLines( tf ) , value = TRUE ) )
-				
-				these_lines <- these_lines[ !grepl( "mailto" , these_lines ) ] 
-				
-			} else these_lines <- puf.lines
+			download.file( paste0( "http://www.census.gov/" , puf.lines ) , tf , mode = 'wb' )
+			
+			these_lines <- gsub('(.*)href=\"(.*)\" title(.*)' , '\\2' , grep( "href(.*)Public Use" , readLines( tf ) , value = TRUE ) )
+			
+			these_lines <- these_lines[ !grepl( "mailto" , these_lines ) ] 
 			
 			# extract only the link
-			puf.pages <- unique( c( puf.pages , these_lines ) )
+			puf.pages <- unique( c( puf.lines , these_lines ) )
 
 			# ..loop through each puf page searching for zipped files
 			for ( this.page in puf.pages ){
