@@ -8,7 +8,7 @@ Description: the lodown package enforces a reproducible starting point for your 
 URL: http://asdfree.com/
 BugReports: https://github.com/ajdamico/lodown/issues
 Imports: survey, SAScii, RCurl, digest, readr, httr, XML, foreign, stringr, rvest, haven, xml2, DBI, MonetDBLite, R.utils
-Suggests: memisc, readxl, reshape2, jsonlite, purrr, gdata, descr, mitools, jpeg, read.dbc
+Suggests: memisc, readxl, reshape2, jsonlite, purrr, gdata, descr, mitools, jpeg, read.dbc, curlconverter
 License: GPL-3
 Encoding: UTF-8
 LazyData: true

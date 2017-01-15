@@ -90,6 +90,7 @@ NULL
 #' lodown( "ssa" , output_dir = "C:/My Directory/SSA" )
 #' lodown( "timss" , output_dir = "C:/My Directory/TIMSS" )
 #' lodown( "uspums" , output_dir = "C:/My Directory/USPUMS" )
+#' lodown( "wvs" , output_dir = "C:/My Directory/WVS" )
 #' lodown( "yrbss" , output_dir = "C:/My Directory/YRBSS" )
 #'
 #' # examples to download only the first two records in the catalog
@@ -227,6 +228,8 @@ NULL
 #' lodown( "timss" , timss_cat[ 1:2 , ] )
 #' uspums_cat <- get_catalog( "uspums" , output_dir = "C:/My Directory/USPUMS" )
 #' lodown( "uspums" , uspums_cat[ 1:2 , ] )
+#' wvs_cat <- get_catalog( "wvs" , output_dir = "C:/My Directory/WVS" )
+#' lodown( "wvs" , wvs_cat[ 1:2 , ] )
 #' yrbss_cat <- get_catalog( "yrbss" , output_dir = "C:/My Directory/YRBSS" )
 #' lodown( "yrbss" , yrbss_cat[ 1:2 , ] )
 #' 
