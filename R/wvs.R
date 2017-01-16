@@ -58,7 +58,6 @@ get_catalog_wvs <-
 							data.frame(
 								wave = this.wave ,
 								this_id = dlid ,
-								wave = this.wave ,
 								stringsAsFactors = FALSE
 							)
 						)
@@ -73,7 +72,6 @@ get_catalog_wvs <-
 						data.frame(
 							wave = this.wave ,
 							this_id = gsub( "(.*)\\('([0-9]*)'\\)" , "\\2" , dlid ) ,
-							wave = this.wave ,
 							stringsAsFactors = FALSE
 						)
 					)
@@ -102,27 +100,14 @@ get_catalog_wvs <-
 lodown_wvs <-
 	function( data_name = "wvs" , catalog , ... ){
 
-		if ( !requireNamespace( "curlconverter" , quietly = TRUE ) ) stop( "curlconverter needed for this function to work. to install it, type `install.packages( 'curlconverter' )`" , call. = FALSE )
-		
-		# curlconverter namespace must be attached for the straighten() function to work properly
-		initv8 <- getFromNamespace(".onAttach","curlconverter")
-		initv8()
-
 		my_cookie <- wvs_valid_cookie()
 		
 		tf <- tempfile()
 
 		for ( i in seq_len( nrow( catalog ) ) ){
 
-			browserGET <- "curl 'http://www.worldvaluessurvey.org/WVSDocumentationWV4.jsp' -H 'Host: www.worldvaluessurvey.org' -H 'User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:49.0) Gecko/20100101 Firefox/49.0' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' -H 'Accept-Language: en-US,en;q=0.5' --compressed -H 'Connection: keep-alive' -H 'Upgrade-Insecure-Requests: 1'"
-			GETDATA <- curlconverter::make_req( curlconverter::straighten( browserGET ) )[[1]]()
-
-			GETPDF <- paste0( "curl '" , catalog[ i , 'full_url' ] , "' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' -H 'Accept-Encoding: gzip, deflate' -H 'Accept-Language: en-US,en;q=0.5' -H 'Connection: keep-alive' -H 'Cookie: JSESSIONID=59558DE631D107B61F528C952FC6E21F' -H 'Host: www.worldvaluessurvey.org' -H 'Referer: http://www.worldvaluessurvey.org/AJDocumentationSmpl.jsp' -H 'Upgrade-Insecure-Requests: 1' -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:49.0) Gecko/20100101 Firefox/49.0'" )
-			appIP <- curlconverter::straighten(GETPDF)
-			# replace cookie
-			appIP[[1]]$cookies$JSESSIONID <- GETDATA$cookies$value
-			appReq <- curlconverter::make_req(appIP)
-			response <- appReq[[1]]()
+			response <- wvs_appreq( catalog[ i , 'full_url' ] , the_cookie = my_cookie )
+			
 			writeBin(response$content, tf )
 
 			# extract the filename from the website's response header
@@ -164,7 +149,7 @@ lodown_wvs <-
 					# store that object into `x`
 					x <- get( dfn[ dfc == 'data.frame' ] )
 					
-				}
+				} else dfn <- NULL
 
 				# if a data.frame object has been imported..
 				if( exists( 'x' ) ){
@@ -179,7 +164,7 @@ lodown_wvs <-
 					# store the data.frame object on the local disk
 					save( x , file = rfn )
 
-				}
+				} else file.copy( unzipped_files , paste0( catalog[ i , 'output_folder' ] , "/" , basename( unzipped_files ) ) )
 
 				suppressWarnings( rm( x ) )				
 				
@@ -284,3 +269,13 @@ wvs_valid_cookie <-
 	}
 
 
+wvs_appreq <-
+	function( this_url , the_cookie ){
+		httr::VERB(verb = "GET", url = this_url , 
+		httr::add_headers(Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", 
+			`Accept-Encoding` = "gzip, deflate", `Accept-Language` = "en-US,en;q=0.5", 
+			Connection = "keep-alive", Host = "www.worldvaluessurvey.org", 
+			Referer = "http://www.worldvaluessurvey.org/AJDocumentationSmpl.jsp", 
+			`Upgrade-Insecure-Requests` = "1", `User-Agent` = "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:49.0) Gecko/20100101 Firefox/49.0"), 
+		httr::set_cookies(JSESSIONID = gsub( "JSESSIONID=" , "" , the_cookie )) )
+	}
