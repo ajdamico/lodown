@@ -105,8 +105,9 @@ lodown_wvs <-
 		if ( !requireNamespace( "curlconverter" , quietly = TRUE ) ) stop( "curlconverter needed for this function to work. to install it, type `install.packages( 'curlconverter' )`" , call. = FALSE )
 		
 		# curlconverter namespace must be attached for the straighten() function to work properly
-		library(curlconverter)
-		
+		initv8 <- getFromNamespace(".onAttach","curlconverter")
+		initv8()
+
 		my_cookie <- wvs_valid_cookie()
 		
 		tf <- tempfile()
