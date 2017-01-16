@@ -4,10 +4,11 @@ get_catalog_censo_escolar <-
 		inep_portal <- "http://portal.inep.gov.br/microdados"
 
 		w <- rvest::html_attr( rvest::html_nodes( xml2::read_html( inep_portal ) , "a" ) , "href" )
-		
+
 		these_links <- grep( "censo_escolar(.*)zip$" , w , value = TRUE , ignore.case = TRUE )
 
 		censo_escolar_years <- gsub( "[^0-9]" , "" , these_links )
+		censo_escolar_years[ censo_escolar_years == 20062 ] <- 2006
 
 		catalog <-
 			data.frame(
@@ -19,9 +20,9 @@ get_catalog_censo_escolar <-
 				stringsAsFactors = FALSE
 			)
 
-		# have not completed testing prior to 2006
-		catalog <- catalog[ catalog$year >= 2006 , ]
-		
+		# have not completed testing prior to 2007
+		catalog <- catalog[ catalog$year >= 2007 , ]
+
 		catalog
 
 	}
@@ -58,10 +59,10 @@ lodown_censo_escolar <-
 					system( dos.command , show.output.on.console = FALSE )
 
 					this_data_file <- list.files( catalog[ i , "output_folder" ] , full.names = TRUE )
-					
+
 					this_data_file <- grep( "\\.csv$", this_data_file, value = TRUE, ignore.case = TRUE )
 
-					DBI::dbWriteTable( 
+					DBI::dbWriteTable(
 						db,
 						paste0( this_table_type , catalog[ i , "year" ] ) ,
 						this_data_file ,
@@ -71,7 +72,7 @@ lodown_censo_escolar <-
 						append = TRUE ,
 						nrow.check = 1000
 					)
-					
+
 					file.remove( this_data_file )
 
 				}
@@ -84,9 +85,16 @@ lodown_censo_escolar <-
 			# delete the temporary files?  or move some docs to a save folder?
 			suppressWarnings( file.remove( tf ) )
 
+			# remove raw data files already loaded
+			for ( rm.dir in grep( "/DADOS/.*", unzipped_files , value = TRUE , ignore.case = TRUE ) ) {
+			  suppressWarnings( unlink( rm.dir , recursive = TRUE )  )
+			}
+
 			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'dbfolder' ] , "'\r\n\n" ) )
 
 		}
+
+
 
 		invisible( TRUE )
 
