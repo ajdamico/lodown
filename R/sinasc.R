@@ -177,10 +177,10 @@ lodown_sinasc <-
 
           for ( docfile in filenames ) {
 
-            docurl <- paste0( sim_portal , directory , "/" , docfile  )
+            docurl <- paste0( sinasc_portal , directory , "/" , docfile  )
 
             # determine the document directory
-            pth <- paste0( doc_dir , "/" , if( grepl( "CID9" , sim_portal ) ) paste0( "Documentation/" , "CID9" ) else paste0( "Documentation/" , "CID10" ) , "/" , directory , "/" )
+            pth <- paste0( doc_dir , "/" , if( grepl( "ANT" , sinasc_portal ) ) paste0( "Documentation/" , "ANT" ) else paste0( "Documentation/" , "NOV" ) , "/" , directory , "/" )
 
             # if the directory doesn't exist, creates
             if ( !dir.exists(pth) ){
