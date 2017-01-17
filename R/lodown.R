@@ -35,6 +35,8 @@ NULL
 #' 		your_username = "username" , your_password = "password" )
 #' lodown( "cps_asec" , output_dir = "C:/My Directory/CPS_ASEC" )
 #' lodown( "cps_basic" , output_dir = "C:/My Directory/CPS_BASIC" )
+#' lodown( "dhs" , output_dir = "C:/My Directory/DHS" , 
+#'		your_email = "email@address.com" , your_password = "password" , your_project = "project" )
 #' lodown( "ess" , output_dir = "C:/My Directory/ESS" , your_email = "email@address.com" )
 #' lodown( "enem" , output_dir = "C:/My Directory/ENEM" )
 #' lodown( "faers" , output_dir = "C:/My Directory/FAERS" )
@@ -126,6 +128,10 @@ NULL
 #' lodown( "cps_asec" , cps_asec_cat[ 1:2 , ] )
 #' cps_basic_cat <- get_catalog( "cps_basic" , output_dir = "C:/My Directory/CPS_BASIC" )
 #' lodown( "cps_basic" , cps_basic_cat[ 1:2 , ] )
+#' dhs_cat <- get_catalog( "dhs" , output_dir = "C:/My Directory/DHS" ,
+#'		your_email = "email@address.com" , your_password = "password" , your_project = "project" )
+#' lodown( "dhs" , dhs_cat[ 1:2 , ] , 
+#'		your_email = "email@address.com" , your_password = "password" , your_project = "project" )
 #' ess_cat <- get_catalog( "ess" , output_dir = "C:/My Directory/ESS" )
 #' lodown( "ess" , ess_cat[ 1:2 , ] , your_email = "email@address.com" )
 #' enem_cat <- get_catalog( "enem" , output_dir = "C:/My Directory/ENEM" )

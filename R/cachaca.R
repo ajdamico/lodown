@@ -187,9 +187,22 @@ cachaca <-
 
 					} else {
 
-						# did the download work?
-						success <- do.call( FUN , list( this_url , destfile , ... ) ) == 0
+						
+						# if using GET with write_disk..
+						if( identical( FUN , httr::GET ) ){
+						# do not include the destfile= in the call, since it's already included inside the write_disk()
+						
+							# did the download work?
+							success <- do.call( FUN , list( this_url , ... ) )
 
+						} else {
+						
+							# did the download work?
+							success <- do.call( FUN , list( this_url , destfile , ... ) ) == 0
+
+						}
+						
+						
 						if( filesize_fun == 'unzip_verify' ){
 						
 							tryCatch( unzipped_files <- unzip_warn_fail( destfile , exdir = paste0( tempdir() , "/unzips" ) ) , warning = function(w) { stop( "unzip_verify failed: " , conditionMessage( w ) ) } )
