@@ -172,6 +172,11 @@ NULL
 #' # download all available microdata
 #' lodown( "hrs" , output_dir = "C:/My Directory/HRS" , 
 #' 		your_username = "username" , your_password = "password" )
+#' # download only the rand files
+#' hrs_cat <- get_catalog( "hrs" , output_dir = "C:/My Directory/HRS" , 
+#' 		your_username = "username" , your_password = "password" )
+#' lodown( "hrs" , hrs_cat[ grepl( "rand" , hrs_cat$file_title , ignore.case = TRUE ) , ] , 
+#' 		your_username = "username" , your_password = "password" )
 #'
 #' # Medical Expenditure Panel Survey
 #' # download all available microdata
@@ -327,7 +332,9 @@ NULL
 #' lodown( "piaac" , output_dir = "C:/My Directory/PIAAC" )
 #' # download only the italian files
 #' piaac_cat <- get_catalog( "piaac" , output_dir = "C:/My Directory/PIAAC" )
-#' lodown( "piaac" , piaac_cat[ grepl( "ita" , basename( piaac_cat$full_url ) , ignore.case = TRUE ) , ] )
+#' italian_files <- 
+#'		piaac_cat[ grepl( "ita" , basename( piaac_cat$full_url ) , ignore.case = TRUE ) , ]
+#' lodown( "piaac" , italian_files )
 #'
 #' # Progress in International Reading Literacy Study
 #' # download all available microdata

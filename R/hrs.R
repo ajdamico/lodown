@@ -60,13 +60,17 @@ get_catalog_hrs <-
 			
 			this_text <- stringr::str_trim( link_text[ grepl( 'filedownload2\\.php\\?d' , link_refs ) ] )
 
-			this_cat <-
-				data.frame(
-					file_title = versid_text[ this_page ] ,
-					file_name = this_text ,
-					full_url = these_versids ,
-					stringsAsFactors = FALSE
-				)
+			if( length( this_text ) > 0 ){
+				
+				this_cat <-
+					data.frame(
+						file_title = versid_text[ this_page ] ,
+						file_name = this_text ,
+						full_url = these_versids ,
+						stringsAsFactors = FALSE
+					)
+					
+			} else this_cat <- data.frame( NULL )
 		
 			if( nrow( this_cat ) > 0 ){
 			
