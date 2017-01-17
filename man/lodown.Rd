@@ -45,6 +45,8 @@ lodown( "chis" , output_dir = "C:/My Directory/CHIS" ,
 		your_username = "username" , your_password = "password" )
 lodown( "cps_asec" , output_dir = "C:/My Directory/CPS_ASEC" )
 lodown( "cps_basic" , output_dir = "C:/My Directory/CPS_BASIC" )
+lodown( "dhs" , output_dir = "C:/My Directory/DHS" , 
+	your_email = "email@address.com" , your_password = "password" , your_project = "project" )
 lodown( "ess" , output_dir = "C:/My Directory/ESS" , your_email = "email@address.com" )
 lodown( "enem" , output_dir = "C:/My Directory/ENEM" )
 lodown( "faers" , output_dir = "C:/My Directory/FAERS" )
@@ -100,6 +102,7 @@ lodown( "sipp" , output_dir = "C:/My Directory/SIPP" )
 lodown( "ssa" , output_dir = "C:/My Directory/SSA" )
 lodown( "timss" , output_dir = "C:/My Directory/TIMSS" )
 lodown( "uspums" , output_dir = "C:/My Directory/USPUMS" )
+lodown( "wvs" , output_dir = "C:/My Directory/WVS" )
 lodown( "yrbss" , output_dir = "C:/My Directory/YRBSS" )
 
 # examples to download only the first two records in the catalog
@@ -135,6 +138,10 @@ cps_asec_cat <- get_catalog( "cps_asec" , output_dir = "C:/My Directory/CPS_ASEC
 lodown( "cps_asec" , cps_asec_cat[ 1:2 , ] )
 cps_basic_cat <- get_catalog( "cps_basic" , output_dir = "C:/My Directory/CPS_BASIC" )
 lodown( "cps_basic" , cps_basic_cat[ 1:2 , ] )
+dhs_cat <- get_catalog( "dhs" , output_dir = "C:/My Directory/DHS" ,
+	your_email = "email@address.com" , your_password = "password" , your_project = "project" )
+lodown( "dhs" , dhs_cat[ 1:2 , ] , 
+	your_email = "email@address.com" , your_password = "password" , your_project = "project" )
 ess_cat <- get_catalog( "ess" , output_dir = "C:/My Directory/ESS" )
 lodown( "ess" , ess_cat[ 1:2 , ] , your_email = "email@address.com" )
 enem_cat <- get_catalog( "enem" , output_dir = "C:/My Directory/ENEM" )
@@ -237,6 +244,8 @@ timss_cat <- get_catalog( "timss" , output_dir = "C:/My Directory/TIMSS" )
 lodown( "timss" , timss_cat[ 1:2 , ] )
 uspums_cat <- get_catalog( "uspums" , output_dir = "C:/My Directory/USPUMS" )
 lodown( "uspums" , uspums_cat[ 1:2 , ] )
+wvs_cat <- get_catalog( "wvs" , output_dir = "C:/My Directory/WVS" )
+lodown( "wvs" , wvs_cat[ 1:2 , ] )
 yrbss_cat <- get_catalog( "yrbss" , output_dir = "C:/My Directory/YRBSS" )
 lodown( "yrbss" , yrbss_cat[ 1:2 , ] )
 
