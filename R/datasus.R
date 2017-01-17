@@ -1,7 +1,98 @@
-get_catalog_sinasc <-
-  function( data_name = "sinasc" , output_dir , ... ){
+get_catalog_datasus <-
+  function( data_name = "datasus" , output_dir , ... ){
 
     catalog <- NULL
+
+    # get mortality catalog
+
+    # Part 1: specific tables
+    for( sim_portal in paste0( "ftp://ftp.datasus.gov.br/dissemin/publicos/SIM/CID" , 9:10 , "/DOFET/" ) ){
+
+      filenames <- RCurl::getURL(sim_portal, verbose=FALSE, ftp.use.epsv=FALSE, dirlistonly = TRUE , crlf = FALSE )
+      filenames <- strsplit( filenames, "\r*\n")[[1]]
+
+      full_url = paste( sim_portal, filenames, sep = "")
+
+      year_lines <- gsub( "[^0-9]" , "" , basename( filenames ) )
+
+      time.thresh <- as.numeric(year_lines) < 79
+      year_lines [ nchar( year_lines ) < 4 & time.thresh ] <- paste0( "20" , year_lines [ nchar( year_lines ) < 4 & time.thresh ] )
+      year_lines [ nchar( year_lines ) < 4 & !time.thresh ] <- paste0( "19" , year_lines [ nchar( year_lines ) < 4 & !time.thresh ] )
+
+      tod_lines <- substr( filenames , 3, 5 )
+      tod_lines[ tod_lines == "EXT" ] <- "externa"
+      tod_lines[ tod_lines == "FET" ] <- "fetal"
+      tod_lines[ tod_lines == "INF" ] <- "infantil"
+      tod_lines[ tod_lines == "MAT" ] <- "materna"
+
+      catalog <-
+        rbind(
+          catalog ,
+          data.frame(
+            type = "mortality" ,
+            special = tod_lines,
+            uf = NA,
+            year = year_lines ,
+            full_url = full_url ,
+            db_tablename = if( grepl( "CID9" , sim_portal ) ) paste0( tod_lines , "_cid9" ) else paste0( tod_lines , "_cid10" ) ,
+            dbfolder = paste0( output_dir , "/MonetDB" ) ,
+            output_filename = paste( output_dir , "mortality" , tod_lines , gsub( "\\.dbc" , ".rda" , tolower( basename( full_url ) ) ) , sep = "/" ) ,
+            stringsAsFactors = FALSE
+          )
+        )
+    }
+
+    # Part 1.1: DOIGN table
+
+    catalog <-
+      rbind(
+        catalog ,
+        data.frame(
+          type = "mortality" ,
+          special = "dign",
+          uf = NA,
+          year = 1995 ,
+          full_url = "ftp://ftp.datasus.gov.br/dissemin/publicos/SIM/CID9/DOIGN/DORIG95.DBC" ,
+          db_tablename = "dign" ,
+          dbfolder = paste0( output_dir , "/MonetDB" ) ,
+          output_filename = paste( output_dir , "mortality" , "ignorado" , gsub( "\\.dbc" , ".rda" , tolower( basename( "ftp://ftp.datasus.gov.br/dissemin/publicos/SIM/CID9/DOIGN/DORIG95.DBC" ) ) ) , sep = "/" ) ,
+          stringsAsFactors = FALSE
+        )
+      )
+
+    # Part 2: general table
+    for( sim_portal in paste0( "ftp://ftp.datasus.gov.br/dissemin/publicos/SIM/CID" , 9:10 , "/DORES/" ) ){
+
+      filenames <- RCurl::getURL(sim_portal, verbose=FALSE, ftp.use.epsv=FALSE, dirlistonly = TRUE , crlf = FALSE )
+      filenames <- strsplit( filenames, "\r*\n")[[1]]
+
+      full_url = paste( sim_portal, filenames, sep = "")
+
+      year_lines <- gsub( "[^0-9]" , "" , basename( filenames ) )
+
+      time.thresh <- as.numeric(year_lines) < 79
+      year_lines [ nchar( year_lines ) < 4 & time.thresh ] <- paste0( "20" , year_lines [ nchar( year_lines ) < 4 & time.thresh ] )
+      year_lines [ nchar( year_lines ) < 4 & !time.thresh ] <- paste0( "19" , year_lines [ nchar( year_lines ) < 4 & !time.thresh ] )
+
+      catalog <-
+        rbind(
+          catalog ,
+          data.frame(
+            type = "mortality" ,
+            special = "geral" ,
+            uf = if( grepl( "CID9" , sim_portal ) ) substr( filenames , 4 , 5 ) else substr( filenames , 3, 4 ),
+            year = year_lines ,
+            full_url = full_url ,
+            db_tablename = if( grepl( "CID9" , sim_portal ) ) "geral_cid9" else "geral_cid10" ,
+            dbfolder = paste0( output_dir , "/MonetDB" ) ,
+            output_filename = paste( output_dir , "mortality" , "geral" , gsub( "\\.dbc" , ".rda" , tolower( basename( full_url ) ) ) , sep = "/" ) ,
+            stringsAsFactors = FALSE
+          )
+        )
+
+    }
+
+    # get natality catalog
 
     # Part 1: specific tables
     for( sinasc_portal in paste0( "ftp://ftp.datasus.gov.br/dissemin/publicos/SINASC/" , c( "ANT/", "NOV/") , "DNRES/" ) ) {
@@ -17,18 +108,17 @@ get_catalog_sinasc <-
       year_lines [ nchar( year_lines ) < 4 & time.thresh ] <- paste0( "20" , year_lines [ nchar( year_lines ) < 4 & time.thresh ] )
       year_lines [ nchar( year_lines ) < 4 & !time.thresh ] <- paste0( "19" , year_lines [ nchar( year_lines ) < 4 & !time.thresh ] )
 
-      tod_lines <- "nasc"
-
       catalog <-
         rbind( catalog ,
                data.frame(
-                 type = tod_lines,
+                 type = rep( "natality" , length( filenames ) ) ,
+                 special = rep( NA , length( filenames ) ) ,
                  uf = if( grepl( "ANT" , sinasc_portal ) ) substr( filenames , 4 , 5 ) else substr( filenames , 3, 4 ) ,
                  year = year_lines ,
                  full_url = full_url ,
-                 db_tablename = paste0( tod_lines , year_lines ) ,
+                 db_tablename = if( grepl( "ANT" , sinasc_portal ) ) rep( "nasc_cid9" , length( filenames ) ) else rep( "nasc_cid10" , length( filenames ) ) ,
                  dbfolder = paste0( output_dir , "/MonetDB" ) ,
-                 output_filename = paste( output_dir , tod_lines , gsub( "\\.dbc" , ".rda" , tolower( basename( full_url ) ) ) , sep = "/" ) ,
+                 output_filename = paste( output_dir , "natality" , "ignorado" , gsub( "\\.dbc" , ".rda" , tolower( basename( full_url ) ) ) , sep = "/" ) ,
                  stringsAsFactors = FALSE
                )
         )
@@ -41,7 +131,8 @@ get_catalog_sinasc <-
       rbind(
         catalog ,
         data.frame(
-          type = "nign",
+          type = "natality",
+          special = "nign",
           uf = NA,
           year = 1995 ,
           full_url = "ftp://ftp.datasus.gov.br/dissemin/publicos/SINASC/ANT/DNIGN/DNRIG95.DBC" ,
@@ -57,11 +148,10 @@ get_catalog_sinasc <-
   }
 
 
+lodown_datasus <-
+  function( data_name = "datasus" , catalog , ... ){
 
-lodown_sinasc <-
-  function( data_name = "sinasc" , catalog , doc_dir = NULL , ... ){
-
-    if ( !requireNamespace( "read.dbc" , quietly = TRUE ) ) stop( "read.dbc needed for this function to work. to install it, type `install.packages( 'read.dbc' )`" , call. = FALSE )
+    if ( !requireNamespace( "read.dbc" , quietly = TRUE ) ) stop( "read.dbc needed for this function to work. to install it, special `install.packages( 'read.dbc' )`" , call. = FALSE )
 
     tf <- tempfile()
 
@@ -161,43 +251,6 @@ lodown_sinasc <-
       suppressWarnings( file.remove( tf ) )
 
       cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , catalog[ i , 'output_filename' ] , "'\r\n\n" ) )
-
-    }
-
-    # get documentation
-    if ( !is.null( doc_dir ) ) {
-      for( sinasc_portal in paste0( "ftp://ftp.datasus.gov.br/dissemin/publicos/SINASC/" , c( "ANT" , "NOV" ) , "/" ) ) {
-
-        # get directories under sinasc_portal url
-        dir.names <- RCurl::getURL( sinasc_portal, ftp.use.epsv = FALSE , dirlistonly = TRUE )
-        dir.names <- strsplit( dir.names, "\r*\n")[[1]]
-
-        # figure out documentation folders
-        dir.names <- grep( "^DOC|^TAB" , dir.names , value = TRUE )
-
-        for ( directory in dir.names ) {
-
-          filenames <- RCurl::getURL( paste0( sinasc_portal , directory , sep = "/" ), ftp.use.epsv = FALSE , dirlistonly = TRUE )
-          filenames <- strsplit( filenames, "\r*\n")[[1]]
-
-          for ( docfile in filenames ) {
-
-            docurl <- paste0( sinasc_portal , directory , "/" , docfile  )
-
-            # determine the document directory
-            pth <- paste0( doc_dir , "/" , if( grepl( "ANT" , sinasc_portal ) ) paste0( "Documentation/" , "ANT" ) else paste0( "Documentation/" , "NOV" ) , "/" , directory , "/" )
-
-            # if the directory doesn't exist, creates
-            if ( !dir.exists(pth) ){
-              dir.create( pth , recursive = TRUE , showWarnings = FALSE )
-            }
-
-            cachaca( this_url = docurl , destfile = paste0( pth , "/" , docfile ) , mode = "wb" , attempts = 20 )
-          }
-
-        }
-
-      }
 
     }
 
