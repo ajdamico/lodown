@@ -1,65 +1,53 @@
-get_catalog_sinasc <-
-  function( data_name = "sinasc" , output_dir , ... ){
+get_catalog_sia <-
+  function( data_name = "sia" , output_dir , ... ){
 
     catalog <- NULL
 
     # Part 1: specific tables
-    for( sinasc_portal in paste0( "ftp://ftp.datasus.gov.br/dissemin/publicos/SINASC/" , c( "ANT/", "NOV/") , "DNRES/" ) ) {
+    for( sia_portal in paste0( "ftp://ftp.datasus.gov.br/dissemin/publicos/SIASUS/" , c( "199407_200712/", "200801_/") , "Dados/" ) ) {
 
-      filenames <- RCurl::getURL( sinasc_portal , verbose=FALSE , ftp.use.epsv=FALSE , dirlistonly = TRUE , crlf = FALSE )
+      filenames <- RCurl::getURL( sia_portal , verbose=FALSE , ftp.use.epsv=FALSE , dirlistonly = TRUE , crlf = FALSE )
       filenames <- strsplit( filenames, "\r*\n")[[1]]
+      filenames <- filenames[ grepl( ".dbc$" , filenames ) ]
 
-      full_url = paste( sinasc_portal, filenames, sep = "")
+      full_url = paste( sia_portal, filenames, sep = "")
 
-      year_lines <- gsub( "[^0-9]" , "" , basename( filenames ) )
+      year_lines <- substr( gsub( "[^0-9]" , "" , basename( filenames ) ) , 1 , 2 )
+      time_thresh <- year_lines < 94
+      year_lines[ time_thresh ] <- paste0( "20" , year_lines[ time_thresh ] )
+      year_lines[ !time_thresh ] <- paste0( "19" , year_lines[ !time_thresh ] )
 
-      time.thresh <- as.numeric( year_lines ) < 79
-      year_lines [ nchar( year_lines ) < 4 & time.thresh ] <- paste0( "20" , year_lines [ nchar( year_lines ) < 4 & time.thresh ] )
-      year_lines [ nchar( year_lines ) < 4 & !time.thresh ] <- paste0( "19" , year_lines [ nchar( year_lines ) < 4 & !time.thresh ] )
+      mnth_lines <- substr( gsub( "[^0-9]" , "" , basename( filenames ) ) , 3 , 4 )
 
-      tod_lines <- "nasc"
+      uf <- toupper( substr( basename( filenames ) , nchar( basename( filenames ) ) - 9, nchar( basename( filenames ) ) - 8 ) )
+      tab.type <- toupper( substr( basename( filenames ) , 1 , nchar( basename( filenames ) ) - 10 ) )
 
       catalog <-
         rbind( catalog ,
                data.frame(
-                 type = tod_lines,
-                 uf = if( grepl( "ANT" , sinasc_portal ) ) substr( filenames , 4 , 5 ) else substr( filenames , 3, 4 ) ,
+                 type =  tab.type ,
+                 uf = uf ,
                  year = year_lines ,
+                 month = mnth_lines ,
                  full_url = full_url ,
-                 db_tablename = paste0( tod_lines , year_lines ) ,
+                 db_tablename = paste0( tab.type , year_lines ) ,
                  dbfolder = paste0( output_dir , "/MonetDB" ) ,
-                 output_filename = paste( output_dir , tod_lines , gsub( "\\.dbc" , ".rda" , tolower( basename( full_url ) ) ) , sep = "/" ) ,
+                 output_filename = paste( output_dir , gsub( "\\.dbc" , ".rda" , tolower( basename( full_url ) ) ) , sep = "/" ) ,
                  stringsAsFactors = FALSE
                )
         )
 
     }
 
-    # Part 1.1: DNIGN table
-
-    catalog <-
-      rbind(
-        catalog ,
-        data.frame(
-          type = "nign",
-          uf = NA,
-          year = 1995 ,
-          full_url = "ftp://ftp.datasus.gov.br/dissemin/publicos/SINASC/ANT/DNIGN/DNRIG95.DBC" ,
-          db_tablename = "nign" ,
-          dbfolder = paste0( output_dir , "/MonetDB" ) ,
-          output_filename = paste( output_dir , "ignorado" , gsub( "\\.dbc" , ".rda" , tolower( basename( "ftp://ftp.datasus.gov.br/dissemin/publicos/SINASC/ANT/DNIGN/DNRIG95.DBC" ) ) ) , sep = "/" ) ,
-          stringsAsFactors = FALSE
-        )
-      )
+    catalog <- catalog[ with( catalog , order( type , year , uf , month ) ) , ]
 
     catalog
 
   }
 
 
-
-lodown_sinasc <-
-  function( data_name = "sinasc" , catalog , doc_dir = NULL , ... ){
+lodown_sia <-
+  function( data_name = "sia" , catalog , doc_dir = NULL , ... ){
 
     if ( !requireNamespace( "read.dbc" , quietly = TRUE ) ) stop( "read.dbc needed for this function to work. to install it, type `install.packages( 'read.dbc' )`" , call. = FALSE )
 
@@ -166,26 +154,26 @@ lodown_sinasc <-
 
     # get documentation
     if ( !is.null( doc_dir ) ) {
-      for( sinasc_portal in paste0( "ftp://ftp.datasus.gov.br/dissemin/publicos/SINASC/" , c( "ANT" , "NOV" ) , "/" ) ) {
+      for( sia_portal in paste0( "ftp://ftp.datasus.gov.br/dissemin/publicos/SIASUS/" , c( "199407_200712/", "200801_/") ) ) {
 
-        # get directories under sinasc_portal url
-        dir.names <- RCurl::getURL( sinasc_portal, ftp.use.epsv = FALSE , dirlistonly = TRUE )
+        # get directories under sia_portal url
+        dir.names <- RCurl::getURL( sia_portal , ftp.use.epsv = FALSE , dirlistonly = TRUE )
         dir.names <- strsplit( dir.names, "\r*\n")[[1]]
 
         # figure out documentation folders
-        dir.names <- grep( "^DOC|^TAB" , dir.names , value = TRUE )
+        dir.names <- grep( "^Dados" , dir.names , value = TRUE , invert = TRUE , ignore.case = TRUE )
 
         for ( directory in dir.names ) {
 
-          filenames <- RCurl::getURL( paste0( sinasc_portal , directory , sep = "/" ), ftp.use.epsv = FALSE , dirlistonly = TRUE )
+          filenames <- RCurl::getURL( paste0( sia_portal , directory , sep = "/" ), ftp.use.epsv = FALSE , dirlistonly = TRUE )
           filenames <- strsplit( filenames, "\r*\n")[[1]]
 
           for ( docfile in filenames ) {
 
-            docurl <- paste0( sinasc_portal , directory , "/" , docfile  )
+            docurl <- paste0( sia_portal , directory , "/" , docfile  )
 
             # determine the document directory
-            pth <- paste0( doc_dir , "/" , if( grepl( "ANT" , sinasc_portal ) ) paste0( "Documentation/" , "ANT" ) else paste0( "Documentation/" , "NOV" ) , "/" , directory , "/" )
+            pth <- paste0( doc_dir , "/" , if( grepl( "200801_" , sia_portal ) ) paste0( "Documentation/" , "200801_" ) else paste0( "Documentation/" , "199407_200712" ) , "/" , directory , "/" )
 
             # if the directory doesn't exist, creates
             if ( !dir.exists(pth) ){
