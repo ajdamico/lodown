@@ -7,7 +7,7 @@ get_catalog_enem <-
 		
 		these_links <- w[ grep( "enem(.*)zip$|enem(.*)rar$" , basename( w ) , ignore.case = TRUE ) ]
 
-		enem_years <- gsub( "[^0-9]" , "" , these_links )
+		enem_years <- substr( gsub( "[^0-9]" , "" , these_links ) , 1 , 4 )
 
 		catalog <-
 			data.frame(
