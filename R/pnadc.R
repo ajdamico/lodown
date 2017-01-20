@@ -78,7 +78,7 @@ lodown_pnadc <-
 				sasfile <- grep( "1Tri_2012 a 3Tri_2015" , sasfiles , value = TRUE ) 
 			
 			# if 2015Q4 or 2016Q1, use the second
-			} else if( ( catalog[ i , "year" ] == 2015 | catalog[ i , "quarter" ] == '04') | ( catalog[ i , "year" ] == 2016 | catalog[ i , "quarter" ] == '01') ) {
+			} else if( ( catalog[ i , "year" ] == 2015 & catalog[ i , "quarter" ] == '04') | ( catalog[ i , "year" ] == 2016 & catalog[ i , "quarter" ] == '01') ) {
 				
 				sasfile <- grep( "4Tri_2015 a 1Tri_2016" , sasfiles , value = TRUE )
 				
