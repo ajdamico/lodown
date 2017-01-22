@@ -58,6 +58,8 @@ lodown_ncvs <-
 				
 				save( x , file = catalog[ i , 'output_filename' ] )
 				
+				catalog[ i , 'case_count' ] <- nrow( x )
+				
 				cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , catalog[ i , 'output_filename' ] , "'\r\n\n" ) )
 
 			}

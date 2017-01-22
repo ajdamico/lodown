@@ -304,6 +304,8 @@ lodown_uspums <-
 			# save the monetdb-backed complex sample survey design object to the local disk		
 			save( this_design , file = unique_designs[ i , 'design' ] )
 			
+			catalog[ catalog$design == unique_designs[ i , 'design' ] , 'case_count' ] <- nrow( this_design )
+			
 			# disconnect from the current monet database
 			DBI::dbDisconnect( db , shutdown = TRUE )
 

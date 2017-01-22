@@ -33,6 +33,8 @@ lodown_mlces <-
 
 			save( x , file = catalog[ i , 'output_filename' ] )
 
+			catalog[ i , 'case_count' ] <- nrow( x )
+			
 			# delete the temporary files
 			suppressWarnings( file.remove( tf , unzipped_files ) )
 

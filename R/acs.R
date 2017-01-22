@@ -419,6 +419,9 @@ lodown_acs <-
 			# analyzed quicker than anything else.
 			save( acs_design , file = catalog[ i , 'output_filename' ] )
 
+			# add the number of records to the catalog
+			catalog[ i , 'case_count' ] <- nrow( acs_design )
+			
 			close( acs_design )
 
 			# disconnect from the current monet database

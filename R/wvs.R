@@ -164,6 +164,8 @@ lodown_wvs <-
 					# store the data.frame object on the local disk
 					save( x , file = rfn )
 
+					catalog[ i , 'case_count' ] <- nrow( x )
+					
 				} else file.copy( unzipped_files , paste0( catalog[ i , 'output_folder' ] , "/" , basename( unzipped_files ) ) )
 
 				suppressWarnings( rm( x ) )				

@@ -377,6 +377,7 @@ lodown_pnad <-
 			)
 
 
+			catalog[ i , 'case_count' ] <- DBI::dbGetQuery( db , paste0( "SELECT COUNT(*) FROM " , catalog[ i , 'db_tablename' ] ) )
 
 
 			# disconnect from the current monet database

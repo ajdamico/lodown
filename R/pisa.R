@@ -119,7 +119,8 @@ lodown_pisa <-
 			# open the connection to the monetdblite database
 			db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog[ i , 'dbfolder' ] )
 
-			
+			tables_before <- DBI::dbListTables( db )
+
 			if( catalog[ i , 'year' ] >= 2015 ){
 			
 				cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
@@ -535,6 +536,10 @@ lodown_pisa <-
 
 
 			}
+			
+			tables_after <- setdiff( tables_before , DBI::dbListTables( db ) )
+			
+			for( this_table in tables_after ) catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , DBI::dbGetQuery( db , paste0( "SELECT COUNT(*) FROM " , this_table ) )[ 1 , 1 ] , na.rm = TRUE )
 			
 			# disconnect from the current monet database
 			DBI::dbDisconnect( db , shutdown = TRUE )

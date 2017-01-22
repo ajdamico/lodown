@@ -37,7 +37,7 @@ lodown_pls <-
 			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
 
 			unzipped_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) )
-
+			
 			# loop through each of the files extracted to the temporary directory..
 			for ( this_csv in unzipped_files ){
 			
@@ -66,6 +66,8 @@ lodown_pls <-
 				
 				# save the data.frame `x` over to the cleaned-up filename
 				assign( this.tablename , x )
+					
+				catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , nrow( x ) , na.rm = TRUE )
 					
 				# save this table to a year x tablename path in the current working directory
 				save( list = this.tablename , file = paste0( catalog[ i , 'output_folder' ] , "/" , this.tablename , ".rda" ) )

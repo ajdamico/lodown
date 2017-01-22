@@ -433,7 +433,9 @@ lodown_ahs <-
 				# save the merged file to the local disk as well	
 				save( list = mergef , file = merge.fp )
 								
-				
+				# add the number of records to the catalog
+				catalog[ i , 'case_count' ] <- nrow( x )
+
 				# end of data.frame merge #
 					
 				# delete the temporary files

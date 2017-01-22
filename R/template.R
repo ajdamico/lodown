@@ -40,6 +40,9 @@
 
 			# save( x , file = catalog[ i , 'output_filename' ] )
 
+			# if there are multiple files per catalog entry, use `max( catalog[ i , 'case_count' ] , nrow( x ) , na.rm = TRUE )` instead
+			# catalog[ i , 'case_count' ] <- nrow( x )
+			
 			# # delete the temporary files
 			# suppressWarnings( file.remove( tf , unzipped_files ) )
 

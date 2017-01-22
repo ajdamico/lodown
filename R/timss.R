@@ -333,6 +333,8 @@ lodown_timss <-
 						
 					assign( paste0( dfx , "_design" ) , design )
 					
+					catalog[ i , 'case_count' ] <- nrow( design )
+					
 					save( list = paste0( dfx , "_design" ) , file = paste0( catalog[ i , 'output_folder' ] , '/' , dfx , '_design.rda' ) )
 					
 				}

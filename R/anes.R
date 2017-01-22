@@ -99,6 +99,9 @@ lodown_anes <-
 			names( x ) <- tolower( names( x ) )
 
 			save( x , file = catalog[ i , 'output_filename' ] )
+			
+			# add the number of records to the catalog
+			catalog[ i , 'case_count' ] <- nrow( x )
 
 			# delete the temporary files
 			file.remove( tf , unzipped_files )

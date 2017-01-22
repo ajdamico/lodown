@@ -184,6 +184,8 @@ lodown_dhs <-
 				# convert all column names to lowercase
 				names( x ) <- tolower( names( x ) )
 
+				catalog[ i , 'case_count' ] <- nrow( x )
+				
 				# save the file on the local disk, within the appropriate country-survey filepath
 				save( x , file = rda_name )
 				
@@ -204,6 +206,8 @@ lodown_dhs <-
 		
 					# convert all column names to lowercase
 					names( x ) <- tolower( names( x ) )
+					
+					catalog[ i , 'case_count' ] <- nrow( x )
 
 					# save the file on the local disk, within the appropriate country-survey filepath
 					save( x , file = rda_name )

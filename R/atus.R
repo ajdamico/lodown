@@ -114,6 +114,9 @@ lodown_atus <-
       # called whatever's in savename
       assign( savename , x )
 
+		# add the number of records to the catalog
+		catalog[ i , 'case_count' ] <- nrow( x )
+
       # delete the object `x` from working memory
       rm( x )
 

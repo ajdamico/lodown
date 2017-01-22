@@ -248,6 +248,8 @@ lodown_nsfg <-
 			} else x <- mvrf_nsfg( x , readLines( tf2 ) )
 			
 			stopifnot( nrow ( x ) > 0 )
+
+			catalog[ i , 'case_count' ] <- nrow( x )
 			
 			# save this data.frame object to the local disk
 			save( x , file = catalog[ i , "output_filename" ] )

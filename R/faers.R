@@ -88,7 +88,7 @@ lodown_faers <-
 
 
 		for ( i in seq_len( nrow( catalog ) ) ){
-
+		
 			# download the file
 			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
 
@@ -187,6 +187,8 @@ lodown_faers <-
 				
 				# save the data.frame object to the rda filename on the local disk
 				save( list = tablename , file = rda.filename )
+				
+				catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , nrow( x ) , na.rm = TRUE )
 				
 			}
 

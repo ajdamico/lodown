@@ -233,7 +233,9 @@ lodown_nls <-
 
 							# store that `option.value` in the current save-location
 							save( list = option.value , file = paste0( catalog[ i , 'output_folder' ] , "/" , option.value , ".rda" ) )
-											
+
+							catalog[ i , 'case_count' ] <- nrow( get( option.value ) )
+							
 							# delete the temporary files
 							suppressWarnings( file.remove( tf , unzipped_files ) )
 

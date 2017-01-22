@@ -34,6 +34,8 @@ lodown_sbo <-
 		DBI::dbWriteTable( db , catalog$db_tablename , unzipped_files , sep = "," , header = TRUE , lower.case.names = TRUE )
 		# yes.  you did all that.  nice work.
 
+		catalog$case_count <- DBI::dbGetQuery( db , paste0( "SELECT COUNT(*) FROM " , catalog$db_tablename ) )
+		
 		# add a new numeric column called `one` to the `y` data table
 		DBI::dbSendQuery( db , paste0( 'ALTER TABLE ' , catalog$db_tablename , ' ADD COLUMN one DOUBLE PRECISION' ) )
 		# and fill it with all 1s for every single record.

@@ -82,6 +82,8 @@ lodown_ssa <-
 				# convert all column names to lowercase
 				names( x ) <- tolower( names( x ) )
 
+				catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , nrow( x ) , na.rm = TRUE )
+				
 				save( x , file = paste0( catalog[ i , 'output_folder' ] , "/" , gsub( "\\.sas7bdat" , ".rda" , basename( this_file ) , ignore.case = TRUE ) ) )
 
 			}

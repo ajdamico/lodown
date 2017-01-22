@@ -162,6 +162,7 @@ lodown_scf <-
 			# save the five implicates and the replicate weight file as that file name
 			save( imp1 , imp2 , imp3 , imp4 , imp5 , rw , file = catalog[ i , 'output_filename' ] )
 			
+			catalog[ i , 'case_count' ] <- nrow( imp1 )
 			
 			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , catalog[ i , 'output_filename' ] , "'\r\n\n" ) )
 

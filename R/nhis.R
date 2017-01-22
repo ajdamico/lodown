@@ -223,6 +223,8 @@ lodown_nhis <-
 					
 				}
 				
+				catalog[ i , 'case_count' ] <- nrow( ii )
+				
 				# save all five imputed income data frames to a single .rda file #
 				save( list = paste0( "ii" , 1:5 ) , file = catalog[ i , 'output_filename' ] )
 						
@@ -238,6 +240,8 @@ lodown_nhis <-
 				
 				# convert all column names to lowercase
 				names( x ) <- tolower( names( x ) )
+				
+				catalog[ i , 'case_count' ] <- nrow( x )
 				
 				save( x , file = catalog[ i , 'output_filename' ] )
 

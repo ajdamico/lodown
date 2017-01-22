@@ -150,7 +150,7 @@ lodown_hrs <-
 			writeBin( httr::content( this_file , "raw" ) , catalog[ i , "output_filename" ] )
 			
 			if( !is.na( catalog[ i , 'output_folder' ] ) ){
-							
+		
 				unzipped_files <- unzip_warn_fail( catalog[ i , "output_filename" ] , exdir = paste0( tempdir() , "/unzips" ) )
 
 				for( this_zip in grep( "\\.zip" , unzipped_files , ignore.case = TRUE , value = TRUE ) ) unzipped_files <- c( unzipped_files , unzip_warn_fail( this_zip , exdir = paste0( tempdir() , "/unzips" ) ) )
@@ -165,6 +165,8 @@ lodown_hrs <-
 						# convert all column names to lowercase
 						names( x ) <- tolower( names( x ) )
 
+						catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , nrow( x ) , na.rm = TRUE )
+						
 						save( x , file = paste0( catalog[ i , 'output_folder' ] , "/" , tolower( gsub( "\\.dta" , ".rda" , basename( this_stata ) , ignore.case = TRUE ) ) ) )
 						
 					}
@@ -236,6 +238,8 @@ lodown_hrs <-
 						
 						# convert all column names to lowercase
 						names( x ) <- tolower( names( x ) )
+
+						catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , nrow( x ) )
 
 						save( x , file = paste0( catalog[ i , 'output_folder' ] , "/" , tolower( gsub( "\\.da" , ".rda" , basename( this_dat ) , ignore.case = TRUE ) ) ) )
 

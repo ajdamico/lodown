@@ -270,6 +270,9 @@ lodown_brfss <-
 			# analyzed quicker than anything else.
 			save( brfss_design , file = catalog[ i , 'design_filename' ] )
 
+			# add the number of records to the catalog
+			catalog[ i , 'case_count' ] <- nrow( brfss_design )
+
 			# repeat.
 			
 			# disconnect from the current monet database

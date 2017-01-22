@@ -114,6 +114,8 @@ lodown_piaac <-
 					mse = TRUE
 				)
 
+			catalog[ i , 'case_count' ] <- nrow( this_design )
+				
 			# save both objects together into a single `.rda` file
 			save( x , this_design , file = catalog[ i , 'output_filename' ] )
 

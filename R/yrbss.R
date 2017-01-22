@@ -146,6 +146,8 @@ lodown_yrbss <-
 			# add a column full of ones
 			x$one <- 1
 			
+			catalog[ i , 'case_count' ] <- nrow( x )
+			
 			# save the current `x` data.frame to the local disk
 			save( x , file = catalog[ i , "output_filename" ] )
 

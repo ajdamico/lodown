@@ -126,6 +126,8 @@ lodown_nsch <-
 				
 			}
 
+			catalog[ i , 'case_count' ] <- nrow( y )
+			
 			# save implicates 1 - 5 to the local working directory for faster loading later
 			save( list = paste0( 'imp' , 1:5 ) , file = catalog[ i , 'output_filename' ] )
 

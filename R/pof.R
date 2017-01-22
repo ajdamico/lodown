@@ -259,6 +259,8 @@ lodown_pof <-
 				# convert all column names to lowercase
 				names( x ) <- tolower( names( x ) )
 				
+				catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , nrow( x ) , na.rm = TRUE )
+				
 				# rename the data table appropriately
 				assign( tolower( dfn ) , x )
 				

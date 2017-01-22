@@ -79,6 +79,8 @@ lodown_chis <-
 				# convert all column names to lowercase
 				names( x ) <- tolower( names( x ) )
 				
+				if( !grepl( "f\\.dta" , this_dta , ignore.case = TRUE ) ) catalog[ i , 'case_count' ] <- nrow( x )
+				
 				# store the `data.frame` object as an .rda file on the local disk
 				save( x , file = savename )
 				

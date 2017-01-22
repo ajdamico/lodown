@@ -136,6 +136,8 @@ lodown_nychvs <-
 					x$hhweight <- x$hhweight / 10^5 
 				} else if ( catalog[ i , 'year' ] > 2005 ) x$perwgt <- x$perwgt / 10
 			}
+
+			catalog[ i , 'case_count' ] <- nrow( x )
 			
 			save( x , file = catalog[ i , 'output_filename' ] )
 

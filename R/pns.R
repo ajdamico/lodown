@@ -192,6 +192,8 @@ lodown_pns <-
 			# final design object for people answering only short or long questionnaire #
 			# # # # # # # # # # # # # # # # # 
 			
+			catalog[ i , 'case_count' ] <- nrow( pes_all_des )
+			
 			# delete the temporary files
 			suppressWarnings( file.remove( tf , unzipped_files ) )
 

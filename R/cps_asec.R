@@ -709,6 +709,8 @@ lodown_cps_asec <-
 			DBI::dbSendQuery( db , paste( "CREATE TABLE" , catalog[ i , 'db_tablename' ] , "AS SELECT * FROM temp WITH DATA" ) )
 			DBI::dbRemoveTable( db , "temp" )
 			
+			catalog[ i , 'case_count' ] <- DBI::dbGetQuery( db , paste0( "SELECT COUNT(*) FROM " , catalog[ i , 'db_tablename' ] ) )[ 1 , 1 ]
+			
 			# disconnect from the current monet database
 			DBI::dbDisconnect( db , shutdown = TRUE )
 

@@ -629,8 +629,9 @@ lodown_sipp <-
 
 			}
 			
+			catalog[ i , 'case_count' ] <- DBI::dbGetQuery( db , paste( 'select count(*) from' , catalog[ i , 'db_tablename' ] ) )
 			
-			stopifnot( DBI::dbGetQuery( db , paste( 'select count(*) from' , catalog[ i , 'db_tablename' ] ) ) > 0 )
+			stopifnot( catalog[ i , 'case_count' ] > 0 )
 
 			# disconnect from the current monet database
 			DBI::dbDisconnect( db , shutdown = TRUE )

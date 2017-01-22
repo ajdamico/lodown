@@ -505,6 +505,8 @@ lodown <-
 				)
 			}
 		}
+
+		catalog$case_count <- NA
 		
 		load_fun <- getFromNamespace( paste0( "lodown_" , data_name ) , "lodown" )
 

@@ -55,6 +55,8 @@ lodown_nbs <-
 			
 			# add a column of nuthin' but ones.
 			x$one <- 1
+
+			catalog[ i , 'case_count' ] <- nrow( x )
 			
 			save( x , file = catalog[ i , 'output_filename' ] )
 

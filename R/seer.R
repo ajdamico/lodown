@@ -157,6 +157,7 @@ lodown_seer <-
 		# delete the temporary files
 		suppressWarnings( file.remove( tf , unzipped_files ) )
 
+		catalog$case_count <- NA
 		
 		catalog
 

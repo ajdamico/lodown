@@ -74,6 +74,8 @@ lodown_cps_basic <-
 			# convert all column names to lowercase
 			names( x ) <- tolower( names( x ) )
 
+			catalog[ i , 'case_count' ] <- nrow( x )
+			
 			save( x , file = catalog[ i , 'output_filename' ] )
 
 			# delete the temporary files

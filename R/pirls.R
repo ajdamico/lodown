@@ -86,6 +86,8 @@ lodown_pirls <-
 				
 				# make all column names lowercase
 				names( y ) <- tolower( names( y ) )
+
+				catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , nrow( y ) , na.rm = TRUE )
 				
 				# save the stacked file as the prefix
 				assign( p , y )

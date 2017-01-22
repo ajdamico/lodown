@@ -153,6 +153,9 @@ lodown_censo <-
 
 			}
 			
+			# add the number of records to the catalog
+			catalog[ i , 'case_count' ] <- DBI::dbGetQuery( db , paste0( "SELECT COUNT(*) FROM " , catalog[ i , 'db_table_prefix' ] , '_pes' ) )[ 1 , 1 ]
+
 			# disconnect from the current monet database
 			DBI::dbDisconnect( db , shutdown = TRUE )
 

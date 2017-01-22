@@ -66,6 +66,8 @@ lodown_share <-
 				x <- data.frame( haven::read_dta( this_stata ) )
 
 				names( x ) <- tolower( names( x ) )
+				
+				catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , nrow( x ) , na.rm = TRUE )
 
 				save( x , file = gsub( "\\.dta$" , ".rda" , this_stata ) )
 			

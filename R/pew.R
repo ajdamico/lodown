@@ -223,6 +223,8 @@ lodown_pew <-
 					# convert all column names to lowercase
 					names( x ) <- tolower( names( x ) )
 
+					catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , nrow( x ) , na.rm = TRUE )
+					
 					save( x , file = gsub( "\\.sav$" , ".rda" , this_sav , ignore.case = TRUE ) )
 
 				}

@@ -69,6 +69,13 @@ lodown_bsapuf <-
 			
 			DBI::dbWriteTable( db , catalog[ i , 'db_tablename' ] , unzipped_files , lower.case.names = TRUE , append = TRUE , nrow.check = 250000 )
 
+			# if this is the final catalog entry for the unique db_tablename, store the case counts
+			if( i == max( which( catalog$db_tablename == catalog[ i , 'db_tablename' ] ) ) ){
+			
+				catalog[ catalog$db_tablename == catalog[ i , 'db_tablename' ] , 'case_count' ] <- DBI::dbGetQuery( db , paste0( "SELECT COUNT(*) FROM " , catalog[ i , 'db_tablename' ] ) )
+
+			}
+			
 			# delete the temporary files
 			suppressWarnings( file.remove( tf , unzipped_files ) )
 

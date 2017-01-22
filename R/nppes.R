@@ -155,6 +155,8 @@ lodown_nppes <-
 		# execute the COPY INTO command
 		DBI::dbSendQuery( db , sql.update )
 
+		catalog$case_count <- DBI::dbGetQuery( db , paste0( "SELECT COUNT(*) FROM " , catalog$db_tablename ) )
+		
 		# # # # # # # # #
 		# end of import #
 		# # # # # # # # #

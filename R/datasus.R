@@ -181,6 +181,8 @@ lodown_datasus <-
 
       }
 
+	  catalog[ i , 'case_count' ] <- nrow( x )
+	  
       save( x , file = catalog[ i , 'output_filename' ] )
 
       these_cols <- sapply( x , class )

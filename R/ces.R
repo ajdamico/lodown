@@ -41,6 +41,9 @@ lodown_ces <-
 
 			df_names <- NULL
 			
+			# unique ids
+			newids <- NULL
+			
 			# loop through a character vector containing the complete filepath
 			# of each of the dta files downloaded to the local disk..
 			for ( this_dta in dta_files ){
@@ -92,6 +95,8 @@ lodown_ces <-
 				# convert all column names to lowercase
 				names( x ) <- tolower( names( x ) )
 
+				newids <- unique( c( newids , x$newid ) )
+				
 				# save it to an object named by what's contained in the df.name character string
 				assign( df_name , x )
 
@@ -102,6 +107,8 @@ lodown_ces <-
 			# save the file as an R data file (.rda) immediately
 			save( list = df_names , file = catalog[ i , 'output_filename' ] )
 
+			catalog[ i , 'case_count' ] <- length( newids )
+			
 			# delete the temporary files
 			file.remove( tf , unzipped_files )
 

@@ -439,7 +439,8 @@ lodown_nhts <-
 					
 				}
 				
-			
+				catalog[ catalog[ i , 'output_filename' ] == catalog$output_filename , 'case_count' ] <- nrow( nhts.per.design )
+				
 			}
 						
 			# disconnect from the current monet database
