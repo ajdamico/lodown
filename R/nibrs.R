@@ -230,7 +230,7 @@ lodown_nibrs <-
 
 		}
 
-		invisible( TRUE )
+		catalog
 
 	}
 

@@ -254,7 +254,7 @@ lodown_datasus <-
 
     }
 
-    invisible( TRUE )
+    catalog
 
   }
 

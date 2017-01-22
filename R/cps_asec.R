@@ -719,7 +719,7 @@ lodown_cps_asec <-
 
 		}
 
-		invisible( TRUE )
+		catalog
 
 	}
 

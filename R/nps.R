@@ -91,7 +91,7 @@ lodown_nps <-
 
 		}
 
-		invisible( TRUE )
+		catalog
 
 	}
 

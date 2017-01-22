@@ -59,7 +59,7 @@ lodown_ahrf <-
 
     }
 
-    invisible( TRUE )
+    catalog
 
   }
 

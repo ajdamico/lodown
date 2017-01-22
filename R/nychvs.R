@@ -146,7 +146,7 @@ lodown_nychvs <-
 
 		}
 
-		invisible( TRUE )
+		catalog
 
 	}
 

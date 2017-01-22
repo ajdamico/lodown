@@ -112,7 +112,7 @@ lodown_pnadc <-
 
 		}
 
-		invisible( TRUE )
+		catalog
 
 	}
 

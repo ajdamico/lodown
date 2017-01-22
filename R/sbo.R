@@ -54,7 +54,7 @@ lodown_sbo <-
 
 		cat( paste0( data_name , " catalog entry " , 1 , " of " , nrow( catalog ) , " stored at '" , catalog$output_filename , "'\r\n\n" ) )
 
-		invisible( TRUE )
+		catalog
 
 	}
 

@@ -96,7 +96,7 @@ lodown_censo_escolar <-
 
 
 
-		invisible( TRUE )
+		catalog
 
 	}
 

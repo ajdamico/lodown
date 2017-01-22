@@ -259,7 +259,7 @@ lodown_nsfg <-
 
 		}
 
-		invisible( TRUE )
+		catalog
 
 	}
 

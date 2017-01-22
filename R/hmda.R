@@ -509,7 +509,7 @@ lodown_hmda <-
 			
 			
 		
-		invisible( TRUE )
+		catalog
 
 	}
 

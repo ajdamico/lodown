@@ -190,7 +190,7 @@ lodown_enem <-
 
 		}
 
-		invisible( TRUE )
+		catalog
 
 	}
 

@@ -642,7 +642,7 @@ lodown_sipp <-
 
 		}
 
-		invisible( TRUE )
+		catalog
 
 	}
 

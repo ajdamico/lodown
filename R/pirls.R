@@ -155,7 +155,7 @@ lodown_pirls <-
 
 		}
 
-		invisible( TRUE )
+		catalog
 
 	}
 

@@ -91,7 +91,7 @@ lodown_chis <-
 
 		}
 
-		invisible( TRUE )
+		catalog
 
 	}
 

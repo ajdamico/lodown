@@ -429,6 +429,6 @@ lodown_acs <-
 		}
 		
 		
-		invisible( TRUE )
+		catalog
 
 	}

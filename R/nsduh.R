@@ -34,7 +34,7 @@ lodown_nsduh <-
 		
 		}
 		
-		invisible( TRUE )
+		catalog
 
 	}
 

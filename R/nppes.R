@@ -167,7 +167,7 @@ lodown_nppes <-
 		file.remove( unzipped_files , tf , tf2 )
 		
 		
-		invisible( TRUE )
+		catalog
 
 	}
 

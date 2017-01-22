@@ -175,6 +175,6 @@ lodown_psid <-
 
 		}
 
-		invisible( TRUE )
+		catalog
 
 	}

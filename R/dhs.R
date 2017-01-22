@@ -218,7 +218,7 @@ lodown_dhs <-
 
 		}
 
-		invisible( TRUE )
+		catalog
 
 	}
 	

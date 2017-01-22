@@ -236,7 +236,7 @@ lodown_pew <-
 
 		}
 
-		invisible( TRUE )
+		catalog
 
 	}
 

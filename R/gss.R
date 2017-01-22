@@ -57,7 +57,7 @@ lodown_gss <-
 
 		}
 
-		invisible( TRUE )
+		catalog
 
 	}
 

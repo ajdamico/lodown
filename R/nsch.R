@@ -136,7 +136,7 @@ lodown_nsch <-
 		# delete the temporary file
 		file.remove( tf )
 
-		invisible( TRUE )
+		catalog
 
 	}
 

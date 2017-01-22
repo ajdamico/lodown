@@ -239,7 +239,7 @@ lodown_ess <-
 		
     }
 
-    invisible( TRUE )
+    catalog
 
   }
 

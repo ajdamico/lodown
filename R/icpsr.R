@@ -77,7 +77,7 @@ lodown_icpsr <-
 
 		}
 
-		invisible( TRUE )
+		catalog
 
 	}
 

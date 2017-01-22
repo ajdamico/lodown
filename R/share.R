@@ -78,7 +78,7 @@ lodown_share <-
 
 		}
 
-		invisible( TRUE )
+		catalog
 
 	}
 

@@ -135,6 +135,6 @@ lodown_atus <-
 
   }
 
-  invisible( TRUE )
+  catalog
 
 }

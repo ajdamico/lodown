@@ -141,7 +141,7 @@ lodown_nis <-
 
     }
 
-    invisible( TRUE )
+    catalog
 
   }
 

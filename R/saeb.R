@@ -215,7 +215,7 @@ lodown_saeb <-
 
 		}
 
-		invisible( TRUE )
+		catalog
 
 	}
 

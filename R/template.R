@@ -47,7 +47,7 @@
 
 		# }
 
-		# invisible( TRUE )
+		# catalog
 
 	# }
 

@@ -170,7 +170,7 @@ lodown_scf <-
 		# delete the temporary files
 		file.remove( tf )
 
-		invisible( TRUE )
+		catalog
 
 	}
 

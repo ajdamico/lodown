@@ -452,7 +452,7 @@ lodown_nhts <-
 
 		}
 
-		invisible( TRUE )
+		catalog
 
 	}
 

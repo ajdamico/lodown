@@ -181,7 +181,7 @@ lodown_wvs <-
 
 		}
 
-		invisible( TRUE )
+		catalog
 
 	}
 

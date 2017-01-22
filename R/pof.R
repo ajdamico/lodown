@@ -287,7 +287,7 @@ lodown_pof <-
 
 		}
 
-		invisible( TRUE )
+		catalog
 
 	}
 

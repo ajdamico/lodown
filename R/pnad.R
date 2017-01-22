@@ -389,7 +389,7 @@ lodown_pnad <-
 
 		}
 
-		invisible( TRUE )
+		catalog
 
 	}
 

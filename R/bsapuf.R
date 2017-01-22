@@ -76,7 +76,7 @@ lodown_bsapuf <-
 
 		}
 
-		invisible( TRUE )
+		catalog
 
 	}
 

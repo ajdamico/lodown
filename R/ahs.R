@@ -445,7 +445,7 @@ lodown_ahs <-
 
 		}
 
-		invisible( TRUE )
+		catalog
 
 	}
 

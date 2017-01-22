@@ -86,7 +86,7 @@ lodown_nhanes <-
 
 		}
 
-		invisible( TRUE )
+		catalog
 
 	}
 

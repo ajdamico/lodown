@@ -197,7 +197,7 @@ lodown_faers <-
 
 		}
 
-		invisible( TRUE )
+		catalog
 
 	}
 

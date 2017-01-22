@@ -64,7 +64,7 @@ lodown_ncvs <-
 			
 		}
 
-		invisible( TRUE )
+		catalog
 
 	}
 

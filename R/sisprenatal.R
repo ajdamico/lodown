@@ -175,7 +175,7 @@ lodown_sisprenatal <-
     }
 
 
-    invisible( TRUE )
+    catalog
 
   }
 

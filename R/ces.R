@@ -109,7 +109,7 @@ lodown_ces <-
 
 		}
 
-		invisible( TRUE )
+		catalog
 
 	}
 

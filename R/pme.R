@@ -112,7 +112,7 @@ lodown_pme <-
 
 		}
 
-		invisible( TRUE )
+		catalog
 
 	}
 

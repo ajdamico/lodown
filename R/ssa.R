@@ -93,7 +93,7 @@ lodown_ssa <-
 
 		}
 
-		invisible( TRUE )
+		catalog
 
 	}
 

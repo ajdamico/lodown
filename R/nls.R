@@ -256,7 +256,7 @@ lodown_nls <-
 
 		}
 
-		invisible( TRUE )
+		catalog
 
 	}
 

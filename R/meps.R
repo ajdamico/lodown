@@ -121,7 +121,7 @@ lodown_meps <-
 
 		}
 
-		invisible( TRUE )
+		catalog
 
 	}
 

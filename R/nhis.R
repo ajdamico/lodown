@@ -250,7 +250,7 @@ lodown_nhis <-
 
 		}
 
-		invisible( TRUE )
+		catalog
 
 	}
 

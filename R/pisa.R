@@ -546,7 +546,7 @@ lodown_pisa <-
 
 		}
 
-		invisible( TRUE )
+		catalog
 
 	}
 

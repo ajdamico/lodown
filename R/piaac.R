@@ -124,7 +124,7 @@ lodown_piaac <-
 
 		}
 
-		invisible( TRUE )
+		catalog
 
 	}
 

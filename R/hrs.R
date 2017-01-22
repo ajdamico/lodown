@@ -259,7 +259,7 @@ lodown_hrs <-
 			
 		}
 
-		invisible( TRUE )
+		catalog
 
 	}
 

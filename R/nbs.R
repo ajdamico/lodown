@@ -65,7 +65,7 @@ lodown_nbs <-
 
 		}
 
-		invisible( TRUE )
+		catalog
 
 	}
 

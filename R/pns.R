@@ -199,7 +199,7 @@ lodown_pns <-
 
 		}
 
-		invisible( TRUE )
+		catalog
 
 	}
 

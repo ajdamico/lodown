@@ -79,7 +79,7 @@ lodown_mics <-
 
 		}
 
-		invisible( TRUE )
+		catalog
 
 	}
 

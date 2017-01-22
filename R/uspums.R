@@ -311,7 +311,7 @@ lodown_uspums <-
 			
 		}
 		
-		invisible( TRUE )
+		catalog
 
 	}
 

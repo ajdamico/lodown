@@ -40,7 +40,7 @@ lodown_mlces <-
 
 		}
 
-		invisible( TRUE )
+		catalog
 
 	}
 

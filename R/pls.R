@@ -79,7 +79,7 @@ lodown_pls <-
 
 		}
 
-		invisible( TRUE )
+		catalog
 
 	}
 

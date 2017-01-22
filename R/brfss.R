@@ -282,7 +282,7 @@ lodown_brfss <-
 
 		}
 
-		invisible( TRUE )
+		catalog
 
 	}
 

@@ -158,7 +158,7 @@ lodown_seer <-
 		suppressWarnings( file.remove( tf , unzipped_files ) )
 
 		
-		invisible( TRUE )
+		catalog
 
 	}
 

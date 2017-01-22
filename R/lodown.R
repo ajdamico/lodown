@@ -510,11 +510,11 @@ lodown <-
 
 		cat( paste0( "locally downloading " , data_name , "\r\n\n" ) )
 
-		load_fun( data_name = data_name , catalog , ...)
+		catalog <- load_fun( data_name = data_name , catalog , ...)
 
 		cat( paste0( data_name , " local download completed\r\n\n" ) )
 
-		invisible( TRUE )
+		catalog
 
 	}
 

@@ -349,7 +349,7 @@ lodown_timss <-
 
 		}
 
-		invisible( TRUE )
+		catalog
 
 	}
 

@@ -189,7 +189,7 @@ lodown_sia <-
 
     }
 
-    invisible( TRUE )
+    catalog
 
   }
 

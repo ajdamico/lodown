@@ -83,7 +83,7 @@ lodown_cps_basic <-
 
 		}
 
-		invisible( TRUE )
+		catalog
 
 	}
 

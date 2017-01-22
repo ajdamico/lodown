@@ -156,7 +156,7 @@ lodown_yrbss <-
 		# delete the temporary files
 		file.remove( tf_fn , tf_sas )
 
-		invisible( TRUE )
+		catalog
 
 	}
 

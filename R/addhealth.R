@@ -19,7 +19,7 @@ lodown_addhealth <-
 	
 		lodown_icpsr( data_name = data_name , catalog , ... )
 
-		invisible( TRUE )
+		catalog
 
 	}
 

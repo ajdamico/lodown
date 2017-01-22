@@ -107,7 +107,7 @@ lodown_anes <-
 
 		}
 
-		invisible( TRUE )
+		catalog
 
 	}
 

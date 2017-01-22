@@ -455,7 +455,7 @@ lodown_censo <-
 			
 		}
 		
-		invisible( TRUE )
+		catalog
 
 	}
 
