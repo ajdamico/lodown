@@ -97,6 +97,8 @@ get_catalog_geofabrik <-
 		catalog$output_filename <- ifelse( is.na( catalog$level_four ) , catalog$output_filename , paste0( catalog$output_filename , "/" , catalog$level_four ) )
 		catalog$output_filename <- paste0( catalog$output_filename , "/" , basename( catalog$full_url ) )
 		
+		catalog$output_filename <- ifelse( !grepl( "\\.zip$" , catalog$output_filename ) , catalog$output_filename , paste0( gsub( "\\.zip$" , "" , catalog$output_filename ) , "/" , basename( catalog$output_filename ) ) )
+		
 		# remove files
 		catalog <- catalog[ tools::file_ext( catalog$level_two ) %in% c( "" , NA ) , ]
 		catalog <- catalog[ tools::file_ext( catalog$level_three ) %in% c( "" , NA ) , ]
@@ -126,9 +128,9 @@ lodown_geofabrik <-
 				
 			} else if( grepl( "zip$" , catalog[ i , 'output_filename' ] ) ) {
 			
-				unzipped_files <- unzip_warn_fail( catalog[ i , 'output_filename' ] )
+				unzipped_files <- unzip_warn_fail( catalog[ i , 'output_filename' ] , exdir = dirname( catalog[ i , 'output_filename' ] ) )
 			
-				cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , unique( dirname( unzipped_files ) ) , "'\r\n\n" ) )
+				cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , dirname( catalog[ i , 'output_filename' ] ) , "'\r\n\n" ) )
 				
 				suppressWarnings( file.remove( catalog[ i , 'output_filename' ] ) )
 				
