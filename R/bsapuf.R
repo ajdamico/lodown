@@ -72,6 +72,9 @@ lodown_bsapuf <-
 			# delete the temporary files
 			suppressWarnings( file.remove( tf , unzipped_files ) )
 
+			# disconnect from the current monet database
+			DBI::dbDisconnect( db , shutdown = TRUE )
+
 			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'dbfolder' ] , "'\r\n\n" ) )
 
 		}
