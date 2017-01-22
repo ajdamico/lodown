@@ -12,7 +12,6 @@ get_catalog_censo_escolar <-
 		catalog <-
 			data.frame(
 				year = censo_escolar_years ,
-				db_tablename = paste0( "x" , censo_escolar_years ) ,
 				dbfolder = paste0( output_dir , "/MonetDB" ) ,
 				output_folder = paste0( output_dir , "/" , censo_escolar_years ) ,
 				full_url = these_links ,
@@ -77,6 +76,8 @@ lodown_censo_escolar <-
 				}
 
 			}
+
+			catalog[ i , 'case_count' ] <- dbGetQuery( db , paste0( "SELECT COUNT(*) FROM " , "escola" , catalog[ i , "year" ] ) )
 
 			# disconnect from the current monet database
 			DBI::dbDisconnect( db , shutdown = TRUE )
