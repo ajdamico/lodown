@@ -77,7 +77,7 @@ lodown_censo_escolar <-
 
 			}
 
-			catalog[ i , 'case_count' ] <- DBI::dbGetQuery( db , paste0( "SELECT COUNT(*) FROM " , "escola" , catalog[ i , "year" ] ) )[ 1 , 1 ]
+			catalog[ i , 'case_count' ] <- DBI::dbGetQuery( db , paste0( "SELECT COUNT(*) FROM matricula" , catalog[ i , "year" ] ) )[ 1 , 1 ]
 
 			# disconnect from the current monet database
 			DBI::dbDisconnect( db , shutdown = TRUE )
