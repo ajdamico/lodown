@@ -164,6 +164,13 @@ lodown( "faers" , output_dir = "C:/My Directory/FAERS" )
 faers_cat <- get_catalog( "faers" , output_dir = "C:/My Directory/FAERS" )
 lodown( "faers" , faers_cat[ faers_cat == 2013 , ] )
 
+# OpenStreetMap Data Extracts
+# download all available microdata
+lodown( "geofabrik" , output_dir = "C:/My Directory/GEOFABRIK" )
+# download only the berlin files
+geofabrik_cat <- get_catalog( "geofabrik" , output_dir = "C:/My Directory/GEOFABRIK" )
+lodown( "geofabrik" , geofabrik_cat[ geofabrik_cat$level_three \%in\% 'Berlin' , ] )
+
 # General Social Survey
 # download all available microdata
 lodown( "gss" , output_dir = "C:/My Directory/GSS" )
