@@ -108,6 +108,7 @@ lodown_seer <-
 			# create the directory of the save-file-location
 			dir.create( dirname( sfl ) , showWarnings = FALSE ,	recursive = TRUE )
 
+			catalog$case_count <- max( catalog$case_count , nrow( x ) , na.rm = TRUE )
 			
 			# save the data.frame to the save-file-location
 			save( x , file = sfl )
@@ -142,6 +143,7 @@ lodown_seer <-
 			# create the directory of the save-file-location
 			dir.create( dirname( sfl ) , showWarnings = FALSE ,	recursive = TRUE )
 
+			catalog$case_count <- max( catalog$case_count , nrow( x ) , na.rm = TRUE )
 			
 			# save the data.frame to the save-file-location
 			save( x , file = sfl )
@@ -157,8 +159,6 @@ lodown_seer <-
 		# delete the temporary files
 		suppressWarnings( file.remove( tf , unzipped_files ) )
 
-		catalog$case_count <- NA
-		
 		catalog
 
 	}
