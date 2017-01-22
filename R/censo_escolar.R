@@ -7,9 +7,8 @@ get_catalog_censo_escolar <-
 
 		these_links <- grep( "censo_escolar(.*)zip$" , w , value = TRUE , ignore.case = TRUE )
 
-		censo_escolar_years <- gsub( "[^0-9]" , "" , these_links )
-		censo_escolar_years[ censo_escolar_years == 20062 ] <- 2006
-
+		censo_escolar_years <- substr( gsub( "[^0-9]" , "" , these_links ) , 1 , 4 )
+		
 		catalog <-
 			data.frame(
 				year = censo_escolar_years ,
