@@ -15,6 +15,7 @@ get_catalog_pns <-
 
 			af <- gsub( "(.*) (.*)" , "\\2" , file_listing )
 			af <- gsub( "\\r\\n" , "" , af )
+			af <- gsub( "\\n" , "" , af )
 
 			catalog <-
 				rbind( 
