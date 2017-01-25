@@ -44,7 +44,9 @@ get_catalog_sia <-
     #c( "AB" , "ABO" , "ACF" , "AD" , "AM" , "AMP" , "AN" , "AQ" , "AR" , "ATD" , "BI" , "PA" , "PAS" , "PS" , "SAD" )
     #c( "cbar_ant" , "cbar_nov" , "", "diversos" , "medicamentos" , "" , "nefrologia" , "quimioterapia" , "radioterapia" , "" , "" , "", "" , "psicossocial", "domiciliar" )
 
-    catalog[ catalog$type %in% c( "AD" , "AM" , "AN" , "AQ" , "AR" , "AB" , "PA" , "SAD" , "PS" ) ,  ]
+    #catalog[ catalog$type %in% c( "AD" , "AM" , "AN" , "AQ" , "AR" , "AB" , "PA" , "SAD" , "PS" ) ,  ]
+
+    catalog
 
   }
 
