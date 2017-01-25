@@ -4,7 +4,7 @@ get_catalog_sia <-
     catalog <- NULL
 
     # Part 1: specific tables
-    for( sia_portal in paste0( "ftp://ftp.datasus.gov.br/dissemin/publicos/SIASUS/" , c( "199407_200712/", "200801_/") , "Dados/" ) ) {
+    for( sia_portal in "ftp://ftp.datasus.gov.br/dissemin/publicos/SIASUS/200801_/Dados/" ) {
 
       filenames <- RCurl::getURL( sia_portal , verbose=FALSE , ftp.use.epsv=FALSE , dirlistonly = TRUE , crlf = FALSE )
       filenames <- strsplit( filenames, "\r*\n")[[1]]
@@ -25,12 +25,12 @@ get_catalog_sia <-
       catalog <-
         rbind( catalog ,
                data.frame(
-                 type =  tab.type ,
+                 type = tab.type ,
                  uf = uf ,
                  year = year_lines ,
                  month = mnth_lines ,
                  full_url = full_url ,
-                 db_tablename = paste0( tab.type , year_lines ) ,
+                 db_tablename = tolower( paste0( tab.type , "_", year_lines ) ) ,
                  dbfolder = paste0( output_dir , "/MonetDB" ) ,
                  output_filename = paste( output_dir , gsub( "\\.dbc" , ".rda" , tolower( basename( full_url ) ) ) , sep = "/" ) ,
                  stringsAsFactors = FALSE
@@ -41,7 +41,10 @@ get_catalog_sia <-
 
     catalog <- catalog[ with( catalog , order( type , year , uf , month ) ) , ]
 
-    catalog
+    #c( "AB" , "ABO" , "ACF" , "AD" , "AM" , "AMP" , "AN" , "AQ" , "AR" , "ATD" , "BI" , "PA" , "PAS" , "PS" , "SAD" )
+    #c( "cbar_ant" , "cbar_nov" , "", "diversos" , "medicamentos" , "" , "nefrologia" , "quimioterapia" , "radioterapia" , "" , "" , "", "" , "psicossocial", "domiciliar" )
+
+    catalog[ catalog$type %in% c( "AD" , "AM" , "AN" , "AQ" , "AR" , "AB" , "PA" , "SAD" , "PS" ) ,  ]
 
   }
 
@@ -80,7 +83,7 @@ lodown_sia <-
       }
 
 	  catalog[ i , 'case_count' ] <- nrow( x )
-	  
+
       save( x , file = catalog[ i , 'output_filename' ] )
 
       these_cols <- sapply( x , class )
