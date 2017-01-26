@@ -519,13 +519,13 @@ lodown <-
 
 		cat( paste0( "locally downloading " , data_name , "\r\n\n" ) )
 
-		memory_note <- "lodown is now exiting due to a memory error.  your computing performance would suffer due to disk paging,\nbut you can increase your memory limits with beyond your available hardware with the `?memory.limit` function.\nfor example, you can set the memory ceiling to 128GB with `memory.limit(128000)`."
+		memory_note <- "lodown is now exiting due to a memory error.  your computing performance would suffer due to disk paging,\nbut you can increase your memory limits with beyond your available hardware with the `?memory.limit` function.\nfor example, you can set the memory ceiling of an R session to 128 GB by typing `memory.limit(128000)`."
 		
 		installation_note <- "lodown is now exiting due to an installation error."
 		
 		parameter_note <- "lodown is now exiting due to a parameter omission."
 		
-		unknown_error_note <- "lodown is now exiting unexpectedly.\nif the error in the call stack below appears to be related to your internet connection, please verify your connectivity and retry the download.\notherwise, please open a new issue at `https://github.com/ajdamico/lodown/issues` with the contents of this error call stack and also the output of `sessionInfo()`."
+		unknown_error_note <- "lodown is now exiting unexpectedly.  websites that host publicly-downloadable microdata change often and sometimes those changes cause this software to break.\nif the error in the call stack below appears to be a hiccup in your internet connection, then please verify your connectivity and retry the download.\notherwise, please open a new issue at `https://github.com/ajdamico/lodown/issues` with the contents of this error call stack and also the output of `sessionInfo()`."
 		
 		withCallingHandlers(
 			catalog <- load_fun( data_name = data_name , catalog , ... ) , 
