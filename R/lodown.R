@@ -521,14 +521,26 @@ lodown <-
 
 		memory_note <- "lodown is now exiting due to a memory error.  your computing performance would suffer due to disk paging,\nbut you can increase your memory limits with beyond your available hardware with the `?memory.limit` function.\nfor example, you can set the memory ceiling to 128GB with `memory.limit(128000)`."
 		
+		installation_note <- "lodown is now exiting due to an installation error."
+		
+		parameter_note <- "lodown is now exiting due to a parameter omission."
+		
+		unknown_error_note <- "lodown is now exiting unexpectedly.\nif the error in the call stack below appears to be related to your internet connection, please verify your connectivity and retry the download.\notherwise, please open a new issue at `https://github.com/ajdamico/lodown/issues` with the contents of this error call stack and also the output of `sessionInfo()`."
+		
 		withCallingHandlers(
 			catalog <- load_fun( data_name = data_name , catalog , ... ) , 
 			error = 
 				function( e ){ 
 			
-					if( grepl( 'cannot allocate vector of size' , e ) ) message( memory_note )
+					if( grepl( 'cannot allocate vector of size' , e ) ) message( memory_note ) else 
+					if( grepl( 'parameter must be specified' , e ) ) message( parameter_note ) else
+					if( grepl( 'to install' , e ) ) message( installation_note ) else {
 					
-					print( sys.calls() ) 
+						message( unknown_error_note )
+					
+						print( sys.calls() )
+						
+					}
 					
 				}
 		)
