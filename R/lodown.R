@@ -519,15 +519,18 @@ lodown <-
 
 		cat( paste0( "locally downloading " , data_name , "\r\n\n" ) )
 
-		withCallingHandlers({
-			catalog <- load_fun( data_name = data_name , catalog , ... )
-			} , 
-			error = function( e ){ 
+		memory_note <- "lodown is now exiting due to a memory error.  your computing performance would suffer due to disk paging,\nbut you can increase your memory limits with beyond your available hardware with the `?memory.limit` function.\nfor example, you can set the memory ceiling to 128GB with `memory.limit(128000)`."
+		
+		withCallingHandlers(
+			catalog <- load_fun( data_name = data_name , catalog , ... ) , 
+			error = 
+				function( e ){ 
 			
-				if( grepl( 'cannot allocate vector of size' , e ) ) message( "lodown is now exiting due to a memory error.  your computing performance would suffer due to disk paging,\nbut you can increase your memory limits with beyond your available hardware with the `?memory.limit` function.\nfor example, you can set the memory ceiling to 128GB with `memory.limit(128000)`." )
-				
-				print( sys.calls() ) 
-			} 
+					if( grepl( 'cannot allocate vector of size' , e ) ) message( memory_note )
+					
+					print( sys.calls() ) 
+					
+				}
 		)
 
 		cat( paste0( data_name , " local download completed\r\n\n" ) )
