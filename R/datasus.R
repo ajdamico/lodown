@@ -52,7 +52,7 @@ get_catalog_datasus <-
 			ifelse( grepl( "/sisprenatal" , catalog$output_filename ) , "pn" , 
 			ifelse( grepl( "doign" , catalog$output_filename ) , "dign" , NA ) ) ) ) ) )
 			
-		catalog$dbfolder <- paste0( output_dir , "/MonetDB" )
+		catalog$dbfolder <- ifelse( is.na( catalog$db_tablename ) , NA , paste0( output_dir , "/MonetDB" ) )
 	  
 		catalog
 
@@ -130,7 +130,7 @@ lodown_datasus <-
 			db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog[ i , 'dbfolder' ] )
 
 			# loop through all tables that match the current db_tablename
-			for( this_file in catalog[ catalog[ i , 'db_tablename' ] == catalog$db_tablename , 'output_filename' ] ){
+			for( this_file in catalog[ catalog$db_tablename %in% catalog[ i , 'db_tablename' ] , 'output_filename' ] ){
 
 			  load( this_file )
 
