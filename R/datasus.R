@@ -1,10 +1,12 @@
 get_catalog_datasus <-
 	function( data_name = "datasus" , output_dir , ... ){
 
+	  output_dir <- gsub( "\\\\", "/", output_dir )
+
 		sim_path <- "ftp://ftp.datasus.gov.br/dissemin/publicos/SIM/"
-		sinasc_path <- "ftp://ftp.datasus.gov.br/dissemin/publicos/SINASC/" 
+		sinasc_path <- "ftp://ftp.datasus.gov.br/dissemin/publicos/SINASC/"
 		sisprenatal_path <- "ftp://ftp.datasus.gov.br/dissemin/publicos/SISPRENATAL/"
-	
+
 		sim_files <- recursive_ftp_scrape( sim_path )
 		sinasc_files <- recursive_ftp_scrape( sinasc_path )
 		sisprenatal_files <- recursive_ftp_scrape( sisprenatal_path )
@@ -19,14 +21,14 @@ get_catalog_datasus <-
 			ifelse( grepl( sim_path , catalog$full_url ) , "sim" ,
 			ifelse( grepl( sinasc_path , catalog$full_url ) , "sinasc" ,
 			ifelse( grepl( sisprenatal_path , catalog$full_url ) , "sisprenatal" , NA ) ) )
-			
-		catalog$output_filename <- 
-			gsub( "dados/" , "" , 
-			gsub( "201201_/" , "" , 
-			gsub( "dbc$" , "rda" , 
-			gsub( "ftp://ftp.datasus.gov.br/dissemin/publicos/" , paste0( output_dir , "/" ) , 
-				tolower( catalog$full_url ) 
-				) , 
+
+		catalog$output_filename <-
+			gsub( "dados/" , "" ,
+			gsub( "201201_/" , "" ,
+			gsub( "dbc$" , "rda" ,
+			gsub( "ftp://ftp.datasus.gov.br/dissemin/publicos/" , paste0( output_dir , "/" ) ,
+				tolower( catalog$full_url )
+				) ,
 				ignore.case = TRUE )
 				)
 				)
@@ -38,22 +40,22 @@ get_catalog_datasus <-
 			ifelse( nchar( year_lines ) == 2 & as.numeric( year_lines ) >= 79 , 1900 + as.numeric( year_lines ) ,
 			ifelse( nchar( year_lines ) == 4 & as.numeric( year_lines ) >= 1996 , as.numeric( year_lines ) ,
 			ifelse( nchar( year_lines ) == 4 & as.numeric( year_lines ) < 1996 , 2000 + as.numeric( substr( year_lines , 1 , 2 ) ) , NA ) ) ) )
-			
-			
+
+
 		catalog$db_tablename <-
 			ifelse( !grepl( "dbc$" , catalog$full_url , ignore.case = TRUE ) , NA ,
-			ifelse( grepl( "/dofet" , catalog$output_filename ) , 
+			ifelse( grepl( "/dofet" , catalog$output_filename ) ,
 				paste0( substr( basename( catalog$output_filename ) , 3 , 5 ) , ifelse( grepl( "/cid9" , catalog$output_filename ) , "_cid9" , "_cid10" ) ) ,
-			ifelse( grepl( "/dores" , catalog$output_filename ) , 
+			ifelse( grepl( "/dores" , catalog$output_filename ) ,
 				paste0( "geral" , ifelse( grepl( "/cid9" , catalog$output_filename ) , "_cid9" , "_cid10" ) ) ,
-			ifelse( grepl( "/sinasc" , catalog$output_filename ) , 
+			ifelse( grepl( "/sinasc" , catalog$output_filename ) ,
 				ifelse( grepl( "/dnign" , catalog$output_filename ) , "nign" ,
 				paste0( "nasc" , ifelse( grepl( "/ant" , catalog$output_filename ) , "_cid9" , "_cid10" ) ) ) ,
-			ifelse( grepl( "/sisprenatal" , catalog$output_filename ) , "pn" , 
+			ifelse( grepl( "/sisprenatal" , catalog$output_filename ) , "pn" ,
 			ifelse( grepl( "doign" , catalog$output_filename ) , "dign" , NA ) ) ) ) ) )
-			
+
 		catalog$dbfolder <- ifelse( is.na( catalog$db_tablename ) , NA , paste0( output_dir , "/MonetDB" ) )
-	  
+
 		catalog
 
 	}
@@ -69,14 +71,14 @@ lodown_datasus <-
 
     for ( i in seq_len( nrow( catalog ) ) ){
 
-		
+
       # download the file
       cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
 
 	  if( !grepl( "dbc$" , catalog[ i , 'full_url' ] , ignore.case = TRUE ) ){
-	  
+
 		file.copy( tf , catalog[ i , 'output_filename' ] )
-		
+
 	} else {
 		  x <- read.dbc::read.dbc( tf )
 
@@ -100,7 +102,7 @@ lodown_datasus <-
 		  }
 
 		  catalog[ i , 'case_count' ] <- nrow( x )
-		  
+
 		  save( x , file = catalog[ i , 'output_filename' ] )
 
 		  these_cols <- sapply( x , class )
@@ -165,8 +167,8 @@ lodown_datasus <-
 			DBI::dbDisconnect( db , shutdown = TRUE )
 
 		}
-		
-        
+
+
       }
 
 
