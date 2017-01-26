@@ -1,11 +1,13 @@
 get_catalog_ahrf <-
   function( data_name = "ahrf" , output_dir , ... ){
 
-    lines_with_links <- grep( "https://(.*)\\.zip" , readLines( "https://ahrf.hrsa.gov/download.htm" , warn = FALSE ) , value = TRUE , ignore.case= TRUE )
+    lines_with_links <- grep( "(.*)\\.zip" , readLines( "https://datawarehouse.hrsa.gov/data/datadownload.aspx" , warn = FALSE ) , value = TRUE , ignore.case = TRUE )
 
-    lines_with_links <- lines_with_links[ !grepl( "MS Access" , lines_with_links ) ]
+    lines_with_links <- lines_with_links[ !grepl( "Access" , lines_with_links ) ]
 
-    full_url <- gsub( '(.*)href=\"(.*)\"(.*)' , '\\2' , lines_with_links )
+    partial_url <- gsub( '(.*)href=\"(.+?)\"(.*)' , '\\2' , lines_with_links )
+	
+	full_url <- ifelse( grepl( "^https" , partial_url ) , partial_url , paste0( "https://datawarehouse.hrsa.gov" , partial_url ) )
 
     this_catalog <-
       data.frame(
