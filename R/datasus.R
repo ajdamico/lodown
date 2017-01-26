@@ -65,7 +65,7 @@ get_catalog_datasus <-
 lodown_datasus <-
   function( data_name = "datasus" , catalog , ... ){
 
-    if ( !requireNamespace( "read.dbc" , quietly = TRUE ) ) stop( "read.dbc needed for this function to work. to install it, special `install.packages( 'read.dbc' )`" , call. = FALSE )
+    if ( !requireNamespace( "read.dbc" , quietly = TRUE ) ) stop( "read.dbc needed for this function to work. to install it, type `install.packages( 'read.dbc' )`" , call. = FALSE )
 
     tf <- tempfile()
 
