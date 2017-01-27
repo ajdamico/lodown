@@ -195,6 +195,19 @@ hrs_cat <- get_catalog( "hrs" , output_dir = "C:/My Directory/HRS" ,
 lodown( "hrs" , hrs_cat[ grepl( "rand" , hrs_cat$file_title , ignore.case = TRUE ) , ] , 
 		your_username = "username" , your_password = "password" )
 
+# Integrated Public Use Microdata Series (IPUMS)
+# download all available microdata
+lodown( "IPUMS" , output_dir = "C:/My Directory/IPUMS" , 
+		your_email = "email@address.com" , your_password = "password" ,
+	project = c( "international" , "usa" , "cps" ) )
+# download only the first extract in your queue
+ipums_cat <- get_catalog( "ipums" , output_dir = "C:/My Directory/IPUMS" , 
+		your_email = "email@address.com" , your_password = "password" ,
+	project = c( "international" , "usa" , "cps" ) )
+lodown( "ipums" , ipums_cat[ 1 , ] , 
+		your_email = "email@address.com" , your_password = "password" ,
+	project = c( "international" , "usa" , "cps" ) )
+
 # Medical Expenditure Panel Survey
 # download all available microdata
 lodown( "meps" , output_dir = "C:/My Directory/MEPS" )
