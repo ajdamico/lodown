@@ -18,7 +18,7 @@ get_catalog_ahrf <-
 
     this_catalog$full_url = as.character( full_url )
 
-	this_catalog$output_filename <- paste0( output_dir , "/" , this_catalog$directory , "/" , gsub( "\\.zip" , ".rda" , basename( this_catalog$full_url ) ) )
+	this_catalog$output_filename <- paste0( output_dir , "/" , this_catalog$directory , "/" , gsub( "\\.zip" , ".rda" , basename( this_catalog$full_url ) , ignore.case = TRUE ) )
 	
     this_catalog[ !this_catalog[ , "tech_doc" ] , ]
   }
