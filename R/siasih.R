@@ -1,69 +1,57 @@
-get_catalog_datasus <-
-  function( data_name = "datasus" , output_dir , ... ){
+get_catalog_siasih <-
+  function( data_name = "siasih" , output_dir , ... ){
 
     output_dir <- gsub( "\\\\", "/", output_dir )
 
-    sim_path <- "ftp://ftp.datasus.gov.br/dissemin/publicos/SIM/"
-    sinasc_path <- "ftp://ftp.datasus.gov.br/dissemin/publicos/SINASC/"
-    sisprenatal_path <- "ftp://ftp.datasus.gov.br/dissemin/publicos/SISPRENATAL/"
+    sia_path <- "ftp://ftp.datasus.gov.br/dissemin/publicos/SIASUS/"
+    sih_path <- "ftp://ftp.datasus.gov.br/dissemin/publicos/SIHSUS/"
 
-    sim_files <- recursive_ftp_scrape( sim_path )
-    sinasc_files <- recursive_ftp_scrape( sinasc_path )
-    sisprenatal_files <- recursive_ftp_scrape( sisprenatal_path )
+    sia_files <- lodown:::recursive_ftp_scrape( sia_path )
+    sih_files <- lodown:::recursive_ftp_scrape( sih_path )
 
     catalog <-
       data.frame(
-        full_url = c( sim_files , sinasc_files , sisprenatal_files ) ,
+        full_url = c( sia_files , sih_files ) ,
         stringsAsFactors = FALSE
       )
 
     catalog$type <-
-      ifelse( grepl( sim_path , catalog$full_url ) , "sim" ,
-              ifelse( grepl( sinasc_path , catalog$full_url ) , "sinasc" ,
-                      ifelse( grepl( sisprenatal_path , catalog$full_url ) , "sisprenatal" , NA ) ) )
+      ifelse( grepl( sia_path , catalog$full_url ) , "sih" ,
+              ifelse( grepl( sih_path , catalog$full_url ) , "sia" , NA ) )
 
     catalog$output_filename <-
       gsub( "dados/" , "" ,
-            gsub( "201201_/" , "" ,
-                  gsub( "dbc$" , "rda" ,
-                        gsub( "ftp://ftp.datasus.gov.br/dissemin/publicos/" , paste0( output_dir , "/" ) ,
-                              tolower( catalog$full_url )
-                        ) ,
-                        ignore.case = TRUE )
-            )
-      )
+            gsub( "\\.(dbc$|dbf$)" , "\\.rda" ,
+                  gsub( "ftp://ftp.datasus.gov.br/dissemin/publicos/" , paste0( output_dir , "/" ) ,
+                        tolower( catalog$full_url ) ) , ignore.case = TRUE ) )
 
     year_lines <- gsub( "[^0-9]" , "" , basename( catalog$full_url ) )
+    #year_lines <- substr( gsub( "[^0-9]" , "" , basename( catalog$full_url ) ) , 1 , 2 )
 
     catalog$year <-
-      ifelse( nchar( year_lines ) == 2 & as.numeric( year_lines ) < 79 , 2000 + as.numeric( year_lines ) ,
-              ifelse( nchar( year_lines ) == 2 & as.numeric( year_lines ) >= 79 , 1900 + as.numeric( year_lines ) ,
-                      ifelse( nchar( year_lines ) == 4 & as.numeric( year_lines ) >= 1996 , as.numeric( year_lines ) ,
-                              ifelse( nchar( year_lines ) == 4 & as.numeric( year_lines ) < 1996 , 2000 + as.numeric( substr( year_lines , 1 , 2 ) ) , NA ) ) ) )
+      ifelse( nchar( year_lines ) == 4 & as.numeric( year_lines ) >= 9000 , 1900 + as.numeric( substr( year_lines , 1 , 2 ) ) ,
+              ifelse( nchar( year_lines ) == 4 & as.numeric( year_lines ) < 9000 , 2000 + as.numeric( substr( year_lines , 1 , 2 ) ) , NA ) )
 
-
+    get_last <- function ( str , n = 1 ) substr(str,(nchar(str)+1)-n,nchar(str))
     catalog$db_tablename <-
-      ifelse( !grepl( "dbc$" , catalog$full_url , ignore.case = TRUE ) , NA ,
-              ifelse( grepl( "/dofet" , catalog$output_filename ) ,
-                      paste0( substr( basename( catalog$output_filename ) , 3 , 5 ) , ifelse( grepl( "/cid9" , catalog$output_filename ) , "_cid9" , "_cid10" ) ) ,
-                      ifelse( grepl( "/dores" , catalog$output_filename ) ,
-                              paste0( "geral" , ifelse( grepl( "/cid9" , catalog$output_filename ) , "_cid9" , "_cid10" ) ) ,
-                              ifelse( grepl( "/sinasc" , catalog$output_filename ) ,
-                                      ifelse( grepl( "/dnign" , catalog$output_filename ) , "nign" ,
-                                              paste0( "nasc" , ifelse( grepl( "/ant" , catalog$output_filename ) , "_cid9" , "_cid10" ) ) ) ,
-                                      ifelse( grepl( "/sisprenatal" , catalog$output_filename ) , "pn" ,
-                                              ifelse( grepl( "doign" , catalog$output_filename ) , "dign" , NA ) ) ) ) ) )
+      ifelse ( grepl( "\\.dbc$" , catalog$full_url ) ,
+               paste0(
+                 ifelse( grepl( "/siasus" , catalog$full_url ) , "sia" , "sih" ) , "_" ,
+                 gsub( "[a-zA-Z]{2}[0-9]{4}.*", "" , tolower( basename( catalog$full_url ) ) ) , "_" ,
+                 gsub( ".*SUS/|/Dados.*", "" , catalog$full_url ) ) , NA )
+
 
     catalog$dbfolder <- ifelse( is.na( catalog$db_tablename ) , NA , paste0( output_dir , "/MonetDB" ) )
 
-    catalog
+    catalog[ !grepl( "\\.(exe$|xml$|csv$|dbf$)" , catalog$full_url , ignore.case = TRUE ) , ]
+
+
 
   }
 
 
-
-lodown_datasus <-
-  function( data_name = "datasus" , catalog , ... ){
+lodown_siasih <-
+  function( data_name = "siasih" , catalog , ... ){
 
     if ( !requireNamespace( "read.dbc" , quietly = TRUE ) ) stop( "read.dbc needed for this function to work. to install it, type `install.packages( 'read.dbc' )`" , call. = FALSE )
 
@@ -71,25 +59,25 @@ lodown_datasus <-
 
     for ( i in seq_len( nrow( catalog ) ) ){
 
-
       # download the file
       cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
 
-      if( !grepl( "dbc$" , catalog[ i , 'full_url' ] , ignore.case = TRUE ) ){
+      if ( !grepl( "\\.dbc$" , basename( catalog[ i , "full_url" ] ) , ignore.case = TRUE ) ) {
 
         file.copy( tf , catalog[ i , 'output_filename' ] )
 
       } else {
+
         x <- read.dbc::read.dbc( tf )
+
+        # remove trailing spaces
+        names( x ) <- trimws( names( x ) , which = "both" )
 
         # convert all column names to lowercase
         names( x ) <- tolower( names( x ) )
 
         # add underscores after monetdb illegal names
         for ( j in names( x )[ toupper( names( x ) ) %in% getFromNamespace( "reserved_monetdb_keywords" , "MonetDBLite" ) ] ) names( x )[ names( x ) == j ] <- paste0( j , "_" )
-
-        # remove trailing spaces
-        names( x ) <- trimws( names( x ) , which = "both" )
 
         # coerce factor columns to character
         x[ sapply( x , class ) == "factor" ] <- sapply( x[ sapply( x , class ) == "factor" ] , as.character )
@@ -126,9 +114,8 @@ lodown_datasus <-
 
         assign( catalog[ i , 'db_tablename' ] , same_table_cols )
 
-        # process tracker
+        # print process tracker
         cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , catalog[ i , 'output_filename' ] , "'\r\n\n" ) )
-
 
         # if this is the final catalog entry for the unique db_tablename, then write them all to the database
         if( i == max( which( catalog$db_tablename == catalog[ i , 'db_tablename' ] ) ) ){
@@ -139,7 +126,7 @@ lodown_datasus <-
           db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog[ i , 'dbfolder' ] )
 
           # loop through all tables that match the current db_tablename
-          for( this_file in catalog[ catalog$db_tablename %in% catalog[ i , 'db_tablename' ] , 'output_filename' ] ){
+          for( this_file in catalog[ ( catalog[ i , 'db_tablename' ] == catalog$db_tablename ) & ! is.na( catalog$db_tablename ) , 'output_filename' ] ){
 
             load( this_file )
 
@@ -178,7 +165,6 @@ lodown_datasus <-
 
         }
 
-
       }
 
 
@@ -186,8 +172,6 @@ lodown_datasus <-
       suppressWarnings( file.remove( tf ) )
 
     }
-
-    catalog
 
   }
 

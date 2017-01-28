@@ -1,58 +1,63 @@
-get_catalog_datasus <-
-  function( data_name = "datasus" , output_dir , ... ){
+get_catalog_mtps <-
+  function( data_name = "mtps" , output_dir , ... ){
 
     output_dir <- gsub( "\\\\", "/", output_dir )
 
-    sim_path <- "ftp://ftp.datasus.gov.br/dissemin/publicos/SIM/"
-    sinasc_path <- "ftp://ftp.datasus.gov.br/dissemin/publicos/SINASC/"
-    sisprenatal_path <- "ftp://ftp.datasus.gov.br/dissemin/publicos/SISPRENATAL/"
+    url_path <- "ftp://ftp.mtps.gov.br/pdet/microdados/"
 
-    sim_files <- recursive_ftp_scrape( sim_path )
-    sinasc_files <- recursive_ftp_scrape( sinasc_path )
-    sisprenatal_files <- recursive_ftp_scrape( sisprenatal_path )
+    mtps_files <- lodown:::recursive_ftp_scrape( url_path )
 
     catalog <-
       data.frame(
-        full_url = c( sim_files , sinasc_files , sisprenatal_files ) ,
+        full_url = mtps_files ,
         stringsAsFactors = FALSE
       )
 
     catalog$type <-
-      ifelse( grepl( sim_path , catalog$full_url ) , "sim" ,
-              ifelse( grepl( sinasc_path , catalog$full_url ) , "sinasc" ,
-                      ifelse( grepl( sisprenatal_path , catalog$full_url ) , "sisprenatal" , NA ) ) )
-
-    catalog$output_filename <-
-      gsub( "dados/" , "" ,
-            gsub( "201201_/" , "" ,
-                  gsub( "dbc$" , "rda" ,
-                        gsub( "ftp://ftp.datasus.gov.br/dissemin/publicos/" , paste0( output_dir , "/" ) ,
-                              tolower( catalog$full_url )
-                        ) ,
-                        ignore.case = TRUE )
-            )
+      ifelse( grepl( "layout|xls$|pdf$" , catalog$full_url , ignore.case = TRUE ) , "docs" ,
+              ifelse( grepl( "RAIS" , catalog$full_url ) , "rais" ,
+                      ifelse( grepl( "CAGED" , catalog$full_url ) , "caged" , NA ) )
       )
 
-    year_lines <- gsub( "[^0-9]" , "" , basename( catalog$full_url ) )
+    catalog$subtype[ catalog$type == "caged" ] <- NA
+    catalog$subtype[ catalog$type == "rais" ] <-
+      ifelse( grepl( "estb" , catalog$full_url[ catalog$type == "rais" ] , ignore.case = TRUE ) , "estabelecimento" , "vinculo" )
 
-    catalog$year <-
-      ifelse( nchar( year_lines ) == 2 & as.numeric( year_lines ) < 79 , 2000 + as.numeric( year_lines ) ,
-              ifelse( nchar( year_lines ) == 2 & as.numeric( year_lines ) >= 79 , 1900 + as.numeric( year_lines ) ,
-                      ifelse( nchar( year_lines ) == 4 & as.numeric( year_lines ) >= 1996 , as.numeric( year_lines ) ,
-                              ifelse( nchar( year_lines ) == 4 & as.numeric( year_lines ) < 1996 , 2000 + as.numeric( substr( year_lines , 1 , 2 ) ) , NA ) ) ) )
+    catalog$output_filename <- gsub( "7z$|zip$" , "rda" ,
+                                                gsub( "ftp://ftp.mtps.gov.br/pdet/microdados/" , paste0( output_dir , "/" ) , tolower( catalog$full_url ) ) ,
+                                                ignore.case = TRUE )
+    catalog$output_filename <- sapply( catalog$output_filename , URLdecode )
 
+    year_lines <- NULL
+    year_lines [ catalog$type == "rais" & !is.na( catalog$type ) ] <-
+      gsub( "[^0-9]" , "" ,
+            gsub ( "\\..*" , "\\2" , basename( catalog$full_url ) [ grepl( ".7z$|.zip$" , catalog$full_url , ignore.case = TRUE ) ] )
+      )[ catalog$type == "rais" & !is.na( catalog$type ) ]
+    year_lines [ catalog$type == "caged" & !is.na( catalog$type ) ] <-
+      gsub( "[^0-9]" , "" ,
+            gsub ( "\\..*" , "\\2" , basename( catalog$full_url ) [ grepl( ".7z$|.zip$" , catalog$full_url , ignore.case = TRUE ) ] )
+      )[ catalog$type == "caged" & !is.na( catalog$type ) ]
+    get_last <- function ( str , n = 1 ) substr(str,(nchar(str)+1)-n,nchar(str))
+    year_lines [ catalog$type == "caged" & !is.na( catalog$type ) ] <-
+      get_last( year_lines [ catalog$type == "caged" & !is.na( catalog$type ) ] , 4 )
+    catalog$year <- year_lines
+
+    month_lines <- NULL
+    month_lines [ catalog$type == "caged" & !is.na( catalog$type ) ] <-
+      gsub( "[^0-9]" , "" ,
+            gsub ( "\\..*" , "\\2" , basename( catalog$full_url ) [ grepl( ".7z$|.zip$" , catalog$full_url , ignore.case = TRUE ) ] )
+      )[ catalog$type == "caged" & !is.na( catalog$type ) ]
+    month_lines [ nchar( month_lines ) > 4 & !is.na( month_lines ) ] <-
+      substr( month_lines [ nchar( month_lines ) > 4 & !is.na( month_lines ) ] , 1 , 2 )
+    month_lines [ nchar( month_lines ) > 2 & !is.na( month_lines ) ] <- NA
+    catalog$month <- month_lines
 
     catalog$db_tablename <-
-      ifelse( !grepl( "dbc$" , catalog$full_url , ignore.case = TRUE ) , NA ,
-              ifelse( grepl( "/dofet" , catalog$output_filename ) ,
-                      paste0( substr( basename( catalog$output_filename ) , 3 , 5 ) , ifelse( grepl( "/cid9" , catalog$output_filename ) , "_cid9" , "_cid10" ) ) ,
-                      ifelse( grepl( "/dores" , catalog$output_filename ) ,
-                              paste0( "geral" , ifelse( grepl( "/cid9" , catalog$output_filename ) , "_cid9" , "_cid10" ) ) ,
-                              ifelse( grepl( "/sinasc" , catalog$output_filename ) ,
-                                      ifelse( grepl( "/dnign" , catalog$output_filename ) , "nign" ,
-                                              paste0( "nasc" , ifelse( grepl( "/ant" , catalog$output_filename ) , "_cid9" , "_cid10" ) ) ) ,
-                                      ifelse( grepl( "/sisprenatal" , catalog$output_filename ) , "pn" ,
-                                              ifelse( grepl( "doign" , catalog$output_filename ) , "dign" , NA ) ) ) ) ) )
+      ifelse( !is.na( catalog[ , c( "year" ) ] ) ,
+              paste0(
+                ifelse( catalog$type != "docs" , catalog$type , "" ) ,
+                ifelse( !is.na( catalog$subtype ) , paste0( "_", catalog$subtype ) , "" ) ,
+                ifelse( !is.na( catalog$year ) & catalog$type != "caged" , paste0( "_", catalog$year ) , "" ) ) , NA )
 
     catalog$dbfolder <- ifelse( is.na( catalog$db_tablename ) , NA , paste0( output_dir , "/MonetDB" ) )
 
@@ -62,10 +67,8 @@ get_catalog_datasus <-
 
 
 
-lodown_datasus <-
-  function( data_name = "datasus" , catalog , ... ){
-
-    if ( !requireNamespace( "read.dbc" , quietly = TRUE ) ) stop( "read.dbc needed for this function to work. to install it, type `install.packages( 'read.dbc' )`" , call. = FALSE )
+lodown_mtps <-
+  function( data_name = "mtps" , catalog , path_to_7z = if( .Platform$OS.type != 'windows' ) '7za' else normalizePath( "C:/Program Files/7-zip/7z.exe" ) , ... ){
 
     tf <- tempfile()
 
@@ -75,12 +78,24 @@ lodown_datasus <-
       # download the file
       cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
 
-      if( !grepl( "dbc$" , catalog[ i , 'full_url' ] , ignore.case = TRUE ) ){
+      if( !grepl( ".7z$|.zip$" , catalog[ i , 'full_url' ] , ignore.case = TRUE ) ){
 
         file.copy( tf , catalog[ i , 'output_filename' ] )
 
       } else {
-        x <- read.dbc::read.dbc( tf )
+
+        # build the string to send to DOS
+        dos.command <- paste0( '"' , normalizePath( path_to_7z ) , '" x "' , normalizePath( tf ) , '" -o"' , paste0( tempdir() , "\\unzipped" ) , '"' )
+
+        system( dos.command , show.output.on.console = FALSE )
+
+        this_data_file <- list.files( paste0( tempdir() , "\\unzipped" ) , full.names = TRUE )
+
+        this_data_file <- grep( "\\.csv|\\.txt$", this_data_file, value = TRUE, ignore.case = TRUE )
+
+        x <- read.csv2( this_data_file , sep = ";" , dec = "," , header = TRUE )
+
+        suppressWarnings( unlink( paste0( tempdir() , "\\unzipped" ) , recursive = TRUE ) )
 
         # convert all column names to lowercase
         names( x ) <- tolower( names( x ) )
@@ -129,7 +144,6 @@ lodown_datasus <-
         # process tracker
         cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , catalog[ i , 'output_filename' ] , "'\r\n\n" ) )
 
-
         # if this is the final catalog entry for the unique db_tablename, then write them all to the database
         if( i == max( which( catalog$db_tablename == catalog[ i , 'db_tablename' ] ) ) ){
 
@@ -169,7 +183,7 @@ lodown_datasus <-
             DBI::dbWriteTable( db , catalog[ i , 'db_tablename' ] , x , append = TRUE , row.names = FALSE )
 
             file_index <- seq_along( catalog[ ( catalog[ i , 'db_tablename' ] == catalog$db_tablename ) & ! is.na( catalog$db_tablename ) , 'output_filename' ] ) [ this_file == catalog[ ( catalog[ i , 'db_tablename' ] == catalog$db_tablename ) & ! is.na( catalog$db_tablename ) , 'output_filename' ] ]
-            cat( paste0( data_name , " entry " , file_index , " of " , nrow( catalog[ catalog$db_tablename == catalog[ i , 'db_tablename' ] , ] ) , " stored at '" , catalog[ i , 'db_tablename' ] , "'\r" ) )
+            cat( paste0( data_name , " entry " , file_index , " of " , nrow( catalog[ catalog$db_tablename == catalog[ i , 'db_tablename' ] , ] ) , " stored at '" , catalog[ i , 'db_tablename' ] , "'\r\n" ) )
 
           }
 
