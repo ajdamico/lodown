@@ -6,8 +6,8 @@ get_catalog_siasih <-
     sia_path <- "ftp://ftp.datasus.gov.br/dissemin/publicos/SIASUS/"
     sih_path <- "ftp://ftp.datasus.gov.br/dissemin/publicos/SIHSUS/"
 
-    sia_files <- lodown:::recursive_ftp_scrape( sia_path )
-    sih_files <- lodown:::recursive_ftp_scrape( sih_path )
+    sia_files <- recursive_ftp_scrape( sia_path )
+    sih_files <- recursive_ftp_scrape( sih_path )
 
     catalog <-
       data.frame(

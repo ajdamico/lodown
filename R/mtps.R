@@ -5,7 +5,7 @@ get_catalog_mtps <-
 
     url_path <- "ftp://ftp.mtps.gov.br/pdet/microdados/"
 
-    mtps_files <- lodown:::recursive_ftp_scrape( url_path )
+    mtps_files <- recursive_ftp_scrape( url_path )
 
     catalog <-
       data.frame(
@@ -26,7 +26,7 @@ get_catalog_mtps <-
     catalog$output_filename <- gsub( "7z$|zip$" , "rda" ,
                                                 gsub( "ftp://ftp.mtps.gov.br/pdet/microdados/" , paste0( output_dir , "/" ) , tolower( catalog$full_url ) ) ,
                                                 ignore.case = TRUE )
-    catalog$output_filename <- sapply( catalog$output_filename , URLdecode )
+    catalog$output_filename <- sapply( catalog$output_filename , utils::URLdecode )
 
     year_lines <- NULL
     year_lines [ catalog$type == "rais" & !is.na( catalog$type ) ] <-
@@ -93,7 +93,7 @@ lodown_mtps <-
 
         this_data_file <- grep( "\\.csv|\\.txt$", this_data_file, value = TRUE, ignore.case = TRUE )
 
-        x <- read.csv2( this_data_file , sep = ";" , dec = "," , header = TRUE )
+        x <- utils::read.csv( this_data_file , sep = ";" , dec = "," , header = TRUE )
 
         suppressWarnings( unlink( paste0( tempdir() , "\\unzipped" ) , recursive = TRUE ) )
 
