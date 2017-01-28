@@ -65,19 +65,42 @@ lodown_censo_escolar <-
 					w <- gsub( '\t' , ' ' , w )
 					
 					w <- gsub( '@ ' , '@' , w , fixed = TRUE )
+					w <- gsub( "@371 CEST_SAUDE  " , "@371 CEST_SAUDE $1 " , w , fixed = TRUE )
+					w <- gsub( "@379 OUTROS  " , "@379 OUTROS $1 " , w , fixed = TRUE )
+					w <- gsub( "VEF918 11" , "VEF918 11" , w , fixed = TRUE )
+					w <- gsub( "VEE1411  " , "VEE1411 7. " , w , fixed = TRUE )
+					w <- gsub( "VEE1412  " , "VEE1412 7. " , w , fixed = TRUE )
 					
 					# overwrite the file on the disk with the newly de-tabbed text
 					writeLines( w , these_tables[ j , 'sas_script' ] )
 
-					read_SAScii_monetdb(
-						these_tables[ j , 'data_file' ] ,
-						these_tables[ j , 'sas_script' ] ,
-						tl = TRUE ,
-						tablename = these_tables[ j , 'db_tablename' ] ,
-						connection = db ,
-						na_strings = "."
-					)
-				
+					if( R.utils::countLines( these_tables[ j , 'data_file' ] ) < 1000000 ){
+					
+						x <- data.frame( read_SAScii( these_tables[ j , 'data_file' ] , these_tables[ j , 'sas_script' ] , na = c( "" , "." ) ) )
+						
+						# convert column names to lowercase
+						names( x ) <- tolower( names( x ) )
+						
+						# do not use monetdb reserved words
+						for ( j in names( x )[ toupper( names( x ) ) %in% getFromNamespace( "reserved_monetdb_keywords" , "MonetDBLite" ) ] ) names( x )[ names( x ) == j ] <- paste0( j , "_" )
+
+						DBI::dbWriteTable( db , these_tables[ j , 'db_tablename' ] , x )
+						
+						rm( x )
+					
+					} else {
+						
+						read_SAScii_monetdb(
+							these_tables[ j , 'data_file' ] ,
+							these_tables[ j , 'sas_script' ] ,
+							tl = TRUE ,
+							tablename = these_tables[ j , 'db_tablename' ] ,
+							connection = db ,
+							na_strings = ''
+						)
+					
+					}
+						
 					catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , DBI::dbGetQuery( db , paste( "SELECT COUNT(*) FROM" , these_tables[ j , 'db_tablename' ] ) )[ 1 , 1 ] )
 				
 				}
