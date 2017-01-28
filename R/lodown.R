@@ -27,11 +27,11 @@ NULL
 #'
 #' # National Longitudinal Study of Adolescent to Adult Health
 #' # download all available microdata
-#' lodown( "addhealth" , output_dir = "C:/My Directory/AddHealth" ,
+#' lodown( "addhealth" , output_dir = "C:/My Directory/AddHealth" , 
 #' 		your_email = "email@address.com" , your_password = "password" )
 #' # download only the fourth wave of the survey
 #' addhealth_cat <- get_catalog( "addhealth" , output_dir = "C:/My Directory/AddHealth" )
-#' lodown( "addhealth" , addhealth_cat[ addhealth_cat$wave == "wave iv" , ] ,
+#' lodown( "addhealth" , addhealth_cat[ addhealth_cat$wave == "wave iv" , ] , 
 #' 		your_email = "email@address.com" , your_password = "password" )
 #'
 #' # Area Health Resource File
@@ -52,9 +52,9 @@ NULL
 #' # download all available microdata
 #' lodown( "anes" , output_dir = "C:/My Directory/ANES" , your_email = "email@address.com" )
 #' # download only the cumulative data file
-#' anes_cat <- get_catalog( "anes" , output_dir = "C:/My Directory/ANES" ,
+#' anes_cat <- get_catalog( "anes" , output_dir = "C:/My Directory/ANES" , 
 #' 		your_email = "email@address.com" )
-#' lodown( "anes" , anes_cat[ grepl( "Cumulative" , anes_cat$directory ) , ] ,
+#' lodown( "anes" , anes_cat[ grepl( "Cumulative" , anes_cat$directory ) , ] , 
 #'		your_email = "email@address.com" )
 #'
 #' # American Time Use Survey
@@ -123,21 +123,14 @@ NULL
 #' cps_basic_cat <- get_catalog( "cps_basic" , output_dir = "C:/My Directory/CPS_BASIC" )
 #' lodown( "cps_basic" , cps_basic_cat[ cps_basic_cat$month == 11 , ] )
 #'
-#'#' # Natality, mortality and prenatal care data from the Brazilian Public Health System
-#' # download all available microdata
-#' lodown( "datasus" , output_dir = "C:/My Directory/DataSUS" )
-#' # download only files after 2010
-#' datasus_cat <- get_catalog( "datasus" , output_dir = "C:/My Directory/DataSUS" )
-#' lodown( "datasus" , datasus_cat[ datsus_cat$year > 2010 , ] )
-#'
 #' # Demographic & Health Surveys
 #' # download all available microdata
-#' lodown( "dhs" , output_dir = "C:/My Directory/DHS" ,
+#' lodown( "dhs" , output_dir = "C:/My Directory/DHS" , 
 #'		your_email = "email@address.com" , your_password = "password" , your_project = "project" )
 #' # download only files after 2010
 #' dhs_cat <- get_catalog( "dhs" , output_dir = "C:/My Directory/DHS" ,
 #'		your_email = "email@address.com" , your_password = "password" , your_project = "project" )
-#' lodown( "dhs" , dhs_cat[ dhs_cat$year > 2010 , ] ,
+#' lodown( "dhs" , dhs_cat[ dhs_cat$year > 2010 , ] , 
 #'		your_email = "email@address.com" , your_password = "password" , your_project = "project" )
 #'
 #' # European Social Survey
@@ -184,24 +177,24 @@ NULL
 #'
 #' # Health & Retirement Study
 #' # download all available microdata
-#' lodown( "hrs" , output_dir = "C:/My Directory/HRS" ,
+#' lodown( "hrs" , output_dir = "C:/My Directory/HRS" , 
 #' 		your_username = "username" , your_password = "password" )
 #' # download only the rand files
-#' hrs_cat <- get_catalog( "hrs" , output_dir = "C:/My Directory/HRS" ,
+#' hrs_cat <- get_catalog( "hrs" , output_dir = "C:/My Directory/HRS" , 
 #' 		your_username = "username" , your_password = "password" )
-#' lodown( "hrs" , hrs_cat[ grepl( "rand" , hrs_cat$file_title , ignore.case = TRUE ) , ] ,
+#' lodown( "hrs" , hrs_cat[ grepl( "rand" , hrs_cat$file_title , ignore.case = TRUE ) , ] , 
 #' 		your_username = "username" , your_password = "password" )
 #'
 #' # Integrated Public Use Microdata Series (IPUMS)
 #' # download all available microdata
-#' lodown( "IPUMS" , output_dir = "C:/My Directory/IPUMS" ,
+#' lodown( "IPUMS" , output_dir = "C:/My Directory/IPUMS" , 
 #' 		your_email = "email@address.com" , your_password = "password" ,
 #'		project = c( "international" , "usa" , "cps" ) )
 #' # download only the first extract in your queue
-#' ipums_cat <- get_catalog( "ipums" , output_dir = "C:/My Directory/IPUMS" ,
+#' ipums_cat <- get_catalog( "ipums" , output_dir = "C:/My Directory/IPUMS" , 
 #' 		your_email = "email@address.com" , your_password = "password" ,
 #'		project = c( "international" , "usa" , "cps" ) )
-#' lodown( "ipums" , ipums_cat[ 1 , ] ,
+#' lodown( "ipums" , ipums_cat[ 1 , ] , 
 #' 		your_email = "email@address.com" , your_password = "password" ,
 #'		project = c( "international" , "usa" , "cps" ) )
 #'
@@ -214,12 +207,12 @@ NULL
 #'
 #' # Multiple Indicator Cluster Surveys
 #' # download all available microdata
-#' lodown( "mics" , output_dir = "C:/My Directory/MICS" ,
+#' lodown( "mics" , output_dir = "C:/My Directory/MICS" , 
 #' 		your_email = "email@address.com" , your_password = "password" )
 #' # download only the uzbekistan files
-#' mics_cat <- get_catalog( "mics" , output_dir = "C:/My Directory/MICS" ,
+#' mics_cat <- get_catalog( "mics" , output_dir = "C:/My Directory/MICS" , 
 #' 		your_email = "email@address.com" , your_password = "password" )
-#' lodown( "mics" , mics_cat[ mics_cat$country == 'Uzbekistan' , ] ,
+#' lodown( "mics" , mics_cat[ mics_cat$country == 'Uzbekistan' , ] , 
 #' 		your_email = "email@address.com" , your_password = "password" )
 #'
 #' # Medical Large Claims Experience Study
@@ -320,7 +313,7 @@ NULL
 #'
 #' # National Survey on Drug Use and Health
 #' # download all available microdata
-#' lodown( "nsduh" , output_dir = "C:/My Directory/NSDUH" ,
+#' lodown( "nsduh" , output_dir = "C:/My Directory/NSDUH" , 
 #' 		your_email = "email@address.com" , your_password = "password" )
 #' # download only the 2013 files
 #' nsduh_cat <- get_catalog( "nsduh" , output_dir = "C:/My Directory/NSDUH" )
@@ -359,7 +352,7 @@ NULL
 #' lodown( "piaac" , output_dir = "C:/My Directory/PIAAC" )
 #' # download only the italian files
 #' piaac_cat <- get_catalog( "piaac" , output_dir = "C:/My Directory/PIAAC" )
-#' italian_files <-
+#' italian_files <- 
 #'		piaac_cat[ grepl( "ita" , basename( piaac_cat$full_url ) , ignore.case = TRUE ) , ]
 #' lodown( "piaac" , italian_files )
 #'
@@ -398,7 +391,7 @@ NULL
 #' pns_cat <- get_catalog( "pns" , output_dir = "C:/My Directory/PNS" )
 #' lodown( "pns" , pns_cat[ pns_cat$year == 2013 , ] )
 #'
-#' # Pesquisa Nacional por Amostra de Domicilios
+#' # Pesquisa Nacional por Amostra de Domicilios 
 #' # download all available microdata
 #' lodown( "pnad" , output_dir = "C:/My Directory/PNAD" )
 #' # download only the 2013 files
@@ -421,7 +414,7 @@ NULL
 #'
 #' # Panel Study of Income Dynamics
 #' # download all available microdata
-#' lodown( "psid" , output_dir = "C:/My Directory/PSID" ,
+#' lodown( "psid" , output_dir = "C:/My Directory/PSID" , 
 #' 		your_email = "email@address.com" , your_password = "password" )
 #' # download only the cross-year individual file
 #' psid_cat <- get_catalog( "psid" , output_dir = "C:/My Directory/PSID" )
@@ -525,43 +518,43 @@ lodown <-
 
 		for ( this_dir in unique_directories ){
 			if( !dir.exists( this_dir ) ){
-				tryCatch( {
-					dir.create( this_dir , recursive = TRUE , showWarnings = TRUE )
-					} ,
-					warning = function( w ) stop( "while creating directory " , this_dir , "\n" , conditionMessage( w ) )
+				tryCatch( { 
+					dir.create( this_dir , recursive = TRUE , showWarnings = TRUE ) 
+					} , 
+					warning = function( w ) stop( "while creating directory " , this_dir , "\n" , conditionMessage( w ) ) 
 				)
 			}
 		}
 
 		catalog$case_count <- NA
-
+		
 		load_fun <- getFromNamespace( paste0( "lodown_" , data_name ) , "lodown" )
 
 		cat( paste0( "locally downloading " , data_name , "\r\n\n" ) )
 
-		memory_note <- "lodown is now exiting due to a memory error.\nyour computing performance would suffer due to disk paging,\nbut you can increase your memory limits with beyond your available hardware with the `?memory.limit` function.\nfor example, you can set the memory ceiling of an R session to 128 GB by typing `memory.limit(128000)`."
-
-		installation_note <- "lodown is now exiting due to an installation error."
-
-		parameter_note <- "lodown is now exiting due to a parameter omission."
-
-		unknown_error_note <- "lodown is now exiting unexpectedly.\nwebsites that host publicly-downloadable microdata change often and sometimes those changes cause this software to break.\nif the error call stack below appears to be a hiccup in your internet connection, then please verify your connectivity and retry the download.\notherwise, please open a new issue at `https://github.com/ajdamico/lodown/issues` with the contents of this error call stack and also the output of `sessionInfo()`."
-
+		memory_note <- "\r\n\nlodown is now exiting due to a memory error.\nyour computing performance would suffer due to disk paging,\nbut you can increase your memory limits with beyond your available hardware with the `?memory.limit` function.\nfor example, you can set the memory ceiling of an R session to 128 GB by typing `memory.limit(128000)`.\r\n\n"
+		
+		installation_note <- "\r\n\nlodown is now exiting due to an installation error.\r\n\n"
+		
+		parameter_note <- "\r\n\nlodown is now exiting due to a parameter omission.\r\n\n"
+		
+		unknown_error_note <- "\r\n\nlodown is now exiting unexpectedly.\nwebsites that host publicly-downloadable microdata change often and sometimes those changes cause this software to break.\nif the error call stack below appears to be a hiccup in your internet connection, then please verify your connectivity and retry the download.\notherwise, please open a new issue at `https://github.com/ajdamico/lodown/issues` with the contents of this error call stack and also the output of your `sessionInfo()`.\r\n\n"
+		
 		withCallingHandlers(
-			catalog <- load_fun( data_name = data_name , catalog , ... ) ,
-			error =
-				function( e ){
-
-					if( grepl( 'cannot allocate vector of size' , e ) ) message( memory_note ) else
+			catalog <- load_fun( data_name = data_name , catalog , ... ) , 
+			error = 
+				function( e ){ 
+			
+					if( grepl( 'cannot allocate vector of size' , e ) ) message( memory_note ) else 
 					if( grepl( 'parameter must be specified' , e ) ) message( parameter_note ) else
 					if( grepl( 'to install' , e ) ) message( installation_note ) else {
-
+					
 						message( unknown_error_note )
-
+					
 						print( sys.calls() )
-
+						
 					}
-
+					
 				}
 		)
 
@@ -583,7 +576,7 @@ get_catalog <-
 		cat_fun( data_name = data_name , output_dir = output_dir , ... )
 
 	}
-
+	
 no.na <- function( x , value = FALSE ){ x[ is.na( x ) ] <- value ; x }
 
 unzip_warn_fail <- function( ... ) tryCatch( { unzip( ... ) } , warning = function( w ) stop( conditionMessage( w ) ) )

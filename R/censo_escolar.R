@@ -18,9 +18,6 @@ get_catalog_censo_escolar <-
 				stringsAsFactors = FALSE
 			)
 
-		# have not completed testing prior to 2007
-		catalog <- catalog[ catalog$year >= 2007 , ]
-
 		catalog
 
 	}
@@ -43,42 +40,117 @@ lodown_censo_escolar <-
 
 			unzipped_files <- unzip_warn_fail( tf , exdir = catalog[ i , "output_folder" ] )
 
-			rar_files <- grep( "\\.rar$", unzipped_files, value = TRUE , ignore.case = TRUE )
-
-			for( this_table_type in c( "docente", "matricula", "turma", "escola" ) ) {
-
-				tabelas <- grep( this_table_type , rar_files, value = TRUE, ignore.case = TRUE )
-
-				for ( j in seq_along( tabelas ) ) {
-
-					# build the string to send to DOS
-					dos.command <- paste0( '"' , path_to_7z , '" x "' , normalizePath( tabelas[ j ] ) , '" -o"' , normalizePath( catalog[ i , "output_folder" ] ) , '"' )
-
-					system( dos.command , show.output.on.console = FALSE )
-
-					this_data_file <- list.files( catalog[ i , "output_folder" ] , full.names = TRUE )
-
-					this_data_file <- grep( "\\.csv$", this_data_file, value = TRUE, ignore.case = TRUE )
-
-					DBI::dbWriteTable(
-						db,
-						paste0( this_table_type , catalog[ i , "year" ] ) ,
-						this_data_file ,
-						sep = "|" ,
-						best.effort = TRUE ,
-						lower.case.names = TRUE ,
-						append = TRUE ,
-						nrow.check = 1000
+			for( these_zips in grep( "\\.zip$" , unzipped_files , value = TRUE , ignore.case = TRUE ) ) unzipped_files <- c( unzipped_files , unzip_warn_fail( these_zips , exdir = dirname( these_zips ) ) )
+			
+			if( catalog[ i , 'year' ] <= 2006 ){
+			
+				sas_files <- grep( "\\.sas$", unzipped_files, value = TRUE , ignore.case = TRUE )
+			
+				sas_scaledowns <- gsub( "SAS|_" , "" , gsub( "\\.sas|\\.SAS" , "" , gsub( paste0( "INPUT|" , catalog[ i , 'year' ] ) , "" , basename( sas_files ) ) ) )
+				sas_scaledowns <- ifelse( grepl( "ESC" , sas_scaledowns ) & !grepl( "INDICESC" , sas_scaledowns ) , gsub( "ESC" , "" , sas_scaledowns ) , sas_scaledowns )
+				
+				datafile_matches <- lapply( sas_scaledowns , function( z ) unzipped_files[ grepl( z , basename( unzipped_files ) , ignore.case = TRUE ) & grepl( "dados" , dirname( unzipped_files ) , ignore.case = TRUE ) ] )
+				datafile_matches <- lapply( datafile_matches , function( z ) z[ !grepl( "\\.zip" , z , ignore.case = TRUE ) ] )
+				
+				these_tables <- 
+					data.frame( 
+						sas_script = sas_files , 
+						data_file = unique( unlist( datafile_matches ) ) , 
+						db_tablename = paste0( tolower( sas_scaledowns ) , "_" , catalog[ i , 'year' ] ) , 
+						stringsAsFactors = FALSE 
 					)
+				
+				for( j in seq( nrow( these_tables ) ) ){
 
-					file.remove( this_data_file )
+					Encoding( these_tables[ j , 'sas_script' ] ) <- ''
+				
+					# write the file to the disk
+					w <- readLines( these_tables[ j , 'sas_script' ] )
+					
+					# remove all tab characters
+					w <- gsub( '\t' , ' ' , w )
+					
+					w <- gsub( '@ ' , '@' , w , fixed = TRUE )
+					w <- gsub( "@371 CEST_SAUDE  " , "@371 CEST_SAUDE $1 " , w , fixed = TRUE )
+					w <- gsub( "@379 OUTROS  " , "@379 OUTROS $1 " , w , fixed = TRUE )
+					w <- gsub( "VEF918 11" , "VEF918 11" , w , fixed = TRUE )
+					w <- gsub( "VEE1411( +)/" , "VEE1411 7. /" , w )
+					w <- gsub( "VEE1412( +)/" , "VEE1412 7. /" , w )
+					
+					# overwrite the file on the disk with the newly de-tabbed text
+					writeLines( w , these_tables[ j , 'sas_script' ] )
+
+					if( R.utils::countLines( these_tables[ j , 'data_file' ] ) < 1000000 ){
+					
+						x <- data.frame( read_SAScii( these_tables[ j , 'data_file' ] , these_tables[ j , 'sas_script' ] , na_values = c( "" , "." ) ) )
+						
+						# convert column names to lowercase
+						names( x ) <- tolower( names( x ) )
+						
+						# do not use monetdb reserved words
+						for ( k in names( x )[ toupper( names( x ) ) %in% getFromNamespace( "reserved_monetdb_keywords" , "MonetDBLite" ) ] ) names( x )[ names( x ) == k ] <- paste0( k , "_" )
+
+						DBI::dbWriteTable( db , these_tables[ j , 'db_tablename' ] , x )
+						
+						rm( x )
+					
+					} else {
+						
+						read_SAScii_monetdb(
+							these_tables[ j , 'data_file' ] ,
+							these_tables[ j , 'sas_script' ] ,
+							tl = TRUE ,
+							tablename = these_tables[ j , 'db_tablename' ] ,
+							connection = db ,
+							na_strings = ''
+						)
+					
+					}
+						
+					catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , DBI::dbGetQuery( db , paste( "SELECT COUNT(*) FROM" , these_tables[ j , 'db_tablename' ] ) )[ 1 , 1 ] , na.rm = TRUE )
+				
+				}
+				
+			} else {
+			
+				rar_files <- grep( "\\.rar$", unzipped_files, value = TRUE , ignore.case = TRUE )
+
+				for( this_table_type in c( "docente", "matricula", "turma", "escola" ) ) {
+
+					tabelas <- grep( this_table_type , rar_files, value = TRUE, ignore.case = TRUE )
+
+					for ( j in seq_along( tabelas ) ) {
+
+						# build the string to send to DOS
+						dos.command <- paste0( '"' , path_to_7z , '" x "' , normalizePath( tabelas[ j ] ) , '" -o"' , normalizePath( catalog[ i , "output_folder" ] ) , '"' )
+
+						system( dos.command , show.output.on.console = FALSE )
+
+						this_data_file <- list.files( catalog[ i , "output_folder" ] , full.names = TRUE )
+
+						this_data_file <- grep( "\\.csv$", this_data_file, value = TRUE, ignore.case = TRUE )
+
+						DBI::dbWriteTable(
+							db,
+							paste0( this_table_type , "_" , catalog[ i , "year" ] ) ,
+							this_data_file ,
+							sep = "|" ,
+							best.effort = TRUE ,
+							lower.case.names = TRUE ,
+							append = TRUE ,
+							nrow.check = 1000
+						)
+
+						file.remove( this_data_file )
+
+					}
 
 				}
 
+				catalog[ i , 'case_count' ] <- DBI::dbGetQuery( db , paste0( "SELECT COUNT(*) FROM matricula_" , catalog[ i , "year" ] ) )[ 1 , 1 ]
+
 			}
-
-			catalog[ i , 'case_count' ] <- DBI::dbGetQuery( db , paste0( "SELECT COUNT(*) FROM matricula" , catalog[ i , "year" ] ) )[ 1 , 1 ]
-
+			
 			# disconnect from the current monet database
 			DBI::dbDisconnect( db , shutdown = TRUE )
 

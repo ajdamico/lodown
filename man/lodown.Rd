@@ -37,11 +37,11 @@ lodown( "acs" , acs[ acs$year == 2013 , ] )
 
 # National Longitudinal Study of Adolescent to Adult Health
 # download all available microdata
-lodown( "addhealth" , output_dir = "C:/My Directory/AddHealth" ,
+lodown( "addhealth" , output_dir = "C:/My Directory/AddHealth" , 
 		your_email = "email@address.com" , your_password = "password" )
 # download only the fourth wave of the survey
 addhealth_cat <- get_catalog( "addhealth" , output_dir = "C:/My Directory/AddHealth" )
-lodown( "addhealth" , addhealth_cat[ addhealth_cat$wave == "wave iv" , ] ,
+lodown( "addhealth" , addhealth_cat[ addhealth_cat$wave == "wave iv" , ] , 
 		your_email = "email@address.com" , your_password = "password" )
 
 # Area Health Resource File
@@ -62,9 +62,9 @@ lodown( "ahs" , ahs_cat[ ahs_cat$year == 2013 , ] )
 # download all available microdata
 lodown( "anes" , output_dir = "C:/My Directory/ANES" , your_email = "email@address.com" )
 # download only the cumulative data file
-anes_cat <- get_catalog( "anes" , output_dir = "C:/My Directory/ANES" ,
+anes_cat <- get_catalog( "anes" , output_dir = "C:/My Directory/ANES" , 
 		your_email = "email@address.com" )
-lodown( "anes" , anes_cat[ grepl( "Cumulative" , anes_cat$directory ) , ] ,
+lodown( "anes" , anes_cat[ grepl( "Cumulative" , anes_cat$directory ) , ] , 
 	your_email = "email@address.com" )
 
 # American Time Use Survey
@@ -133,21 +133,14 @@ lodown( "cps_basic" , output_dir = "C:/My Directory/CPS_BASIC" )
 cps_basic_cat <- get_catalog( "cps_basic" , output_dir = "C:/My Directory/CPS_BASIC" )
 lodown( "cps_basic" , cps_basic_cat[ cps_basic_cat$month == 11 , ] )
 
-#' # Natality, mortality and prenatal care data from the Brazilian Public Health System
-# download all available microdata
-lodown( "datasus" , output_dir = "C:/My Directory/DataSUS" )
-# download only files after 2010
-datasus_cat <- get_catalog( "datasus" , output_dir = "C:/My Directory/DataSUS" )
-lodown( "datasus" , datasus_cat[ datsus_cat$year > 2010 , ] )
-
 # Demographic & Health Surveys
 # download all available microdata
-lodown( "dhs" , output_dir = "C:/My Directory/DHS" ,
+lodown( "dhs" , output_dir = "C:/My Directory/DHS" , 
 	your_email = "email@address.com" , your_password = "password" , your_project = "project" )
 # download only files after 2010
 dhs_cat <- get_catalog( "dhs" , output_dir = "C:/My Directory/DHS" ,
 	your_email = "email@address.com" , your_password = "password" , your_project = "project" )
-lodown( "dhs" , dhs_cat[ dhs_cat$year > 2010 , ] ,
+lodown( "dhs" , dhs_cat[ dhs_cat$year > 2010 , ] , 
 	your_email = "email@address.com" , your_password = "password" , your_project = "project" )
 
 # European Social Survey
@@ -194,24 +187,24 @@ lodown( "hmda" , hmda_cat[ hmda_cat$year == 2013 , ] )
 
 # Health & Retirement Study
 # download all available microdata
-lodown( "hrs" , output_dir = "C:/My Directory/HRS" ,
+lodown( "hrs" , output_dir = "C:/My Directory/HRS" , 
 		your_username = "username" , your_password = "password" )
 # download only the rand files
-hrs_cat <- get_catalog( "hrs" , output_dir = "C:/My Directory/HRS" ,
+hrs_cat <- get_catalog( "hrs" , output_dir = "C:/My Directory/HRS" , 
 		your_username = "username" , your_password = "password" )
-lodown( "hrs" , hrs_cat[ grepl( "rand" , hrs_cat$file_title , ignore.case = TRUE ) , ] ,
+lodown( "hrs" , hrs_cat[ grepl( "rand" , hrs_cat$file_title , ignore.case = TRUE ) , ] , 
 		your_username = "username" , your_password = "password" )
 
 # Integrated Public Use Microdata Series (IPUMS)
 # download all available microdata
-lodown( "IPUMS" , output_dir = "C:/My Directory/IPUMS" ,
+lodown( "IPUMS" , output_dir = "C:/My Directory/IPUMS" , 
 		your_email = "email@address.com" , your_password = "password" ,
 	project = c( "international" , "usa" , "cps" ) )
 # download only the first extract in your queue
-ipums_cat <- get_catalog( "ipums" , output_dir = "C:/My Directory/IPUMS" ,
+ipums_cat <- get_catalog( "ipums" , output_dir = "C:/My Directory/IPUMS" , 
 		your_email = "email@address.com" , your_password = "password" ,
 	project = c( "international" , "usa" , "cps" ) )
-lodown( "ipums" , ipums_cat[ 1 , ] ,
+lodown( "ipums" , ipums_cat[ 1 , ] , 
 		your_email = "email@address.com" , your_password = "password" ,
 	project = c( "international" , "usa" , "cps" ) )
 
@@ -224,12 +217,12 @@ lodown( "meps" , meps_cat[ grepl( "2013" , meps_cat$year ) , ] )
 
 # Multiple Indicator Cluster Surveys
 # download all available microdata
-lodown( "mics" , output_dir = "C:/My Directory/MICS" ,
+lodown( "mics" , output_dir = "C:/My Directory/MICS" , 
 		your_email = "email@address.com" , your_password = "password" )
 # download only the uzbekistan files
-mics_cat <- get_catalog( "mics" , output_dir = "C:/My Directory/MICS" ,
+mics_cat <- get_catalog( "mics" , output_dir = "C:/My Directory/MICS" , 
 		your_email = "email@address.com" , your_password = "password" )
-lodown( "mics" , mics_cat[ mics_cat$country == 'Uzbekistan' , ] ,
+lodown( "mics" , mics_cat[ mics_cat$country == 'Uzbekistan' , ] , 
 		your_email = "email@address.com" , your_password = "password" )
 
 # Medical Large Claims Experience Study
@@ -330,7 +323,7 @@ lodown( "nps" , nps_cat[ nps_cat$year == 2013 , ] )
 
 # National Survey on Drug Use and Health
 # download all available microdata
-lodown( "nsduh" , output_dir = "C:/My Directory/NSDUH" ,
+lodown( "nsduh" , output_dir = "C:/My Directory/NSDUH" , 
 		your_email = "email@address.com" , your_password = "password" )
 # download only the 2013 files
 nsduh_cat <- get_catalog( "nsduh" , output_dir = "C:/My Directory/NSDUH" )
@@ -369,7 +362,7 @@ lodown( "pew" , pew_cat[ pew_cat$topic == "Global Attitudes & Trends" , ] ,
 lodown( "piaac" , output_dir = "C:/My Directory/PIAAC" )
 # download only the italian files
 piaac_cat <- get_catalog( "piaac" , output_dir = "C:/My Directory/PIAAC" )
-italian_files <-
+italian_files <- 
 	piaac_cat[ grepl( "ita" , basename( piaac_cat$full_url ) , ignore.case = TRUE ) , ]
 lodown( "piaac" , italian_files )
 
@@ -408,7 +401,7 @@ lodown( "pns" , output_dir = "C:/My Directory/PNS" )
 pns_cat <- get_catalog( "pns" , output_dir = "C:/My Directory/PNS" )
 lodown( "pns" , pns_cat[ pns_cat$year == 2013 , ] )
 
-# Pesquisa Nacional por Amostra de Domicilios
+# Pesquisa Nacional por Amostra de Domicilios 
 # download all available microdata
 lodown( "pnad" , output_dir = "C:/My Directory/PNAD" )
 # download only the 2013 files
@@ -431,7 +424,7 @@ lodown( "pof" , pof_cat[ pof_cat$period == "2008_2009" , ] )
 
 # Panel Study of Income Dynamics
 # download all available microdata
-lodown( "psid" , output_dir = "C:/My Directory/PSID" ,
+lodown( "psid" , output_dir = "C:/My Directory/PSID" , 
 		your_email = "email@address.com" , your_password = "password" )
 # download only the cross-year individual file
 psid_cat <- get_catalog( "psid" , output_dir = "C:/My Directory/PSID" )
