@@ -74,8 +74,8 @@ lodown_censo_escolar <-
 					w <- gsub( "@371 CEST_SAUDE  " , "@371 CEST_SAUDE $1 " , w , fixed = TRUE )
 					w <- gsub( "@379 OUTROS  " , "@379 OUTROS $1 " , w , fixed = TRUE )
 					w <- gsub( "VEF918 11" , "VEF918 11" , w , fixed = TRUE )
-					w <- gsub( "VEE1411  " , "VEE1411 7. " , w , fixed = TRUE )
-					w <- gsub( "VEE1412  " , "VEE1412 7. " , w , fixed = TRUE )
+					w <- gsub( "VEE1411( +)/" , "VEE1411 7. /" , w )
+					w <- gsub( "VEE1412( +)/" , "VEE1412 7. /" , w )
 					
 					# overwrite the file on the disk with the newly de-tabbed text
 					writeLines( w , these_tables[ j , 'sas_script' ] )
@@ -88,7 +88,7 @@ lodown_censo_escolar <-
 						names( x ) <- tolower( names( x ) )
 						
 						# do not use monetdb reserved words
-						for ( j in names( x )[ toupper( names( x ) ) %in% getFromNamespace( "reserved_monetdb_keywords" , "MonetDBLite" ) ] ) names( x )[ names( x ) == j ] <- paste0( j , "_" )
+						for ( k in names( x )[ toupper( names( x ) ) %in% getFromNamespace( "reserved_monetdb_keywords" , "MonetDBLite" ) ] ) names( x )[ names( x ) == k ] <- paste0( k , "_" )
 
 						DBI::dbWriteTable( db , these_tables[ j , 'db_tablename' ] , x )
 						
