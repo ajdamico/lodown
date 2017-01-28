@@ -82,7 +82,7 @@ lodown_censo_escolar <-
 
 					if( R.utils::countLines( these_tables[ j , 'data_file' ] ) < 1000000 ){
 					
-						x <- data.frame( read_SAScii( these_tables[ j , 'data_file' ] , these_tables[ j , 'sas_script' ] , na = c( "" , "." ) ) )
+						x <- data.frame( read_SAScii( these_tables[ j , 'data_file' ] , these_tables[ j , 'sas_script' ] , na_values = c( "" , "." ) ) )
 						
 						# convert column names to lowercase
 						names( x ) <- tolower( names( x ) )
@@ -107,7 +107,7 @@ lodown_censo_escolar <-
 					
 					}
 						
-					catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , DBI::dbGetQuery( db , paste( "SELECT COUNT(*) FROM" , these_tables[ j , 'db_tablename' ] ) )[ 1 , 1 ] )
+					catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , DBI::dbGetQuery( db , paste( "SELECT COUNT(*) FROM" , these_tables[ j , 'db_tablename' ] ) )[ 1 , 1 ] , na.rm = TRUE )
 				
 				}
 				
