@@ -52,7 +52,13 @@ lodown_censo_escolar <-
 				datafile_matches <- lapply( sas_scaledowns , function( z ) unzipped_files[ grepl( z , basename( unzipped_files ) , ignore.case = TRUE ) & grepl( "dados" , dirname( unzipped_files ) , ignore.case = TRUE ) ] )
 				datafile_matches <- lapply( datafile_matches , function( z ) z[ !grepl( "\\.zip" , z , ignore.case = TRUE ) ] )
 				
-				these_tables <- data.frame( sas_script = sas_files , data_file = unlist( datafile_matches ) , db_tablename = paste0( tolower( sas_scaledowns ) , "_" , catalog[ i , 'year' ] ) , stringsAsFactors = FALSE )
+				these_tables <- 
+					data.frame( 
+						sas_script = sas_files , 
+						data_file = unique( unlist( datafile_matches ) ) , 
+						db_tablename = paste0( tolower( sas_scaledowns ) , "_" , catalog[ i , 'year' ] ) , 
+						stringsAsFactors = FALSE 
+					)
 				
 				for( j in seq( nrow( these_tables ) ) ){
 
