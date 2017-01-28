@@ -185,7 +185,7 @@ read_SAScii_monetdb <-
 		#download the CPS repwgts zipped file
 		cachaca( fn , tf , mode = "wb" )
 		#unzip the file's contents and store the file name within the temporary directory
-		fn <- unzip_warn_fail( tf , exdir = td , overwrite = T )
+		fn <- unzip_warn_fail( tf , exdir = td , overwrite = TRUE )
 		
 		on.exit( file.remove( tf ) )
 	}
@@ -204,8 +204,8 @@ read_SAScii_monetdb <-
 	
 	for ( j in y$varname[ toupper( y$varname ) %in% getFromNamespace( "reserved_monetdb_keywords" , "MonetDBLite" ) ] ){
 	
-		print( paste0( 'warning: variable named ' , j , ' not allowed in monetdb' ) )
-		print( paste0( 'changing column name to ' , j , '_' ) )
+		warning( paste0( 'warning: variable named ' , j , ' not allowed in monetdb\nchanging column name to ' , j , '_' ) )
+		
 		y[ y$varname == j , 'varname' ] <- paste0( j , "_" )
 
 	}
