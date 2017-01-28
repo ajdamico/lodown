@@ -80,33 +80,18 @@ lodown_censo_escolar <-
 					# overwrite the file on the disk with the newly de-tabbed text
 					writeLines( w , these_tables[ j , 'sas_script' ] )
 
-					if( R.utils::countLines( these_tables[ j , 'data_file' ] ) < 1000000 ){
+					x <- read_SAScii( these_tables[ j , 'data_file' ] , these_tables[ j , 'sas_script' ] , na_values = c( "" , "." ) )
 					
-						x <- data.frame( read_SAScii( these_tables[ j , 'data_file' ] , these_tables[ j , 'sas_script' ] , na_values = c( "" , "." ) ) )
-						
-						# convert column names to lowercase
-						names( x ) <- tolower( names( x ) )
-						
-						# do not use monetdb reserved words
-						for ( k in names( x )[ toupper( names( x ) ) %in% getFromNamespace( "reserved_monetdb_keywords" , "MonetDBLite" ) ] ) names( x )[ names( x ) == k ] <- paste0( k , "_" )
+					# convert column names to lowercase
+					names( x ) <- tolower( names( x ) )
+					
+					# do not use monetdb reserved words
+					for ( k in names( x )[ toupper( names( x ) ) %in% getFromNamespace( "reserved_monetdb_keywords" , "MonetDBLite" ) ] ) names( x )[ names( x ) == k ] <- paste0( k , "_" )
 
-						DBI::dbWriteTable( db , these_tables[ j , 'db_tablename' ] , x )
-						
-						rm( x )
+					DBI::dbWriteTable( db , these_tables[ j , 'db_tablename' ] , x )
 					
-					} else {
-						
-						read_SAScii_monetdb(
-							these_tables[ j , 'data_file' ] ,
-							these_tables[ j , 'sas_script' ] ,
-							tl = TRUE ,
-							tablename = these_tables[ j , 'db_tablename' ] ,
-							connection = db ,
-							na_strings = ''
-						)
-					
-					}
-						
+					rm( x )
+				
 					catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , DBI::dbGetQuery( db , paste( "SELECT COUNT(*) FROM" , these_tables[ j , 'db_tablename' ] ) )[ 1 , 1 ] , na.rm = TRUE )
 				
 				}
