@@ -41,8 +41,13 @@ lodown_pns <-
 	function( data_name = "pns" , catalog , ... ){
 
 		tf <- tempfile()
-
-
+		
+		if( .Platform$OS.type != 'windows' ) {
+			previous_encoding <- getOption( "encoding" )
+			on.exit( options( encoding = previous_encoding ) )
+			options( encoding = 'windows-1252' )
+		}
+		
 		for ( i in seq_len( nrow( catalog ) ) ){
 
 			# download the file
