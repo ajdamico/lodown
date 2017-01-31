@@ -43,7 +43,8 @@ lodown_pns <-
 		tf <- tempfile()
 		
 		if( .Platform$OS.type != 'windows' ) {
-			on.exit( options( encoding = getOption( "encoding" ) ) )
+			previous_encoding <- getOption( "encoding" )
+			on.exit( options( encoding = previous_encoding ) )
 			options( encoding = 'windows-1252' )
 		}
 		
