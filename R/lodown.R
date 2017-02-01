@@ -22,8 +22,8 @@ NULL
 #' # download all available microdata
 #' lodown( "acs" , output_dir = "C:/My Directory/ACS" )
 #' # download only the 2013 files
-#' acs <- get_catalog( "acs" , output_dir = "C:/My Directory/ACS" )
-#' lodown( "acs" , acs[ acs$year == 2013 , ] )
+#' acs_cat <- get_catalog( "acs" , output_dir = "C:/My Directory/ACS" )
+#' lodown( "acs" , acs_cat[ acs_cat$year == 2013 , ] )
 #'
 #' # National Longitudinal Study of Adolescent to Adult Health
 #' # download all available microdata
