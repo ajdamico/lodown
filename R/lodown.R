@@ -514,7 +514,7 @@ lodown <-
 
 		if( is.null( catalog ) ) catalog <- get_catalog( data_name , ... )
 
-		unique_directories <- unique( c( catalog$unzip_folder , if( 'output_filename' %in% names( catalog ) ) dirname( catalog$output_filename ) , catalog$dbfolder , catalog$output_folder ) )
+		unique_directories <- unique( c( catalog$unzip_folder , if( 'output_filename' %in% names( catalog ) ) np_dirname( catalog$output_filename ) , catalog$dbfolder , catalog$output_folder ) )
 
 		for ( this_dir in unique_directories ){
 			if( !dir.exists( this_dir ) ){
@@ -580,3 +580,5 @@ get_catalog <-
 no.na <- function( x , value = FALSE ){ x[ is.na( x ) ] <- value ; x }
 
 unzip_warn_fail <- function( ... ) tryCatch( { unzip( ... ) } , warning = function( w ) stop( conditionMessage( w ) ) )
+
+np_dirname <- function( ... ) normalizePath( dirname( ... ) )

@@ -128,9 +128,9 @@ lodown_geofabrik <-
 				
 			} else if( grepl( "zip$" , catalog[ i , 'output_filename' ] ) ) {
 			
-				unzipped_files <- unzip_warn_fail( catalog[ i , 'output_filename' ] , exdir = dirname( catalog[ i , 'output_filename' ] ) )
+				unzipped_files <- unzip_warn_fail( catalog[ i , 'output_filename' ] , exdir = np_dirname( catalog[ i , 'output_filename' ] ) )
 			
-				cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , dirname( catalog[ i , 'output_filename' ] ) , "'\r\n\n" ) )
+				cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , np_dirname( catalog[ i , 'output_filename' ] ) , "'\r\n\n" ) )
 				
 				suppressWarnings( file.remove( catalog[ i , 'output_filename' ] ) )
 				

@@ -84,7 +84,7 @@ lodown_pme <-
 
 		cachaca( "ftp://ftp.ibge.gov.br/Trabalho_e_Rendimento/Pesquisa_Mensal_de_Emprego/Microdados/documentacao/Documentacao.zip" , tf )
 
-		unzipped_files <- unzip_warn_fail( tf , exdir = unique( dirname( catalog$output_filename ) )  )
+		unzipped_files <- unzip_warn_fail( tf , exdir = unique( np_dirname( catalog$output_filename ) )  )
 
 		# hold onto only the filename containing the word `INPUT`
 		input <- unzipped_files[ grep( "INPUT" , unzipped_files ) ]

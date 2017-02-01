@@ -65,7 +65,7 @@ lodown_nsch <-
 			# download the file
 			cachaca( catalog[ i , "dat_url" ] , tf , mode = 'wb' )
 
-			unzipped_files <- unzip_warn_fail( tf , exdir = dirname( catalog[ i , 'output_filename' ] ) )
+			unzipped_files <- unzip_warn_fail( tf , exdir = np_dirname( catalog[ i , 'output_filename' ] ) )
 
 			sas_path <- grep( "\\.sas7bdat$" , unzipped_files , value = TRUE )
 
@@ -85,7 +85,7 @@ lodown_nsch <-
 			# download the multiply-imputed poverty data.frame
 			cachaca( catalog[ i , "mi_url" ] , tf , mode = 'wb' )
 
-			unzipped_files <- unzip_warn_fail( tf , exdir = dirname( catalog[ i , 'output_filename' ] ) )
+			unzipped_files <- unzip_warn_fail( tf , exdir = np_dirname( catalog[ i , 'output_filename' ] ) )
 
 			sas_path <- grep( "\\.sas7bdat$" , unzipped_files , value = TRUE )
 
