@@ -581,4 +581,4 @@ no.na <- function( x , value = FALSE ){ x[ is.na( x ) ] <- value ; x }
 
 unzip_warn_fail <- function( ... ) tryCatch( { unzip( ... ) } , warning = function( w ) stop( conditionMessage( w ) ) )
 
-np_dirname <- function( ... ) normalizePath( dirname( ... ) )
+np_dirname <- function( ... ) normalizePath( dirname( ... ) , mustWork = FALSE )
