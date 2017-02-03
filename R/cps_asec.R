@@ -111,7 +111,7 @@ lodown_cps_asec <-
 										catalog[ i , 'year' ] == 2014.58 ,
 										"http://thedataweb.rm.census.gov/pub/cps/march/asec2014_pubuse.zip" ,
 										ifelse( catalog[ i , 'year' ] == 2016 ,
-											paste0( "http://thedataweb.rm.census.gov/pub/cps/march/asec" , catalog[ i , 'year' ] , "early_pubuse_v2.zip" ) ,
+											paste0( "http://thedataweb.rm.census.gov/pub/cps/march/asec" , catalog[ i , 'year' ] , "_pubuse_v3.zip" ) ,
 											paste0( "http://thedataweb.rm.census.gov/pub/cps/march/asec" , catalog[ i , 'year' ] , "_pubuse.zip" )
 										)
 									)
@@ -137,7 +137,7 @@ lodown_cps_asec <-
 
 				} else {
 					
-					if( catalog[ i , 'year' ] >= 2016 ) sas_ris <- cps_asec_dd_parser( paste0( "http://thedataweb.rm.census.gov/pub/cps/march/asec" , catalog[ i , 'year' ] , "_pubuse.dd.txt" ) )
+					if( catalog[ i , 'year' ] >= 2016 ) sas_ris <- cps_asec_dd_parser( paste0( "http://thedataweb.rm.census.gov/pub/cps/march/Asec" , catalog[ i , 'year' ] , "_Data_Dict_Full.txt" ) )
 					if( catalog[ i , 'year' ] == 2015 ) sas_ris <- cps_asec_dd_parser( "http://thedataweb.rm.census.gov/pub/cps/march/asec2015early_pubuse.dd.txt" )
 					if( catalog[ i , 'year' ] == 2014.38 ) sas_ris <- cps_asec_dd_parser( "http://thedataweb.rm.census.gov/pub/cps/march/asec2014R_pubuse.dd.txt" )
 					if( catalog[ i , 'year' ] == 2014.58 ) sas_ris <- cps_asec_dd_parser( "http://thedataweb.rm.census.gov/pub/cps/march/asec2014early_pubuse.dd.txt" )
