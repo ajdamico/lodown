@@ -90,7 +90,7 @@ lodown_censo_escolar <-
 
 					DBI::dbWriteTable( db , these_tables[ j , 'db_tablename' ] , x )
 
-					rm( x ) ; gc()
+					rm( x )
 
 					cat( tolower( gsub( basename( "\\..*" , "" , these_tables[ j , 'data_file' ] ) ) ) , "stored at" ,
 					     these_tables[ j , 'db_tablename' ] , "\r\n" )
