@@ -95,7 +95,7 @@ lodown_seer <-
 			
 			# calculate the save-file-location
 			# by removing the downloaded zipped file's folderpath
-			# and substituting `txt` with `rda`
+			# and substituting `txt` with `rds`
 			# and converting the file location to lowercase
 			sfl <- gsub( "(.*)_TEXTDATA/" , catalog$output_folder , gsub( "\\.txt$" , ".rds" , fp , ignore.case = TRUE ) )
 			
@@ -130,7 +130,7 @@ lodown_seer <-
 				
 			# calculate the save-file-location
 			# by removing the downloaded zipped file's folderpath
-			# and substituting `txt` with `rda`
+			# and substituting `txt` with `rds`
 			# and converting the file location to lowercase
 			sfl <- gsub( "(.*)_TEXTDATA/" , catalog$output_folder , gsub( "\\.txt$" , ".rds" , fp , ignore.case = TRUE ) )
 				

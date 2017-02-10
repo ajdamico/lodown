@@ -71,7 +71,7 @@ lodown_chis <-
 				
 				if( grepl( "f\\.dta" , this_dta , ignore.case = TRUE ) ) savename <- gsub( "\\.rds" , "f.rds" , catalog[ i , 'output_filename' ] ) else savename <- catalog[ i , 'output_filename' ]
 				
-				if( file.exists( savename ) ) stop( "rda file already exists. delete the contents of your output_dir= and try again" )
+				if( file.exists( savename ) ) stop( "rds file already exists. delete the contents of your output_dir= and try again" )
 				
 				# load the .dta file as an R `data.frame` object
 				x <- data.frame( haven::read_dta( this_dta ) )

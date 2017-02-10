@@ -169,8 +169,8 @@ lodown_dhs <-
 			# unzip the contents of the zipped file
 			unzipped_files <- unzip_warn_fail( catalog[ i , 'output_filename' ] , exdir = catalog[ i , 'output_folder' ] )
 
-			# figure out the correct location for the rda
-			rda_name <- tolower( paste0( gsub( "\\.zip" , ".rds" , catalog[ i , 'output_filename' ] ) ) )
+			# figure out the correct location for the rds
+			rds_name <- tolower( paste0( gsub( "\\.zip" , ".rds" , catalog[ i , 'output_filename' ] ) ) )
 			
 			# and now, if there's a stata file, import it!
 			if ( any( st <- grepl( "\\.dta$" , tolower( unzipped_files ) ) ) ){
@@ -187,13 +187,13 @@ lodown_dhs <-
 				catalog[ i , 'case_count' ] <- nrow( x )
 				
 				# save the file on the local disk, within the appropriate country-survey filepath
-				saveRDS( x , file = rda_name )
+				saveRDS( x , file = rds_name )
 				
 			}
 
-			# if a file has not been saved as an rda yet,
+			# if a file has not been saved as an rds yet,
 			# look for an spss file as well.  this way, stata always takes priority.
-			if ( !file.exists( rda_name ) ){
+			if ( !file.exists( rds_name ) ){
 			
 				# if there's any spss file, import it!
 				if ( any( st <- grepl( "\\.sav$" , tolower( unzipped_files ) ) ) ){
@@ -210,7 +210,7 @@ lodown_dhs <-
 					catalog[ i , 'case_count' ] <- nrow( x )
 
 					# save the file on the local disk, within the appropriate country-survey filepath
-					saveRDS( x , file = rda_name )
+					saveRDS( x , file = rds_name )
 					
 				}
 			}

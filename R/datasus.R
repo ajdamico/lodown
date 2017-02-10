@@ -25,7 +25,7 @@ get_catalog_datasus <-
     catalog$output_filename <-
       gsub( "dados/" , "" ,
             gsub( "201201_/" , "" ,
-                  gsub( "dbc$" , "rda" ,
+                  gsub( "dbc$" , "rds" ,
                         gsub( "ftp://ftp.datasus.gov.br/dissemin/publicos/" , paste0( output_dir , "/" ) ,
                               tolower( catalog$full_url )
                         ) ,

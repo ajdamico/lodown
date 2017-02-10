@@ -159,7 +159,7 @@ lodown_wvs <-
 					
 					# determine the filepath to store this data.frame object on the local disk
 					# if it was "thisfile.sav" then make it "yourdirectory/subdirectory/thisfile.rds"
-					rfn <- paste0( catalog[ i , 'output_folder' ] , "/" , gsub( tools::file_ext( this_fn ) , "rda" , this_fn ) )
+					rfn <- paste0( catalog[ i , 'output_folder' ] , "/" , gsub( tools::file_ext( this_fn ) , "rds" , this_fn ) )
 					
 					# store the data.frame object on the local disk
 					saveRDS( x , file = rfn )

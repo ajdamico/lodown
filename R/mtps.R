@@ -23,7 +23,7 @@ get_catalog_mtps <-
     catalog$subtype[ catalog$type == "rais" ] <-
       ifelse( grepl( "estb" , catalog$full_url[ catalog$type == "rais" ] , ignore.case = TRUE ) , "estabelecimento" , "vinculo" )
 
-    catalog$output_filename <- gsub( "7z$|zip$" , "rda" ,
+    catalog$output_filename <- gsub( "7z$|zip$" , "rds" ,
                                                 gsub( "ftp://ftp.mtps.gov.br/pdet/microdados/" , paste0( output_dir , "/" ) , tolower( catalog$full_url ) ) ,
                                                 ignore.case = TRUE )
     catalog$output_filename <- sapply( catalog$output_filename , utils::URLdecode )
