@@ -285,7 +285,7 @@ lodown_ahs <-
 								zip.path , 
 								"/" ,
 								prefix[ this_ext ] ,
-								".rda"
+								".rds"
 							)
 						
 						# confirm the file isn't a duplicate of some sort
@@ -293,12 +293,9 @@ lodown_ahs <-
 						
 						# convert all column names to lowercase
 						names( x ) <- tolower( names( x ) )
-					
-						# copy the data.frame `x` to a less mysteriously-named object
-						assign( prefix[ this_ext ] , x )
-						
-						# save the newly-renamed object as an `.rda` file on the local disk
-						save( list = prefix[ this_ext ] , file = this.filename )
+											
+						# save the newly-renamed object as an `.rds` file on the local disk
+						saveRDS( x , file = this.filename )
 									
 						# confirm that this data file has been loaded.
 						data.loaded <- TRUE
@@ -317,13 +314,13 @@ lodown_ahs <-
 					
 				}
 
-				# if the data file did not get loaded as an `.rda` file..
+				# if the data file did not get loaded as an `.rds` file..
 				if ( !data.loaded ){
 
 					# determine whether one or many files did not get loaded..
 					if ( length( tf ) == 1 ){
 					
-						# construct the full filepath of the original (not `.rda`) file
+						# construct the full filepath of the original (not `.rds`) file
 						this.filename <-
 							paste0(
 								catalog[ i , 'output_folder' ] ,
@@ -382,7 +379,7 @@ lodown_ahs <-
 						zip.path , 
 						"/" ,
 						hhlf ,
-						".rda"
+						".rds"
 					)
 
 				# determine the filepath of the replicate-weighted file
@@ -392,7 +389,7 @@ lodown_ahs <-
 						zip.path , 
 						"/" ,
 						wgtf ,
-						".rda"
+						".rds"
 					)
 
 				# load both the household-level..
@@ -427,11 +424,11 @@ lodown_ahs <-
 						zip.path , 
 						"/" ,
 						mergef ,
-						".rda"
+						".rds"
 					)
 					
 				# save the merged file to the local disk as well	
-				save( list = mergef , file = merge.fp )
+				saveRDS( list = mergef , file = merge.fp )
 								
 				# add the number of records to the catalog
 				catalog[ i , 'case_count' ] <- nrow( x )

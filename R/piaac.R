@@ -18,7 +18,8 @@ get_catalog_piaac <-
 
 		catalog <-
 			data.frame(
-				output_filename = paste0( output_dir , "/" , csv.fns , ".rda" ) ,
+				output_filename = paste0( output_dir , "/" , csv.fns , ".rds" ) ,
+				design_filename = paste0( output_dir , "/" , csv.fns , " design.rds" ) ,
 				full_url = paste0( oecd.csv.website , csv.fns , ".csv" ) ,
 				stringsAsFactors = FALSE
 			)
@@ -116,8 +117,10 @@ lodown_piaac <-
 
 			catalog[ i , 'case_count' ] <- nrow( this_design )
 				
-			# save both objects together into a single `.rda` file
-			save( x , this_design , file = catalog[ i , 'output_filename' ] )
+			# save both objects as `.rds` files
+			saveRDS( x , file = catalog[ i , 'output_filename' ] )
+			
+			saveRDS( this_design , file = catalog[ i , 'design_filename' ] )
 
 			# delete the temporary files
 			suppressWarnings( file.remove( tf ) )

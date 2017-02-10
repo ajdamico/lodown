@@ -84,10 +84,9 @@ lodown_pof <-
 				
 				
 				# save both of these data frames to the local disk
-				save( 
-					componentes , estrutura , 
-					file = paste0( catalog[ i , 'output_folder' ] , "/codigos de alimentacao.rda" ) 
-				)
+				saveRDS( componentes , file = paste0( catalog[ i , 'output_folder' ] , "/codigos de alimentacao componentes.rds" ) )
+				
+				saveRDS( estrutura , file = paste0( catalog[ i , 'output_folder' ] , "/codigos de alimentacao estrutura.rds" ) )
 				
 				# # # # # # # # # # # # # # # # #
 				# table for post-stratification #
@@ -104,10 +103,7 @@ lodown_pof <-
 				names( poststr ) <- tolower( names( poststr ) )
 				
 				# save this data frame to the local disk
-				save( 
-					poststr ,
-					file = paste0( catalog[ i , 'output_folder' ] , "/poststr.rda" ) 
-				)
+				saveRDS( poststr , file = paste0( catalog[ i , 'output_folder' ] , "/poststr.rds" ) )
 				
 				# remove all three of these tables from memory
 				rm( componentes , estrutura , poststr )
@@ -261,16 +257,10 @@ lodown_pof <-
 				
 				catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , nrow( x ) , na.rm = TRUE )
 				
-				# rename the data table appropriately
-				assign( tolower( dfn ) , x )
-				
 				# save the current data.frame
 				# to the appropriate year folder
 				# within the current working directory
-				save( 
-					list = tolower( dfn ) , 
-					file = paste0( catalog[ i , 'output_folder' ] , "/" , tolower( dfn ) , ".rda" )
-				)
+				saveRDS( x , file = paste0( catalog[ i , 'output_folder' ] , "/" , tolower( dfn ) , ".rds" ) )
 
 				# delete the current file from the current working directory
 				file.remove( curfile )

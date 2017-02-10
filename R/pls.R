@@ -58,19 +58,12 @@ lodown_pls <-
 				int.cols <- sapply( x , class ) == 'integer'
 				
 				# for all integer columns, replace negative ones with NAs
-				x[ , int.cols ] <- 
-					sapply( 
-						x[ , int.cols ] , 
-						function( z ){ z[ z == -1 ] <- NA ; z } 
-					)
+				x[ , int.cols ] <- sapply( x[ , int.cols ] , function( z ){ z[ z == -1 ] <- NA ; z } )
 				
-				# save the data.frame `x` over to the cleaned-up filename
-				assign( this.tablename , x )
-					
 				catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , nrow( x ) , na.rm = TRUE )
 					
 				# save this table to a year x tablename path in the current working directory
-				save( list = this.tablename , file = paste0( catalog[ i , 'output_folder' ] , "/" , this.tablename , ".rda" ) )
+				saveRDS( x , file = paste0( catalog[ i , 'output_folder' ] , "/" , this.tablename , ".rds" ) )
 
 			}
 

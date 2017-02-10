@@ -89,11 +89,8 @@ lodown_pirls <-
 
 				catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , nrow( y ) , na.rm = TRUE )
 				
-				# save the stacked file as the prefix
-				assign( p , y )
-				
 				# save that single all-country stack-a-mole
-				save( list = p , file = paste0( catalog[ i , 'output_folder' ] , '/' , p , '.rda' ) )
+				saveRDS( y , file = paste0( catalog[ i , 'output_folder' ] , '/' , p , '.rds' ) )
 				
 			}
 
@@ -101,19 +98,19 @@ lodown_pirls <-
 			# here are the combinations to create #
 	
 			# asa alone #
-			asa_name <- load( paste0( catalog[ i , 'output_folder' ] , '/asa.rda' ) )
+			asa_name <- readRDS( paste0( catalog[ i , 'output_folder' ] , '/asa.rds' ) )
 			asa <- get( asa_name )
 			asa_design <- pirls_pvsd( asa , 'totwgt' , pirls_rwcf( asa , 'totwgt' ) )
-			save( asa_design , file = paste0( catalog[ i , 'output_folder' ] , '/asa_design.rda' ) )
+			saveRDS( asa_design , file = paste0( catalog[ i , 'output_folder' ] , '/asa_design.rds' ) )
 			
 			# asg alone #
-			asg_name <- load( paste0( catalog[ i , 'output_folder' ] , '/asg.rda' ) )
+			asg_name <- readRDS( paste0( catalog[ i , 'output_folder' ] , '/asg.rds' ) )
 			asg <- get( asg_name )
 			asg_design <- pirls_pvsd( asg , 'totwgt' , pirls_rwcf( asg , 'totwgt' ) )
-			save( asg_design , file = paste0( catalog[ i , 'output_folder' ] , '/asg_design.rda' ) )
+			saveRDS( asg_design , file = paste0( catalog[ i , 'output_folder' ] , '/asg_design.rds' ) )
 			
 			# asg + ash
-			ash_name <- load( paste0( catalog[ i , 'output_folder' ] , '/ash.rda' ) )
+			ash_name <- readRDS( paste0( catalog[ i , 'output_folder' ] , '/ash.rds' ) )
 			ash <- get( ash_name )
 			# note: these two files are too big to merge in a smaller computer's RAM
 			# so only keep the weighting/jackknife variables from the `asg` table for this iteration.
@@ -121,34 +118,34 @@ lodown_pirls <-
 			stopifnot( nrow( asg_ash ) == nrow( ash ) & nrow( ash ) == nrow( asg ) )
 
 			asg_ash_design <- pirls_pvsd( asg_ash , 'totwgt' , pirls_rwcf( asg_ash , 'totwgt' ) )
-			save( asg_ash_design , file = paste0( catalog[ i , 'output_folder' ] , '/asg_ash_design.rda' ) )
+			saveRDS( asg_ash_design , file = paste0( catalog[ i , 'output_folder' ] , '/asg_ash_design.rds' ) )
 
 			
 			# asg + acg
-			acg_name <- load( paste0( catalog[ i , 'output_folder' ] , '/acg.rda' ) )
+			acg_name <- readRDS( paste0( catalog[ i , 'output_folder' ] , '/acg.rds' ) )
 			acg <- get( acg_name )
 			asg_acg <- merge( asg , acg , by = c( 'idcntry' , 'idschool' ) )
 			stopifnot( nrow( asg_acg ) == nrow( asg ) )
 			
 			asg_acg_design <- pirls_pvsd( asg_acg , 'totwgt' , pirls_rwcf( asg_acg , 'totwgt' ) )
-			save( asg_acg_design , file = paste0( catalog[ i , 'output_folder' ] , '/asg_acg_design.rda' ) )
+			saveRDS( asg_acg_design , file = paste0( catalog[ i , 'output_folder' ] , '/asg_acg_design.rds' ) )
 
 			
 			# ast alone #
-			ast_name <- load( paste0( catalog[ i , 'output_folder' ] , '/ast.rda' ) )
+			ast_name <- readRDS( paste0( catalog[ i , 'output_folder' ] , '/ast.rds' ) )
 			ast <- get( ast_name )
 			ast_design <- pirls_pvsd( ast , 'tchwgt' , pirls_rwcf( ast , 'tchwgt' ) )
-			save( ast_design , file = paste0( catalog[ i , 'output_folder' ] , '/ast_design.rda' ) )
+			saveRDS( ast_design , file = paste0( catalog[ i , 'output_folder' ] , '/ast_design.rds' ) )
 
 			
 			# ast + atg
-			atg_name <- load( paste0( catalog[ i , 'output_folder' ] , '/atg.rda' ) )
+			atg_name <- readRDS( paste0( catalog[ i , 'output_folder' ] , '/atg.rds' ) )
 			atg <- get( atg_name )
 			ast_atg <- merge( ast , atg , by = c( 'idcntry' , 'idteach' , 'idlink' ) )
 			stopifnot( nrow( ast_atg ) == nrow( ast ) )
 
 			ast_atg_design <- pirls_pvsd( ast_atg , 'tchwgt' , pirls_rwcf( ast_atg , 'tchwgt' ) )
-			save( ast_atg_design , file = paste0( catalog[ i , 'output_folder' ] , '/ast_atg_design.rda' ) )
+			saveRDS( ast_atg_design , file = paste0( catalog[ i , 'output_folder' ] , '/ast_atg_design.rds' ) )
 			
 			# delete the temporary files
 			suppressWarnings( file.remove( tf , unzipped_files ) )

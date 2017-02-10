@@ -105,7 +105,7 @@ lodown_timss <-
 				for ( p in prefixes ){
 				
 					# confirm no overwriting
-					if( file.exists( paste0( catalog[ i , 'output_folder' ] , '/' , p , '.rda' ) ) ) stop( "rda file already exists. delete your working directory and try again." )
+					if( file.exists( paste0( catalog[ i , 'output_folder' ] , '/' , p , '.rds' ) ) ) stop( "rds file already exists. delete your working directory and try again." )
 
 					# initiate an empty object
 					y <- NULL
@@ -138,11 +138,8 @@ lodown_timss <-
 					# make all column names lowercase
 					names( y ) <- tolower( names( y ) )
 					
-					# save the stacked file as the prefix
-					assign( p , y )
-					
 					# save that single all-country stack-a-mole
-					save( list = p , file = paste0( catalog[ i , 'output_folder' ] , '/' , p , '.rda' ) )
+					saveRDS( y , file = paste0( catalog[ i , 'output_folder' ] , '/' , p , '.rds' ) )
 					
 				}
 				
@@ -165,7 +162,7 @@ lodown_timss <-
 					for ( p in prefixes ){
 					
 						# confirm no overwriting
-						if( file.exists( paste0( catalog[ i , 'output_folder' ] , '/' , p , s , '.rda' ) ) ) stop( "rda file already exists. delete your working directory and try again." )
+						if( file.exists( paste0( catalog[ i , 'output_folder' ] , '/' , p , s , '.rds' ) ) ) stop( "rds file already exists. delete your working directory and try again." )
 
 						if( catalog[ i , 'year' ] == 1995 ){
 						
@@ -212,22 +209,22 @@ lodown_timss <-
 							assign( paste0( p , s ) , y )
 							
 							# save that single all-country stack-a-mole
-							save( list = paste0( p , s ) , file = paste0( catalog[ i , 'output_folder' ] , '/' , p , s , '.rda' ) )
+							saveRDS( list = paste0( p , s ) , file = paste0( catalog[ i , 'output_folder' ] , '/' , p , s , '.rds' ) )
 					
 						}
 					}
 				}
 			}	
 
-			# the current working directory should now contain one r data file (.rda)
+			# the current working directory should now contain one r data file (.rds)
 			# for each original prefixed data.frame objects, all separated by year-specific folders.
 
 		
 		
 		
-			for ( rdas in rev( list.files( catalog[ i , 'output_folder' ] , full.names = TRUE ) ) ){
+			for ( rdss in rev( list.files( catalog[ i , 'output_folder' ] , full.names = TRUE ) ) ){
 			
-				dfx <- load( rdas )
+				dfx <- readRDS( rdss )
 				
 				ppv <- grep( "(.*)0[1-5]$" , names( get( dfx ) ) , value = TRUE )
 				
@@ -330,12 +327,10 @@ lodown_timss <-
 						design$mse <- TRUE
 
 					}
-						
-					assign( paste0( dfx , "_design" ) , design )
-					
+
 					catalog[ i , 'case_count' ] <- nrow( design )
 					
-					save( list = paste0( dfx , "_design" ) , file = paste0( catalog[ i , 'output_folder' ] , '/' , dfx , '_design.rda' ) )
+					saveRDS( design , file = paste0( catalog[ i , 'output_folder' ] , '/' , dfx , '_design.rds' ) )
 					
 				}
 				

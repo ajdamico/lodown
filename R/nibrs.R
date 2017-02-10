@@ -1,24 +1,24 @@
 get_catalog_nibrs <-
 	function( data_name = "nibrs" , output_dir , ... ){
 
-	catalog <- get_catalog_icpsr( "00128" )
-	
-	catalog$unzip_folder <- paste0( output_dir , "/" , gsub( "[^0-9A-z ]" , "" , catalog$name ) , "/" , catalog$dataset_name )
+		catalog <- get_catalog_icpsr( "00128" )
+		
+		catalog$unzip_folder <- paste0( output_dir , "/" , gsub( "[^0-9A-z ]" , "" , catalog$name ) , "/" , catalog$dataset_name )
 
-	catalog$db_tablename <- tolower( gsub( " " , "_" , paste0( gsub( "[^0-9A-z ]" , "" , catalog$name ) , "_" , catalog$dataset_name ) ) )
-	catalog$db_tablename <- gsub( "national_incidentbased_reporting_system_" , "x" , catalog$db_tablename )
-	catalog$db_tablename <- gsub( "uniform_crime_reporting_" , "ucr_" , catalog$db_tablename )
-	catalog$db_tablename <- gsub( "program_data_" , "" , catalog$db_tablename )
-	catalog$db_tablename <- gsub( "-level_file" , "_level" , catalog$db_tablename )
-	catalog$db_tablename <- gsub( "segment" , "seg" , catalog$db_tablename )
-	
-	catalog$unzip_folder <- gsub( "IncidentBased" , "Incident Based" , catalog$unzip_folder )
+		catalog$db_tablename <- tolower( gsub( " " , "_" , paste0( gsub( "[^0-9A-z ]" , "" , catalog$name ) , "_" , catalog$dataset_name ) ) )
+		catalog$db_tablename <- gsub( "national_incidentbased_reporting_system_" , "x" , catalog$db_tablename )
+		catalog$db_tablename <- gsub( "uniform_crime_reporting_" , "ucr_" , catalog$db_tablename )
+		catalog$db_tablename <- gsub( "program_data_" , "" , catalog$db_tablename )
+		catalog$db_tablename <- gsub( "-level_file" , "_level" , catalog$db_tablename )
+		catalog$db_tablename <- gsub( "segment" , "seg" , catalog$db_tablename )
+		
+		catalog$unzip_folder <- gsub( "IncidentBased" , "Incident Based" , catalog$unzip_folder )
 
-	catalog$dbfolder <- paste0( output_dir , "/MonetDB" )
+		catalog$dbfolder <- paste0( output_dir , "/MonetDB" )
 
-	catalog
+		catalog
 
-}
+	}
 
 
 lodown_nibrs <-
@@ -175,8 +175,8 @@ lodown_nibrs <-
 
 					}
 					
-					# save the r data.frame object to the local disk as an `.rda`
-					save( x , file = gsub( "txt$" , "rda" , data.file ) )
+					# save the r data.frame object to the local disk as an `.rds`
+					saveRDS( x , file = gsub( "txt$" , "rds" , data.file ) )
 				
 					# remove the object from working memory
 					rm( x )
@@ -211,8 +211,8 @@ lodown_nibrs <-
 					# pull the data file into working memory
 					x <- DBI::dbReadTable( db , catalog[ i , 'db_tablename' ] )
 				
-					# save the r data.frame object to the local disk as an `.rda`
-					save( x , file = gsub( "txt$" , "rda" , data.file ) )
+					# save the r data.frame object to the local disk as an `.rds`
+					saveRDS( x , file = gsub( "txt$" , "rds" , data.file ) )
 				
 				}
 				

@@ -27,8 +27,10 @@ get_catalog_scf <-
 				stringsAsFactors = FALSE
 			)
 
-		catalog$output_filename <- paste0( output_dir , "/scf " , catalog$year , ifelse( catalog$year == 2009 , " panel" , "" ) , ".rda" )
+		catalog$output_filename <- paste0( output_dir , "/scf " , catalog$year , ifelse( catalog$year == 2009 , " panel" , "" ) , ".rds" )
 			
+		catalog$rw_filename <- paste0( output_dir , "/scf " , catalog$year , ifelse( catalog$year == 2009 , " panel" , "" ) , " rw.rds" )
+		
 		catalog[ c( 'main_url' , 'extract_url' , 'rw_url' ) ] <- sapply( catalog[ c( 'main_url' , 'extract_url' , 'rw_url' ) ] , function( z ) paste0( "https://www.federalreserve.gov/econresdata/scf/files/" , z , '.zip' ) )
 		
 		catalog[ catalog$year == 2001 , 'rw_url' ] <- "https://www.federalreserve.gov/pubs/oss/oss2/2001/scf2001rw1s.zip"
@@ -159,8 +161,9 @@ lodown_scf <-
 			# sort the replicate weights data frame by the unique identifier as well
 			rw <- rw[ order( rw$yy1 ) , ]
 			
-			# save the five implicates and the replicate weight file as that file name
-			save( imp1 , imp2 , imp3 , imp4 , imp5 , rw , file = catalog[ i , 'output_filename' ] )
+			# save the five implicates and the replicate weights file
+			saveRDS( list( imp1 , imp2 , imp3 , imp4 , imp5 ) , file = catalog[ i , 'output_filename' ] )
+			saveRDS( rw , file = catalog[ i , 'rw_filename' ] )
 			
 			catalog[ i , 'case_count' ] <- nrow( imp1 )
 			

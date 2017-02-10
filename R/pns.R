@@ -24,8 +24,10 @@ get_catalog_pns <-
 						year = this_year ,
 						full_url = paste0( "ftp://ftp.ibge.gov.br/PNS/" , this_year , "/microdados/" , af ) ,
 						output_folder = paste0( output_dir , "/" ) ,
-						long_name = paste0( this_year , " long questionnaire survey design.rda" ) , 
-						all_name = paste0( this_year , " all questionnaire survey design.rda" ) ,
+						long_file = paste0( this_year , " long questionnaire survey.rds" ) , 
+						all_file = paste0( this_year , " all questionnaire survey.rds" ) ,
+						long_design = paste0( this_year , " long questionnaire survey design.rds" ) , 
+						all_design = paste0( this_year , " all questionnaire survey design.rds" ) ,
 						stringsAsFactors = FALSE
 					)
 				)
@@ -163,7 +165,8 @@ lodown_pns <-
 			pes_sel_des_pos <- survey::postStratify( pes_sel_des , ~v00293.y , post_pop )
 
 			# save the long questionnaire survey design
-			save( pes_sel_des_pos , pes_sel , file = paste0( catalog[ i , 'output_folder' ] , catalog[ i , 'long_name' ] ) )
+			saveRDS( pes_sel , file = paste0( catalog[ i , 'output_folder' ] , catalog[ i , 'long_file' ] ) )
+			saveRDS( pes_sel_des_pos , file = paste0( catalog[ i , 'output_folder' ] , catalog[ i , 'long_design' ] ) )
 
 			# final design object for people answering the long questionnaire #
 			# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -192,8 +195,9 @@ lodown_pns <-
 			# post-stratified design
 			pes_all_des_pos <- survey::postStratify( pes_all_des , ~ v00283.y , post_pop_all )
 
-			# save the all-respondent questionnaire survey design
-			save( pes_all_des_pos , x , file = paste0( catalog[ i , 'output_folder' ] , catalog[ i , 'all_name' ] )  )
+			# save the all-respondent questionnaire survey and design
+			saveRDS( x , file = paste0( catalog[ i , 'output_folder' ] , catalog[ i , 'all_file' ] )  )
+			saveRDS( pes_all_des_pos , file = paste0( catalog[ i , 'output_folder' ] , catalog[ i , 'all_design' ] )  )
 
 			# final design object for people answering only short or long questionnaire #
 			# # # # # # # # # # # # # # # # # 

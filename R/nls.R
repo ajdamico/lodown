@@ -85,7 +85,7 @@ lodown_nls <-
 				strpsu <- read.csv( unzipped_files[ grep( '\\.csv' , unzipped_files ) ] )
 				
 				# store the complex sample variables on the local disk
-				save( strpsu , file = paste0( catalog[ i , 'output_folder' ] , "/strpsu.rda" ) )
+				saveRDS( strpsu , file = paste0( catalog[ i , 'output_folder' ] , "/strpsu.rds" ) )
 				
 				# delete the temporary files
 				suppressWarnings( file.remove( tf , unzipped_files ) )
@@ -228,13 +228,13 @@ lodown_nls <-
 							# determine the location of the `.csv` file within the zipped file you've just unarchived
 							csv <- unzipped_files[ grep( '.csv' , unzipped_files , fixed = TRUE ) ]
 
-							# save that zipped file as a data.frame named as the current `option.value`
-							assign( option.value , read.csv( csv ) )
+							# save that zipped file as a data.frame
+							assign( x , read.csv( csv ) )
 
-							# store that `option.value` in the current save-location
-							save( list = option.value , file = paste0( catalog[ i , 'output_folder' ] , "/" , option.value , ".rda" ) )
+							# store in the current save-location
+							saveRDS( x , file = paste0( catalog[ i , 'output_folder' ] , "/" , option.value , ".rds" ) )
 
-							catalog[ i , 'case_count' ] <- nrow( get( option.value ) )
+							catalog[ i , 'case_count' ] <- nrow( x )
 							
 							# delete the temporary files
 							suppressWarnings( file.remove( tf , unzipped_files ) )

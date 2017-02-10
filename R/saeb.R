@@ -140,11 +140,8 @@ lodown_saeb <-
 				# store the `x` data.frame object in sqlite database as well
 				DBI::dbWriteTable( db , tnwy , x )
 				
-				# copy the object `x` over to what it actually should be named
-				assign( table.name , x )
-				
 				# save the current table in the year-specific folder on the local drive
-				save( list = table.name , file = paste0( catalog[ i , 'output_folder' ] , "/" , table.name , ".rda" ) )
+				saveRDS( x , file = paste0( catalog[ i , 'output_folder' ] , "/" , table.name , ".rds" ) )
 
 			}
 

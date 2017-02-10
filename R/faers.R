@@ -106,8 +106,8 @@ lodown_faers <-
 				# determine the tablename (the filename sans extension)
 				tablename <- gsub( "\\.txt$" , "" , tolower( basename( j ) ) )
 
-				# create another character string appending `.rda` to the end
-				rda.filename <- paste0( catalog[ i , 'output_folder' ] , "/" , tablename , ".rda" )
+				# create another character string appending `.rds` to the end
+				rds.filename <- paste0( catalog[ i , 'output_folder' ] , "/" , tablename , ".rds" )
 				
 				# check for missing dollar signs at the end of the first column
 				first.100 <- unlist( lapply( gregexpr( "\\$" , readLines( j , n = 100 ) ) , length ) )
@@ -182,11 +182,8 @@ lodown_faers <-
 				# `lot_num` and `lot_nbr` switch back and forth a lot.  pick one
 				names( x )[ names( x ) == 'lot_num' ] <- 'lot_nbr'
 				
-				# copy `x` over to the table's actual name
-				assign( tablename , x )
-				
-				# save the data.frame object to the rda filename on the local disk
-				save( list = tablename , file = rda.filename )
+				# save the data.frame object to the rds filename on the local disk
+				saveRDS( x , file = rds.filename )
 				
 				catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , nrow( x ) , na.rm = TRUE )
 				
