@@ -137,10 +137,10 @@ get_catalog_nhis <-
 		}
 
 		catalog$output_filename <-
-			paste0( output_dir , "/" , catalog$year , "/" , gsub( "\\.(.*)" , ".rda" , basename( catalog$full_url ) ) )
+			paste0( output_dir , "/" , catalog$year , "/" , gsub( "\\.(.*)" , ".rds" , basename( catalog$full_url ) ) )
 			
 		catalog$sas_script <- 
-			paste0( gsub( "Datasets" , "Program_Code" , dirname( catalog$full_url ) ) , "/" , gsub( "\\.rda" , ".sas" , basename( catalog$output_filename ) ) )
+			paste0( gsub( "Datasets" , "Program_Code" , dirname( catalog$full_url ) ) , "/" , gsub( "\\.rds" , ".sas" , basename( catalog$output_filename ) ) )
 		
 		catalog$imputed_income <- FALSE
 		
@@ -179,7 +179,7 @@ get_catalog_nhis <-
 			}
 					
 			inc_cat$output_filename <-
-				paste0( output_dir , "/" , inc_cat$year , "/" , gsub( "\\.(.*)" , ".rda" , basename( inc_cat$full_url ) ) )
+				paste0( output_dir , "/" , inc_cat$year , "/" , gsub( "\\.(.*)" , ".rds" , basename( inc_cat$full_url ) ) )
 			
 			catalog <- rbind( catalog , inc_cat )
 		}
@@ -225,8 +225,8 @@ lodown_nhis <-
 				
 				catalog[ i , 'case_count' ] <- nrow( ii )
 				
-				# save all five imputed income data frames to a single .rda file #
-				save( list = paste0( "ii" , 1:5 ) , file = catalog[ i , 'output_filename' ] )
+				# save all five imputed income data frames to a single .rds file #
+				saveRDS( list = paste0( "ii" , 1:5 ) , file = catalog[ i , 'output_filename' ] )
 						
 			
 			} else {
@@ -243,7 +243,7 @@ lodown_nhis <-
 				
 				catalog[ i , 'case_count' ] <- nrow( x )
 				
-				save( x , file = catalog[ i , 'output_filename' ] )
+				saveRDS( x , file = catalog[ i , 'output_filename' ] )
 
 			}
 			

@@ -43,7 +43,7 @@ get_catalog_nhanes <-
 		
 		catalog <- rbind( catalog , ayd )
 
-		catalog$output_filename <- paste0( output_dir , "/" , catalog$years , "/" , tolower( gsub( "\\.xpt" , ".rda" , basename( catalog$full_url ) , ignore.case = TRUE ) ) )
+		catalog$output_filename <- paste0( output_dir , "/" , catalog$years , "/" , tolower( gsub( "\\.xpt" , ".rds" , basename( catalog$full_url ) , ignore.case = TRUE ) ) )
 		
 		catalog
 
@@ -77,7 +77,7 @@ lodown_nhanes <-
 			# convert all column names to lowercase
 			names( x ) <- tolower( names( x ) )
 
-			save( x , file = catalog[ i , 'output_filename' ] )
+			saveRDS( x , file = catalog[ i , 'output_filename' ] )
 
 			catalog[ i , 'case_count' ] <- nrow( x )
 			

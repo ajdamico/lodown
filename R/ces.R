@@ -15,7 +15,7 @@ get_catalog_ces <-
 			stringsAsFactors = FALSE
 		)
 		
-	catalog$output_filename <- paste0( output_dir , "/" , catalog$year , "/" , catalog$type , ".rda" )
+	catalog$output_filename <- paste0( output_dir , "/" , catalog$year , "/" , catalog$type , ".rds" )
 
 	catalog
 
@@ -104,8 +104,8 @@ lodown_ces <-
 				
 			}
 				
-			# save the file as an R data file (.rda) immediately
-			save( list = df_names , file = catalog[ i , 'output_filename' ] )
+			# save the file as an R data file (.rds) immediately
+			saveRDS( list = df_names , file = catalog[ i , 'output_filename' ] )
 
 			catalog[ i , 'case_count' ] <- length( newids )
 			

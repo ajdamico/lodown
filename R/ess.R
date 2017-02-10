@@ -117,7 +117,7 @@ get_catalog_ess <-
 		ifelse( 
 			catalog$directory == 'docs' ,
 			paste0( output_dir , "/" , catalog$year , "/docs/" , catalog$file_name ) ,
-			paste0( output_dir , "/" , catalog$year , "/" , gsub( "\\.(.*)" , "" , catalog$file_name ) , ".rda" )
+			paste0( output_dir , "/" , catalog$year , "/" , gsub( "\\.(.*)" , "" , catalog$file_name ) , ".rds" )
 		)
 	
 	catalog$full_url <- paste0( "http://www.europeansocialsurvey.org" , catalog$full_url )
@@ -233,7 +233,7 @@ lodown_ess <-
 
 			catalog[ i , 'case_count' ] <- nrow( x )
 			
-			save( x , file = catalog[ i , 'output_filename' ] )
+			saveRDS( x , file = catalog[ i , 'output_filename' ] )
 
 		}
 		

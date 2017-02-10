@@ -69,7 +69,7 @@ lodown_share <-
 				
 				catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , nrow( x ) , na.rm = TRUE )
 
-				save( x , file = gsub( "\\.dta$" , ".rda" , this_stata ) )
+				saveRDS( x , file = gsub( "\\.dta$" , ".rds" , this_stata ) )
 			
 			}
 				

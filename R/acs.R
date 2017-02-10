@@ -47,7 +47,7 @@ get_catalog_acs <-
 							base_folder = paste0( available_folders[ i ] , "/" ) ,
 							db_tablename = this_tablename ,
 							dbfolder = paste0( output_dir , "/MonetDB" ) ,
-							output_filename = paste0( output_dir , "/" , this_tablename , '.rda' ) ,
+							output_filename = paste0( output_dir , "/" , this_tablename , '.rds' ) ,
 							include_puerto_rico = TRUE ,
 							stringsAsFactors = FALSE
 						)
@@ -415,9 +415,9 @@ lodown_acs <-
 			acs_design$mse <- TRUE
 
 			# save both complex sample survey designs
-			# into a single r data file (.rda) that can now be
+			# into a single r data file (.rds) that can now be
 			# analyzed quicker than anything else.
-			save( acs_design , file = catalog[ i , 'output_filename' ] )
+			saveRDS( acs_design , file = catalog[ i , 'output_filename' ] )
 
 			# add the number of records to the catalog
 			catalog[ i , 'case_count' ] <- nrow( acs_design )

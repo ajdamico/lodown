@@ -158,11 +158,11 @@ lodown_wvs <-
 					names( x ) <- tolower( names( x ) )
 					
 					# determine the filepath to store this data.frame object on the local disk
-					# if it was "thisfile.sav" then make it "yourdirectory/subdirectory/thisfile.rda"
+					# if it was "thisfile.sav" then make it "yourdirectory/subdirectory/thisfile.rds"
 					rfn <- paste0( catalog[ i , 'output_folder' ] , "/" , gsub( tools::file_ext( this_fn ) , "rda" , this_fn ) )
 					
 					# store the data.frame object on the local disk
-					save( x , file = rfn )
+					saveRDS( x , file = rfn )
 
 					catalog[ i , 'case_count' ] <- nrow( x )
 					

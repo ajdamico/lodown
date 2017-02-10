@@ -45,7 +45,7 @@ get_catalog_cps_basic <-
 				stringsAsFactors = FALSE
 			)
 
-		catalog$output_filename = paste0( output_dir , "/" , catalog$year , "_" , stringr::str_pad( catalog$month , 2 , pad = "0" ) , "_cps_basic.rda" )
+		catalog$output_filename = paste0( output_dir , "/" , catalog$year , "_" , stringr::str_pad( catalog$month , 2 , pad = "0" ) , "_cps_basic.rds" )
 		
 		rownames( catalog ) <- NULL
 			
@@ -76,7 +76,7 @@ lodown_cps_basic <-
 
 			catalog[ i , 'case_count' ] <- nrow( x )
 			
-			save( x , file = catalog[ i , 'output_filename' ] )
+			saveRDS( x , file = catalog[ i , 'output_filename' ] )
 
 			# delete the temporary files
 			suppressWarnings( file.remove( tf , unzipped_files ) )

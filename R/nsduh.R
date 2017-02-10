@@ -5,7 +5,7 @@ get_catalog_nsduh <-
 	
 	catalog$unzip_folder <- paste0( output_dir , "/" , catalog$temporalCoverage , ifelse( catalog$dataset_name %in% c( "Part A" , "Part B" ) , paste0( "/" , tolower( catalog$dataset_name ) ) , "" ) )
 
-	catalog$output_filename <- paste0( output_dir , "/" , catalog$temporalCoverage , " " , ifelse( catalog$dataset_name %in% c( "Part A" , "Part B" ) , tolower( catalog$dataset_name ) , "main" ) , ".rda" )
+	catalog$output_filename <- paste0( output_dir , "/" , catalog$temporalCoverage , " " , ifelse( catalog$dataset_name %in% c( "Part A" , "Part B" ) , tolower( catalog$dataset_name ) , "main" ) , ".rds" )
 
 	catalog
 
@@ -30,7 +30,7 @@ lodown_nsduh <-
 			
 			catalog[ i , 'case_count' ] <- nrow( x )
 			
-			save( x , file = catalog[ i , 'output_filename' ] )
+			saveRDS( x , file = catalog[ i , 'output_filename' ] )
 			
 			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , catalog[ i , 'output_filename' ] , "'\r\n\n" ) )
 		

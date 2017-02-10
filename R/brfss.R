@@ -38,7 +38,7 @@ get_catalog_brfss <-
 				weight = c( rep( 'x_finalwt' , 18 ) , rep( 'xfinalwt' , 9 ) , rep( 'xllcpwt' , length( available_years ) - 27 ) ) ,
 				psu = c( rep( 'x_psu' , 18 ) , rep( 'xpsu' , length( available_years ) - 18 ) ) ,
 				strata = c( rep( 'x_ststr' , 18 ) , rep( 'xststr' , length( available_years ) - 18 ) ) ,
-				design_filename = paste0( output_dir , "/" , available_years , " design.rda" ) ,
+				design_filename = paste0( output_dir , "/" , available_years , " design.rds" ) ,
 				stringsAsFactors = FALSE
 			)
 
@@ -266,9 +266,9 @@ lodown_brfss <-
 				)
 
 			# save the complex sample survey design
-			# into a single r data file (.rda) that can now be
+			# into a single r data file (.rds) that can now be
 			# analyzed quicker than anything else.
-			save( brfss_design , file = catalog[ i , 'design_filename' ] )
+			saveRDS( brfss_design , file = catalog[ i , 'design_filename' ] )
 
 			# add the number of records to the catalog
 			catalog[ i , 'case_count' ] <- nrow( brfss_design )

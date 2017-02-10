@@ -46,7 +46,7 @@ get_catalog_nsch <-
 	catalog$output_filename <- 
 		paste0( 
 			output_dir , "/" , 
-			catalog$year , " " , ifelse( catalog$virgin_islands , "vi" , "main" ) ,	".rda" 
+			catalog$year , " " , ifelse( catalog$virgin_islands , "vi" , "main" ) ,	".rds" 
 		)
 
 	catalog
@@ -129,7 +129,7 @@ lodown_nsch <-
 			catalog[ i , 'case_count' ] <- nrow( y )
 			
 			# save implicates 1 - 5 to the local working directory for faster loading later
-			save( list = paste0( 'imp' , 1:5 ) , file = catalog[ i , 'output_filename' ] )
+			saveRDS( list = paste0( 'imp' , 1:5 ) , file = catalog[ i , 'output_filename' ] )
 
 			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , catalog[ i , 'output_filename' ] , "'\r\n\n" ) )
 

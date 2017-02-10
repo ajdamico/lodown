@@ -14,7 +14,7 @@ get_catalog_pisa <-
 				year = 2015 ,
 				full_url = paste0( "http://vs-web-fs-1.oecd.org/pisa/PUF_SAS_COMBINED_" , files_2015 , ".zip" ) ,
 				sas_ri = NA ,
-				design = c( paste0( output_dir , "/2015 " , "cmb_stu_qqq" , " design.rda" ) , rep( NA , 5 ) ) ,
+				design = c( paste0( output_dir , "/2015 " , "cmb_stu_qqq" , " design.rds" ) , rep( NA , 5 ) ) ,
 				stringsAsFactors = FALSE
 			)
 
@@ -30,7 +30,7 @@ get_catalog_pisa <-
 				year = 2012 ,
 				full_url = paste0( http.pre , files_2012 , ".zip" ) ,
 				sas_ri = paste0( http.pre , sas_2012 , ".sas" ) ,
-				design = c( paste0( output_dir , "/2012 " , "int_stu12_dec03" , " design.rda" ) , rep( NA , 4 ) ) ,
+				design = c( paste0( output_dir , "/2012 " , "int_stu12_dec03" , " design.rds" ) , rep( NA , 4 ) ) ,
 				stringsAsFactors = FALSE
 			)
 			
@@ -45,7 +45,7 @@ get_catalog_pisa <-
 				year = 2009 ,
 				full_url = paste0( http.pre , files_2009 , ".zip" ) ,
 				sas_ri = paste0( http.pre , sas_2009 , ".sas" ) ,
-				design = c( paste0( output_dir , "/2009 " , "int_stq09_dec11" , " design.rda" ) , rep( NA , 4 ) ) ,
+				design = c( paste0( output_dir , "/2009 " , "int_stq09_dec11" , " design.rds" ) , rep( NA , 4 ) ) ,
 				stringsAsFactors = FALSE
 			)
 			
@@ -61,7 +61,7 @@ get_catalog_pisa <-
 				year = 2006 ,
 				full_url = paste0( http.pre , files_2006 , ".zip" ) ,
 				sas_ri = paste0( http.pre , sas_2006 , ".sas" ) ,
-				design = c( paste0( output_dir , "/2006 " , "int_stu06_dec07" , " design.rda" ) , rep( NA , 4 ) ) ,
+				design = c( paste0( output_dir , "/2006 " , "int_stu06_dec07" , " design.rds" ) , rep( NA , 4 ) ) ,
 				stringsAsFactors = FALSE
 			)
 			
@@ -77,7 +77,7 @@ get_catalog_pisa <-
 				year = 2003 ,
 				full_url = paste0( http.pre , files_2003 , ".zip" ) ,
 				sas_ri = paste0( http.pre , sas_2003 , ".sas" ) ,
-				design = c( NA , paste0( output_dir , "/2003 " , "int_cogn_2003" , " design.rda" )  , NA ) ,
+				design = c( NA , paste0( output_dir , "/2003 " , "int_cogn_2003" , " design.rds" )  , NA ) ,
 				stringsAsFactors = FALSE
 			)
 			
@@ -93,7 +93,7 @@ get_catalog_pisa <-
 				year = 2000 ,
 				full_url = paste0( http.pre , files_2000 , ".zip" ) ,
 				sas_ri = paste0( http.pre , sas_2000 , ".sas" ) ,
-				design = c( NA , NA , paste0( output_dir , "/2000 " , c( "instud_math" , "intstud_read" , "intstud_scie" ) , " design.rda" ) ) ,
+				design = c( NA , NA , paste0( output_dir , "/2000 " , c( "instud_math" , "intstud_read" , "intstud_scie" ) , " design.rds" ) ) ,
 				stringsAsFactors = FALSE
 			)
 			
@@ -1004,7 +1004,7 @@ pisa_construct.pisa.survey.designs <-
 		this_design$mse <- TRUE
 		
 		# save all of the database design objects as r data files
-		save( this_design , file = save_name )
+		saveRDS( this_design , file = save_name )
 
 		save_name
 	}

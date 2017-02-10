@@ -68,7 +68,7 @@ get_catalog_pme <-
 				year = substr( all_ym , 1 , 4 ) ,
 				month = substr( all_ym , 6 , 7 ) ,
 				full_url = all_zipfiles ,
-				output_filename = paste0( output_dir , "/" , 'pme ' , all_ym , '.rda' ) ,
+				output_filename = paste0( output_dir , "/" , 'pme ' , all_ym , '.rds' ) ,
 				stringsAsFactors = FALSE
 			)
 
@@ -105,7 +105,7 @@ lodown_pme <-
 			
 			catalog[ i , 'case_count' ] <- nrow( x )
 			
-			save( x , file = catalog[ i , 'output_filename' ] )
+			saveRDS( x , file = catalog[ i , 'output_filename' ] )
 
 			# delete the temporary files
 			file.remove( tf , unzipped_files )

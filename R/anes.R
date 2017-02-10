@@ -41,7 +41,7 @@ get_catalog_anes <-
 		
 		catalog$full_url <- gsub( "../" , "http://www.electionstudies.org/studypages/" , catalog$full_url , fixed = TRUE )
 
-		catalog$output_filename <- paste0( output_dir , "/" , catalog$directory , "/" , gsub( "(dta|sav)(.*)zip" , "" , basename( catalog$full_url ) ) , ".rda" )
+		catalog$output_filename <- paste0( output_dir , "/" , catalog$directory , "/" , gsub( "(dta|sav)(.*)zip" , "" , basename( catalog$full_url ) ) , ".rds" )
 		
 		catalog
 
@@ -98,7 +98,7 @@ lodown_anes <-
 			# convert all column names to lowercase
 			names( x ) <- tolower( names( x ) )
 
-			save( x , file = catalog[ i , 'output_filename' ] )
+			saveRDS( x , file = catalog[ i , 'output_filename' ] )
 			
 			# add the number of records to the catalog
 			catalog[ i , 'case_count' ] <- nrow( x )

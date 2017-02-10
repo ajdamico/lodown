@@ -170,7 +170,7 @@ lodown_dhs <-
 			unzipped_files <- unzip_warn_fail( catalog[ i , 'output_filename' ] , exdir = catalog[ i , 'output_folder' ] )
 
 			# figure out the correct location for the rda
-			rda_name <- tolower( paste0( gsub( "\\.zip" , ".rda" , catalog[ i , 'output_filename' ] ) ) )
+			rda_name <- tolower( paste0( gsub( "\\.zip" , ".rds" , catalog[ i , 'output_filename' ] ) ) )
 			
 			# and now, if there's a stata file, import it!
 			if ( any( st <- grepl( "\\.dta$" , tolower( unzipped_files ) ) ) ){
@@ -187,7 +187,7 @@ lodown_dhs <-
 				catalog[ i , 'case_count' ] <- nrow( x )
 				
 				# save the file on the local disk, within the appropriate country-survey filepath
-				save( x , file = rda_name )
+				saveRDS( x , file = rda_name )
 				
 			}
 
@@ -210,7 +210,7 @@ lodown_dhs <-
 					catalog[ i , 'case_count' ] <- nrow( x )
 
 					# save the file on the local disk, within the appropriate country-survey filepath
-					save( x , file = rda_name )
+					saveRDS( x , file = rda_name )
 					
 				}
 			}

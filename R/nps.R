@@ -48,7 +48,7 @@ get_catalog_nps <-
 			data.frame(
 				year = years ,
 				full_url = full_url ,
-				output_filename = paste0( output_dir , "/" , years , "/" , service_names[ service_ids ] , ".rda" ) ,
+				output_filename = paste0( output_dir , "/" , years , "/" , service_names[ service_ids ] , ".rds" ) ,
 				stringsAsFactors = FALSE
 			)
 
@@ -82,7 +82,7 @@ lodown_nps <-
 			# add a column of all ones
 			x$one <- 1
 			
-			save( x , file = catalog[ i , 'output_filename' ] )
+			saveRDS( x , file = catalog[ i , 'output_filename' ] )
 
 			catalog[ i , 'case_count' ] <- nrow( x )
 			

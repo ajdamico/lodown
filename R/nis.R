@@ -45,7 +45,7 @@ get_catalog_nis <-
 
 	catalog$sas_script <- ifelse( sas_scripts == 'character(0)' , NA , sas_scripts )
 
-	catalog$output_filename <- paste0( output_dir , "/" , catalog$year , " " , catalog$directory , ".rda" )
+	catalog$output_filename <- paste0( output_dir , "/" , catalog$year , " " , catalog$directory , ".rds" )
 
 	catalog
 
@@ -134,7 +134,7 @@ lodown_nis <-
 
 	  catalog[ i , 'case_count' ] <- nrow( x )
 	  
-      save( x , file = catalog[ i , 'output_filename' ] )
+      saveRDS( x , file = catalog[ i , 'output_filename' ] )
 
       # delete the temporary files
       file.remove( tf , paste0( tempdir() , "/" , basename( unzipped_file ) ) )

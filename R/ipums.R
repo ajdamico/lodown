@@ -37,7 +37,7 @@ get_catalog_ipums <-
 		
 		catalog$db_tablename <- ifelse( is.na( catalog$full_url ) , NA , gsub( "( +)" , "_" , stringr::str_trim( gsub( "[^a-z0-9]" , " " , tolower( catalog$Description ) ) ) ) )
 		
-		catalog$output_filename <- ifelse( is.na( catalog$full_url ) , NA , paste0( output_dir , '/' , catalog$db_tablename , '.rda' ) )
+		catalog$output_filename <- ifelse( is.na( catalog$full_url ) , NA , paste0( output_dir , '/' , catalog$db_tablename , '.rds' ) )
 		
 		catalog$dbfolder <- ifelse( is.na( catalog$full_url ) , NA , paste0( output_dir , "/MonetDB" ) )
 
@@ -75,7 +75,7 @@ lodown_ipums <-
 				
 			} else {
 
-				csv_filename <- gsub( "\\.rda" , ".csv" , catalog[ i , 'output_filename' ] )
+				csv_filename <- gsub( "\\.rds" , ".csv" , catalog[ i , 'output_filename' ] )
 
 				# download the actual file
 				httr::GET( catalog[ i , 'full_url' ] , httr::write_disk( tf , overwrite = TRUE ) , httr::set_cookies( .cookies = this_cookie ) , httr::progress() )
@@ -109,7 +109,7 @@ lodown_ipums <-
 					# read in as a data.frame
 					x <- data.frame( readr::read_csv( csv_filename , col_names = cn , col_types = paste0( ifelse( csv_file_structure == 'character' , 'c' , 'd' ) , collapse = "" ) , skip = 1 ) )
 					
-					save( x , file = catalog[ i , 'output_filename' ] )
+					saveRDS( x , file = catalog[ i , 'output_filename' ] )
 				
 					catalog[ i , 'case_count' ] <- nrow( x )
 				

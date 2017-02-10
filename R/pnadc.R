@@ -43,7 +43,7 @@ get_catalog_pnadc <-
 
 		catalog$full_url <- paste0( year.ftp , catalog$year , "/" , zip.filenames )
 		
-		catalog$output_filename <- paste0( output_dir , '/pnadc ' , catalog$year , ' ' , catalog$quarter , '.rda' )
+		catalog$output_filename <- paste0( output_dir , '/pnadc ' , catalog$year , ' ' , catalog$quarter , '.rds' )
 		
 		catalog
 
@@ -103,7 +103,7 @@ lodown_pnadc <-
 			# convert all column names to lowercase
 			names( x ) <- tolower( names( x ) )
 
-			save( x , file = catalog[ i , 'output_filename' ] )
+			saveRDS( x , file = catalog[ i , 'output_filename' ] )
 
 			catalog[ i , 'case_count' ] <- nrow( x )
 			

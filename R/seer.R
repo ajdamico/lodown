@@ -44,7 +44,7 @@ lodown_seer <-
 
 
 		# # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-		# identify all files to import into r data files (.rda) #
+		# identify all files to import into r data files (.rds) #
 
 		# create a character vector matching the different cancer file name identifiers
 		words.to.match <- c( "BREAST" , "COLRECT" , "DIGOTHR" , "FEMGEN" , "LYMYLEUK" , "MALEGEN" , "RESPIR" , "URINARY" , "OTHER" )
@@ -97,7 +97,7 @@ lodown_seer <-
 			# by removing the downloaded zipped file's folderpath
 			# and substituting `txt` with `rda`
 			# and converting the file location to lowercase
-			sfl <- gsub( "(.*)_TEXTDATA/" , catalog$output_folder , gsub( "\\.txt$" , ".rda" , fp , ignore.case = TRUE ) )
+			sfl <- gsub( "(.*)_TEXTDATA/" , catalog$output_folder , gsub( "\\.txt$" , ".rds" , fp , ignore.case = TRUE ) )
 			
 			# convert all column names to lowercase
 			# in the current data.frame object `x`
@@ -111,7 +111,7 @@ lodown_seer <-
 			catalog$case_count <- max( catalog$case_count , nrow( x ) , na.rm = TRUE )
 			
 			# save the data.frame to the save-file-location
-			save( x , file = sfl )
+			saveRDS( x , file = sfl )
 
 			cat( paste0( data_name , " individual file " , which( fp == ind_file_matches ) , " of " , length( ind_file_matches ) , " stored at '" , sfl , "'\r\n\n" ) )
 
@@ -132,7 +132,7 @@ lodown_seer <-
 			# by removing the downloaded zipped file's folderpath
 			# and substituting `txt` with `rda`
 			# and converting the file location to lowercase
-			sfl <- gsub( "(.*)_TEXTDATA/" , catalog$output_folder , gsub( "\\.txt$" , ".rda" , fp , ignore.case = TRUE ) )
+			sfl <- gsub( "(.*)_TEXTDATA/" , catalog$output_folder , gsub( "\\.txt$" , ".rds" , fp , ignore.case = TRUE ) )
 				
 			# convert all column names to lowercase
 			# in the current data.frame object `x`
@@ -146,7 +146,7 @@ lodown_seer <-
 			catalog$case_count <- max( catalog$case_count , nrow( x ) , na.rm = TRUE )
 			
 			# save the data.frame to the save-file-location
-			save( x , file = sfl )
+			saveRDS( x , file = sfl )
 
 			cat( paste0( data_name , " population file " , which( fp == pop_file_matches ) , " of " , length( pop_file_matches ) , " stored at '" , sfl , "'\r\n\n" ) )
 

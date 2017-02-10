@@ -21,7 +21,7 @@ get_catalog_nbs <-
 					data.frame(
 						this_round = round_number ,
 						full_url = this_csv ,
-						output_filename = paste0( output_dir , "/" , "round " , stringr::str_pad( round_number , 2 , pad = "0" ) , ".rda" ) ,
+						output_filename = paste0( output_dir , "/" , "round " , stringr::str_pad( round_number , 2 , pad = "0" ) , ".rds" ) ,
 						stringsAsFactors = FALSE
 					)
 				)
@@ -58,7 +58,7 @@ lodown_nbs <-
 
 			catalog[ i , 'case_count' ] <- nrow( x )
 			
-			save( x , file = catalog[ i , 'output_filename' ] )
+			saveRDS( x , file = catalog[ i , 'output_filename' ] )
 
 			# delete the temporary files
 			suppressWarnings( file.remove( tf ) )

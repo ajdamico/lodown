@@ -32,7 +32,7 @@ get_catalog_chis <-
 		
 		catalog[ catalog$year == 2014 & catalog$type == 'teen' , 'full_url' ] <- gsub( 'teen' , 'adolescent' , catalog[ catalog$year == 2014 & catalog$type == 'teen' , 'full_url' ] )
 		
-		catalog$output_filename <- paste0( output_dir , "/" , catalog$year , " " , catalog$type , ".rda" )
+		catalog$output_filename <- paste0( output_dir , "/" , catalog$year , " " , catalog$type , ".rds" )
 		
 		catalog
 
@@ -69,7 +69,7 @@ lodown_chis <-
 			
 			for( this_dta in dta_file ){
 				
-				if( grepl( "f\\.dta" , this_dta , ignore.case = TRUE ) ) savename <- gsub( "\\.rda" , "f.rda" , catalog[ i , 'output_filename' ] ) else savename <- catalog[ i , 'output_filename' ]
+				if( grepl( "f\\.dta" , this_dta , ignore.case = TRUE ) ) savename <- gsub( "\\.rds" , "f.rds" , catalog[ i , 'output_filename' ] ) else savename <- catalog[ i , 'output_filename' ]
 				
 				if( file.exists( savename ) ) stop( "rda file already exists. delete the contents of your output_dir= and try again" )
 				
@@ -81,8 +81,8 @@ lodown_chis <-
 				
 				if( !grepl( "f\\.dta" , this_dta , ignore.case = TRUE ) ) catalog[ i , 'case_count' ] <- nrow( x )
 				
-				# store the `data.frame` object as an .rda file on the local disk
-				save( x , file = savename )
+				# store the `data.frame` object as an .rds file on the local disk
+				saveRDS( x , file = savename )
 				
 			}
 				

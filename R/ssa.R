@@ -84,7 +84,7 @@ lodown_ssa <-
 
 				catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , nrow( x ) , na.rm = TRUE )
 				
-				save( x , file = paste0( catalog[ i , 'output_folder' ] , "/" , gsub( "\\.sas7bdat" , ".rda" , basename( this_file ) , ignore.case = TRUE ) ) )
+				saveRDS( x , file = paste0( catalog[ i , 'output_folder' ] , "/" , gsub( "\\.sas7bdat" , ".rds" , basename( this_file ) , ignore.case = TRUE ) ) )
 
 			}
 			

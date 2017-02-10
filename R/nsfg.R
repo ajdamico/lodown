@@ -53,7 +53,7 @@ get_catalog_nsfg <-
 		
 		catalog$beginline <- 1
 
-		catalog$output_filename <- paste0( output_dir , "/" , gsub( "\\.dat$" , ".rda" , basename( catalog$full_url ) ) )
+		catalog$output_filename <- paste0( output_dir , "/" , gsub( "\\.dat$" , ".rds" , basename( catalog$full_url ) ) )
 		
 		catalog <-
 			rbind(
@@ -62,7 +62,7 @@ get_catalog_nsfg <-
 					full_url = c( "1976NSFGData.dat" , "1976NSFGData.dat" , "1982NSFGData.dat" , "1982NSFGData.dat" ) ,
 					sas_ri = c( "1976PregSetup.sas" , "1976FemRespSetup.sas" , "1982PregSetup.sas" , "1982FemRespSetup.sas" ) ,
 					beginline = c( 194 , 7515 , 1567 , 1 ) ,
-					output_filename = paste0( output_dir , "/" , c( "1976FemPreg.rda" , "1976FemResp.rda" , "1982FemPreg.rda" , "1982FemResp.rda" ) )
+					output_filename = paste0( output_dir , "/" , c( "1976FemPreg.rds" , "1976FemResp.rds" , "1982FemPreg.rds" , "1982FemResp.rds" ) )
 				)
 			)
 			
@@ -252,7 +252,7 @@ lodown_nsfg <-
 			catalog[ i , 'case_count' ] <- nrow( x )
 			
 			# save this data.frame object to the local disk
-			save( x , file = catalog[ i , "output_filename" ] )
+			saveRDS( x , file = catalog[ i , "output_filename" ] )
 			
 			# delete the temporary files
 			suppressWarnings( file.remove( tf ) )

@@ -26,7 +26,7 @@ get_catalog_nhts <-
 				stringsAsFactors = FALSE
 			)
 
-		catalog$output_filename <- paste0( output_dir , "/" , catalog$year , " designs.rda" )
+		catalog$output_filename <- paste0( output_dir , "/" , catalog$year , " designs.rds" )
 
 		catalog <- catalog[ !( catalog$year >= 2009 & grepl( "tripchaining\\.zip" , basename( catalog$full_url ) , ignore.case = TRUE ) ) , ]
 			
@@ -431,11 +431,11 @@ lodown_nhts <-
 				# done.  phew.  save all the objects to the current working directory
 				if ( catalog[ i , 'year' ] == 2001 ){
 
-					save( nhts.ldt.design , nhts.day.design , nhts.per.design , nhts.hh.design , file = catalog[ i , 'output_filename' ] )
+					saveRDS( nhts.ldt.design , nhts.day.design , nhts.per.design , nhts.hh.design , file = catalog[ i , 'output_filename' ] )
 					
 				} else {
 				
-					save( nhts.day.design , nhts.per.design , nhts.hh.design , file = catalog[ i , 'output_filename' ] )
+					saveRDS( nhts.day.design , nhts.per.design , nhts.hh.design , file = catalog[ i , 'output_filename' ] )
 					
 				}
 				

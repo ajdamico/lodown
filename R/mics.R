@@ -70,7 +70,7 @@ lodown_mics <-
 
 				catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , nrow( x ) , na.rm = TRUE )
 				
-				save( x , file = paste0( catalog[ i , 'output_folder' ] , "/" , gsub( "\\.sav" , ".rda" , basename( this_sav ) , ignore.case = TRUE ) ) )
+				saveRDS( x , file = paste0( catalog[ i , 'output_folder' ] , "/" , gsub( "\\.sav" , ".rds" , basename( this_sav ) , ignore.case = TRUE ) ) )
 				
 			}
 

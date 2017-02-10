@@ -90,7 +90,7 @@ get_catalog_nychvs <-
 						full_url = census_url ,
 						sas_ri = sas_script ,
 						beginline = beginline ,
-						output_filename = paste0( output_dir , "/" , year , "/" , filetype , ".rda" ) ,
+						output_filename = paste0( output_dir , "/" , year , "/" , filetype , ".rds" ) ,
 						stringsAsFactors = FALSE
 					)
 
@@ -139,7 +139,7 @@ lodown_nychvs <-
 
 			catalog[ i , 'case_count' ] <- nrow( x )
 			
-			save( x , file = catalog[ i , 'output_filename' ] )
+			saveRDS( x , file = catalog[ i , 'output_filename' ] )
 
 			# delete the temporary files
 			suppressWarnings( file.remove( tf ) )

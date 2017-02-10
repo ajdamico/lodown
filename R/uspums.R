@@ -48,7 +48,7 @@ get_catalog_uspums <-
 		
 		catalog$dbfolder <- paste0( output_dir , "/MonetDB" )
 		
-		catalog$design <- paste0( output_dir , '/pums_' , catalog$year , '_' , catalog$percent , '_m.rda' )
+		catalog$design <- paste0( output_dir , '/pums_' , catalog$year , '_' , catalog$percent , '_m.rds' )
 		
 		catalog$merged_tablename <- paste0( 'pums_' , catalog$year , '_' , catalog$percent , '_m' )
 		catalog$household_tablename <- paste0( 'pums_' , catalog$year , '_' , catalog$percent , '_h' )
@@ -302,7 +302,7 @@ lodown_uspums <-
 				)
 
 			# save the monetdb-backed complex sample survey design object to the local disk		
-			save( this_design , file = unique_designs[ i , 'design' ] )
+			saveRDS( this_design , file = unique_designs[ i , 'design' ] )
 			
 			catalog[ catalog$design == unique_designs[ i , 'design' ] , 'case_count' ] <- nrow( this_design )
 			

@@ -30,7 +30,7 @@ get_catalog_yrbss <-
 			)
 		}
 		
-		catalog$output_filename <- paste0( output_dir , "/" , catalog$year , " main.rda" )
+		catalog$output_filename <- paste0( output_dir , "/" , catalog$year , " main.rds" )
 			
 		catalog
 
@@ -149,7 +149,7 @@ lodown_yrbss <-
 			catalog[ i , 'case_count' ] <- nrow( x )
 			
 			# save the current `x` data.frame to the local disk
-			save( x , file = catalog[ i , "output_filename" ] )
+			saveRDS( x , file = catalog[ i , "output_filename" ] )
 
 			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , catalog[ i , 'output_filename' ] , "'\r\n\n" ) )
 

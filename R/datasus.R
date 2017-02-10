@@ -106,7 +106,7 @@ lodown_datasus <-
 
         catalog[ i , 'case_count' ] <- nrow( x )
 
-        save( x , file = catalog[ i , 'output_filename' ] )
+        saveRDS( x , file = catalog[ i , 'output_filename' ] )
 
         these_cols <- sapply( x , class )
 
@@ -163,7 +163,7 @@ lodown_datasus <-
             x <- x[ sort( names( x ) ) ]
 
             # re-save the file
-            save( x , file = this_file )
+            saveRDS( x , file = this_file )
 
             # append the file to the database
             DBI::dbWriteTable( db , catalog[ i , 'db_tablename' ] , x , append = TRUE , row.names = FALSE )

@@ -19,7 +19,7 @@ get_catalog_gss <-
 		
 		catalog <-
 			data.frame(
-				output_filename = paste0( output_dir , "/" , zip_text , ".rda" ) ,
+				output_filename = paste0( output_dir , "/" , zip_text , ".rds" ) ,
 				full_url = paste0( "http://gss.norc.org/" , zip_refs ) ,
 				stringsAsFactors = FALSE
 			)
@@ -50,7 +50,7 @@ lodown_gss <-
 
 			catalog[ i , 'case_count' ] <- nrow( x )
 			
-			save( x , file = catalog[ i , 'output_filename' ] )
+			saveRDS( x , file = catalog[ i , 'output_filename' ] )
 
 			# delete the temporary files
 			suppressWarnings( file.remove( tf , unzipped_files ) )

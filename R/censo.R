@@ -25,9 +25,9 @@ get_catalog_censo <-
 					year = 2010 ,
 					db_table_prefix = tolower( gsub( ".zip" , "10" , files_to_download_2010 , ignore.case = TRUE ) ) ,
 					dbfolder = paste0( output_dir , "/MonetDB" ) ,
-					pes_design = paste0( output_dir , "/pes 2010 design.rda" ) ,
+					pes_design = paste0( output_dir , "/pes 2010 design.rds" ) ,
 					pes_sas = system.file("extdata", "censo/SASinputPes.txt", package = "lodown") ,
-					dom_design = paste0( output_dir , "/dom 2010 design.rda" ) ,
+					dom_design = paste0( output_dir , "/dom 2010 design.rds" ) ,
 					dom_sas = system.file("extdata", "censo/SASinputDom.txt", package = "lodown") ,
 					fam_design = NA ,
 					fam_sas = NA ,
@@ -67,11 +67,11 @@ get_catalog_censo <-
 					year = 2000 ,
 					db_table_prefix = tolower( gsub( ".zip" , "00" , files_to_download_2000 , ignore.case = TRUE ) ) ,
 					dbfolder = paste0( output_dir , "/MonetDB" ) ,
-					pes_design = paste0( output_dir , "/pes 2000 design.rda" ) ,
+					pes_design = paste0( output_dir , "/pes 2000 design.rds" ) ,
 					pes_sas = system.file("extdata", "censo/LE_PESSOAS.sas", package = "lodown") ,
-					dom_design = paste0( output_dir , "/dom 2000 design.rda" ) ,
+					dom_design = paste0( output_dir , "/dom 2000 design.rds" ) ,
 					dom_sas = system.file("extdata", "censo/LE_DOMIC.sas", package = "lodown") ,
-					fam_design = paste0( output_dir , "/fam 2000 design.rda" ) ,
+					fam_design = paste0( output_dir , "/fam 2000 design.rds" ) ,
 					fam_sas = system.file("extdata", "censo/LE_FAMILIAS.sas", package = "lodown") ,
 					dom_ranc = 170 ,
 					pes_ranc = 390 ,
@@ -449,7 +449,7 @@ lodown_censo <-
 					dbname = unique_designs[ i , 'dbfolder' ]
 				)
 
-			save( this_design , file = unique_designs[ i , 'design' ] )
+			saveRDS( this_design , file = unique_designs[ i , 'design' ] )
 			
 			# disconnect from the current monet database
 			DBI::dbDisconnect( db , shutdown = TRUE )

@@ -56,7 +56,7 @@ lodown_ncvs <-
 				
 				names( x ) <- tolower( names( x ) )
 				
-				save( x , file = catalog[ i , 'output_filename' ] )
+				saveRDS( x , file = catalog[ i , 'output_filename' ] )
 				
 				catalog[ i , 'case_count' ] <- nrow( x )
 				
