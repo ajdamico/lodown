@@ -641,7 +641,7 @@ lodown_cps_asec <-
 					paste0( 
 					"http://www.census.gov/housing/povmeas/spmresearch/spmresearch" , 
 					floor( catalog[ i , 'year' ] - 1 ) , 
-					if ( catalog[ i , 'year' ] == 2014.38 ) "_redes" else if ( catalog[ i , 'year' ] >= 2014 ) "" else "new" ,
+					if ( catalog[ i , 'year' ] == 2014.38 ) "_redes" else if ( catalog[ i , 'year' ] >= 2015 ) "" else "new" ,
 					".sas7bdat" 
 				)
 				
