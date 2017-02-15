@@ -560,7 +560,7 @@ lodown <-
 
 		cat( paste0( data_name , " local download completed\r\n\n" ) )
 
-		catalog
+		invisible( catalog )
 
 	}
 
