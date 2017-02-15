@@ -22,7 +22,7 @@ get_catalog_nhanes <-
 
 		this_table[ c( 'full_url' , 'doc_url' ) ] <- sapply( this_table[ c( 'full_url' , 'doc_url' ) ] , function( w ) ifelse( is.na( w ) , NA , paste0( "https://wwwn.cdc.gov" , w ) ) )
 		
-		catalog <- this_table[ this_table$file_name != 'RDC Only' & this_table$date_published != 'Withdrawn' , ]
+		catalog <- this_table[ this_table$file_name != 'RDC Only' & this_table$date_published != 'Withdrawn' & this_table$full_url != "https://wwwn.cdc.gov#" , ]
 
 		# one all years doc hardcode
 		ayd <- catalog[ catalog$full_url == "https://wwwn.cdc.gov/Nchs/Nhanes/Dxx/dxa.aspx" , ]
