@@ -229,7 +229,7 @@ lodown_nls <-
 							csv <- unzipped_files[ grep( '.csv' , unzipped_files , fixed = TRUE ) ]
 
 							# save that zipped file as a data.frame
-							assign( x , read.csv( csv ) )
+							assign( "x" , read.csv( csv ) )
 
 							# store in the current save-location
 							saveRDS( x , file = paste0( catalog[ i , 'output_folder' ] , "/" , option.value , ".rds" ) )
