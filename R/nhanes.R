@@ -25,21 +25,21 @@ get_catalog_nhanes <-
 		catalog <- this_table[ this_table$file_name != 'RDC Only' & this_table$date_published != 'Withdrawn' & this_table$full_url != "https://wwwn.cdc.gov#" , ]
 
 		# one all years doc hardcode
-		ayd <- catalog[ catalog$full_url == "https://wwwn.cdc.gov/Nchs/Nhanes/Dxx/dxa.aspx" , ]
+		ayd <- catalog[ tolower( catalog$full_url ) == "https://wwwn.cdc.gov/nchs/nhanes/dxa/dxa.aspx" , ]
 		
 		ayd$years <- ayd$full_url <- ayd$doc_url <- NULL
 		
 		this_ayd <-
 			data.frame(
 				years = c( "2005-2006" , "2003-2004" , "2001-2002" , "1999-2000" ) ,
-				full_url = paste0( "https://wwwn.cdc.gov/Nchs/Nhanes/Dxx/dxx" , c( "_d" , "_c" , "_b" , "" ) , ".xpt" ) ,
+				full_url = paste0( "https://wwwn.cdc.gov/Nchs/Data/Nhanes/Dxa/dxx" , c( "_d" , "_c" , "_b" , "" ) , ".xpt" ) ,
 				doc_url = paste0( "https://wwwn.cdc.gov/Nchs/Nhanes/2005-2006/DXX_D.htm" , "https://wwwn.cdc.gov/Nchs/Data/Nhanes/Dxa/dxx_c.pdf" , "https://wwwn.cdc.gov/Nchs/Data/Nhanes/Dxa/dxx_b.pdf" , "https://wwwn.cdc.gov/Nchs/Data/Nhanes/Dxa/dxx.pdf" ) ,
 				stringsAsFactors = FALSE
 			)
 		
 		ayd <- merge( ayd , this_ayd )
 		
-		catalog <- catalog[ catalog$full_url != "https://wwwn.cdc.gov/Nchs/Nhanes/Dxx/dxa.aspx" , ]
+		catalog <- catalog[ tolower( catalog$full_url ) != "https://wwwn.cdc.gov/nchs/nhanes/dxa/dxa.aspx" , ]
 		
 		catalog <- rbind( catalog , ayd )
 
