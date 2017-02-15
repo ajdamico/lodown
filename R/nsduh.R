@@ -24,7 +24,7 @@ lodown_nsduh <-
 			
 			stopifnot( length( stata_files ) == 1 )
 			
-			x <- icpsr_stata( x , catalog_entry = catalog[ i , ] )
+			x <- icpsr_stata( stata_files , catalog_entry = catalog[ i , ] )
 
 			names( x ) <- tolower( names( x ) )
 			
