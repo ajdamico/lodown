@@ -242,7 +242,7 @@ cachaca <-
 
 		if( is.null( destfile ) ){
 
-		saveRDS( success , file = cachefile )
+		save( success , file = cachefile )
 
 		} else file.copy( destfile , cachefile , overwrite = TRUE )
 
