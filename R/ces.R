@@ -15,7 +15,7 @@ get_catalog_ces <-
 			stringsAsFactors = FALSE
 		)
 		
-	catalog$output_filename <- paste0( output_dir , "/" , catalog$year , "/" , catalog$type , ".rds" )
+	catalog$output_folder <- paste0( output_dir , "/" , catalog$year , "/" )
 
 	catalog
 
@@ -97,22 +97,17 @@ lodown_ces <-
 
 				newids <- unique( c( newids , x$newid ) )
 				
-				# save it to an object named by what's contained in the df.name character string
-				assign( df_name , x )
-
-				df_names <- unique( c( df_names , df_name ) )
+				# save the file as an R data file (.rds) immediately
+				saveRDS( x , file = paste0( catalog[ i , 'output_folder' ] , "/" , df_name , ".rds" ) )
 				
 			}
-				
-			# save the file as an R data file (.rds) immediately
-			saveRDS( list = df_names , file = catalog[ i , 'output_filename' ] )
 
 			catalog[ i , 'case_count' ] <- length( newids )
 			
 			# delete the temporary files
 			file.remove( tf , unzipped_files )
 
-			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , catalog[ i , 'output_filename' ] , "'\r\n\n" ) )
+			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'output_folder' ] , "'\r\n\n" ) )
 
 		}
 
