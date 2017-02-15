@@ -10,9 +10,9 @@ get_catalog_nls <-
 		studies <- httr::GET( "https://www.nlsinfo.org/investigator/servlet1?get=STUDIES&t=1" )
 
 		# extract the study names option
-		study_values <- XML::xpathSApply( XML::xmlParse( httr::content( studies ) ) , "//option" , XML::xmlAttrs )
+		study_values <- XML::xpathSApply( XML::htmlParse( httr::content( studies ) ) , "//option" , XML::xmlAttrs )
 
-		study_text <- XML::xpathSApply( XML::xmlParse( httr::content( studies ) ) , "//option" , XML::xmlValue )
+		study_text <- XML::xpathSApply( XML::htmlParse( httr::content( studies ) ) , "//option" , XML::xmlValue )
 
 		study_text <- stringr::str_trim( study_text[ study_values != "-1" ] )
 		
@@ -26,10 +26,10 @@ get_catalog_nls <-
 			substudies <- httr::GET( paste0( "https://www.nlsinfo.org/investigator/servlet1?get=SUBSTUDIES&study=" , study_values[ this_study ] ) )
 			
 			# extract the option tags from the substudies page
-			substudy_values <- XML::xpathSApply( XML::xmlParse( httr::content( substudies ) ) , "//option" , XML::xmlAttrs )
+			substudy_values <- XML::xpathSApply( XML::htmlParse( httr::content( substudies ) ) , "//option" , XML::xmlAttrs )
 			
 			# also extract the values contained within those tags
-			substudy_text <- XML::xpathSApply( XML::xmlParse( httr::content( substudies ) ) , "//option" , XML::xmlValue )
+			substudy_text <- XML::xpathSApply( XML::htmlParse( httr::content( substudies ) ) , "//option" , XML::xmlValue )
 			
 			# convert that list into a vector
 			substudy_values <- unlist( substudy_values )

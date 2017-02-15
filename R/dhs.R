@@ -66,7 +66,7 @@ get_catalog_dhs <-
 			z <- httr::POST( "https://dhsprogram.com/data/dataset_admin/download-datasets.cfm" , body = values )
 				
 			# pull all links
-			link.urls <- XML::xpathSApply( XML::xmlParse( httr::content( z ) ) , "//a" , XML::xmlGetAttr , "href" )
+			link.urls <- XML::xpathSApply( XML::htmlParse( httr::content( z ) ) , "//a" , XML::xmlGetAttr , "href" )
 
 			# extract all links containing the current country's name
 			valid.surveys <- grep( "?flag=1" , link.urls )
@@ -87,7 +87,7 @@ get_catalog_dhs <-
 				# dir.create( paste0( "./" , this.name , "/" , this.title ) )
 
 				# store all dataset-specific links
-				all.links <- XML::xpathSApply( XML::xmlParse( httr::content( z ) ) , "//div//a" , XML::xmlGetAttr , "href" )
+				all.links <- XML::xpathSApply( XML::htmlParse( httr::content( z ) ) , "//div//a" , XML::xmlGetAttr , "href" )
 
 				# keep only /data/dataset/ links
 				data.link <- unique( all.links[ grepl( "customcf/legacy/data/download_dataset" , all.links ) ] )
