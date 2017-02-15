@@ -5,19 +5,22 @@ get_catalog_siasih <-
 
     sia_path <- "ftp://ftp.datasus.gov.br/dissemin/publicos/SIASUS/"
     sih_path <- "ftp://ftp.datasus.gov.br/dissemin/publicos/SIHSUS/"
+    cnes_path <- "ftp://ftp.datasus.gov.br/dissemin/publicos/CNES/"
 
     sia_files <- recursive_ftp_scrape( sia_path )
     sih_files <- recursive_ftp_scrape( sih_path )
+    cnes_files <- recursive_ftp_scrape( cnes_path )
 
     catalog <-
       data.frame(
-        full_url = c( sia_files , sih_files ) ,
+        full_url = c( sia_files , sih_files , cnes_files ) ,
         stringsAsFactors = FALSE
       )
 
     catalog$type <-
-      ifelse( grepl( sia_path , catalog$full_url ) , "sih" ,
-              ifelse( grepl( sih_path , catalog$full_url ) , "sia" , NA ) )
+      ifelse( grepl( cnes_path , catalog$full_url ) , "cnes" ,
+              ifelse( grepl( sia_path , catalog$full_url ) , "sih" ,
+                      ifelse( grepl( sih_path , catalog$full_url ) , "sia" , NA ) ) )
 
     catalog$output_filename <-
       gsub( "dados/" , "" ,
@@ -36,9 +39,11 @@ get_catalog_siasih <-
     catalog$db_tablename <-
       ifelse ( grepl( "\\.dbc$" , catalog$full_url ) ,
                paste0(
-                 ifelse( grepl( "/siasus" , catalog$full_url ) , "sia" , "sih" ) , "_" ,
+                 ifelse( grepl( "/cnes" , catalog$full_url , ignore.case = TRUE ) , "cnes" ,
+                         ifelse( grepl( "/sihsus" , catalog$full_url , ignore.case = TRUE ) , "sih" ,
+                                 ifelse( grepl( "/siasus" , catalog$full_url , ignore.case = TRUE ) , "sia" , NA ) ) ) , "_" ,
                  gsub( "[a-zA-Z]{2}[0-9]{4}.*", "" , tolower( basename( catalog$full_url ) ) ) , "_" ,
-                 gsub( ".*SUS/|/Dados.*", "" , catalog$full_url ) ) , NA )
+                 gsub( ".*(SUS/|CNES/)|/Dados.*", "" , dirname(catalog$full_url) ) ) , NA )
 
 
     catalog$dbfolder <- ifelse( is.na( catalog$db_tablename ) , NA , paste0( output_dir , "/MonetDB" ) )
@@ -60,7 +65,7 @@ lodown_siasih <-
     for ( i in seq_len( nrow( catalog ) ) ){
 
       # download the file
-      cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
+      cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' , attempts = 10 )
 
       if ( !grepl( "\\.dbc$" , basename( catalog[ i , "full_url" ] ) , ignore.case = TRUE ) ) {
 
@@ -128,7 +133,7 @@ lodown_siasih <-
           # loop through all tables that match the current db_tablename
           for( this_file in catalog[ ( catalog[ i , 'db_tablename' ] == catalog$db_tablename ) & ! is.na( catalog$db_tablename ) , 'output_filename' ] ){
 
-            load( this_file )
+            x <- readRDS( this_file )
 
             for( this_col in setdiff( correct_columns$col_name , names( x ) ) ) x[ , this_col ] <- NA
 
