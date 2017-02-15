@@ -393,29 +393,26 @@ lodown_ahs <-
 					)
 
 				# load both the household-level..
-				load( hhlfn )
+				hhlf <- readRDS( hhlfn )
 				
 				# ..and weights data tables into working memory
-				load( wgtfn )
+				wgtf <- readRDS( wgtfn )
 				
 				# confirm both tables have the same number of records
-				stopifnot( nrow( get( hhlf ) ) == nrow( get( wgtf ) ) )
+				stopifnot( nrow( hhlf ) == nrow( wgtf ) )
 				
 				# confirm both tables have only one intersecting column name: `control`
-				stopifnot( all( intersect( names( get( hhlf ) ) , names( get( wgtf ) ) ) %in% c( 'smsa' , 'control' ) ) )
+				stopifnot( all( intersect( names( hhlf ) , names( wgtf ) ) %in% c( 'smsa' , 'control' ) ) )
 				
 				# merge these two files together
-				x <- merge( get( hhlf ) , get( wgtf ) )
+				x <- merge( hhlf , wgtf )
 				
 				# confirm that the resultant `x` table has the same number of records
 				# as the household-level data table
-				stopifnot( nrow( x ) == nrow( get( hhlf ) ) )
+				stopifnot( nrow( x ) == nrow( hhlf ) )
 				
 				# determine the name of the hhlf+weights object..
 				mergef <- paste( hhlf , wgtf , sep = '_' )
-				
-				# ..and save `x` as that.
-				assign( mergef , x )
 				
 				# determine the filepath of the merged file
 				merge.fp <-
@@ -428,7 +425,7 @@ lodown_ahs <-
 					)
 					
 				# save the merged file to the local disk as well	
-				saveRDS( list = mergef , file = merge.fp )
+				saveRDS( x , file = merge.fp )
 								
 				# add the number of records to the catalog
 				catalog[ i , 'case_count' ] <- nrow( x )
