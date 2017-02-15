@@ -205,11 +205,8 @@ lodown_timss <-
 							# some earlier files have `jkindic` instead of `jkrep`.  fix that.
 							if( 'jkindic' %in% names( y ) & !( 'jkrep' %in% names( y ) ) ) names( y ) <- gsub( 'jkindic' , 'jkrep' , names( y ) )
 							
-							# save the stacked file as the prefix
-							assign( paste0( p , s ) , y )
-							
 							# save that single all-country stack-a-mole
-							saveRDS( list = paste0( p , s ) , file = paste0( catalog[ i , 'output_folder' ] , '/' , p , s , '.rds' ) )
+							saveRDS( y , file = paste0( catalog[ i , 'output_folder' ] , '/' , p , s , '.rds' ) )
 					
 						}
 					}
