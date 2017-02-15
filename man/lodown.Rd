@@ -119,7 +119,7 @@ chis_cat <- get_catalog( "chis" , output_dir = "C:/My Directory/CHIS" ,
 lodown( "chis" , chis_cat[ chis_cat$year == 2013 , ]  ,
 		your_username = "username" , your_password = "password" )
 
-# Current Population Survey - Annual Social & Economic Supplement
+# Current Population Survey - Annual Social and Economic Supplement
 # download all available microdata
 lodown( "cps_asec" , output_dir = "C:/My Directory/CPS_ASEC" )
 # download only the 2013 files
@@ -133,7 +133,7 @@ lodown( "cps_basic" , output_dir = "C:/My Directory/CPS_BASIC" )
 cps_basic_cat <- get_catalog( "cps_basic" , output_dir = "C:/My Directory/CPS_BASIC" )
 lodown( "cps_basic" , cps_basic_cat[ cps_basic_cat$month == 11 , ] )
 
-# Demographic & Health Surveys
+# Demographic and Health Surveys
 # download all available microdata
 lodown( "dhs" , output_dir = "C:/My Directory/DHS" , 
 	your_email = "email@address.com" , your_password = "password" , your_project = "project" )
@@ -185,7 +185,7 @@ lodown( "hmda" , output_dir = "C:/My Directory/HMDA" )
 hmda_cat <- get_catalog( "hmda" , output_dir = "C:/My Directory/HMDA" )
 lodown( "hmda" , hmda_cat[ hmda_cat$year == 2013 , ] )
 
-# Health & Retirement Study
+# Health and Retirement Study
 # download all available microdata
 lodown( "hrs" , output_dir = "C:/My Directory/HRS" , 
 		your_username = "username" , your_password = "password" )
@@ -248,7 +248,7 @@ ncvs_cat <- get_catalog( "ncvs" , output_dir = "C:/My Directory/NCVS" )
 lodown( "ncvs" , ncvs_cat[ ncvs_cat$temporalCoverage == 2013 , ] ,
 		your_email = "email@address.com" , your_password = "password" )
 
-# National Health & Nutrition Examination Survey
+# National Health and Nutrition Examination Survey
 # download all available microdata
 lodown( "nhanes" , output_dir = "C:/My Directory/NHANES" )
 # download only the 2013-2014 files
@@ -306,7 +306,7 @@ lodown( "nsfg" , output_dir = "C:/My Directory/NSFG" )
 nsfg_cat <- get_catalog( "nsfg" , output_dir = "C:/My Directory/NSFG" )
 lodown( "nsfg" , nsfg_cat[ grepl( "2013_2015" , nsfg_cat$full_url ) , ] )
 
-# National Plan & Provider Enumeration System
+# National Plan and Provider Enumeration System
 # download all available microdata
 lodown( "nppes" , output_dir = "C:/My Directory/NPPES" )
 # edit the database tablename in the first record
@@ -337,7 +337,7 @@ lodown( "nvss" , output_dir = "C:/My Directory/NVSS" )
 nvss_cat <- get_catalog( "nvss" , output_dir = "C:/My Directory/NVSS" )
 lodown( "nvss" , nvss_cat[ nvss_cat$type == 'natality' , ] )
 
-# New York City Housing & Vacancy Survey
+# New York City Housing and Vacancy Survey
 # download all available microdata
 lodown( "nychvs" , output_dir = "C:/My Directory/NYCHVS" )
 # download only the 2011 files
@@ -350,7 +350,7 @@ lodown( "pew" , output_dir = "C:/My Directory/PEW" ,
 		your_name = "your name" , your_org = "your organization" ,
 		your_phone = "555 555 5555" , your_email = "email@address.com" ,
 		agree_to_terms = FALSE )
-# download only the global attitudes & trends surveys
+# download only the global attitudes and trends surveys
 pew_cat <- get_catalog( "pew" , output_dir = "C:/My Directory/PEW" )
 lodown( "pew" , pew_cat[ pew_cat$topic == "Global Attitudes & Trends" , ] ,
 		your_name = "your name" , your_org = "your organization" ,
@@ -472,7 +472,7 @@ share_cat <- get_catalog( "share" , output_dir = "C:/My Directory/SHARE" ,
 lodown( "share" , share_cat[ grepl( "Wave 4" , share_cat$output_folder ) , ] ,
 		your_username = "username" , your_password = "password" )
 
-# Survey of Income & Program Participation
+# Survey of Income and Program Participation
 # download all available microdata
 lodown( "sipp" , output_dir = "C:/My Directory/SIPP" )
 # download only the 2008 panel
