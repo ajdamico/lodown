@@ -393,23 +393,23 @@ lodown_ahs <-
 					)
 
 				# load both the household-level..
-				hhlf <- readRDS( hhlfn )
+				hhlf_df <- readRDS( hhlfn )
 				
 				# ..and weights data tables into working memory
-				wgtf <- readRDS( wgtfn )
+				wgtf_df <- readRDS( wgtfn )
 				
 				# confirm both tables have the same number of records
-				stopifnot( nrow( hhlf ) == nrow( wgtf ) )
+				stopifnot( nrow( hhlf_df ) == nrow( wgtf_df ) )
 				
 				# confirm both tables have only one intersecting column name: `control`
-				stopifnot( all( intersect( names( hhlf ) , names( wgtf ) ) %in% c( 'smsa' , 'control' ) ) )
+				stopifnot( all( intersect( names( hhlf_df ) , names( wgtf_df ) ) %in% c( 'smsa' , 'control' ) ) )
 				
 				# merge these two files together
-				x <- merge( hhlf , wgtf )
+				x <- merge( hhlf_df , wgtf_df )
 				
 				# confirm that the resultant `x` table has the same number of records
 				# as the household-level data table
-				stopifnot( nrow( x ) == nrow( hhlf ) )
+				stopifnot( nrow( x ) == nrow( hhlf_df ) )
 				
 				# determine the name of the hhlf+weights object..
 				mergef <- paste( hhlf , wgtf , sep = '_' )
