@@ -28,36 +28,19 @@ get_catalog_mtps <-
                                                 ignore.case = TRUE )
     catalog$output_filename <- sapply( catalog$output_filename , utils::URLdecode )
 
-    year_lines <- NULL
-    year_lines [ catalog$type == "rais" & !is.na( catalog$type ) ] <-
-      gsub( "[^0-9]" , "" ,
-            gsub ( "\\..*" , "\\2" , basename( catalog$full_url ) [ grepl( ".7z$|.zip$" , catalog$full_url , ignore.case = TRUE ) ] )
-      )[ catalog$type == "rais" & !is.na( catalog$type ) ]
-    year_lines [ catalog$type == "caged" & !is.na( catalog$type ) ] <-
-      gsub( "[^0-9]" , "" ,
-            gsub ( "\\..*" , "\\2" , basename( catalog$full_url ) [ grepl( ".7z$|.zip$" , catalog$full_url , ignore.case = TRUE ) ] )
-      )[ catalog$type == "caged" & !is.na( catalog$type ) ]
-    get_last <- function ( str , n = 1 ) substr(str,(nchar(str)+1)-n,nchar(str))
-    year_lines [ catalog$type == "caged" & !is.na( catalog$type ) ] <-
-      get_last( year_lines [ catalog$type == "caged" & !is.na( catalog$type ) ] , 4 )
-    catalog$year <- year_lines
+    catalog$year <- NULL
+    catalog$year [ catalog$type %in% c( "caged" , "rais" ) ] <- as.numeric( gsub( ".*/" , "" , dirname( catalog$full_url ) )[ catalog$type %in% c( "caged" , "rais" ) ] )
 
-    month_lines <- NULL
-    month_lines [ catalog$type == "caged" & !is.na( catalog$type ) ] <-
-      gsub( "[^0-9]" , "" ,
-            gsub ( "\\..*" , "\\2" , basename( catalog$full_url ) [ grepl( ".7z$|.zip$" , catalog$full_url , ignore.case = TRUE ) ] )
-      )[ catalog$type == "caged" & !is.na( catalog$type ) ]
-    month_lines [ nchar( month_lines ) > 4 & !is.na( month_lines ) ] <-
-      substr( month_lines [ nchar( month_lines ) > 4 & !is.na( month_lines ) ] , 1 , 2 )
-    month_lines [ nchar( month_lines ) > 2 & !is.na( month_lines ) ] <- NA
-    catalog$month <- month_lines
+    catalog$month <- NULL
+    catalog$month [ catalog$type %in% c( "caged" ) ] <- substr( gsub( ".*_|\\..*", "", basename( catalog$full_url ) ) , 1 , 2 ) [ catalog$type %in% c( "caged" ) ]
+    catalog$month <- as.numeric( catalog$month )
 
     catalog$db_tablename <-
-      ifelse( !is.na( catalog[ , c( "year" ) ] ) ,
+      ifelse( catalog$type %in% c("caged" , "rais") ,
               paste0(
-                ifelse( catalog$type != "docs" , catalog$type , "" ) ,
-                ifelse( !is.na( catalog$subtype ) , paste0( "_", catalog$subtype ) , "" ) ,
-                ifelse( !is.na( catalog$year ) & catalog$type != "caged" , paste0( "_", catalog$year ) , "" ) ) , NA )
+                ifelse( catalog$type == "caged" , "caged" , "rais_" ) ,
+                ifelse( !is.na( catalog$subtype ) , paste0( catalog$subtype, "_" ) , "" ) ,
+                ifelse( catalog$type == "rais" , catalog$year , "" ) ) , NA )
 
     catalog$dbfolder <- ifelse( is.na( catalog$db_tablename ) , NA , paste0( output_dir , "/MonetDB" ) )
 
@@ -102,6 +85,9 @@ lodown_mtps <-
 
         # add underscores after monetdb illegal names
         for ( j in names( x )[ toupper( names( x ) ) %in% getFromNamespace( "reserved_monetdb_keywords" , "MonetDBLite" ) ] ) names( x )[ names( x ) == j ] <- paste0( j , "_" )
+
+        # change dots for underscore
+        names( x ) <- gsub( "\\." , "_" , names( x ) )
 
         # remove trailing spaces
         names( x ) <- trimws( names( x ) , which = "both" )
@@ -155,7 +141,7 @@ lodown_mtps <-
           # loop through all tables that match the current db_tablename
           for( this_file in catalog[ catalog$db_tablename %in% catalog[ i , 'db_tablename' ] , 'output_filename' ] ){
 
-            load( this_file )
+            x <- readRDS( this_file )
 
             for( this_col in setdiff( correct_columns$col_name , names( x ) ) ) x[ , this_col ] <- NA
 
@@ -183,7 +169,7 @@ lodown_mtps <-
             DBI::dbWriteTable( db , catalog[ i , 'db_tablename' ] , x , append = TRUE , row.names = FALSE )
 
             file_index <- seq_along( catalog[ ( catalog[ i , 'db_tablename' ] == catalog$db_tablename ) & ! is.na( catalog$db_tablename ) , 'output_filename' ] ) [ this_file == catalog[ ( catalog[ i , 'db_tablename' ] == catalog$db_tablename ) & ! is.na( catalog$db_tablename ) , 'output_filename' ] ]
-            cat( paste0( data_name , " entry " , file_index , " of " , nrow( catalog[ catalog$db_tablename == catalog[ i , 'db_tablename' ] , ] ) , " stored at '" , catalog[ i , 'db_tablename' ] , "'\r\n" ) )
+            cat( "\r", paste0( data_name , " entry " , file_index , " of " , nrow( catalog[ catalog$db_tablename == catalog[ i , 'db_tablename' ] , ] ) , " stored at '" , catalog[ i , 'db_tablename' ] , "'\r" ) )
 
           }
 
