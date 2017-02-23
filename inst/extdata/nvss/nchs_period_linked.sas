@@ -261,51 +261,51 @@ manner 1362
 dispo $ 1363
 autopsy $ 1364
 place 1366
-uc0d 1368-1371
-ucodr130 1373-1375
+uc0d $ 1368-1371
+ucodr130 $ 1373-1375
 recwt 1377-1384
 eanum 1387-1388
-cond1st 1389-1395
-cond2nd 1396-1402
-cond3rd 1403-1409
-cond4th 1410-1416
-cond5th 1417-1423
-cond6th 1424-1430
-cond7th 1431-1437
-cond8th 1438-1444
-cond9th 1445-1451
-cond10th 1452-1458
-cond11th 1459-1465
-cond12th 1466-1472
-cond13th 1473-1479
-cond14th 1480-1486
-cond15th 1487-1493
-cond16th 1494-1500
-cond17th 1501-1507
-cond18th 1508-1514
-cond19th 1515-1521
-cond20th 1522-1528
+cond1st $ 1389-1395
+cond2nd $ 1396-1402
+cond3rd $ 1403-1409
+cond4th $ 1410-1416
+cond5th $ 1417-1423
+cond6th $ 1424-1430
+cond7th $ 1431-1437
+cond8th $ 1438-1444
+cond9th $ 1445-1451
+cond10th $ 1452-1458
+cond11th $ 1459-1465
+cond12th $ 1466-1472
+cond13th $ 1473-1479
+cond14th $ 1480-1486
+cond15th $ 1487-1493
+cond16th $ 1494-1500
+cond17th $ 1501-1507
+cond18th $ 1508-1514
+cond19th $ 1515-1521
+cond20th $ 1522-1528
 ranum 1531-1532
-rec_axis1st 1533-1537
-rec_axis2nd 1538-1542
-rec_axis3rd 1543-1547
-rec_axis4th 1548-1552
-rec_axis5th 1553-1557
-rec_axis6th 1558-1562
-rec_axis7th 1563-1567
-rec_axis8th 1568-1572
-rec_axis9th 1573-1577
-rec_axis10th 1578-1582
-rec_axis11th 1583-1587
-rec_axis12th 1588-1592
-rec_axis13th 1593-1597
-rec_axis14th 1598-1602
-rec_axis15th 1603-1607
-rec_axis16th 1608-1612
-rec_axis17th 1613-1617
-rec_axis18th 1618-1622
-rec_axis19th 1623-1627
-rec_axis20th 1628-1632
+rec_axis1st $ 1533-1537
+rec_axis2nd $ 1538-1542
+rec_axis3rd $ 1543-1547
+rec_axis4th $ 1548-1552
+rec_axis5th $ 1553-1557
+rec_axis6th $ 1558-1562
+rec_axis7th $ 1563-1567
+rec_axis8th $ 1568-1572
+rec_axis9th $ 1573-1577
+rec_axis10th $ 1578-1582
+rec_axis11th $ 1583-1587
+rec_axis12th $ 1588-1592
+rec_axis13th $ 1593-1597
+rec_axis14th $ 1598-1602
+rec_axis15th $ 1603-1607
+rec_axis16th $ 1608-1612
+rec_axis17th $ 1613-1617
+rec_axis18th $ 1618-1622
+rec_axis19th $ 1623-1627
+rec_axis20th $ 1628-1632
 d_restatus 1635
 dostate $ 1636-1637
 docnty 1638-1640
