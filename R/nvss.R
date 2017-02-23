@@ -189,6 +189,22 @@ lodown_nvss <-
 				# export that revised sas script to the second temporary file
 				writeLines( pl.den , den.tf )
 				
+				# point to the period-linked 2013 sas file stored on github
+				sas_ri_13 <- system.file("extdata", "nvss/nchs_period_linked_2013.sas", package = "lodown")
+
+				# create a temporary file
+				den13.tf <- tempfile()
+
+				# also read it into working memory
+				pl13.txt <- readLines( sas_ri_13 )
+
+				# add a semicolon after the FLGND field in order to indicate
+				# that's the end of the numerator
+				pl13.den <- gsub( "FLGND 751" , "FLGND 751;" , pl13.txt )
+
+				# export that revised sas script to the second temporary file
+				writeLines( pl13.den , den13.tf )
+				
 				# point to the period-linked 2003 sas file stored on github
 				sas_ri_03 <- system.file("extdata", "nvss/nchs_period_linked_2003.sas", package = "lodown")
 
@@ -240,11 +256,17 @@ lodown_nvss <-
 				periodlinked.ps.den <- all.files[ grep( 'periodlinked/ps/den' , all.files ) ]
 
 				
-				# if the year is 2004 and beyond..
-				if ( catalog[ i , 'year' ] > 2003 ){
+				# if the year is 2014 and beyond..
+				if ( catalog[ i , 'year' ] > 2013 ){
 				
 					# use the period-linked sas import script
 					sas_ri <- sas_ri_linked
+				
+				# ..otherwise, if the year is 2004-2013..
+				} else if ( catalog[ i , 'year' ] > 2003 ){
+				
+					# use the period-linked sas import script
+					sas_ri <- sas_ri_13
 				
 				# ..otherwise, if the year is 2003..
 				} else if ( catalog[ i , 'year' ] == 2003 ) {
@@ -288,12 +310,18 @@ lodown_nvss <-
 				)
 
 				
-				# if the year is 2004 and beyond..
-				if ( catalog[ i , 'year' ] > 2003 ){
+				# if the year is 2014 and beyond..
+				if ( catalog[ i , 'year' ] > 2013 ){
 				
 					# use the period-linked sas import script
 					sas_ri <- sas_ri_linked
-					
+				
+				# ..otherwise, if the year is 2004-2013..
+				} else if ( catalog[ i , 'year' ] > 2003 ){
+				
+					# use the period-linked sas import script
+					sas_ri <- sas_ri_13
+				
 				# ..otherwise, if the year is 2003..
 				} else if ( catalog[ i , 'year' ] == 2003 ) {
 					
@@ -331,11 +359,17 @@ lodown_nvss <-
 					db = db
 				)
 				
-				# if the year is 2004 and beyond..	
-				if ( catalog[ i , 'year' ] > 2003 ){
+				# if the year is 2014 and beyond..	
+				if ( catalog[ i , 'year' ] > 2013 ){
 					
 					# use the period-linked sas import script
 					sas_ri <- den.tf
+				
+				# ..otherwise, if the year is 2004-2013..
+				} else if ( catalog[ i , 'year' ] > 2003 ){
+					
+					# use the period-linked sas import script
+					sas_ri <- den13.tf
 				
 				# ..otherwise, if the year is 2003..
 				} else if ( catalog[ i , 'year' ] == 2003 ) {
