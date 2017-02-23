@@ -184,7 +184,7 @@ lodown_nvss <-
 
 				# add a semicolon after the FLGND field in order to indicate
 				# that's the end of the numerator
-				pl.den <- gsub( "FLGND  868" , "FLGND  868;" , pl.txt )
+				pl.den <- gsub( "flgnd 1346" , "flgnd 1346 ;" , pl.txt )
 
 				# export that revised sas script to the second temporary file
 				writeLines( pl.den , den.tf )
@@ -200,7 +200,7 @@ lodown_nvss <-
 
 				# add a semicolon after the FLGND field in order to indicate
 				# that's the end of the numerator
-				pl13.den <- gsub( "FLGND 751" , "FLGND 751;" , pl13.txt )
+				pl13.den <- gsub( "FLGND  868" , "FLGND  868;" , pl13.txt )
 
 				# export that revised sas script to the second temporary file
 				writeLines( pl13.den , den13.tf )
