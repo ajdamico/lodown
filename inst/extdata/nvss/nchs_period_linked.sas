@@ -16,8 +16,8 @@ MAGEREP 74
 MAGER 75-76
 MAGER14 77-78
 MAGER9 79
-MBSTATE_REC 84
 mbcntry $ 80-82
+MBSTATE_REC 84
 mrcntry $ 85-86
 mrstatepstl $ 89-90
 mrcntyfips 91-93
@@ -306,10 +306,6 @@ rec_axis17th 1613-1617
 rec_axis18th 1618-1622
 rec_axis19th 1623-1627
 rec_axis20th 1628-1632
-hospd 1670
-dweekday 1671
-dod_yy 1672-1675
-dod_mm 1742-1743
 d_restatus 1635
 dostate $ 1636-1637
 docnty 1638-1640
@@ -317,4 +313,8 @@ drstate $ 1644-1645
 drstcntry $ 1648-1649
 drcnty 1650-1652
 drcntypop $ 1666
+hospd 1670
+dweekday 1671
+dod_yy 1672-1675
+dod_mm 1742-1743
 ;
