@@ -263,7 +263,7 @@ autopsy $ 1364
 place 1366
 uc0d $ 1368-1371
 ucodr130 $ 1373-1375
-recwt 1377-1384
+recwt $ 1377-1384
 eanum 1387-1388
 cond1st $ 1389-1395
 cond2nd $ 1396-1402
