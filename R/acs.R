@@ -374,9 +374,6 @@ lodown_acs <-
 			
 			DBI::dbRemoveTable( db , 'h' )
 			DBI::dbRemoveTable( db , 'p' )
-			
-			file.remove( list.files( tempdir() , full.names = TRUE , recursive = TRUE ) )
-		
 
 			# special exception for the 2009 3-year file..  too many missings in the weights.
 			if( catalog[ i , 'year' ] <= 2009 & catalog[ i , 'time_period' ] %in% c( '3-Year' , '5-Year' ) ){
