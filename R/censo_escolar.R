@@ -99,7 +99,7 @@ lodown_censo_escolar <-
 
 				}
 
-			} else {
+			} else if ( catalog[ i , 'year' ] <= 2015 ) {
 
 				rar_files <- grep( "\\.rar$", unzipped_files, value = TRUE , ignore.case = TRUE )
 
@@ -141,6 +141,43 @@ lodown_censo_escolar <-
 				}
 
 				catalog[ i , 'case_count' ] <- DBI::dbGetQuery( db , paste0( "SELECT COUNT(*) FROM matricula_" , catalog[ i , "year" ] ) )[ 1 , 1 ]
+
+			} else {
+
+			  unzipped_files <- unzipped_files [ grep( "CSV" , basename( unzipped_files ), value = FALSE, ignore.case = TRUE ) ]
+
+			  for( this_table_type in c( "docente", "matricula", "turma", "escola" ) ) {
+
+			    tabelas <- unzipped_files[ grep( this_table_type , basename( unzipped_files ), value = FALSE, ignore.case = TRUE ) ]
+
+			    for ( j in seq_along( tabelas ) ) {
+
+			      this_data_file <- tabelas[ j ]
+
+			      suppressMessages(
+			        DBI::dbWriteTable(
+			          db,
+			          paste0( this_table_type , "_" , catalog[ i , "year" ] ) ,
+			          this_data_file ,
+			          sep = "|" ,
+			          best.effort = TRUE ,
+			          lower.case.names = TRUE ,
+			          append = TRUE ,
+			          nrow.check = 1000
+			        )
+			      )
+
+			      file.remove( this_data_file )
+
+			      cat( tolower( gsub( "\\..*" , "" , basename( this_data_file ) ) ), "stored at" ,
+			           paste0( this_table_type , "_" , catalog[ i , "year" ] ) , "\r\n\r" )
+
+			    }
+
+			  }
+
+			  catalog[ i , 'case_count' ] <- DBI::dbGetQuery( db , paste0( "SELECT COUNT(*) FROM matricula_" , catalog[ i , "year" ] ) )[ 1 , 1 ]
+
 
 			}
 
