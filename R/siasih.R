@@ -42,8 +42,8 @@ get_catalog_siasih <-
                  ifelse( grepl( "/cnes" , catalog$full_url , ignore.case = TRUE ) , "cnes" ,
                          ifelse( grepl( "/sihsus" , catalog$full_url , ignore.case = TRUE ) , "sih" ,
                                  ifelse( grepl( "/siasus" , catalog$full_url , ignore.case = TRUE ) , "sia" , NA ) ) ) , "_" ,
-                 gsub( "[a-zA-Z]{2}[0-9]{4}.*", "" , tolower( basename( catalog$full_url ) ) ) , "_" ,
-                 gsub( ".*(SUS/|CNES/)|/Dados.*", "" , dirname(catalog$full_url) ) ) , NA )
+                 gsub( "[a-zA-Z]{2}[0-9]{4}.*", "" , tolower( basename( catalog$full_url ) ) ) ,
+                 ifelse( grepl( "CNES", catalog$full_url , ignore.case = TRUE ), "", paste0( "_" , gsub( ".*(SUS/|CNES/)|/Dados.*", "" , dirname(catalog$full_url) ) ) ) ), NA )
 
 
     catalog$dbfolder <- ifelse( is.na( catalog$db_tablename ) , NA , paste0( output_dir , "/MonetDB" ) )
