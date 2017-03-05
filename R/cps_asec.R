@@ -53,9 +53,9 @@ lodown_cps_asec <-
 				
 				tf1 <- tempfile() ; tf2 <- tempfile() ; tf3 <- tempfile()
 			
-				cachaca( "http://www.census.gov/housing/extract_files/data%20extracts/cpsasec14/hhld.sas7bdat" , tf1 , mode = 'wb' )
-				cachaca( "http://www.census.gov/housing/extract_files/data%20extracts/cpsasec14/family.sas7bdat" , tf2 , mode = 'wb' )
-				cachaca( "http://www.census.gov/housing/extract_files/data%20extracts/cpsasec14/person.sas7bdat" , tf3 , mode = 'wb' )
+				cachaca( "https://www.census.gov/housing/extract_files/data%20extracts/cpsasec14/hhld.sas7bdat" , tf1 , mode = 'wb' )
+				cachaca( "https://www.census.gov/housing/extract_files/data%20extracts/cpsasec14/family.sas7bdat" , tf2 , mode = 'wb' )
+				cachaca( "https://www.census.gov/housing/extract_files/data%20extracts/cpsasec14/person.sas7bdat" , tf3 , mode = 'wb' )
 
 				hhld <- data.frame( haven::read_sas( tf1 ) )
 				names( hhld ) <- tolower( names( hhld ) )
@@ -527,7 +527,7 @@ lodown_cps_asec <-
 						"http://thedataweb.rm.census.gov/pub/cps/march/CPS_ASEC_ASCII_REPWGT_2014_3x8_run5.zip" ,
 						ifelse(
 							catalog[ i , 'year' ] == 2014 ,
-							"http://www.census.gov/housing/extract_files/weights/CPS_ASEC_ASCII_REPWGT_2014_FULLSAMPLE.DAT" ,
+							"https://www.census.gov/housing/extract_files/weights/CPS_ASEC_ASCII_REPWGT_2014_FULLSAMPLE.DAT" ,
 							paste0( 
 								"http://thedataweb.rm.census.gov/pub/cps/march/CPS_ASEC_ASCII_REPWGT_" , 
 								substr( catalog[ i , 'year' ] , 1 , 4 ) , 
@@ -639,11 +639,11 @@ lodown_cps_asec <-
 
 				sp.url <- 
 					paste0( 
-					"http://www.census.gov/housing/povmeas/spmresearch/spmresearch" , 
-					floor( catalog[ i , 'year' ] - 1 ) , 
-					if ( catalog[ i , 'year' ] == 2014.38 ) "_redes" else if ( catalog[ i , 'year' ] >= 2016 ) "" else "new" ,
-					".sas7bdat" 
-				)
+						"https://www.census.gov/housing/povmeas/spmresearch/spmresearch" , 
+						floor( catalog[ i , 'year' ] - 1 ) , 
+						if ( catalog[ i , 'year' ] == 2014.38 ) "_redes" else if ( catalog[ i , 'year' ] >= 2016 ) "" else "new" ,
+						".sas7bdat" 
+					)
 				
 				cachaca( sp.url , tf , mode = 'wb' )
 				
@@ -651,7 +651,7 @@ lodown_cps_asec <-
 			
 				if ( catalog[ i , 'year' ] == 2014 ){
 					
-					sp.url <- "http://www.census.gov/housing/povmeas/spmresearch/spmresearch2013_redes.sas7bdat"
+					sp.url <- "https://www.census.gov/housing/povmeas/spmresearch/spmresearch2013_redes.sas7bdat"
 						
 					cachaca( sp.url , tf , mode = 'wb' )
 					
