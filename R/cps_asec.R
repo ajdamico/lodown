@@ -109,7 +109,7 @@ lodown_cps_asec <-
 									"http://thedataweb.rm.census.gov/pub/cps/march/asec2014_pubuse_3x8_rerun_v2.zip" ,
 									ifelse( 
 										catalog[ i , 'year' ] == 2014.58 ,
-										"http://thedataweb.rm.census.gov/pub/cps/march/asec2014_pubuse.zip" ,
+										"http://thedataweb.rm.census.gov/pub/cps/march/asec2014_pubuse_tax_fix_5x8_2017.zip" ,
 										ifelse( catalog[ i , 'year' ] == 2016 ,
 											paste0( "http://thedataweb.rm.census.gov/pub/cps/march/asec" , catalog[ i , 'year' ] , "_pubuse_v3.zip" ) ,
 											paste0( "http://thedataweb.rm.census.gov/pub/cps/march/asec" , catalog[ i , 'year' ] , "_pubuse.zip" )
