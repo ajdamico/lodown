@@ -444,10 +444,10 @@ pnad_remove_uf <-
 pnad.postStratify <-
 	function( design , strata.col , oldwgt ){
 		
-		# extract the tablename within the SQLite database
+		# extract the tablename within the MonetDBLite database
 		tablename <- design$db$tablename
 		
-		# extract the SQLite connection
+		# extract the MonetDBLite connection
 		conn <- design$db$connection
 
 		# create an R data frame containing one record per strata

@@ -137,7 +137,7 @@ lodown_saeb <-
 				# do not use monetdb reserved words
 				for ( j in names( x )[ toupper( names( x ) ) %in% getFromNamespace( "reserved_monetdb_keywords" , "MonetDBLite" ) ] ) names( x )[ names( x ) == j ] <- paste0( j , "_" )
 				
-				# store the `x` data.frame object in sqlite database as well
+				# store the `x` data.frame object in MonetDBLite database as well
 				DBI::dbWriteTable( db , tnwy , x )
 				
 				# save the current table in the year-specific folder on the local drive
