@@ -53,9 +53,9 @@ lodown_cps_asec <-
 				
 				tf1 <- tempfile() ; tf2 <- tempfile() ; tf3 <- tempfile()
 			
-				cachaca( "http://www.census.gov/housing/extract_files/data%20extracts/cpsasec14/hhld.sas7bdat" , tf1 , mode = 'wb' )
-				cachaca( "http://www.census.gov/housing/extract_files/data%20extracts/cpsasec14/family.sas7bdat" , tf2 , mode = 'wb' )
-				cachaca( "http://www.census.gov/housing/extract_files/data%20extracts/cpsasec14/person.sas7bdat" , tf3 , mode = 'wb' )
+				cachaca( "https://www.census.gov/housing/extract_files/data%20extracts/cpsasec14/hhld.sas7bdat" , tf1 , mode = 'wb' , filesize_fun = 'httr' )
+				cachaca( "https://www.census.gov/housing/extract_files/data%20extracts/cpsasec14/family.sas7bdat" , tf2 , mode = 'wb' , filesize_fun = 'httr' )
+				cachaca( "https://www.census.gov/housing/extract_files/data%20extracts/cpsasec14/person.sas7bdat" , tf3 , mode = 'wb' , filesize_fun = 'httr' )
 
 				hhld <- data.frame( haven::read_sas( tf1 ) )
 				names( hhld ) <- tolower( names( hhld ) )
@@ -109,7 +109,7 @@ lodown_cps_asec <-
 									"http://thedataweb.rm.census.gov/pub/cps/march/asec2014_pubuse_3x8_rerun_v2.zip" ,
 									ifelse( 
 										catalog[ i , 'year' ] == 2014.58 ,
-										"http://thedataweb.rm.census.gov/pub/cps/march/asec2014_pubuse.zip" ,
+										"http://thedataweb.rm.census.gov/pub/cps/march/asec2014_pubuse_tax_fix_5x8_2017.zip" ,
 										ifelse( catalog[ i , 'year' ] == 2016 ,
 											paste0( "http://thedataweb.rm.census.gov/pub/cps/march/asec" , catalog[ i , 'year' ] , "_pubuse_v3.zip" ) ,
 											paste0( "http://thedataweb.rm.census.gov/pub/cps/march/asec" , catalog[ i , 'year' ] , "_pubuse.zip" )
@@ -151,7 +151,7 @@ lodown_cps_asec <-
 				tf <- tempfile() ; td <- tempdir()
 
 				# download the CPS repwgts zipped file to the local computer
-				cachaca( CPS.ASEC.mar.file.location , tf , mode = "wb" )
+				cachaca( CPS.ASEC.mar.file.location , tf , mode = "wb" , filesize_fun = 'httr' )
 
 				# unzip the file's contents and store the file name within the temporary directory
 				fn <- unzip( tf , exdir = td , overwrite = TRUE )
@@ -389,7 +389,7 @@ lodown_cps_asec <-
 					
 					ace <- "http://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/asec14_now_anycov.dat"
 
-					cachaca( ace , tf , mode = "wb" )	
+					cachaca( ace , tf , mode = "wb" , filesize_fun = 'httr' )	
 
 					ac <- rbind( ac , read.fwf( tf , c( 5 , 2 , 1 ) ) )
 					
@@ -399,7 +399,7 @@ lodown_cps_asec <-
 					
 					ace <- "http://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/asec14_now_anycov_redes.dat"
 
-					cachaca( ace , tf , mode = "wb" )	
+					cachaca( ace , tf , mode = "wb" , filesize_fun = 'httr' )	
 
 					ac <- rbind( ac , read.fwf( tf , c( 5 , 2 , 1 ) ) )
 					
@@ -409,11 +409,11 @@ lodown_cps_asec <-
 				
 					ote <- "http://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/asec14_outtyp_full.dat"
 					
-					cachaca( ote , tf , mode = 'wb' )
+					cachaca( ote , tf , mode = 'wb' , filesize_fun = 'httr' )
 					
 					ot <- read.fwf( tf , c( 5 , 2 , 2 , 1 ) )
 					
-					cachaca( "http://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/ppint14esi_offer_ext.sas7bdat" , tf , mode = 'wb' )
+					cachaca( "http://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/ppint14esi_offer_ext.sas7bdat" , tf , mode = 'wb' , filesize_fun = 'httr' )
 					
 					offer <- data.frame( haven::read_sas( tf ) )
 					
@@ -424,17 +424,17 @@ lodown_cps_asec <-
 				
 					ote <- "http://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/asec15_outtyp.dat"
 				
-					cachaca( ote , tf , mode = 'wb' )
+					cachaca( ote , tf , mode = 'wb' , filesize_fun = 'httr' )
 					
 					ot <- read.fwf( tf , c( 5 , 2 , 2 , 1 ) )
 					
 					ace <- "http://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/asec15_currcov_extract.dat"
 				
-					cachaca( ace , tf , mode = 'wb' )
+					cachaca( ace , tf , mode = 'wb' , filesize_fun = 'httr' )
 					
 					ac <- read.fwf( tf , c( 5 , 2 , 1 ) ) 
 
-					cachaca( "http://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/ppint15esi_offer_ext.sas7bdat" , tf , mode = 'wb' )
+					cachaca( "http://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/ppint15esi_offer_ext.sas7bdat" , tf , mode = 'wb' , filesize_fun = 'httr' )
 					
 					offer <- data.frame( haven::read_sas( tf ) )
 				
@@ -444,17 +444,17 @@ lodown_cps_asec <-
 				
 					ote <- "http://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2016/cps-redesign/asec16_outtyp_full.dat"
 				
-					cachaca( ote , tf , mode = 'wb' )
+					cachaca( ote , tf , mode = 'wb' , filesize_fun = 'httr' )
 					
 					ot <- read.fwf( tf , c( 5 , 2 , 2 , 1 ) )
 					
 					ace <- "http://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2016/cps-redesign/asec16_currcov_extract.dat"
 				
-					cachaca( ace , tf , mode = 'wb' )
+					cachaca( ace , tf , mode = 'wb' , filesize_fun = 'httr' )
 					
 					ac <- read.fwf( tf , c( 5 , 2 , 1 ) ) 
 
-					cachaca( "http://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/pubuse_esioffer_2016.sas7bdat" , tf , mode = 'wb' )
+					cachaca( "http://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/pubuse_esioffer_2016.sas7bdat" , tf , mode = 'wb' , filesize_fun = 'httr' )
 					
 					offer <- data.frame( haven::read_sas( tf ) )
 				
@@ -527,7 +527,7 @@ lodown_cps_asec <-
 						"http://thedataweb.rm.census.gov/pub/cps/march/CPS_ASEC_ASCII_REPWGT_2014_3x8_run5.zip" ,
 						ifelse(
 							catalog[ i , 'year' ] == 2014 ,
-							"http://www.census.gov/housing/extract_files/weights/CPS_ASEC_ASCII_REPWGT_2014_FULLSAMPLE.DAT" ,
+							"https://www.census.gov/housing/extract_files/weights/CPS_ASEC_ASCII_REPWGT_2014_FULLSAMPLE.DAT" ,
 							paste0( 
 								"http://thedataweb.rm.census.gov/pub/cps/march/CPS_ASEC_ASCII_REPWGT_" , 
 								substr( catalog[ i , 'year' ] , 1 , 4 ) , 
@@ -574,7 +574,7 @@ lodown_cps_asec <-
 					
 				if( !zip_file ){
 					rw_tf <- tempfile()
-					cachaca( CPS.replicate.weight.file.location , rw_tf , mode = 'wb' )
+					cachaca( CPS.replicate.weight.file.location , rw_tf , mode = 'wb' , filesize_fun = 'httr' )
 					CPS.replicate.weight.file.location <- rw_tf
 				}
 				
@@ -639,21 +639,21 @@ lodown_cps_asec <-
 
 				sp.url <- 
 					paste0( 
-					"http://www.census.gov/housing/povmeas/spmresearch/spmresearch" , 
-					floor( catalog[ i , 'year' ] - 1 ) , 
-					if ( catalog[ i , 'year' ] == 2014.38 ) "_redes" else if ( catalog[ i , 'year' ] >= 2016 ) "" else "new" ,
-					".sas7bdat" 
-				)
+						"https://www.census.gov/housing/povmeas/spmresearch/spmresearch" , 
+						floor( catalog[ i , 'year' ] - 1 ) , 
+						if ( catalog[ i , 'year' ] == 2014.38 ) "_redes" else if ( catalog[ i , 'year' ] >= 2016 ) "" else "new" ,
+						".sas7bdat" 
+					)
 				
-				cachaca( sp.url , tf , mode = 'wb' )
+				cachaca( sp.url , tf , mode = 'wb' , filesize_fun = 'httr' )
 				
 				sp <- haven::read_sas( tf )
 			
 				if ( catalog[ i , 'year' ] == 2014 ){
 					
-					sp.url <- "http://www.census.gov/housing/povmeas/spmresearch/spmresearch2013_redes.sas7bdat"
+					sp.url <- "https://www.census.gov/housing/povmeas/spmresearch/spmresearch2013_redes.sas7bdat"
 						
-					cachaca( sp.url , tf , mode = 'wb' )
+					cachaca( sp.url , tf , mode = 'wb' , filesize_fun = 'httr' )
 					
 					sp2 <- haven::read_sas( tf )
 				
