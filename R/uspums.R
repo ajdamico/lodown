@@ -65,7 +65,7 @@ get_catalog_uspums <-
 lodown_uspums <-
 	function( data_name = "uspums" , catalog , ... ){
 
-		if ( !requireNamespace( "gdata" , quietly = TRUE ) ) stop( "gdata needed for this function to work. to install it, type `install.packages( 'gdata' )`" , call. = FALSE )
+		if ( !requireNamespace( "readxl" , quietly = TRUE ) ) stop( "readxl needed for this function to work. to install it, type `install.packages( 'readxl' )`" , call. = FALSE )
 		
 		if ( !requireNamespace( "descr" , quietly = TRUE ) ) stop( "descr needed for this function to work. to install it, type `install.packages( 'descr' )`" , call. = FALSE )
 
@@ -147,7 +147,7 @@ lodown_uspums <-
 				function( fn , sheet ){
 
 					# read the sheet (specified as a function input) to an object `stru
-					stru <- data.frame( gdata::read.xls( fn , sheet = sheet , skip = 1 ) )
+					stru <- data.frame( readxl::read_excel( fn , sheet = sheet , skip = 1 ) )
 					
 					# make all column names of the `stru` data.frame lowercase
 					names( stru ) <- tolower( names( stru ) )
@@ -215,7 +215,7 @@ lodown_uspums <-
 				function( fn , sheet ){
 
 					# read the sheet (specified as a function input) to an object `stru
-					stru <- data.frame( gdata::read.xls( fn , sheet = sheet , skip = 1 ) )
+					stru <- data.frame( readxl::read_excel( fn , sheet = sheet , skip = 1 ) )
 					
 					# make all column names of the `stru` data.frame lowercase
 					names( stru ) <- tolower( names( stru ) )
