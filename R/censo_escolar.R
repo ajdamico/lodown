@@ -92,7 +92,7 @@ lodown_censo_escolar <-
 
 					rm( x )
 
-					cat( tolower( gsub( basename( "\\..*" , "" , these_tables[ j , 'data_file' ] ) ) ) , "stored at" ,
+					cat( tolower( gsub( "\\..*" , "" , basename( these_tables[ j , 'data_file' ] ) ) ) , "stored at" ,
 					     these_tables[ j , 'db_tablename' ] , "\r\n" )
 
 					catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , DBI::dbGetQuery( db , paste( "SELECT COUNT(*) FROM" , these_tables[ j , 'db_tablename' ] ) )[ 1 , 1 ] , na.rm = TRUE )
