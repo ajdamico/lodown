@@ -469,7 +469,7 @@ lodown_censo <-
 # from any data files that have  #
 # been downloaded from ibge      #
 ranc_censo <- 
-	function( infiles , width ){
+	function( infiles , width , encoding = getOption("encoding") ){
 
 		tf_a <- tempfile()
 
@@ -479,7 +479,7 @@ ranc_censo <-
 		# loop through them all!
 		for ( infile in infiles ){
 
-			incon <- file( infile , "r")
+			incon <- file( infile , "r" , encoding = encoding )
 
 			line.num <- 0
 			
