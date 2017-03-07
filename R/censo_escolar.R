@@ -202,3 +202,21 @@ lodown_censo_escolar <-
 
 	}
 
+
+remove_nonutf8_censo_escolar <- 
+	function( infile , encoding = "ASCII" ){
+
+		tf_a <- tempfile()
+
+		outcon <- file( tf_a , "w" )
+
+		incon <- file( infile , "r" , encoding = encoding )
+			
+		while( length( line <- readLines( incon , 1 , warn = FALSE ) ) > 0 ) writeLines( line , outcon )
+
+		close( incon )
+		
+		close( outcon )
+
+		tf_a
+	}
