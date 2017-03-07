@@ -141,7 +141,7 @@ lodown_datasus <-
           # loop through all tables that match the current db_tablename
           for( this_file in catalog[ catalog$db_tablename %in% catalog[ i , 'db_tablename' ] , 'output_filename' ] ){
 
-            load( this_file )
+            x <- readRDS( file = this_file )
 
             for( this_col in setdiff( correct_columns$col_name , names( x ) ) ) x[ , this_col ] <- NA
 
