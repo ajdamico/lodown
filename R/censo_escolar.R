@@ -119,16 +119,29 @@ lodown_censo_escolar <-
 						this_data_file <- grep( "\\.csv$", this_data_file, value = TRUE, ignore.case = TRUE )
 
 						suppressMessages(
-						  DBI::dbWriteTable(
+						  tryCatch( DBI::dbWriteTable(
 						    db,
 						    paste0( this_table_type , "_" , catalog[ i , "year" ] ) ,
 						    this_data_file ,
 						    sep = "|" ,
-						    best.effort = TRUE ,
+						    best.effort = FALSE ,
 						    lower.case.names = TRUE ,
 						    append = TRUE ,
 						    nrow.check = 1000
-						  )
+						  ) , error = function(e) {
+						    paste( "removing non-utf8 characters" )
+						    remove_nonutf8_censo_escolar( this_data_file ) ;
+						    DBI::dbWriteTable(
+						      db,
+						      paste0( this_table_type , "_" , catalog[ i , "year" ] ) ,
+						      this_data_file ,
+						      sep = "|" ,
+						      best.effort = TRUE ,
+						      lower.case.names = TRUE ,
+						      append = TRUE ,
+						      nrow.check = 1000
+						    )
+						  } )
 						)
 
 						file.remove( this_data_file )
@@ -155,7 +168,7 @@ lodown_censo_escolar <-
 			      this_data_file <- tabelas[ j ]
 
 			      suppressMessages(
-			        DBI::dbWriteTable(
+			        tryCatch( DBI::dbWriteTable(
 			          db,
 			          paste0( this_table_type , "_" , catalog[ i , "year" ] ) ,
 			          this_data_file ,
@@ -164,7 +177,20 @@ lodown_censo_escolar <-
 			          lower.case.names = TRUE ,
 			          append = TRUE ,
 			          nrow.check = 1000
-			        )
+			        ) , error = function(e) {
+			          paste( "removing non-utf8 characters" )
+			          remove_nonutf8_censo_escolar( this_data_file ) ;
+			          DBI::dbWriteTable(
+			            db,
+			            paste0( this_table_type , "_" , catalog[ i , "year" ] ) ,
+			            this_data_file ,
+			            sep = "|" ,
+			            best.effort = TRUE ,
+			            lower.case.names = TRUE ,
+			            append = TRUE ,
+			            nrow.check = 1000
+			          )
+			        } )
 			      )
 
 			      file.remove( this_data_file )
@@ -203,7 +229,7 @@ lodown_censo_escolar <-
 	}
 
 
-remove_nonutf8_censo_escolar <- 
+remove_nonutf8_censo_escolar <-
 	function( infile , encoding = "ASCII" ){
 
 		tf_a <- tempfile()
@@ -211,11 +237,11 @@ remove_nonutf8_censo_escolar <-
 		outcon <- file( tf_a , "w" )
 
 		incon <- file( infile , "r" , encoding = encoding )
-			
+
 		while( length( line <- readLines( incon , 1 , warn = FALSE ) ) > 0 ) writeLines( line , outcon )
 
 		close( incon )
-		
+
 		close( outcon )
 
 		tf_a
