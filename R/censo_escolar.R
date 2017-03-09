@@ -124,19 +124,16 @@ lodown_censo_escolar <-
 						    paste0( this_table_type , "_" , catalog[ i , "year" ] ) ,
 						    this_data_file ,
 						    sep = "|" ,
-						    best.effort = FALSE ,
 						    lower.case.names = TRUE ,
 						    append = TRUE ,
 						    nrow.check = 1000
 						  ) , error = function(e) {
-						    paste( "removing non-utf8 characters" )
-						    remove_nonutf8_censo_escolar( this_data_file ) ;
+						    cleaned_data_file <- remove_nonutf8_censo_escolar( this_data_file ) ;
 						    DBI::dbWriteTable(
 						      db,
 						      paste0( this_table_type , "_" , catalog[ i , "year" ] ) ,
-						      this_data_file ,
+						      cleaned_data_file ,
 						      sep = "|" ,
-						      best.effort = TRUE ,
 						      lower.case.names = TRUE ,
 						      append = TRUE ,
 						      nrow.check = 1000
@@ -173,19 +170,16 @@ lodown_censo_escolar <-
 			          paste0( this_table_type , "_" , catalog[ i , "year" ] ) ,
 			          this_data_file ,
 			          sep = "|" ,
-			          best.effort = TRUE ,
 			          lower.case.names = TRUE ,
 			          append = TRUE ,
 			          nrow.check = 1000
 			        ) , error = function(e) {
-			          paste( "removing non-utf8 characters" )
-			          remove_nonutf8_censo_escolar( this_data_file ) ;
+			          cleaned_data_file <- remove_nonutf8_censo_escolar( this_data_file ) ;
 			          DBI::dbWriteTable(
 			            db,
 			            paste0( this_table_type , "_" , catalog[ i , "year" ] ) ,
-			            this_data_file ,
+			            cleaned_data_file ,
 			            sep = "|" ,
-			            best.effort = TRUE ,
 			            lower.case.names = TRUE ,
 			            append = TRUE ,
 			            nrow.check = 1000
