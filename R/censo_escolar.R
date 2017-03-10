@@ -1,376 +1,246 @@
 get_catalog_censo_escolar <-
-  function( data_name = "censo_escolar" , output_dir , ... ){
+	function( data_name = "censo_escolar" , output_dir , ... ){
 
-    inep_portal <- "http://portal.inep.gov.br/microdados"
+		inep_portal <- "http://portal.inep.gov.br/microdados"
 
-    w <- rvest::html_attr( rvest::html_nodes( xml2::read_html( inep_portal ) , "a" ) , "href" )
+		w <- rvest::html_attr( rvest::html_nodes( xml2::read_html( inep_portal ) , "a" ) , "href" )
 
-    these_links <- grep( "censo_escolar(.*)zip$" , w , value = TRUE , ignore.case = TRUE )
+		these_links <- grep( "censo_escolar(.*)zip$" , w , value = TRUE , ignore.case = TRUE )
 
-    censo_escolar_years <- substr( gsub( "[^0-9]" , "" , these_links ) , 1 , 4 )
+		censo_escolar_years <- substr( gsub( "[^0-9]" , "" , these_links ) , 1 , 4 )
 
-    catalog <-
-      data.frame(
-        year = censo_escolar_years ,
-        dbfolder = paste0( output_dir , "/MonetDB" ) ,
-        output_folder = paste0( output_dir , "/" , censo_escolar_years ) ,
-        full_url = these_links ,
-        stringsAsFactors = FALSE
-      )
+		catalog <-
+			data.frame(
+				year = censo_escolar_years ,
+				dbfolder = paste0( output_dir , "/MonetDB" ) ,
+				output_folder = paste0( output_dir , "/" , censo_escolar_years ) ,
+				full_url = these_links ,
+				stringsAsFactors = FALSE
+			)
 
-    catalog
+		catalog
 
-  }
+	}
 
 
 lodown_censo_escolar <-
-  function( data_name = "censo_escolar" , catalog , path_to_7z = if( .Platform$OS.type != 'windows' ) '7za' else normalizePath( "C:/Program Files/7-zip/7z.exe" ) , ... ){
+	function( data_name = "censo_escolar" , catalog , path_to_7z = if( .Platform$OS.type != 'windows' ) '7za' else normalizePath( "C:/Program Files/7-zip/7z.exe" ) , ... ){
 
-    if( system( paste0( '"' , path_to_7z , '" -h' ) , show.output.on.console = FALSE ) != 0 ) stop( paste0( "you need to install 7-zip.  if you already have it, include a parameter like path_to_7z='" , path_to_7z , "'" ) )
+	  if( system( paste0( '"' , path_to_7z , '" -h' ) , show.output.on.console = FALSE ) != 0 ) stop( paste0( "you need to install 7-zip.  if you already have it, include a parameter like path_to_7z='" , path_to_7z , "'" ) )
 
-    tf <- tempfile()
+		tf <- tempfile()
 
-    for ( i in seq_len( nrow( catalog ) ) ){
+		for ( i in seq_len( nrow( catalog ) ) ){
 
-      # open the connection to the monetdblite database
-      db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog[ i , 'dbfolder' ] )
+			# open the connection to the monetdblite database
+			db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog[ i , 'dbfolder' ] )
 
-      # download the file
-      cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
+			# download the file
+			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
 
-      unzipped_files <- unzip_warn_fail( tf , exdir = catalog[ i , "output_folder" ] )
+			unzipped_files <- unzip_warn_fail( tf , exdir = catalog[ i , "output_folder" ] )
 
-      for( these_zips in grep( "\\.zip$" , unzipped_files , value = TRUE , ignore.case = TRUE ) ) unzipped_files <- c( unzipped_files , unzip_warn_fail( these_zips , exdir = np_dirname( these_zips ) ) )
+			for( these_zips in grep( "\\.zip$" , unzipped_files , value = TRUE , ignore.case = TRUE ) ) unzipped_files <- c( unzipped_files , unzip_warn_fail( these_zips , exdir = np_dirname( these_zips ) ) )
 
-      if( catalog[ i , 'year' ] <= 2006 ){
+			if( catalog[ i , 'year' ] <= 2006 ){
 
-        sas_files <- grep( "\\.sas$", unzipped_files, value = TRUE , ignore.case = TRUE )
+				sas_files <- grep( "\\.sas$", unzipped_files, value = TRUE , ignore.case = TRUE )
 
-        sas_scaledowns <- gsub( "SAS|_" , "" , gsub( "\\.sas|\\.SAS" , "" , gsub( paste0( "INPUT|" , catalog[ i , 'year' ] ) , "" , basename( sas_files ) ) ) )
-        sas_scaledowns <- ifelse( grepl( "ESC" , sas_scaledowns ) & !grepl( "INDICESC" , sas_scaledowns ) , gsub( "ESC" , "" , sas_scaledowns ) , sas_scaledowns )
+				sas_scaledowns <- gsub( "SAS|_" , "" , gsub( "\\.sas|\\.SAS" , "" , gsub( paste0( "INPUT|" , catalog[ i , 'year' ] ) , "" , basename( sas_files ) ) ) )
+				sas_scaledowns <- ifelse( grepl( "ESC" , sas_scaledowns ) & !grepl( "INDICESC" , sas_scaledowns ) , gsub( "ESC" , "" , sas_scaledowns ) , sas_scaledowns )
 
-        datafile_matches <- lapply( sas_scaledowns , function( z ) unzipped_files[ grepl( z , basename( unzipped_files ) , ignore.case = TRUE ) & grepl( "dados" , np_dirname( unzipped_files ) , ignore.case = TRUE ) ] )
-        datafile_matches <- lapply( datafile_matches , function( z ) z[ !grepl( "\\.zip" , z , ignore.case = TRUE ) ] )
+				datafile_matches <- lapply( sas_scaledowns , function( z ) unzipped_files[ grepl( z , basename( unzipped_files ) , ignore.case = TRUE ) & grepl( "dados" , np_dirname( unzipped_files ) , ignore.case = TRUE ) ] )
+				datafile_matches <- lapply( datafile_matches , function( z ) z[ !grepl( "\\.zip" , z , ignore.case = TRUE ) ] )
 
-        these_tables <-
-          data.frame(
-            sas_script = sas_files ,
-            data_file = unique( unlist( datafile_matches ) ) ,
-            db_tablename = paste0( tolower( sas_scaledowns ) , "_" , catalog[ i , 'year' ] ) ,
-            stringsAsFactors = FALSE
-          )
+				these_tables <-
+					data.frame(
+						sas_script = sas_files ,
+						data_file = unique( unlist( datafile_matches ) ) ,
+						db_tablename = paste0( tolower( sas_scaledowns ) , "_" , catalog[ i , 'year' ] ) ,
+						stringsAsFactors = FALSE
+					)
 
-        for( j in seq( nrow( these_tables ) ) ){
+				for( j in seq( nrow( these_tables ) ) ){
 
-          Encoding( these_tables[ j , 'sas_script' ] ) <- ''
+					Encoding( these_tables[ j , 'sas_script' ] ) <- ''
 
-          # write the file to the disk
-          w <- readLines( these_tables[ j , 'sas_script' ] )
+					# write the file to the disk
+					w <- readLines( these_tables[ j , 'sas_script' ] )
 
-          # remove all tab characters
-          w <- gsub( '\t' , ' ' , w )
+					# remove all tab characters
+					w <- gsub( '\t' , ' ' , w )
 
-          w <- gsub( '@ ' , '@' , w , fixed = TRUE )
-          w <- gsub( "@371 CEST_SAUDE  " , "@371 CEST_SAUDE $1 " , w , fixed = TRUE )
-          w <- gsub( "@379 OUTROS  " , "@379 OUTROS $1 " , w , fixed = TRUE )
-          w <- gsub( "VEF918 11" , "VEF918 11" , w , fixed = TRUE )
-          w <- gsub( "VEE1411( +)/" , "VEE1411 7. /" , w )
-          w <- gsub( "VEE1412( +)/" , "VEE1412 7. /" , w )
+					w <- gsub( '@ ' , '@' , w , fixed = TRUE )
+					w <- gsub( "@371 CEST_SAUDE  " , "@371 CEST_SAUDE $1 " , w , fixed = TRUE )
+					w <- gsub( "@379 OUTROS  " , "@379 OUTROS $1 " , w , fixed = TRUE )
+					w <- gsub( "VEF918 11" , "VEF918 11" , w , fixed = TRUE )
+					w <- gsub( "VEE1411( +)/" , "VEE1411 7. /" , w )
+					w <- gsub( "VEE1412( +)/" , "VEE1412 7. /" , w )
 
-          # overwrite the file on the disk with the newly de-tabbed text
-          writeLines( w , these_tables[ j , 'sas_script' ] )
+					# overwrite the file on the disk with the newly de-tabbed text
+					writeLines( w , these_tables[ j , 'sas_script' ] )
 
-          x <- read_SAScii( these_tables[ j , 'data_file' ] , these_tables[ j , 'sas_script' ] , na_values = c( "" , "." ) )
+					x <- read_SAScii( these_tables[ j , 'data_file' ] , these_tables[ j , 'sas_script' ] , na_values = c( "" , "." ) )
 
-          # convert column names to lowercase
-          names( x ) <- tolower( names( x ) )
+					# convert column names to lowercase
+					names( x ) <- tolower( names( x ) )
 
-          # do not use monetdb reserved words
-          for ( k in names( x )[ toupper( names( x ) ) %in% getFromNamespace( "reserved_monetdb_keywords" , "MonetDBLite" ) ] ) names( x )[ names( x ) == k ] <- paste0( k , "_" )
+					# do not use monetdb reserved words
+					for ( k in names( x )[ toupper( names( x ) ) %in% getFromNamespace( "reserved_monetdb_keywords" , "MonetDBLite" ) ] ) names( x )[ names( x ) == k ] <- paste0( k , "_" )
 
-          DBI::dbWriteTable( db , these_tables[ j , 'db_tablename' ] , x )
+					DBI::dbWriteTable( db , these_tables[ j , 'db_tablename' ] , x )
 
-          rm( x )
+					rm( x )
 
-          cat( tolower( gsub( "\\..*" , "" , basename( these_tables[ j , 'data_file' ] ) ) ) , "stored at" ,
-               these_tables[ j , 'db_tablename' ] , "\r\n" )
+					cat( tolower( gsub( "\\..*" , "" , basename( these_tables[ j , 'data_file' ] ) ) ) , "stored at" ,
+					     these_tables[ j , 'db_tablename' ] , "\r\n" )
 
-          catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , DBI::dbGetQuery( db , paste( "SELECT COUNT(*) FROM" , these_tables[ j , 'db_tablename' ] ) )[ 1 , 1 ] , na.rm = TRUE )
+					catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , DBI::dbGetQuery( db , paste( "SELECT COUNT(*) FROM" , these_tables[ j , 'db_tablename' ] ) )[ 1 , 1 ] , na.rm = TRUE )
 
-        }
+				}
 
-      } else if ( catalog[ i , 'year' ] <= 2015 ) {
+			} else if ( catalog[ i , 'year' ] <= 2015 ) {
 
-        rar_files <- grep( "\\.rar$", unzipped_files, value = TRUE , ignore.case = TRUE )
+				rar_files <- grep( "\\.rar$", unzipped_files, value = TRUE , ignore.case = TRUE )
 
-        for( this_table_type in c( "docente", "matricula", "turma", "escola" ) ) {
+				for( this_table_type in c( "docente", "matricula", "turma", "escola" ) ) {
 
-          tabelas <- rar_files[ grep( this_table_type , basename( rar_files ), value = FALSE, ignore.case = TRUE ) ]
+					tabelas <- rar_files[ grep( this_table_type , basename( rar_files ), value = FALSE, ignore.case = TRUE ) ]
 
-          for ( j in seq_along( tabelas ) ) {
+					for ( j in seq_along( tabelas ) ) {
 
-            # build the string to send to DOS
-            dos.command <- paste0( '"' , path_to_7z , '" x "' , normalizePath( tabelas[ j ] ) , '" -o"' , normalizePath( catalog[ i , "output_folder" ] ) , '"' )
+						# build the string to send to DOS
+						dos.command <- paste0( '"' , path_to_7z , '" x "' , normalizePath( tabelas[ j ] ) , '" -o"' , normalizePath( catalog[ i , "output_folder" ] ) , '"' )
 
-            system( dos.command , show.output.on.console = FALSE )
+						system( dos.command , show.output.on.console = FALSE )
 
-            this_excel_file <- grep( "ANEXO I -" , unzipped_files , ignore.case = FALSE , value = TRUE )
+						this_data_file <- list.files( catalog[ i , "output_folder" ] , full.names = TRUE )
 
-            sheet_name <- grep( this_table_type, iconv( readxl::excel_sheets( this_excel_file ) , from = "utf8" , to = "ASCII//TRANSLIT" ) , ignore.case = T )
-            codebook <- data.frame( readxl::read_excel( this_excel_file , sheet = sheet_name , skip = 0 ) )
-            codebook <- codebook [ which( codebook[ , 1 ] == "N" ): nrow(codebook) , ]
-            colnames( codebook ) <- codebook[ 1 , ]
-            codebook <- codebook[ -1 , ]
-            codebook <- tryCatch(
-              codebook <- codebook[ !is.na( codebook[ , 2 ] ) , c( "Nome da Variável" , "Tipo" , "Tam.(1)" ) ] ,
-              error = function( e ) {
+						this_data_file <- grep( "\\.csv$", this_data_file, value = TRUE, ignore.case = TRUE )
 
-                possible.names <- list( c( "Nome da Variável" , "Tipo" , "Tam. (1)" ) , c( "Nome novo da Variável" , "Tipo" , "Tam. (1)" ), c( "Nome novo da Variável" , "Tipo" , "Tam.(1)" ) )
+						suppressMessages(
+						  tryCatch( DBI::dbWriteTable(
+						    db,
+						    paste0( this_table_type , "_" , catalog[ i , "year" ] ) ,
+						    this_data_file ,
+						    sep = "|" ,
+						    lower.case.names = TRUE ,
+						    append = TRUE ,
+						    nrow.check = 1000
+						  ) , error = function(e) {
+						    cleaned_data_file <- remove_nonutf8_censo_escolar( this_data_file ) ;
+						    DBI::dbWriteTable(
+						      db,
+						      paste0( this_table_type , "_" , catalog[ i , "year" ] ) ,
+						      cleaned_data_file ,
+						      sep = "|" ,
+						      lower.case.names = TRUE ,
+						      append = TRUE ,
+						      nrow.check = 1000
+						    )
+						  } )
+						)
 
-                for( name_set in possible.names ) {
+						file.remove( this_data_file )
 
-                  if ( all( name_set %in% colnames( codebook ) ) ) {
+						cat( tolower( gsub( "\\..*" , "" , basename( this_data_file ) ) ), "stored at" ,
+						     paste0( this_table_type , "_" , catalog[ i , "year" ] ) , "\r\n\r" )
 
-                    codebook <- codebook[ !is.na( codebook[ , 2 ] ) , name_set ]
-                    colnames( codebook ) <- c( "Nome da Variável" , "Tipo" , "Tam.(1)" )
+					}
 
-                    return( codebook )
+				}
 
-                  }
+				catalog[ i , 'case_count' ] <- DBI::dbGetQuery( db , paste0( "SELECT COUNT(*) FROM matricula_" , catalog[ i , "year" ] ) )[ 1 , 1 ]
 
-                }
+			} else {
 
-              } )
-            codebook$`Nome da Variável` <- tolower( codebook$`Nome da Variável` )
-            codebook[ is.na( codebook$Tipo ) , c( "Tipo" , "Tam.(1)" ) ] <- c( "Char" , 4 )
-            codebook[ grepl( "^co_curso_[1-9]" , codebook$`Nome da Variável` ) , c( "Tipo" ) ] <- "Char"
-            codebook[ grepl( "^co_curso_[1-9]" , codebook$`Nome da Variável` ) , c( "Tam.(1)" ) ] <- 10
+			  unzipped_files <- unzipped_files [ grep( "CSV" , basename( unzipped_files ), value = FALSE, ignore.case = TRUE ) ]
 
-            this_data_file <- list.files( catalog[ i , "output_folder" ] , full.names = TRUE )
+			  for( this_table_type in c( "docente", "matricula", "turma", "escola" ) ) {
 
-            this_data_file <- grep( "\\.csv$", this_data_file, value = TRUE, ignore.case = TRUE )
+			    tabelas <- unzipped_files[ grep( this_table_type , basename( unzipped_files ), value = FALSE, ignore.case = TRUE ) ]
 
-            columns.in.datafile <- strsplit( readLines( this_data_file , n = 1 ) , "\\|" )[ 1 ] [[ 1 ]]
-            columns.in.datafile <- tolower( columns.in.datafile )
-            columns.in.datafile <- codebook$`Nome da Variável` %in% columns.in.datafile
+			    for ( j in seq_along( tabelas ) ) {
 
-            if ( j == 1 ) {
+			      this_data_file <- tabelas[ j ]
 
-              create.table.query <-
-                paste0(
-                  "CREATE TABLE " ,
-                  paste0( this_table_type , "_" , catalog[ i , "year" ] ) ,
-                  " ( " ,
-                  paste0(
-                    paste0( codebook$`Nome da Variável` , " " ,
-                            ifelse(
-                              grepl( "Num" , codebook$Tipo , ignore.case = TRUE ) ,
-                              "bigint" ,
-                              paste0( "varchar(" , gsub( "\\$|\\..*" , "" , codebook$`Tam.(1)` ) ,  ")" ) ) ) , collapse = " , " ) , " ) ;"
-                )
-              DBI::dbSendQuery( db , create.table.query )
+			      suppressMessages(
+			        tryCatch( DBI::dbWriteTable(
+			          db,
+			          paste0( this_table_type , "_" , catalog[ i , "year" ] ) ,
+			          this_data_file ,
+			          sep = "|" ,
+			          lower.case.names = TRUE ,
+			          append = TRUE ,
+			          nrow.check = 1000
+			        ) , error = function(e) {
+			          cleaned_data_file <- remove_nonutf8_censo_escolar( this_data_file ) ;
+			          DBI::dbWriteTable(
+			            db,
+			            paste0( this_table_type , "_" , catalog[ i , "year" ] ) ,
+			            cleaned_data_file ,
+			            sep = "|" ,
+			            lower.case.names = TRUE ,
+			            append = TRUE ,
+			            nrow.check = 1000
+			          )
+			        } )
+			      )
 
-            }
+			      file.remove( this_data_file )
 
-            create.table.query <-
-              paste0(
-                "CREATE TABLE " ,
-                tolower( gsub( "\\..*" , "" , basename( this_data_file ) ) ) ,
-                " ( " ,
-                paste0(
-                  paste0( codebook$`Nome da Variável`[ columns.in.datafile ] , " " ,
-                          ifelse(
-                            grepl( "Num" , codebook$Tipo[ columns.in.datafile ] , ignore.case = TRUE ) ,
-                            "bigint" ,
-                            paste0( "varchar(" , gsub( "\\$|\\..*" , "" , codebook$`Tam.(1)`[ columns.in.datafile ] ) ,  ")" ) ) ) , collapse = " , " ) , " ) ;"
-              )
-            DBI::dbSendQuery( db , create.table.query )
+			      cat( tolower( gsub( "\\..*" , "" , basename( this_data_file ) ) ), "stored at" ,
+			           paste0( this_table_type , "_" , catalog[ i , "year" ] ) , "\r\n\r" )
 
-            suppressMessages(
-              tryCatch(
-                DBI::dbSendQuery( db , paste0( "COPY offset 2 INTO " ,
-                                               tolower( gsub( "\\..*" , "" , basename( this_data_file ) ) ) ,
-                                               " FROM '" , this_data_file , "' USING DELIMITERS '|' NULL AS '' ;" ) ) ,
-                error = function(e) {
-                  cleaned_data_file <- lodown:::remove_nonutf8_censo_escolar( this_data_file )
-                  DBI::dbSendQuery( db , paste0( "COPY offset 2 INTO " ,
-                                                 tolower( gsub( "\\..*" , "" , basename( this_data_file ) ) ) ,
-                                                 " FROM '" , cleaned_data_file , "' USING DELIMITERS '|' NULL AS '' ;" ) )
-                } )
-            )
+			    }
 
-            file.remove( this_data_file )
+			  }
 
-            DBI::dbSendQuery( db , paste0(
-              "INSERT INTO " ,
-              paste0( this_table_type , "_" , catalog[ i , "year" ] ) , "(" , paste0( codebook$`Nome da Variável` , collapse = " , " ) , ")" ,
-              "SELECT " ,
-              paste0( ifelse( columns.in.datafile , codebook$`Nome da Variável` , paste0( "NULL as ", codebook$`Nome da Variável` ) ) , collapse = " , " ) ,
-              " FROM " , tolower( gsub( "\\..*" , "" , basename( this_data_file ) ) ) ) )
+			  catalog[ i , 'case_count' ] <- DBI::dbGetQuery( db , paste0( "SELECT COUNT(*) FROM matricula_" , catalog[ i , "year" ] ) )[ 1 , 1 ]
 
-            DBI::dbRemoveTable( db , tolower( gsub( "\\..*" , "" , basename( this_data_file ) ) ) )
-
-            cat( tolower( gsub( "\\..*" , "" , basename( this_data_file ) ) ), "stored at" ,
-                 paste0( this_table_type , "_" , catalog[ i , "year" ] ) , "\r\n\r" )
-
-
-          }
 
-        }
-
-        catalog[ i , 'case_count' ] <- DBI::dbGetQuery( db , paste0( "SELECT COUNT(*) FROM matricula_" , catalog[ i , "year" ] ) )[ 1 , 1 ]
-
-      } else {
-
-        this_excel_file <- grep( "ANEXO I -" , unzipped_files , ignore.case = FALSE , value = TRUE )
-
-        unzipped_files <- unzipped_files [ grep( "\\.CSV$" , basename( unzipped_files ), value = FALSE, ignore.case = TRUE ) ]
-
-        for( this_table_type in c( "docente", "matricula", "turma", "escola" ) ) {
+			}
 
-          tabelas <- unzipped_files[ grep( this_table_type , basename( unzipped_files ), value = FALSE, ignore.case = TRUE ) ]
+			# disconnect from the current monet database
+			DBI::dbDisconnect( db , shutdown = TRUE )
 
-          for ( j in seq_along( tabelas ) ) {
+			# delete the temporary files?  or move some docs to a save folder?
+			suppressWarnings( file.remove( tf ) )
 
-            sheet_name <- grep( this_table_type, iconv( readxl::excel_sheets( this_excel_file ) , from = "utf8" , to = "ASCII//TRANSLIT" ) , ignore.case = T )
-            codebook <- data.frame( readxl::read_excel( this_excel_file , sheet = sheet_name , skip = 0 ) )
-            codebook <- codebook [ which( codebook[ , 1 ] == "N" ): nrow(codebook) , ]
-            colnames( codebook ) <- codebook[ 1 , ]
-            codebook <- codebook[ -1 , ]
-            codebook <- tryCatch(
-              codebook <- codebook[ !is.na( codebook[ , 2 ] ) , c( "Nome da Variável" , "Tipo" , "Tam.(1)" ) ] ,
-              error = function( e ) {
+			# remove raw data files already loaded
+			for ( rm.dir in grep( "/DADOS/.*", unzipped_files , value = TRUE , ignore.case = TRUE ) ) {
+			  suppressWarnings( unlink( rm.dir , recursive = TRUE )  )
+			}
 
-                possible.names <- list( c( "Nome da Variável" , "Tipo" , "Tam. (1)" ) , c( "Nome novo da Variável" , "Tipo" , "Tam. (1)" ), c( "Nome novo da Variável" , "Tipo" , "Tam.(1)" ) )
+			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'dbfolder' ] , "'\r\n\n" ) )
 
-                for( name_set in possible.names ) {
+		}
 
-                  if ( all( name_set %in% colnames( codebook ) ) ) {
 
-                    codebook <- codebook[ !is.na( codebook[ , 2 ] ) , name_set ]
-                    colnames( codebook ) <- c( "Nome da Variável" , "Tipo" , "Tam.(1)" )
 
-                    return( codebook )
+		catalog
 
-                  }
-
-                }
-
-              } )
-            codebook$`Nome da Variável` <- tolower( codebook$`Nome da Variável` )
-            codebook[ is.na( codebook$Tipo ) , c( "Tipo" , "Tam.(1)" ) ] <- c( "Char" , 4 )
-            codebook[ grepl( "^co_curso_[1-9]" , codebook$`Nome da Variável` ) , c( "Tipo" ) ] <- "Char"
-            codebook[ grepl( "^co_curso_[1-9]" , codebook$`Nome da Variável` ) , c( "Tam.(1)" ) ] <- 10
-
-            this_data_file <- tabelas[ j ]
-
-            columns.in.datafile <- strsplit( readLines( this_data_file , n = 1 ) , "\\|" )[ 1 ] [[ 1 ]]
-            columns.in.datafile <- tolower( columns.in.datafile )
-            columns.in.datafile <- codebook$`Nome da Variável` %in% columns.in.datafile
-
-            if ( j == 1 ) {
-
-              create.table.query <-
-                paste0(
-                  "CREATE TABLE " ,
-                  paste0( this_table_type , "_" , catalog[ i , "year" ] ) ,
-                  " ( " ,
-                  paste0(
-                    paste0( codebook$`Nome da Variável` , " " ,
-                            ifelse(
-                              grepl( "Num" , codebook$Tipo , ignore.case = TRUE ) ,
-                               "bigint" ,
-                              paste0( "varchar(" , gsub( "\\$|\\..*" , "" , codebook$`Tam.(1)` ) ,  ")" ) ) ) , collapse = " , " ) , " ) ;"
-                )
-              DBI::dbSendQuery( db , create.table.query )
-
-            }
-
-            create.table.query <-
-              paste0(
-                "CREATE TABLE " ,
-                tolower( gsub( "\\..*" , "" , basename( this_data_file ) ) ) ,
-                " ( " ,
-                paste0(
-                  paste0( codebook$`Nome da Variável`[ columns.in.datafile ] , " " ,
-                          ifelse(
-                            grepl( "Num" , codebook$Tipo[ columns.in.datafile ] , ignore.case = TRUE ) ,
-                            "bigint" ,
-                            paste0( "varchar(" , gsub( "\\$|\\..*" , "" , codebook$`Tam.(1)`[ columns.in.datafile ] ) ,  ")" ) ) ) , collapse = " , " ) , " ) ;"
-              )
-            DBI::dbSendQuery( db , create.table.query )
-
-            suppressMessages(
-              tryCatch(
-                DBI::dbSendQuery( db , paste0( "COPY offset 2 INTO " ,
-                                               tolower( gsub( "\\..*" , "" , basename( this_data_file ) ) ) ,
-                                               " FROM '" , this_data_file , "' USING DELIMITERS '|' NULL AS '' ;" ) ) ,
-                error = function(e) {
-                  cleaned_data_file <- lodown:::remove_nonutf8_censo_escolar( this_data_file )
-                  DBI::dbSendQuery( db , paste0( "COPY offset 2 INTO " ,
-                                                 tolower( gsub( "\\..*" , "" , basename( this_data_file ) ) ) ,
-                                                 " FROM '" , cleaned_data_file , "' USING DELIMITERS '|' NULL AS '' ;" ) )
-                } )
-            )
-
-            file.remove( this_data_file )
-
-            DBI::dbSendQuery( db , paste0(
-              "INSERT INTO " ,
-              paste0( this_table_type , "_" , catalog[ i , "year" ] ) , "(" , paste0( codebook$`Nome da Variável` , collapse = " , " ) , ")" ,
-              "SELECT " ,
-              paste0( ifelse( columns.in.datafile , codebook$`Nome da Variável` , paste0( "NULL as ", codebook$`Nome da Variável` ) ) , collapse = " , " ) ,
-              " FROM " , tolower( gsub( "\\..*" , "" , basename( this_data_file ) ) ) ) )
-
-            DBI::dbRemoveTable( db , tolower( gsub( "\\..*" , "" , basename( this_data_file ) ) ) )
-
-            cat( tolower( gsub( "\\..*" , "" , basename( this_data_file ) ) ), "stored at" ,
-                 paste0( this_table_type , "_" , catalog[ i , "year" ] ) , "\r\n\r" )
-
-          }
-
-        }
-
-        catalog[ i , 'case_count' ] <- DBI::dbGetQuery( db , paste0( "SELECT COUNT(*) FROM matricula_" , catalog[ i , "year" ] ) )[ 1 , 1 ]
-
-      }
-
-      # disconnect from the current monet database
-      DBI::dbDisconnect( db , shutdown = TRUE )
-
-      # delete the temporary files?  or move some docs to a save folder?
-      suppressWarnings( file.remove( tf ) )
-
-      # remove raw data files already loaded
-      for ( rm.dir in grep( "/DADOS/.*", unzipped_files , value = TRUE , ignore.case = TRUE ) ) {
-        suppressWarnings( unlink( rm.dir , recursive = TRUE )  )
-      }
-
-      cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'dbfolder' ] , "'\r\n\n" ) )
-
-    }
-
-    catalog
-
-  }
+	}
 
 
 
 remove_nonutf8_censo_escolar <-
   function( infile ){
-
+    
     tf_a <- tempfile()
-
+    
     outcon <- file( tf_a , "w" )
-
+    
     incon <- file( infile , "r" )
-
+    
     while( length( line <- readLines( incon , 1 , warn = FALSE ) ) > 0 ) writeLines( iconv( line , "" , "ASCII" , sub = " " ) , outcon )
-
+    
     close( incon )
-
+    
     close( outcon )
-
+    
     tf_a
   }
-
+  
+  
+  
