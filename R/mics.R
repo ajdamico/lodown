@@ -91,10 +91,11 @@ lodown_mics <-
 mics_authenticate <-
 	function( your_email , your_password ){
 
+		readline( prompt = "" )
+		
 		tf <- tempfile() ; tf2 <- tempfile()
 
 		signin_page <- "http://mics.unicef.org/visitors/sign-in"
-
 			
 		a <- httr::GET( signin_page )
 
