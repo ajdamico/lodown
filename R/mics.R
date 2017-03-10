@@ -90,8 +90,6 @@ lodown_mics <-
 	
 mics_authenticate <-
 	function( your_email , your_password ){
-
-		readline( prompt = "" )
 		
 		tf <- tempfile() ; tf2 <- tempfile()
 
@@ -103,6 +101,8 @@ mics_authenticate <-
 
 		if( any( grepl( "Log Out" , readLines(tf) ) ) ) return( invisible( TRUE ) )
 		
+		readline( prompt = "" )
+
 		this_page <- readLines( tf ) 
 
 		this_token <- gsub( '(.*)authenticity_token\" type=\"hidden\" value=\"(.*)\"(.*)' , "\\2" , grep( "authenticity_token" , this_page , value = TRUE ) )
