@@ -237,6 +237,7 @@ lodown_censo_escolar <-
             codebook <- codebook [ which( codebook[ , 1 ] == "N" ): nrow(codebook) , ]
             colnames( codebook ) <- codebook[ 1 , ]
             codebook <- codebook[ -1 , ]
+            colnames( codebook ) <- iconv( colnames( codebook ) , from = "utf8" , to = "ASCII//TRANSLIT" )
             codebook <- tryCatch(
               codebook <- codebook[ !is.na( codebook[ , 2 ] ) , c( "Nome da Variavel" , "Tipo" , "Tam.(1)" ) ] ,
               error = function( e ) {
@@ -258,7 +259,8 @@ lodown_censo_escolar <-
 
               } )
             codebook$`Nome da Variavel` <- tolower( codebook$`Nome da Variavel` )
-            codebook[ is.na( codebook$Tipo ) , c( "Tipo" , "Tam.(1)" ) ] <- c( "Char" , 4 )
+            codebook[ is.na( codebook$Tipo ) , "Tipo" ] <- "Char"
+            codebook[ is.na( codebook$Tipo ) , "Tam.(1)" ] <- 4
             codebook[ grepl( "^co_curso_[1-9]" , codebook$`Nome da Variavel` ) , c( "Tipo" ) ] <- "Char"
             codebook[ grepl( "^co_curso_[1-9]" , codebook$`Nome da Variavel` ) , c( "Tam.(1)" ) ] <- 10
 
