@@ -99,163 +99,110 @@ lodown_censo_escolar <-
 
         }
 
-      } else if ( catalog[ i , 'year' ] <= 2015 ) {
-
-        this_excel_file <- unzipped_files [ grep( "^ANEXO I -" , basename( unzipped_files ), value = FALSE, ignore.case = TRUE ) ]
-        rar_files <- grep( "\\.rar$", unzipped_files, value = TRUE , ignore.case = TRUE )
-
-        for ( this_table_type in c( "docente" , "matricula" , "turma" , "escola" ) ) {
-
-          tabelas <- rar_files[ grep( this_table_type , basename( rar_files ), value = FALSE, ignore.case = TRUE ) ]
-
-          for ( j in seq_along( tabelas ) ) {
-
-            codebook <- read_excel_metadata( this_excel_file , this_table_type )
-
-            # build the string to send to DOS
-            dos.command <- paste0( '"' , path_to_7z , '" x "' , normalizePath( tabelas[ j ] ) , '" -o"' , normalizePath( catalog[ i , "output_folder" ] ) , '"' )
-
-            system( dos.command , show.output.on.console = FALSE )
-
-            this_data_file <- list.files( catalog[ i , "output_folder" ] , full.names = TRUE )
-
-            this_data_file <- grep( "\\.csv$", this_data_file, value = TRUE, ignore.case = TRUE )
-
-            columns.in.datafile <- strsplit( readLines( this_data_file , n = 1 ) , "\\|" )[ 1 ] [[ 1 ]]
-            columns.in.datafile <- tolower( columns.in.datafile )
-            columns.in.datafile <- codebook$`Nome da Variavel` %in% columns.in.datafile
-
-            suppressMessages(
-              tryCatch(
-                DBI::dbWriteTable(
-                  db,
-                  ifelse( length( tabelas ) > 1 , tolower( gsub( "\\..*" , "" , basename( this_data_file ) ) ) , paste0( this_table_type , "_" , catalog[ i , "year" ] ) ),
-                  this_data_file ,
-                  sep = "|" ,
-                  lower.case.names = TRUE ,
-                  overwrite = TRUE ,
-                  temporary = TRUE ,
-                  colClasses = ifelse( grepl( "num" , codebook$Tipo[ columns.in.datafile ] , ignore.case = TRUE ) , "numeric" , "character" )
-                ) , error = function(e) {
-                  cleaned_data_file <- remove_nonutf8_censo_escolar( this_data_file ) ;
-                  DBI::dbWriteTable(
-                    db,
-                    ifelse( length( tabelas ) > 1 , tolower( gsub( "\\..*" , "" , basename( this_data_file ) ) ) , paste0( this_table_type , "_" , catalog[ i , "year" ] ) ),
-                    cleaned_data_file ,
-                    sep = "|" ,
-                    lower.case.names = TRUE ,
-                    overwrite = TRUE ,
-                    temporary = TRUE ,
-                    colClasses = ifelse( grepl( "num" , codebook$Tipo[ columns.in.datafile ] , ignore.case = TRUE ) , "numeric" , "character" )
-                  )
-                } )
-            )
-
-            file.remove( this_data_file )
-
-            if ( j == length( tabelas ) & length( tabelas ) > 1 ) {
-
-              field.names <- data.frame( tablename = NULL , field = NULL )
-              for ( tabela in tolower( gsub( "\\..*" , "" , basename( tabelas ) ) ) ) {
-                field.names <- rbind( field.names , data.frame( tablename = tabela , field = DBI::dbListFields( db , tabela ) , stringsAsFactors = FALSE ) )
-              }
-
-              field.names <- reshape2::dcast( field.names , field ~ tablename , value.var = "field" )
-
-              std.string <- sapply( seq_along( tabelas ) , FUN = function( x ) {
-                paste0( "SELECT ",
-                        paste0( ifelse( is.na( field.names[ , x + 1 ] ) , paste( "NULL AS" , field.names[ , 1 ] ) , field.names[ , 1 ] ) , collapse = " , " ),
-                        " FROM ",  colnames( field.names ) [ x + 1 ] )
-              }  )
-
-              create.stacked <- paste0( "CREATE TABLE " , paste0( this_table_type , "_" , catalog[ i , "year" ] ) , " AS ( " ,
-                                        paste0( std.string , collapse = " ) UNION ALL ( " ) ,
-                                        " ) WITH DATA" )
-
-              DBI::dbSendQuery( db , create.stacked )
-
-              DBI::dbSendQuery( db , paste0( " DROP TABLE " , paste0( colnames( field.names )[ - 1 ] , collapse = " ; DROP TABLE " ) , " ;" ) )
-
-            }
-
-            cat( tolower( gsub( "\\..*" , "" , basename( this_data_file ) ) ), "stored at" , paste0( this_table_type , "_" , catalog[ i , "year" ] ) , "\r\n\r" )
-
-          }
-
-        }
-
-
-        catalog[ i , 'case_count' ] <- DBI::dbGetQuery( db , paste0( "SELECT COUNT(*) FROM matricula_" , catalog[ i , "year" ] ) )[ 1 , 1 ]
-
       } else {
 
         this_excel_file <- unzipped_files [ grep( "^ANEXO I -" , basename( unzipped_files ), value = FALSE, ignore.case = TRUE ) ]
-        unzipped_files <- unzipped_files [ grep( "\\.CSV$" , basename( unzipped_files ), value = FALSE, ignore.case = TRUE ) ]
+        data_files <- grep( "\\.rar$|\\.csv$", unzipped_files, value = TRUE , ignore.case = TRUE )
 
-        for ( this_table_type in c( "docente", "matricula", "turma", "escola" ) ) {
+        for ( this_table_type in c( "docente" , "matricula" , "turma" , "escola" ) ) {
 
-          tabelas <- unzipped_files[ grep( this_table_type , basename( unzipped_files ), value = FALSE, ignore.case = TRUE ) ]
+          tabelas <- data_files[ grep( this_table_type , basename( data_files ), value = FALSE, ignore.case = TRUE ) ]
 
           for ( j in seq_along( tabelas ) ) {
 
             codebook <- read_excel_metadata( this_excel_file , this_table_type )
 
-            this_data_file <- tabelas[ j ]
+            if ( grepl( "\\.rar$" , tabelas[ j ] , ignore.case = TRUE ) ) {
+
+              # build the string to send to DOS
+              dos.command <- paste0( '"' , path_to_7z , '" x "' , normalizePath( tabelas[ j ] ) , '" -o"' , normalizePath( catalog[ i , "output_folder" ] ) , '"' )
+
+              system( dos.command , show.output.on.console = FALSE )
+
+              this_data_file <- list.files( catalog[ i , "output_folder" ] , full.names = TRUE )
+
+              this_data_file <- grep( "\\.csv$", this_data_file, value = TRUE, ignore.case = TRUE )
+
+            } else {
+
+              this_data_file <- tabelas[ j ]
+
+            }
 
             columns.in.datafile <- strsplit( readLines( this_data_file , n = 1 ) , "\\|" )[ 1 ] [[ 1 ]]
             columns.in.datafile <- tolower( columns.in.datafile )
             columns.in.datafile <- codebook$`Nome da Variavel` %in% columns.in.datafile
 
-            suppressMessages(
-              tryCatch(
+            if ( this_table_type == "matricula" ) {
+
+              suppressMessages(
                 DBI::dbWriteTable(
                   db,
-                  ifelse( length( tabelas ) > 1 , tolower( gsub( "\\..*" , "" , basename( this_data_file ) ) ) , paste0( this_table_type , "_" , catalog[ i , "year" ] ) ),
+                  paste0( this_table_type , "_" , catalog[ i , "year" ] ) ,
                   this_data_file ,
                   sep = "|" ,
                   lower.case.names = TRUE ,
-                  overwrite = TRUE ,
-                  temporary = TRUE ,
+                  append = TRUE ,
+                  #nrow.check = 70000
                   colClasses = ifelse( grepl( "num" , codebook$Tipo[ columns.in.datafile ] , ignore.case = TRUE ) , "numeric" , "character" )
-                ) , error = function(e) {
-                  cleaned_data_file <- remove_nonutf8_censo_escolar( this_data_file ) ;
+                ) )
+              file.remove( this_data_file )
+
+            } else {
+
+              suppressMessages(
+                tryCatch(
                   DBI::dbWriteTable(
                     db,
                     ifelse( length( tabelas ) > 1 , tolower( gsub( "\\..*" , "" , basename( this_data_file ) ) ) , paste0( this_table_type , "_" , catalog[ i , "year" ] ) ),
-                    cleaned_data_file ,
+                    this_data_file ,
                     sep = "|" ,
                     lower.case.names = TRUE ,
                     overwrite = TRUE ,
                     temporary = TRUE ,
                     colClasses = ifelse( grepl( "num" , codebook$Tipo[ columns.in.datafile ] , ignore.case = TRUE ) , "numeric" , "character" )
-                  )
-                } )
-            )
+                  ) , error = function(e) {
+                    cat( "removing non-utf8 characters\r" )
+                    cleaned_data_file <- remove_nonutf8_censo_escolar( this_data_file ) ;
+                    DBI::dbWriteTable(
+                      db,
+                      ifelse( length( tabelas ) > 1 , tolower( gsub( "\\..*" , "" , basename( this_data_file ) ) ) , paste0( this_table_type , "_" , catalog[ i , "year" ] ) ),
+                      cleaned_data_file ,
+                      sep = "|" ,
+                      lower.case.names = TRUE ,
+                      overwrite = TRUE ,
+                      temporary = TRUE ,
+                      colClasses = ifelse( grepl( "num" , codebook$Tipo[ columns.in.datafile ] , ignore.case = TRUE ) , "numeric" , "character" )
+                    )
+                  } )
+              )
 
-            file.remove( this_data_file )
+              file.remove( this_data_file )
 
-            if ( j == length( tabelas ) & length( tabelas ) > 1 ) {
+              if ( j == length( tabelas ) & length( tabelas ) > 1 ) {
 
-              field.names <- data.frame( tablename = NULL , field = NULL )
-              for ( tabela in tolower( gsub( "\\..*" , "" , basename( tabelas ) ) ) ) {
-                field.names <- rbind( field.names , data.frame( tablename = tabela , field = DBI::dbListFields( db , tabela ) , stringsAsFactors = FALSE ) )
+                field.names <- data.frame( tablename = NULL , field = NULL )
+                for ( tabela in tolower( gsub( "\\..*" , "" , basename( tabelas ) ) ) ) {
+                  field.names <- rbind( field.names , data.frame( tablename = tabela , field = DBI::dbListFields( db , tabela ) , stringsAsFactors = FALSE ) )
+                }
+
+                field.names <- reshape2::dcast( field.names , field ~ tablename , value.var = "field" )
+
+                std.string <- sapply( seq_along( tabelas ) , FUN = function( x ) {
+                  paste0( "SELECT ",
+                          paste0( ifelse( is.na( field.names[ , x + 1 ] ) , paste( "NULL AS" , field.names[ , 1 ] ) , field.names[ , 1 ] ) , collapse = " , " ),
+                          " FROM ",  colnames( field.names ) [ x + 1 ] )
+                }  )
+
+                create.stacked <- paste0( "CREATE TABLE " , paste0( this_table_type , "_" , catalog[ i , "year" ] ) , " AS ( " ,
+                                          paste0( std.string , collapse = " ) UNION ALL ( " ) ,
+                                          " ) WITH DATA" )
+
+                DBI::dbSendQuery( db , create.stacked )
+
+                DBI::dbSendQuery( db , paste0( " DROP TABLE " , paste0( colnames( field.names )[ - 1 ] , collapse = " ; DROP TABLE " ) , " ;" ) )
+
               }
-
-              field.names <- reshape2::dcast( field.names , field ~ tablename , value.var = "field" )
-
-              std.string <- sapply( seq_along( tabelas ) , FUN = function( x ) {
-                paste0( "SELECT ",
-                        paste0( ifelse( is.na( field.names[ , x + 1 ] ) , paste( "NULL AS" , field.names[ , 1 ] ) , field.names[ , 1 ] ) , collapse = " , " ),
-                        " FROM ",  colnames( field.names ) [ x + 1 ] )
-              }  )
-
-              create.stacked <- paste0( "CREATE TABLE " , paste0( this_table_type , "_" , catalog[ i , "year" ] ) , " AS ( " ,
-                                        paste0( std.string , collapse = " ) UNION ALL ( " ) ,
-                                        " ) WITH DATA" )
-
-              DBI::dbSendQuery( db , create.stacked )
-
-              DBI::dbSendQuery( db , paste0( " DROP TABLE " , paste0( colnames( field.names )[ - 1 ] , collapse = " ; DROP TABLE " ) , " ;" ) )
 
             }
 
