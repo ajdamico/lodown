@@ -131,7 +131,8 @@ lodown_censo_escolar <-
 
             columns.in.datafile <- strsplit( readLines( this_data_file , n = 1 ) , "\\|" )[ 1 ] [[ 1 ]]
             columns.in.datafile <- tolower( columns.in.datafile )
-            columns.in.datafile <- codebook$`Nome da Variavel` %in% columns.in.datafile
+            codebook <- codebook[ codebook$`Nome da Variavel` %in% columns.in.datafile , ]
+            codebook <- codebook[ match( columns.in.datafile , codebook$`Nome da Variavel` ) , ]
 
             if ( this_table_type == "matricula" ) {
 
@@ -144,7 +145,7 @@ lodown_censo_escolar <-
                   lower.case.names = TRUE ,
                   append = TRUE ,
                   #nrow.check = 70000
-                  colClasses = ifelse( grepl( "num" , codebook$Tipo[ columns.in.datafile ] , ignore.case = TRUE ) , "numeric" , "character" )
+                  colClasses = ifelse( grepl( "num" , codebook$Tipo , ignore.case = TRUE ) , "numeric" , "character" )
                 ) )
               file.remove( this_data_file )
 
@@ -160,7 +161,7 @@ lodown_censo_escolar <-
                     lower.case.names = TRUE ,
                     overwrite = TRUE ,
                     temporary = TRUE ,
-                    colClasses = ifelse( grepl( "num" , codebook$Tipo[ columns.in.datafile ] , ignore.case = TRUE ) , "numeric" , "character" )
+                    colClasses = ifelse( grepl( "num" , codebook$Tipo , ignore.case = TRUE ) , "numeric" , "character" )
                   ) , error = function(e) {
                     cat( "removing non-utf8 characters\r" )
                     cleaned_data_file <- remove_nonutf8_censo_escolar( this_data_file ) ;
@@ -172,7 +173,7 @@ lodown_censo_escolar <-
                       lower.case.names = TRUE ,
                       overwrite = TRUE ,
                       temporary = TRUE ,
-                      colClasses = ifelse( grepl( "num" , codebook$Tipo[ columns.in.datafile ] , ignore.case = TRUE ) , "numeric" , "character" )
+                      colClasses = ifelse( grepl( "num" , codebook$Tipo , ignore.case = TRUE ) , "numeric" , "character" )
                     )
                   } )
               )
