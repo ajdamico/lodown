@@ -12,5 +12,4 @@ Suggests: memisc, readxl, reshape2, jsonlite, purrr, descr, mitools, jpeg, read.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 5.0.1
-
+RoxygenNote: 6.0.1

@@ -39,4 +39,3 @@ cachaca( "https://www.r-project.org/logo/Rlogo.png" , tf , mode = 'wb' )
 }
 
 }
-
