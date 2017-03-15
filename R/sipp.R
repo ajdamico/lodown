@@ -673,7 +673,7 @@ lodown_sipp <-
 					# add the core wave to the database in a table w#
 					read_SAScii_monetdb (
 						catalog[ i , 'full_url' ] ,
-						chop.suid( fix.ct( "http://thedataweb.rm.census.gov/pub/sipp/2014/rw14wx_sas.txt" ) ) ,
+						fix.repwgt("http://thedataweb.rm.census.gov/pub/sipp/2014/rw14wx_sas.txt") ,
 						beginline = 2 ,
 						zipped = TRUE ,
 						tl = TRUE ,
