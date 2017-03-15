@@ -647,9 +647,7 @@ lodown_sipp <-
 
 			if( catalog[ i , 'panel' ] == 2014 ){
 
-
-
-				# if the longitudinal weights flag has been set to TRUE above..
+				# loop through each core wave..
 				if ( grepl( "http://thedataweb.rm.census.gov/pub/sipp/2014/pu2014w" , catalog[ i , 'full_url' ] , fixed = TRUE ) ){
 
 					cachaca( catalog[ i , 'full_url' ] , tf , mode = 'wb' )
@@ -664,11 +662,12 @@ lodown_sipp <-
 					
 					dbWriteTable( db , catalog[ i , 'db_tablename' ] , x )
 					
+					rm( x ) ; gc()
+					
 				}
 					
-				# loop through each core wave..
+				# loop through each replicate weight wave..
 				if ( grepl( "http://thedataweb.rm.census.gov/pub/sipp/2014/rw14w" , catalog[ i , 'full_url' ] , fixed = TRUE ) ){
-
 
 					# add the core wave to the database in a table w#
 					read_SAScii_monetdb (
