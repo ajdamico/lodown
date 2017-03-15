@@ -80,9 +80,24 @@ get_catalog_sipp <-
 				dbfolder = paste0( output_dir , "/MonetDB_2008" ) ,
 				stringsAsFactors = FALSE
 			)
-						
+
+		cat_2014 <-
+			data.frame(
+				panel = 2014 ,
+				wave = c( 1 , 1 ) ,
+				cy = c( NA , NA ) ,
+				db_tablename = c( paste0( "w" , 1 ) , paste0( "rw" , 1 ) ) ,
+				full_url =
+					c(
+						paste0( "http://thedataweb.rm.census.gov/pub/sipp/2014/pu2014w" , 1 , ".zip" ) ,
+						paste0( "http://thedataweb.rm.census.gov/pub/sipp/2014/rw14w" , 1 , ".zip" ) 
+					) ,
+				dbfolder = paste0( output_dir , "/MonetDB_2014" ) ,
+				stringsAsFactors = FALSE
+			)
+			
 		
-		rbind( cat_1996 , cat_2001 , cat_2004 , cat_2008 )
+		rbind( cat_1996 , cat_2001 , cat_2004 , cat_2008 , cat_2014 )
 
 	}
 
@@ -626,6 +641,46 @@ lodown_sipp <-
 				}
 				# the current working directory should now contain one database (.db) file
 
+
+			}
+
+
+			if( catalog[ i , 'panel' ] == 2014 ){
+
+				# loop through each core wave..
+				if ( grepl( "http://thedataweb.rm.census.gov/pub/sipp/2014/pu2014w" , catalog[ i , 'full_url' ] , fixed = TRUE ) ){
+
+					cachaca( catalog[ i , 'full_url' ] , tf , mode = 'wb' )
+						
+					unzipped_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) )
+
+					x <- haven::read_sas( unzipped_files[ grep( 'sas7bdat' , unzipped_files ) ] )
+					
+					x <- data.frame( x )
+					
+					names( x ) <- tolower( names( x ) )
+					
+					DBI::dbWriteTable( db , catalog[ i , 'db_tablename' ] , x )
+					
+					rm( x ) ; gc()
+					
+				}
+					
+				# loop through each replicate weight wave..
+				if ( grepl( "http://thedataweb.rm.census.gov/pub/sipp/2014/rw14w" , catalog[ i , 'full_url' ] , fixed = TRUE ) ){
+
+					# add the core wave to the database in a table w#
+					read_SAScii_monetdb (
+						catalog[ i , 'full_url' ] ,
+						fix.repwgt("http://thedataweb.rm.census.gov/pub/sipp/2014/rw14wx_sas.txt") ,
+						beginline = 2 ,
+						zipped = TRUE ,
+						tl = TRUE ,
+						tablename = catalog[ i , 'db_tablename' ] ,
+						connection = db
+					)
+					
+				}
 
 			}
 			
