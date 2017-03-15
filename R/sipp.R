@@ -660,7 +660,7 @@ lodown_sipp <-
 					
 					names( x ) <- tolower( names( x ) )
 					
-					dbWriteTable( db , catalog[ i , 'db_tablename' ] , x )
+					DBI::dbWriteTable( db , catalog[ i , 'db_tablename' ] , x )
 					
 					rm( x ) ; gc()
 					
