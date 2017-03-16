@@ -53,9 +53,9 @@ lodown_psid <-
 
 		tf <- tempfile()
 
-		if( !( 'your_email' %in% names(list(...)) ) ) stop( "`your_email` parameter must be specified.  create an account at https://ssl.isr.umich.edu/hrs/reg_pub2.php" )
+		if( !( 'your_email' %in% names(list(...)) ) ) stop( "`your_email` parameter must be specified.  create an account at http://simba.isr.umich.edu/U/ca.aspx" )
 
-		if( !( 'your_password' %in% names(list(...)) ) ) stop( "`your_password` parameter must be specified.  create an account at https://ssl.isr.umich.edu/hrs/reg_pub2.php" )
+		if( !( 'your_password' %in% names(list(...)) ) ) stop( "`your_password` parameter must be specified.  create an account at http://simba.isr.umich.edu/U/ca.aspx" )
 		
 		your_email <- list(...)[["your_email"]]
 						
