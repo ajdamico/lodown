@@ -1,0 +1,18 @@
+# R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
+
+language: r
+cache: packages
+sudo: required
+apt_packages:
+- unixodbc-dev
+
+script: 
+  - |
+    R CMD build .
+    travis_wait 40 R CMD check lodown*tar.gz
+    
+after_failure:
+- find *Rcheck -name '*.fail' -print -exec cat '{}' \;
+
+r_github_packages:
+ - hannesmuehleisen/MonetDBLite
