@@ -49,15 +49,15 @@ lodown_scf <-
 
 		for ( i in seq_len( nrow( catalog ) ) ){
 
-			cachaca( catalog[ i , "main_url" ] , tf , mode = 'wb' )
+			cachaca( catalog[ i , "main_url" ] , tf , mode = 'wb' , filesize_fun = 'httr' )
 			scf.m <- data.frame( haven::read_dta( unzipped_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , '/unzips' ) ) ) )
 			file.remove( unzipped_files )
 			
-			cachaca( catalog[ i , "extract_url" ] , tf , mode = 'wb' )
+			cachaca( catalog[ i , "extract_url" ] , tf , mode = 'wb' , filesize_fun = 'httr' )
 			scf.e <- data.frame( haven::read_dta( unzipped_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , '/unzips' ) ) ) )
 			file.remove( unzipped_files )
 			
-			cachaca( catalog[ i , "rw_url" ] , tf , mode = 'wb' )
+			cachaca( catalog[ i , "rw_url" ] , tf , mode = 'wb' , filesize_fun = 'httr' )
 			rw <- data.frame( haven::read_dta( unzipped_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , '/unzips' ) ) ) )
 			file.remove( unzipped_files )
 			
