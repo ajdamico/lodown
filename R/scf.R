@@ -2,15 +2,17 @@ get_catalog_scf <-
 	function( data_name = "scf" , output_dir , ... ){
 	
 		latest_year <- 
-			as.numeric(
-				gsub( 
-					"(.*)([0-9][0-9][0-9][0-9])(.*)" , 
-					"\\2" , 
-					grep( 
-						'<h2>([0-9][0-9][0-9][0-9])' , 
-						readLines( "https://www.federalreserve.gov/econresdata/scf/scfindex.htm" , warn = FALSE ) , 
-						value = TRUE 
-					) 
+			max( 
+				as.numeric(
+					gsub( 
+						"(.*)([0-9][0-9][0-9][0-9])(.*)" , 
+						"\\2" , 
+						grep( 
+							'scf([0-9][0-9][0-9][0-9])' , 
+							readLines( "https://www.federalreserve.gov/econresdata/scf/scfindex.htm" , warn = FALSE ) , 
+							value = TRUE 
+						) 
+					)
 				)
 			)
 			
