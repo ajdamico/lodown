@@ -4,17 +4,17 @@ get_catalog_pisa <-
 	
 		http.pre <- "https://www.oecd.org/pisa/pisaproducts/"
 
-		
-		files_2015 <- c( "CMB_STU_QQQ" , "CMB_SCH_QQQ" , "CMB_TCH_QQQ" , "CMB_STU_COG" , "CMB_STU_QTM" , "CM2_STU_QQQ_COG_QTM_SCH_TCH" )
+		files_2015 <- c( "CMB_STU_QQQ" , "CMB_SCH_QQQ" , "CMB_TCH_QQQ" , "CMB_STU_COG" , "CMB_STU_QTM" , rep( "CM2_STU_QQQ_COG_QTM_SCH_TCH" , 5 ) )
+		tables_2015 <- c( "CMB_STU_QQQ" , "CMB_SCH_QQQ" , "CMB_TCH_QQQ" , "CMB_STU_COG" , "CMB_STU_QTM" , "CY6_MS_CM2_SCH_QQQ" , "CY6_MS_CM2_STU_COG" , "CY6_MS_CM2_STU_QQQ" , "CY6_MS_CM2_STU_QTM" , "CY6_MS_CM2_TCH_QQQ" )
 	
 		cat_2015 <-
 			data.frame(
 				dbfolder = paste0( output_dir , "/MonetDB" ) ,
-				db_tablename = paste0( tolower( files_2015 ) , "_2015" ),
+				db_tablename = paste0( tolower( tables_2015 ) , "_2015" ),
 				year = 2015 ,
 				full_url = paste0( "http://vs-web-fs-1.oecd.org/pisa/PUF_SAS_COMBINED_" , files_2015 , ".zip" ) ,
 				sas_ri = NA ,
-				design = c( paste0( output_dir , "/2015 " , "cmb_stu_qqq" , " design.rds" ) , rep( NA , 5 ) ) ,
+				design = c( paste0( output_dir , "/2015 " , "cmb_stu_qqq" , " design.rds" ) , rep( NA , 9 ) ) ,
 				stringsAsFactors = FALSE
 			)
 
