@@ -5,7 +5,7 @@ get_catalog_pisa <-
 		http.pre <- "https://www.oecd.org/pisa/pisaproducts/"
 
 		
-		files_2015 <- c( "CMB_STU_QQQ" , "CMB_SCH_QQQ" , "CMB_TCH_QQQ" , "CMB_STU_COG" , "CMB_STU%20_QTM" , "CM2_STU_QQQ_COG_QTM_SCH_TCH" )
+		files_2015 <- c( "CMB_STU_QQQ" , "CMB_SCH_QQQ" , "CMB_TCH_QQQ" , "CMB_STU_COG" , "CMB_STU_QTM" , "CM2_STU_QQQ_COG_QTM_SCH_TCH" )
 	
 		cat_2015 <-
 			data.frame(
