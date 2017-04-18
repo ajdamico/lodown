@@ -142,13 +142,15 @@ get_catalog_nhis <-
 		}
 
 		catalog$output_filename <-
-			paste0( output_dir , "/" , catalog$year , "/" , ifelse( catalog$nhpi , "nhpi_" , "" ) , gsub( "\\.(.*)" , ".rds" , basename( catalog$full_url ) ) )
+			paste0( output_dir , "/" , catalog$year , "/" , ifelse( catalog$nhpi , "nhpi/" , "" ) , gsub( "\\.(.*)" , ".rds" , basename( catalog$full_url ) ) )
 			
 		catalog$sas_script <- 
 			paste0( gsub( "Datasets" , "Program_Code" , dirname( catalog$full_url ) ) , "/" , gsub( "\\.rds" , ".sas" , basename( catalog$output_filename ) ) )
 		
-		catalog$sas_script <- gsub( "nhpi_" , "NHIS/" , catalog$sas_script )
+		catalog$sas_script <- gsub( "nhpi/" , "NHPI/" , catalog$sas_script )
 		
+		catalog$output_filename <- gsub( "nhpi/" , "nhpi_" , catalog$output_filename )
+
 		catalog$imputed_income <- FALSE
 		
 		available_imputed_incomes <- grep( "imputed_income" , ay , value = TRUE , ignore.case = TRUE )
