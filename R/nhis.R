@@ -147,7 +147,7 @@ get_catalog_nhis <-
 		catalog$sas_script <- 
 			paste0( gsub( "Datasets" , "Program_Code" , dirname( catalog$full_url ) ) , "/" , gsub( "\\.rds" , ".sas" , basename( catalog$output_filename ) ) )
 		
-		catalog$sas_script <- gsub( "nhpi" , "NHIS" , catalog$sas_script )
+		catalog$sas_script <- gsub( "nhpi_" , "NHIS/" , catalog$sas_script )
 		
 		catalog$imputed_income <- FALSE
 		
