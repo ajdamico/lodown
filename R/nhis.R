@@ -3,147 +3,153 @@ get_catalog_nhis <-
 
 		catalog <- NULL
 		
-		base_ftp_dir <- "ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/NHIS/"
-	
-		# read the text of the microdata ftp into working memory
-		# download the contents of the ftp directory for all microdata
-		ftp.listing <- readLines( textConnection( RCurl::getURL( base_ftp_dir ) ) )
-
-		# extract the text from all lines containing a this_year of microdata
-		# figure out the names of those this_year directories
-		ay <- rev( gsub( "(.*) (.*)" , "\\2" , ftp.listing ) )
-
-		# remove non-numeric strings
-		suppressWarnings( available_years <- ay[ as.numeric( ay ) %in% ay ] )
-		# now `available.years` should contain all of the available years on the nhis ftp site
-
-		for( this_year in available_years ){
+		for( this_name in c( "NHIS" , "nhpi" ) ){
+			
+			base_ftp_dir <- paste0( "ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/" , this_name , "/" )
 		
-			# define path of this year
-			year_dir <- paste0( base_ftp_dir , this_year , "/" )
+			# read the text of the microdata ftp into working memory
+			# download the contents of the ftp directory for all microdata
+			ftp.listing <- readLines( textConnection( RCurl::getURL( base_ftp_dir ) ) )
 
-			cat( paste0( "loading " , data_name , " catalog from " , year_dir , "\r\n\n" ) )
+			# extract the text from all lines containing a this_year of microdata
+			# figure out the names of those this_year directories
+			ay <- rev( gsub( "(.*) (.*)" , "\\2" , ftp.listing ) )
 
-			# just like above, read those lines into working memory
-			ftp_files <- tolower( readLines( textConnection( RCurl::getURL( year_dir , dirlistonly = TRUE ) ) ) )
+			# remove non-numeric strings
+			suppressWarnings( available_years <- ay[ as.numeric( ay ) %in% ay ] )
+			# now `available.years` should contain all of the available years on the nhis ftp site
+
+			for( this_year in available_years ){
 			
-			# identify all .exe files..
-			exe.filenames <- ftp_files[ grepl( ".exe" , ftp_files ) ]
-			
-			# identify all .zip files..
-			zip.filenames <- ftp_files[ grepl( ".zip" , ftp_files ) ]
-			
-			# identify overlap between .zip and .exe files
-			exe.filenames <- gsub( ".exe" , "" , exe.filenames )
-			zip.filenames <- gsub( ".zip" , "" , zip.filenames )
-			duplicate.filenames <- zip.filenames[ (zip.filenames %in% exe.filenames) ]
-			zip.filenames.with.exe.matches <- paste( duplicate.filenames , ".zip" , sep = "" )
-			
-			# throw out .zip files that match a .exe file exactly
-			ftp_files <- ftp_files[ ! ( ftp_files %in% zip.filenames.with.exe.matches ) ]
-			
-			# end of throwing out file.zip files that match file.exe files #	
-			
-			if( this_year == 2004 ){
-			
-				ftp_files <- gsub( "familyfile" , "familyfile/familyxx.exe" , ftp_files )
-				ftp_files <- gsub( "household" , "household/househld.exe", ftp_files )
-				ftp_files <- gsub( "injurypoison" , "injurypoison/injpoiep.exe" , ftp_files )
-				ftp_files <- gsub( "person" , "person/personsx.exe" , ftp_files )
-				ftp_files <- gsub( "sampleadult" , "sampleadult/samadult.exe" , ftp_files )
-				ftp_files <- gsub( "samplechild" , "samplechild/samchild.exe" , ftp_files )
-				ftp_files <- ftp_files[ !( ftp_files %in% c( "" , "injuryverbatim" ) ) ]
-			
+				# define path of this year
+				year_dir <- paste0( base_ftp_dir , this_year , "/" )
+
+				cat( paste0( "loading " , data_name , " catalog from " , year_dir , "\r\n\n" ) )
+
+				# just like above, read those lines into working memory
+				ftp_files <- tolower( readLines( textConnection( RCurl::getURL( year_dir , dirlistonly = TRUE ) ) ) )
 				
-			} else {
+				# identify all .exe files..
+				exe.filenames <- ftp_files[ grepl( ".exe" , ftp_files ) ]
 				
-				# throw out folders (assumed to be files without a . in them)
-				# (any files in folders within the main this_year folder need to be downloaded separately)
-				ftp_files <- ftp_files[ grepl( "\\." , ftp_files ) ]
-
-			}
-			
+				# identify all .zip files..
+				zip.filenames <- ftp_files[ grepl( ".zip" , ftp_files ) ]
+				
+				# identify overlap between .zip and .exe files
+				exe.filenames <- gsub( ".exe" , "" , exe.filenames )
+				zip.filenames <- gsub( ".zip" , "" , zip.filenames )
+				duplicate.filenames <- zip.filenames[ (zip.filenames %in% exe.filenames) ]
+				zip.filenames.with.exe.matches <- paste( duplicate.filenames , ".zip" , sep = "" )
+				
+				# throw out .zip files that match a .exe file exactly
+				ftp_files <- ftp_files[ ! ( ftp_files %in% zip.filenames.with.exe.matches ) ]
+				
+				# end of throwing out file.zip files that match file.exe files #	
+				
+				if( this_year == 2004 ){
+				
+					ftp_files <- gsub( "familyfile" , "familyfile/familyxx.exe" , ftp_files )
+					ftp_files <- gsub( "household" , "household/househld.exe", ftp_files )
+					ftp_files <- gsub( "injurypoison" , "injurypoison/injpoiep.exe" , ftp_files )
+					ftp_files <- gsub( "person" , "person/personsx.exe" , ftp_files )
+					ftp_files <- gsub( "sampleadult" , "sampleadult/samadult.exe" , ftp_files )
+					ftp_files <- gsub( "samplechild" , "samplechild/samchild.exe" , ftp_files )
+					ftp_files <- ftp_files[ !( ftp_files %in% c( "" , "injuryverbatim" ) ) ]
+				
 					
-			# skip txt files
-			ftp_files <- ftp_files[ !grepl( '\\.txt' , ftp_files ) ]
-			
-			# skip the new sc_bwt files entirely
-			ftp_files <- ftp_files[ !grepl( 'sc_bwt' , ftp_files ) ]
-			
-			# skip these 1963 files with irregular SAS importation scripts
-			if ( this_year == 1963 ) ftp_files <- ftp_files[ ! ( ftp_files %in% c( 'condition.exe' , 'family.exe' , 'hospital.exe' , 'health_exp.exe' ) ) ]
-			
-			# skip these 1964 files with irregular SAS importation scripts
-			if ( this_year == 1964 ) ftp_files <- ftp_files[ ! ( ftp_files %in% c( 'family.exe' , 'hospital.exe' , 'xray.exe' , 'person.exe' ) ) ]
+				} else {
+					
+					# throw out folders (assumed to be files without a . in them)
+					# (any files in folders within the main this_year folder need to be downloaded separately)
+					ftp_files <- ftp_files[ grepl( "\\." , ftp_files ) ]
 
-			# skip these 1965 files with irregular SAS importation scripts
-			if ( this_year == 1965 ) ftp_files <- ftp_files[ ! ( ftp_files %in% c( "condition.exe" , "diabetes.exe" , "person.exe" , "presmed.exe" ) ) ]
+				}
+				
+						
+				# skip txt files
+				ftp_files <- ftp_files[ !grepl( '\\.txt' , ftp_files ) ]
+				
+				# skip the new sc_bwt files entirely
+				ftp_files <- ftp_files[ !grepl( 'sc_bwt' , ftp_files ) ]
+				
+				# skip these 1963 files with irregular SAS importation scripts
+				if ( this_year == 1963 ) ftp_files <- ftp_files[ ! ( ftp_files %in% c( 'condition.exe' , 'family.exe' , 'hospital.exe' , 'health_exp.exe' ) ) ]
+				
+				# skip these 1964 files with irregular SAS importation scripts
+				if ( this_year == 1964 ) ftp_files <- ftp_files[ ! ( ftp_files %in% c( 'family.exe' , 'hospital.exe' , 'xray.exe' , 'person.exe' ) ) ]
 
-			# skip these 1966 files with irregular SAS importation scripts
-			if ( this_year == 1966 ) ftp_files <- ftp_files[ ! ( ftp_files %in% c( "condition.exe" , "person.exe" ) ) ]
+				# skip these 1965 files with irregular SAS importation scripts
+				if ( this_year == 1965 ) ftp_files <- ftp_files[ ! ( ftp_files %in% c( "condition.exe" , "diabetes.exe" , "person.exe" , "presmed.exe" ) ) ]
 
-			# skip these 1969 files with irregular SAS importation scripts
-			if ( this_year == 1969 ) ftp_files <- ftp_files[ ! ( ftp_files %in% c( "aidsspec.exe" , "arthrtis.exe" ) ) ]
+				# skip these 1966 files with irregular SAS importation scripts
+				if ( this_year == 1966 ) ftp_files <- ftp_files[ ! ( ftp_files %in% c( "condition.exe" , "person.exe" ) ) ]
 
-			# skip these 1970 files with irregular SAS importation scripts
-			if ( this_year == 1970 ) ftp_files <- ftp_files[ ! ( ftp_files %in% c( "healthin.exe" , "medccost.exe" , "xrayxxxx.exe" ) ) ]
+				# skip these 1969 files with irregular SAS importation scripts
+				if ( this_year == 1969 ) ftp_files <- ftp_files[ ! ( ftp_files %in% c( "aidsspec.exe" , "arthrtis.exe" ) ) ]
 
-			# the healthin file has WTBDD2W and WTBDD2WB (in the SAS input file) in the wrong order
-			if ( this_year %in% c( 1972 , 1974 ) ) ftp_files <- ftp_files[ ! ( ftp_files %in% 'healthin.exe' ) ]
-			
-			# skip this 1973 file with irregular SAS importation scripts
-			if ( this_year == 1973 ) ftp_files <- ftp_files[ ! ( ftp_files %in% "prgnancy.exe" ) ]
-			
-			# skip these 1977 files with irregular SAS importation scripts
-			if ( this_year == 1977 ) ftp_files <- ftp_files[ ! ( ftp_files %in% c( "aidsspec.exe" , "influenza.exe" ) ) ]
-			
-			# skip these 1978 files with irregular SAS importation scripts
-			if ( this_year == 1978 ) ftp_files <- ftp_files[ ! ( ftp_files %in% c( "famedexp.exe" , "immunize.exe" ) ) ]
-			
-			# skip 1979 personsx file
-			if ( this_year == 1979 ) ftp_files <- ftp_files[ ! ( ftp_files %in% c( "personsx.exe" , "smokingx.exe" ) ) ]
+				# skip these 1970 files with irregular SAS importation scripts
+				if ( this_year == 1970 ) ftp_files <- ftp_files[ ! ( ftp_files %in% c( "healthin.exe" , "medccost.exe" , "xrayxxxx.exe" ) ) ]
 
-			# skip 1988 mdevices file
-			if ( this_year == 1988 ) ftp_files <- ftp_files[ ! ( ftp_files %in% "mdevices.exe" ) ]
+				# the healthin file has WTBDD2W and WTBDD2WB (in the SAS input file) in the wrong order
+				if ( this_year %in% c( 1972 , 1974 ) ) ftp_files <- ftp_files[ ! ( ftp_files %in% 'healthin.exe' ) ]
+				
+				# skip this 1973 file with irregular SAS importation scripts
+				if ( this_year == 1973 ) ftp_files <- ftp_files[ ! ( ftp_files %in% "prgnancy.exe" ) ]
+				
+				# skip these 1977 files with irregular SAS importation scripts
+				if ( this_year == 1977 ) ftp_files <- ftp_files[ ! ( ftp_files %in% c( "aidsspec.exe" , "influenza.exe" ) ) ]
+				
+				# skip these 1978 files with irregular SAS importation scripts
+				if ( this_year == 1978 ) ftp_files <- ftp_files[ ! ( ftp_files %in% c( "famedexp.exe" , "immunize.exe" ) ) ]
+				
+				# skip 1979 personsx file
+				if ( this_year == 1979 ) ftp_files <- ftp_files[ ! ( ftp_files %in% c( "personsx.exe" , "smokingx.exe" ) ) ]
 
-			# skip 1994 and 1995 dfs files
-			if ( this_year %in% c( 1994 , 1995 ) ) ftp_files <- ftp_files[ ! ( ftp_files %in% c( "dfschild.exe" , "dfsadult.exe" ) ) ]
+				# skip 1988 mdevices file
+				if ( this_year == 1988 ) ftp_files <- ftp_files[ ! ( ftp_files %in% "mdevices.exe" ) ]
 
-			# skip the 1992 nursing home files
-			if ( this_year == 1992 ) ftp_files <- ftp_files[ ! ( ftp_files %in% c( "conditnh.exe" , "drvisinh.exe" , "hospitnh.exe" , "househnh.exe" , "personnh.exe" ) ) ]
+				# skip 1994 and 1995 dfs files
+				if ( this_year %in% c( 1994 , 1995 ) ) ftp_files <- ftp_files[ ! ( ftp_files %in% c( "dfschild.exe" , "dfsadult.exe" ) ) ]
 
-			# skip the 2007 alternative medicine and injury verbatim files
-			if ( this_year == 2007 ) ftp_files <- ftp_files[ ! ( ftp_files %in% c( "althealt.exe" , "injverbt.exe" ) ) ]
+				# skip the 1992 nursing home files
+				if ( this_year == 1992 ) ftp_files <- ftp_files[ ! ( ftp_files %in% c( "conditnh.exe" , "drvisinh.exe" , "hospitnh.exe" , "househnh.exe" , "personnh.exe" ) ) ]
 
-			# skip the 1999 and 2000 injury verbatim file
-			if ( this_year %in% c( 1998:2000 , 2008 , 2009 ) ) ftp_files <- ftp_files[ ! ( ftp_files %in% "injverbt.exe" ) ]
+				# skip the 2007 alternative medicine and injury verbatim files
+				if ( this_year == 2007 ) ftp_files <- ftp_files[ ! ( ftp_files %in% c( "althealt.exe" , "injverbt.exe" ) ) ]
 
-			# skip the 2010 sad_wgts.dat and sc_bwt10.dat files (although you may need them, depending what you're doing!)
-			if ( this_year == 2010 ) ftp_files <- ftp_files[ ! ( ftp_files %in% c( "sad_wgts.dat" , "sc_bwt10.dat" ) ) ]
-			
-			
-			
-			catalog <-
-				rbind(
-					catalog ,
-					data.frame(
-						year = this_year ,
-						type = tolower( gsub( "\\.(.*)" , "" , basename( ftp_files ) ) ) ,
-						full_url = paste0( year_dir , ftp_files ) ,
-						stringsAsFactors = FALSE
+				# skip the 1999 and 2000 injury verbatim file
+				if ( this_year %in% c( 1998:2000 , 2008 , 2009 ) ) ftp_files <- ftp_files[ ! ( ftp_files %in% "injverbt.exe" ) ]
+
+				# skip the 2010 sad_wgts.dat and sc_bwt10.dat files (although you may need them, depending what you're doing!)
+				if ( this_year == 2010 ) ftp_files <- ftp_files[ ! ( ftp_files %in% c( "sad_wgts.dat" , "sc_bwt10.dat" ) ) ]
+				
+				
+				
+				catalog <-
+					rbind(
+						catalog ,
+						data.frame(
+							year = this_year ,
+							type = tolower( gsub( "\\.(.*)" , "" , basename( ftp_files ) ) ) ,
+							full_url = paste0( year_dir , ftp_files ) ,
+							nhpi = ( this_name == "nhpi" ) ,
+							stringsAsFactors = FALSE
+						)
 					)
-				)
+				
+			}
 			
 		}
 
 		catalog$output_filename <-
-			paste0( output_dir , "/" , catalog$year , "/" , gsub( "\\.(.*)" , ".rds" , basename( catalog$full_url ) ) )
+			paste0( output_dir , "/" , catalog$year , "/" , ifelse( catalog$nhpi , "nhpi_" , "" ) , gsub( "\\.(.*)" , ".rds" , basename( catalog$full_url ) ) )
 			
 		catalog$sas_script <- 
 			paste0( gsub( "Datasets" , "Program_Code" , dirname( catalog$full_url ) ) , "/" , gsub( "\\.rds" , ".sas" , basename( catalog$output_filename ) ) )
 		
-		catalog$imputed_income <- FALSE
+		catalog$sas_script <- gsub( "nhpi" , "NHIS" , catalog$sas_script )
 		
+		catalog$imputed_income <- FALSE
 		
 		available_imputed_incomes <- grep( "imputed_income" , ay , value = TRUE , ignore.case = TRUE )
 		
@@ -167,6 +173,7 @@ get_catalog_nhis <-
 					type = "ii" ,
 					sas_script = paste0( income_dir , grep( "\\.sas$" , ftp_files , value = TRUE , ignore.case = TRUE ) ) ,
 					imputed_income = TRUE ,
+					nhpi = FALSE ,
 					stringsAsFactors = FALSE
 				)
 				
