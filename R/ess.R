@@ -159,8 +159,12 @@ lodown_ess <-
 		current.file <- cachaca( catalog[ i , 'full_url' ] , FUN = httr::GET , filesize_fun = 'httr' )
 
 		writeBin( httr::content( current.file ) , tf )
-	  
-		spss.files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) )
+
+		if( !grepl( "\\.pdf$" , catalog[ i , 'full_url' ] , ignore.case = TRUE ) ){
+			spss.files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) )
+		} else {
+			spss.files <- tf
+		}
 		
 		if( catalog[ i , 'directory' ] == 'docs' ){
 		
