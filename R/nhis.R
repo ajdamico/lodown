@@ -235,7 +235,7 @@ lodown_nhis <-
 				catalog[ i , 'case_count' ] <- nrow( ii )
 				
 				# save all five imputed income data frames to a single .rds file #
-				saveRDS( lapply( paste0( "ii" , 1:5 ) , get ) , file = catalog[ i , 'output_filename' ] )
+				saveRDS( mget( paste0( "ii" , 1:5 ) ) , file = catalog[ i , 'output_filename' ] )
 						
 			
 			} else {

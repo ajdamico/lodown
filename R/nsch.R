@@ -129,7 +129,7 @@ lodown_nsch <-
 			catalog[ i , 'case_count' ] <- nrow( y )
 			
 			# save implicates 1 - 5 to the local working directory for faster loading later
-			saveRDS( lapply( paste0( "imp" , 1:5 ) , get ) , file = catalog[ i , 'output_filename' ] )
+			saveRDS( mget( paste0( "imp" , 1:5 ) ) , file = catalog[ i , 'output_filename' ] )
 
 			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , catalog[ i , 'output_filename' ] , "'\r\n\n" ) )
 
