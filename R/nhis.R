@@ -3,7 +3,7 @@ get_catalog_nhis <-
 
 		catalog <- NULL
 		
-		for( this_name in c( "NHIS" , "nhpi" ) ){
+		for( this_name in c( "nhpi" , "NHIS" ) ){
 			
 			base_ftp_dir <- paste0( "ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/" , this_name , "/" )
 		
@@ -154,7 +154,7 @@ get_catalog_nhis <-
 		catalog$imputed_income <- FALSE
 		
 		available_imputed_incomes <- grep( "imputed_income" , ay , value = TRUE , ignore.case = TRUE )
-		
+
 		for( this_income in available_imputed_incomes ){
 		
 			# define path of this imputed income file
