@@ -133,12 +133,12 @@ NULL
 #' lodown( "dhs" , dhs_cat[ dhs_cat$year > 2010 , ] , 
 #'		your_email = "email@address.com" , your_password = "password" , your_project = "project" )
 #'
-#' # European Social Survey
+#' # Exame Nacional de Desempenho de Estudantes
 #' # download all available microdata
-#' lodown( "ess" , output_dir = "C:/My Directory/ESS" , your_email = "email@address.com" )
-#' # download only the integrated files
-#' ess_cat <- get_catalog( "ess" , output_dir = "C:/My Directory/ESS" )
-#' lodown( "ess" , ess_cat[ ess_cat$directory == 'integrated' , ] , your_email = "email@address.com" )
+#' lodown( "enade" , output_dir = "C:/My Directory/ENADE" )
+#' # download only the 2013 files
+#' enade_cat <- get_catalog( "enade" , output_dir = "C:/My Directory/ENADE" )
+#' lodown( "enade" , enade_cat[ enade_cat$year == 2013 , ] )
 #'
 #' # Exame Nacional do Ensino Medio
 #' # download all available microdata
@@ -146,6 +146,13 @@ NULL
 #' # download only the 2013 files
 #' enem_cat <- get_catalog( "enem" , output_dir = "C:/My Directory/ENEM" )
 #' lodown( "enem" , enem_cat[ enem_cat$year == 2013 , ] )
+#'
+#' # European Social Survey
+#' # download all available microdata
+#' lodown( "ess" , output_dir = "C:/My Directory/ESS" , your_email = "email@address.com" )
+#' # download only the integrated files
+#' ess_cat <- get_catalog( "ess" , output_dir = "C:/My Directory/ESS" )
+#' lodown( "ess" , ess_cat[ ess_cat$directory == 'integrated' , ] , your_email = "email@address.com" )
 #'
 #' # FDA Adverse Event Reporting System
 #' # download all available microdata
