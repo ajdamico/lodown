@@ -185,7 +185,7 @@ lodown_scf <-
 	
 # svyttest() variant (code from the `survey` package)
 # that works on multiply-imputed data
-scf_svyttest<-function(formula, design ,...){
+MIsvyttest<-function(formula, design ,...){
 
 	# the MIcombine function runs differently than a normal svyglm() call
 	m <- eval(bquote(MIcombine( with( design , svyglm(formula,family=gaussian()))) ) )
