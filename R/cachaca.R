@@ -58,9 +58,15 @@ download_to_filename <- function(url, dlfile, curl=RCurl::getCurlHandle(), ...) 
 #'
 #' \dontrun{
 #'
+#' # only the first of these two lines downloads the file.  the second line uses the cached file
 #' tf <- tempfile()
 #' cachaca( "https://www.r-project.org/logo/Rlogo.png" , tf , mode = 'wb' )
 #' cachaca( "https://www.r-project.org/logo/Rlogo.png" , tf , mode = 'wb' )
+#' 
+#' # option to disable cache in case the files are too big
+#' options( "lodown.cachaca.savecache" = FALSE )
+#' cachaca( "https://www.r-project.org/logo/Rlogo.svg" , tf , mode = 'wb' )
+#' cachaca( "https://www.r-project.org/logo/Rlogo.svg" , tf , mode = 'wb' )
 #' 
 #' }
 #'
@@ -240,13 +246,18 @@ cachaca <-
 		# double-check that the `success` object exists.. it might not if `attempts` was set to zero.
 		if ( exists( 'success' ) ){
 
-		if( is.null( destfile ) ){
+			# only save to the cachefile if the savecache options is TRUE (the default)
+			if( getOption( "lodown.cachaca.savecache" , TRUE ) ){
+			
+				if( is.null( destfile ) ){
 
-		save( success , file = cachefile )
+					save( success , file = cachefile )
 
-		} else file.copy( destfile , cachefile , overwrite = TRUE )
-
-		return( invisible( success ) )
+				} else file.copy( destfile , cachefile , overwrite = TRUE )
+				
+			}
+				
+			return( invisible( success ) )
 
 		# otherwise break.
 		} else stop( paste( "download failed after" , initial.attempts , "attempts" ) )

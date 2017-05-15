@@ -32,9 +32,15 @@ check remote file size. check cache for a match and if it exists, copy it over. 
 
 \dontrun{
 
+# only the first of these two lines downloads the file.  the second line uses the cached file
 tf <- tempfile()
 cachaca( "https://www.r-project.org/logo/Rlogo.png" , tf , mode = 'wb' )
 cachaca( "https://www.r-project.org/logo/Rlogo.png" , tf , mode = 'wb' )
+
+# option to disable cache in case the files are too big
+options( "lodown.cachaca.savecache" = FALSE )
+cachaca( "https://www.r-project.org/logo/Rlogo.svg" , tf , mode = 'wb' )
+cachaca( "https://www.r-project.org/logo/Rlogo.svg" , tf , mode = 'wb' )
 
 }
 
