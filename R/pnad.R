@@ -441,7 +441,7 @@ pnad_remove_uf <-
 
 # initiate a function that post-stratifies the PNAD survey object,
 # because the R `survey` package does not currently allow post-stratification of database-backed survey objects
-pnad.postStratify <-
+pnad_postStratify <-
 	function( design , strata.col , oldwgt ){
 		
 		# extract the tablename within the MonetDBLite database
