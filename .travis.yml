@@ -5,6 +5,7 @@ cache: packages
 sudo: required
 apt_packages:
 - unixodbc-dev
+- libarchive-dev
 
 script: 
   - |
