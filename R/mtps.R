@@ -51,7 +51,7 @@ get_catalog_mtps <-
 
 
 lodown_mtps <-
-  function( data_name = "mtps" , catalog , path_to_7z = if( .Platform$OS.type != 'windows' ) '7za' else normalizePath( "C:/Program Files/7-zip/7z.exe" ) , ... ){
+  function( data_name = "mtps" , catalog , ... ){
 
     tf <- tempfile()
 
@@ -67,10 +67,7 @@ lodown_mtps <-
 
       } else {
 
-        # build the string to send to DOS
-        dos.command <- paste0( '"' , normalizePath( path_to_7z ) , '" x "' , normalizePath( tf ) , '" -o"' , paste0( tempdir() , "\\unzipped" ) , '"' )
-
-        system( dos.command , show.output.on.console = FALSE )
+		archive::archive_extract( normalizePath( tf ) , dir = paste0( tempdir() , "\\unzipped" ) )
 
         this_data_file <- list.files( paste0( tempdir() , "\\unzipped" ) , full.names = TRUE )
 

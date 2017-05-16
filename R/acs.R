@@ -62,9 +62,7 @@ get_catalog_acs <-
 	}
 
 lodown_acs <-
-	function( data_name = "acs" , catalog , path_to_7za = '7za' , ... ){
-
-		if( ( .Platform$OS.type != 'windows' ) && ( system( paste0('"', path_to_7za , '" -h' ) , show.output.on.console = FALSE ) != 0 ) ) stop( "you need to install 7-zip.  if you already have it, include a path_to_7za='/directory/7za' parameter" )
+	function( data_name = "acs" , catalog , ... ){
 
 		tf <- tempfile()
 
@@ -99,24 +97,11 @@ lodown_acs <-
 				for ( this_download in file_locations ){
 					
 					cachaca( this_download , tf , mode = 'wb' , filesize_fun = "httr" )
-					
-					# unzip the file's contents to the temporary directory
-					# extract the file, platform-specific
-					if ( .Platform$OS.type == 'windows' ){
+								
+					archive::archive_extract( tf , dir = tempdir() )
 
-						tfn <- unzip_warn_fail( tf , exdir = tempdir() , overwrite = TRUE )
+					tfn <- list.files( tempdir() , full.names = TRUE )
 
-					} else {
-					
-						# build the string to send to the terminal on non-windows systems
-						dos.command <- paste0( '"' , path_to_7za , '" x ' , tf , ' -aoa -o"' , tempdir() , '"' )
-
-						system( dos.command )
-
-						tfn <- list.files( tempdir() , full.names = TRUE )
-
-					}
-					
 					# limit the files to read in to ones containing csvs
 					tfn <- grep( '\\.csv$' , tfn , value = TRUE )
 

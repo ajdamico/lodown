@@ -24,11 +24,9 @@ get_catalog_enem <-
 
 
 lodown_enem <-
-	function( data_name = "enem" , catalog , path_to_7z = if( .Platform$OS.type != 'windows' ) '7za' else normalizePath( "C:/Program Files/7-zip/7z.exe" ) , ... ){
+	function( data_name = "enem" , catalog , ... ){
 
 		if ( !requireNamespace( "readxl" , quietly = TRUE ) ) stop( "readxl needed for this function to work. to install it, type `install.packages( 'readxl' )`" , call. = FALSE )
-
-		if( system( paste0( '"' , path_to_7z , '" -h' ) , show.output.on.console = FALSE ) != 0 ) stop( paste0( "you need to install 7-zip.  if you already have it, include a parameter like path_to_7z='" , path_to_7z , "'" ) )
 
 		tf <- tempfile() ; tf2 <- tempfile()
 
@@ -42,9 +40,7 @@ lodown_enem <-
 
 			if( !grepl( "\\.rar" , catalog[ i , "full_url" ] ) ){
 
-				dos.command <- paste0( '"' , path_to_7z , '" x "' , tf , '" -o"' , normalizePath( catalog[ i , "output_folder" ] ) , '"' )
-
-				system( dos.command )
+				archive::archive_extract( tf , dir = normalizePath( catalog[ i , "output_folder" ] ) )
 
 				z <- unique( list.files( catalog[ i , 'output_folder' ] , recursive = TRUE , full.names = TRUE  ) )
 
@@ -52,9 +48,7 @@ lodown_enem <-
 
 				if( length( zf ) > 0 ){
 
-					dos.command <- paste0( '"' , path_to_7z , '" x "' , zf , '" -o"' , normalizePath( catalog[ i , "output_folder" ] ) , '"' )
-
-					system( dos.command )
+					archive::archive_extract( zf , dir = normalizePath( catalog[ i , "output_folder" ] ) )
 
 					z <- unique( c( z , list.files( catalog[ i , 'output_folder' ] , recursive = TRUE , full.names = TRUE  ) ) )
 
@@ -72,9 +66,7 @@ lodown_enem <-
 
 			if( length( rfi ) > 0 ) {
 
-				dos.command <- paste0( '"' , path_to_7z , '" x "' , rfi , '" -o"' , normalizePath( catalog[ i , "output_folder" ] ) , '"' )
-				
-				system( dos.command )
+				archive::archive_extract( rfi , dir = normalizePath( catalog[ i , "output_folder" ] ) )
 
 				z <- unique( c( z , list.files( catalog[ i , 'output_folder' ] , recursive = TRUE , full.names = TRUE  ) ) )
 

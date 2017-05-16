@@ -35,12 +35,8 @@ get_catalog_nvss <-
 
 
 lodown_nvss <-
-	function( data_name = "nvss" , catalog , path_to_7za = '7za' , path_to_winrar = normalizePath( "C:/Program Files/winrar/winrar.exe" ) , ... ){
+	function( data_name = "nvss" , catalog , ... ){
 
-		if( ( .Platform$OS.type != 'windows' ) && ( system( paste0('"', path_to_7za , '" -h' ) , show.output.on.console = FALSE ) != 0 ) ) stop( "you need to install 7-zip.  if you already have it, include a path_to_7za='/directory/7za' parameter" )
-		
-		if( ( .Platform$OS.type == 'windows' ) && ( system( paste0('"', path_to_winrar , '" rar help' ) , show.output.on.console = FALSE ) != 0 ) ) stop( "you need to install winrar.  if you already have it, include a path_to_winrar='C:/directory/winrar.exe' parameter" )
-		
 		# create winrar extraction directories
 		unique_directories <- unique( paste0( catalog$output_folder , "/winrar" ) )
 
@@ -84,7 +80,7 @@ lodown_nvss <-
 				natality <- nchs_extract_files( files[ grep( catalog[ i , 'year' ] , files ) ] , 'natality' )
 				
 				# download the natality file to the local working directory
-				nchs_download( natality , catalog[ i , 'output_folder' ] , path.to.winrar = path_to_winrar , path.to.7z = path_to_7za )
+				nchs_download( natality , catalog[ i , 'output_folder' ] )
 
 				# create a character vector containing all files in the current working directory
 				all.files <- list.files( catalog[ i , 'output_folder' ] , recursive = T , full.names = TRUE )
@@ -232,7 +228,7 @@ lodown_nvss <-
 				period.linked <- nchs_extract_files( files[ grep( catalog[ i , 'year' ] , files ) ] , 'periodlinked' )
 				
 				# download the period-linked file to the local working directory
-				nchs_download( period.linked , catalog[ i , 'output_folder' ] , path.to.winrar = path_to_winrar , path.to.7z = path_to_7za )
+				nchs_download( period.linked , catalog[ i , 'output_folder' ] )
 
 				# create a character vector containing all files in the current working directory
 				all.files <- list.files( catalog[ i , 'output_folder' ] , recursive = TRUE , full.names = TRUE )
@@ -425,7 +421,7 @@ lodown_nvss <-
 				cohort.linked <- nchs_extract_files( files[ grep( catalog[ i , 'year' ] , files ) ]  , 'cohortlinked' )
 				
 				# download the cohort-linked file to the local working directory
-				nchs_download( cohort.linked , catalog[ i , 'output_folder' ] , path.to.winrar = path_to_winrar , path.to.7z = path_to_7za )
+				nchs_download( cohort.linked , catalog[ i , 'output_folder' ] )
 
 				# create a character vector containing all files in the current working directory
 				all.files <- list.files( catalog[ i , 'output_folder' ] , recursive = TRUE , full.names = TRUE )
@@ -559,7 +555,7 @@ lodown_nvss <-
 				mortality <- nchs_extract_files( files[ grep( catalog[ i , 'year' ] , files ) ] , 'mortality' )
 				
 				# download the mortality file to the local working directory
-				nchs_download( mortality , catalog[ i , 'output_folder' ] , path.to.winrar = path_to_winrar , path.to.7z = path_to_7za )
+				nchs_download( mortality , catalog[ i , 'output_folder' ] )
 
 				# create a character vector containing all files in the current working directory
 				all.files <- list.files( catalog[ i , 'output_folder' ] , recursive = TRUE , full.names = TRUE )
@@ -949,7 +945,7 @@ nchs_remove_overlap <-
 # this function downloads a specified zipped file to the local disk
 # and unzips everything according to a straightforward pattern
 nchs_download <-
-	function( y , output_folder , path.to.winrar , path.to.7z ){
+	function( y , output_folder ){
 		
 		tf <- tempfile()
 		
@@ -978,13 +974,7 @@ nchs_download <-
 			
 			# extract the file, platform-specific
 			
-			if ( .Platform$OS.type == 'windows' ){
-				sys.command <- paste0( '"' , path.to.winrar , '" x ' , tf , ' "' , winrar.dir , '"' )
-			} else {
-				sys.command <- paste0( '"' , path.to.7z , '" x ' , tf , ' -o"' , winrar.dir , '"' )
-			}
-			
-			system( sys.command )
+			archive::archive_extract( tf , dir = winrar.dir )
 
 			suppressWarnings( while( any( file.remove( tf ) ) ) Sys.sleep( 1 ) )
 			

@@ -24,9 +24,7 @@ get_catalog_censo_escolar <-
 
 
 lodown_censo_escolar <-
-  function( data_name = "censo_escolar" , catalog , path_to_7z = if( .Platform$OS.type != 'windows' ) '7za' else normalizePath( "C:/Program Files/7-zip/7z.exe" ) , ... ){
-
-    if( system( paste0( '"' , path_to_7z , '" -h' ) , show.output.on.console = FALSE ) != 0 ) stop( paste0( "you need to install 7-zip.  if you already have it, include a parameter like path_to_7z='" , path_to_7z , "'" ) )
+  function( data_name = "censo_escolar" , catalog , ... ){
 
     tf <- tempfile()
 
@@ -114,14 +112,11 @@ lodown_censo_escolar <-
 
             if ( grepl( "\\.rar$" , tabelas[ j ] , ignore.case = TRUE ) ) {
 
-              # build the string to send to DOS
-              dos.command <- paste0( '"' , path_to_7z , '" x "' , normalizePath( tabelas[ j ] ) , '" -o"' , normalizePath( catalog[ i , "output_folder" ] ) , '"' )
+				archive::archive_extract( normalizePath( tabelas[ j ] ) , dir = normalizePath( catalog[ i , "output_folder" ] ) )
 
-              system( dos.command , show.output.on.console = FALSE )
+				this_data_file <- list.files( catalog[ i , "output_folder" ] , full.names = TRUE )
 
-              this_data_file <- list.files( catalog[ i , "output_folder" ] , full.names = TRUE )
-
-              this_data_file <- grep( "\\.csv$", this_data_file, value = TRUE, ignore.case = TRUE )
+				this_data_file <- grep( "\\.csv$", this_data_file, value = TRUE, ignore.case = TRUE )
 
             } else {
 

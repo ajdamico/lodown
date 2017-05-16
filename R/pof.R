@@ -28,9 +28,7 @@ get_catalog_pof <-
 
 
 lodown_pof <-
-	function( data_name = "nppes" , catalog , path_to_7za = if( .Platform$OS.type != 'windows' ) '7za' else normalizePath( "C:/Program Files/7-zip/7z.exe" ) , ... ){
-
-		if( system( paste0( '"' , path_to_7za , '" -h' ) , show.output.on.console = FALSE ) != 0 ) stop( paste0( "you need to install 7-zip.  if you already have it, include a parameter like path_to_7za='" , path_to_7za , "'" ) )
+	function( data_name = "nppes" , catalog , ... ){
 
 		if ( !requireNamespace( "readxl" , quietly = TRUE ) ) stop( "readxl needed for this function to work. to install it, type `install.packages( 'readxl' )`" , call. = FALSE )
 
@@ -226,11 +224,7 @@ lodown_pof <-
 				# otherwise, the file must be unzipped with 7-zip
 				} else {
 
-					# build the string to send to DOS
-					dos.command <- paste0( '"' , path_to_7za , '" x "' , normalizePath( data.file ) , '" -o"' , normalizePath( paste0( tempdir() , '\\unzips' ) ) , '"' )
-
-					# extract the file
-					system( dos.command , show.output.on.console = FALSE )
+					archive::archive_extract( normalizePath( data.file ) , dir = normalizePath( paste0( tempdir() , '\\unzips' ) ) )
 
 					# find the name of the final ASCII data file to be imported
 					curfile <- paste0( tempdir() , '/unzips/' , gsub( ".7z" , ".txt" , basename( data.file ) ) )

@@ -26,9 +26,7 @@ get_catalog_enade <-
 
 
 lodown_enade <-
-	function( data_name = "enade" , catalog , path_to_7z = if( .Platform$OS.type != 'windows' ) '7za' else normalizePath( "C:/Program Files/7-zip/7z.exe" ) , ... ){
-
-		if( system( paste0( '"' , path_to_7z , '" -h' ) , show.output.on.console = FALSE ) != 0 ) stop( paste0( "you need to install 7-zip.  if you already have it, include a parameter like path_to_7z='" , path_to_7z , "'" ) )
+	function( data_name = "enade" , catalog , ... ){
 
 		tf <- tempfile()
 		
@@ -37,9 +35,7 @@ lodown_enade <-
 			# download the file
 			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
 
-			dos.command <- paste0( '"' , path_to_7z , '" x "' , tf , '" -o"' , normalizePath( catalog[ i , "output_folder" ] ) , '"' )
-
-			system( dos.command )
+			archive::archive_extract( tf , dir = normalizePath( catalog[ i , "output_folder" ] ) )
 
 			z <- unique( list.files( catalog[ i , 'output_folder' ] , recursive = TRUE , full.names = TRUE  ) )
 
@@ -47,9 +43,7 @@ lodown_enade <-
 
 			if( length( zf ) > 0 ){
 
-				dos.command <- paste0( '"' , path_to_7z , '" x "' , zf , '" -o"' , normalizePath( catalog[ i , "output_folder" ] ) , '"' )
-
-				system( dos.command )
+				archive::archive_extract( zf , dir = normalizePath( catalog[ i , "output_folder" ] ) )
 
 				z <- unique( c( z , list.files( catalog[ i , 'output_folder' ] , recursive = TRUE , full.names = TRUE  ) ) )
 
@@ -59,9 +53,7 @@ lodown_enade <-
 
 			if( length( rfi ) > 0 ) {
 
-				dos.command <- paste0( '"' , path_to_7z , '" x "' , rfi , '" -o"' , normalizePath( catalog[ i , "output_folder" ] ) , '"' )
-				
-				system( dos.command )
+				archive::archive_extract( rfi , dir = normalizePath( catalog[ i , "output_folder" ] ) )
 
 				z <- unique( c( z , list.files( catalog[ i , 'output_folder' ] , recursive = TRUE , full.names = TRUE  ) ) )
 

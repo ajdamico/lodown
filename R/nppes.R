@@ -24,32 +24,18 @@ get_catalog_nppes <-
 
 
 lodown_nppes <-
-	function( data_name = "nppes" , catalog , path_to_7za = '7za' , ... ){
+	function( data_name = "nppes" , catalog , ... ){
 	
 		if( nrow( catalog ) != 1 ) stop( "nppes catalog must be exactly one record" )
-	
-		if( ( .Platform$OS.type != 'windows' ) && ( system( paste0('"', path_to_7za , '" -h' ) , show.output.on.console = FALSE ) != 0 ) ) stop( "you need to install 7-zip.  if you already have it, include a path_to_7za='/directory/7za' parameter" )
 		
 		tf <- tempfile() ; tf2 <- tempfile()
 
 		cachaca( catalog$full_url , tf , mode = 'wb' )
 
-		# extract the file, platform-specific
-		if ( .Platform$OS.type == 'windows' ){
+		archive::archive_extract( tf , dir = tempdir() )
 
-			unzipped_files <- unzip_warn_fail( tf , exdir = tempdir() )
+		unzipped_files <- list.files( tempdir() , full.names = TRUE )
 
-		} else {
-
-			# build the string to send to the terminal on non-windows systems
-			dos.command <- paste0( '"' , path_to_7za , '" x ' , tf , ' -o"' , tempdir() , '"' )
-
-			system( dos.command )
-
-			unzipped_files <- list.files( tempdir() , full.names = TRUE )
-
-		}
-		
 		
 		# ..and identify the appropriate 
 		# comma separated value (csv) file

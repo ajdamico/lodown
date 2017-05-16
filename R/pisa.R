@@ -105,13 +105,10 @@ get_catalog_pisa <-
 
 
 lodown_pisa <-
-	function( data_name = "pisa" , catalog , path_to_7za = '7za' , ... ){
-
-		if( ( .Platform$OS.type != 'windows' ) && ( system( paste0('"', path_to_7za , '" -h' ) , show.output.on.console = FALSE ) != 0 ) ) stop( "you need to install 7-zip.  if you already have it, include a path_to_7za='/directory/7za' parameter" )
+	function( data_name = "pisa" , catalog , ... ){
 
 		if ( !requireNamespace( "mitools" , quietly = TRUE ) ) stop( "mitools needed for this function to work. to install it, type `install.packages( 'mitools' )`" , call. = FALSE )
-		
-		
+				
 		tf <- tempfile()
 
 		for ( i in seq_len( nrow( catalog ) ) ){
@@ -125,21 +122,9 @@ lodown_pisa <-
 			
 				cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
 
-				# extract the file, platform-specific
-				if ( .Platform$OS.type == 'windows' ){
+				archive::archive_extract( tf , dir = paste0( tempdir() , "/unzips" ) )
 
-					unzipped_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) )
-
-				} else {
-
-					# build the string to send to the terminal on non-windows systems
-					dos.command <- paste0( '"' , path_to_7za , '" x ' , tf , ' -o"' , paste0( tempdir() , "/unzips" ) , '"' )
-
-					system( dos.command )
-
-					unzipped_files <- list.files( paste0( tempdir() , "/unzips" ) , full.names = TRUE )
-
-				}
+				unzipped_files <- list.files( paste0( tempdir() , "/unzips" ) , full.names = TRUE )
 
 				# loop through all sas7bdat files and load them into monetdb
 				for( this_sas in grep( "\\.sas7bdat$" , unzipped_files , value = TRUE ) ){
