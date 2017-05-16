@@ -17,3 +17,5 @@ after_failure:
 
 r_github_packages:
  - hannesmuehleisen/MonetDBLite
+ - jimhester/archive
+ 
