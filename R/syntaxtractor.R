@@ -89,7 +89,7 @@ syntaxtractor <-
 
 
 readLines_retry <-
-	function( ... , attempts = 3 , sleep_length = 60 ){
+	function( ... , attempts = 10 , sleep_length = sample( 1:120 , 1 ) ){
 	
 		for( i in seq( attempts ) ){
 		
