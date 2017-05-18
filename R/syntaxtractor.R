@@ -38,13 +38,13 @@
 syntaxtractor <-
 	function( data_name , repo = "ajdamico/asdfreebook" , ref = "master" , replacements = NULL , setup_test = NULL ){
 
-		repo_homepage <- readLines( paste0( "https://github.com/" , repo , "/tree/" , ref , "/" ) )
+		repo_homepage <- readLines_retry( paste0( "https://github.com/" , repo , "/tree/" , ref , "/" ) )
 		
 		rmd_links <- gsub( "(.*)>(.*)\\.Rmd</a>(.*)" , "\\2" , grep( "Rmd" , repo_homepage , value = TRUE ) )
 		
 		this_rmd <- grep( data_name , rmd_links , value = TRUE )
 	
-		rmd_page <- readLines( paste0( "https://raw.githubusercontent.com/" , repo , "/" , ref , "/" , this_rmd , ".Rmd" ) )
+		rmd_page <- readLines_retry( paste0( "https://raw.githubusercontent.com/" , repo , "/" , ref , "/" , this_rmd , ".Rmd" ) )
 
 		v <- grep( "```" , rmd_page )
 		
@@ -87,3 +87,19 @@ syntaxtractor <-
 		temp_script
 	}
 
+
+readLines_retry <-
+	function( ... , attempts = 3 , sleep_length = 60 ){
+	
+		for( i in seq( attempts ) ){
+		
+			this_attempt <- try( result <- readLines( ... ) , silent = TRUE )
+			
+			if( class( this_attempt ) != 'try-error' ) return( result ) else Sys.sleep( sleep_length )
+		
+		}
+		
+		stop( this_attempt )
+		
+	}
+	
