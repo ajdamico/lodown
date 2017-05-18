@@ -61,7 +61,7 @@ syntaxtractor <-
 			
 			# if that line does not exist, simply use the first two lines of code
 			if( is.na( second_library_lodown_line ) ){
-				second_library_lodown_line <- lines_to_eval[ 3 ]
+				second_library_lodown_line <- 3
 			}
 			
 			if( setup_test == "setup" ){
