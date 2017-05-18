@@ -93,7 +93,7 @@ readLines_retry <-
 	
 		for( i in seq( attempts ) ){
 		
-			this_attempt <- try( result <- readLines( ... ) , silent = TRUE )
+			suppressWarnings( this_attempt <- try( result <- readLines( ... ) , silent = TRUE ) )
 			
 			if( class( this_attempt ) != 'try-error' ) return( result ) else Sys.sleep( sleep_length )
 		
