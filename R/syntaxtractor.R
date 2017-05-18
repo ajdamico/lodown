@@ -59,6 +59,11 @@ syntaxtractor <-
 			# find the second `library(lodown)` line
 			second_library_lodown_line <- grep( "^library\\(lodown\\)$" , rmd_page )[ 2 ]
 			
+			# if that line does not exist, simply use the first two lines of code
+			if( is.na( second_library_lodown_line ) ){
+				second_library_lodown_line <- lines_to_eval[ 3 ]
+			}
+			
 			if( setup_test == "setup" ){
 				
 				rmd_page <- rmd_page[ seq_along( rmd_page ) < second_library_lodown_line ]
