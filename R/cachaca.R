@@ -16,7 +16,7 @@ gettmpdir <-
 rcurl_filesize <-
 	function( url ){
 		xx <- RCurl::getURL(url, nobody=1L, header=1L)
-		yy <- strsplit(xx, "\r\n")[[1]]
+		yy <- strsplit(xx, "(\r)?\n")[[1]]
 		as.numeric( gsub( "Content-Length: " , "" , grep( "Content-Length" , yy , value = TRUE ) ) )
 	}
 

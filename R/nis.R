@@ -7,9 +7,9 @@ get_catalog_nis <-
 
 	nhfs_ftp_contents <- RCurl::getURL( paste0( nis_ftp_site , "NHFS/" ) , dirlistonly = TRUE )
 
-	nis_ftp_paths <- paste0( nis_ftp_site , strsplit( nis_ftp_contents , '\r\n' )[[1]] )
+	nis_ftp_paths <- paste0( nis_ftp_site , strsplit( nis_ftp_contents , '(\r)?\n' )[[1]] )
 
-	nhfs_ftp_paths <- paste0( nis_ftp_site , "NHFS/" , strsplit( nhfs_ftp_contents , '\r\n' )[[1]] )
+	nhfs_ftp_paths <- paste0( nis_ftp_site , "NHFS/" , strsplit( nhfs_ftp_contents , '(\r)?\n' )[[1]] )
 
 	combined_paths <- c( nis_ftp_paths , nhfs_ftp_paths )
 

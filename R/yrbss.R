@@ -5,7 +5,7 @@ get_catalog_yrbss <-
 	
 		yrbss_ftp_contents <- RCurl::getURL( "ftp://ftp.cdc.gov/pub/data/yrbs/" , ftp.use.epsv = TRUE, dirlistonly = TRUE )
 
-		yrbss_ftp_paths <- paste0( "ftp://ftp.cdc.gov/pub/data/yrbs/" , strsplit( yrbss_ftp_contents , '\r\n' )[[1]] , "/" )
+		yrbss_ftp_paths <- paste0( "ftp://ftp.cdc.gov/pub/data/yrbs/" , strsplit( yrbss_ftp_contents , '(\r)?\n' )[[1]] , "/" )
 
 		yrbss_folders <- grep( "([0-9][0-9][0-9][0-9])" , yrbss_ftp_paths , value = TRUE )
 		
@@ -15,7 +15,7 @@ get_catalog_yrbss <-
 				
 			this_year_contents <- RCurl::getURL( this_year , ftp.use.epsv = TRUE, dirlistonly = TRUE )
 
-			this_year_paths <- paste0( this_year , strsplit( this_year_contents , '\r\n' )[[1]] )
+			this_year_paths <- paste0( this_year , strsplit( this_year_contents , '(\r)?\n' )[[1]] )
 
 			catalog <-
 				rbind(
