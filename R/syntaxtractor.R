@@ -89,17 +89,19 @@ syntaxtractor <-
 
 
 readLines_retry <-
-	function( ... , attempts = 10 , sleep_length = sample( 1:120 , 1 ) ){
+	function( ... , attempts = 10 , sleep_length = 60 * sample( 1:5 , 1 ) ){
 	
 		for( i in seq( attempts ) ){
 		
-			suppressWarnings( this_attempt <- try( result <- readLines( ... ) , silent = TRUE ) )
+			this_warning <- tryCatch( result <- readLines( ... ) , warning = print ) )
 			
-			if( class( this_attempt ) != 'try-error' ) return( result ) else Sys.sleep( sleep_length )
+			if( grepl( "404" , as.character( this_warning ) ) ) stop( as.character( this_warning ) ) 
+			
+			if( length( result ) > 0 ) return( result ) else Sys.sleep( sleep_length )
 		
 		}
 		
-		stop( this_attempt )
+		stop( this_warning )
 		
 	}
 	
