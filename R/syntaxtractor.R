@@ -93,11 +93,11 @@ readLines_retry <-
 	
 		for( i in seq( attempts ) ){
 		
-			this_warning <- tryCatch( result <- readLines( ... ) , warning = print )
+			this_warning <- tryCatch( { result <- readLines( ... ) ; return( result ) } , warning = print )
 			
-			if( grepl( "404" , as.character( this_warning ) ) ) stop( as.character( this_warning ) ) 
+			if( grepl( "404" , paste( as.character( this_warning ) , collapse = " " ) ) ) stop( as.character( this_warning ) ) 
 			
-			if( length( result ) > 0 ) return( result ) else Sys.sleep( sleep_length )
+			Sys.sleep( sleep_length )
 		
 		}
 		
