@@ -104,7 +104,7 @@ lodown_pnad <-
 
 
 			# manually set the encoding of the unziped files so they don't break things.
-			if( catalog[ i , 'year' ] %in% 2013:2014 & .Platform$OS.type != 'windows' ) Encoding( unzipped_files ) <- 'UTF-8' else Encoding( unzipped_files ) <- 'latin1'
+			if( catalog[ i , 'year' ] > 2012 & .Platform$OS.type != 'windows' ) Encoding( unzipped_files ) <- 'UTF-8' else Encoding( unzipped_files ) <- 'latin1'
 			
 			
 			# remove the UF column and the mistake with "LOCAL ULTIMO FURTO"
