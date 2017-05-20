@@ -115,7 +115,10 @@ lodown_pnad <-
 			# in 2003 and 2007, the age variable had been read in as a factor variable
 			# which breaks certain commands by treating the variable incorrectly as a factor
 			if( catalog[ i , 'year' ] %in% c( 2003 , 2007 ) ){
-				pes_lines <- readLines( pes.sas )
+				pes_con <- file( pes.sas , "r" , encoding = "windows-1252" )
+				pes_lines <- readLines( pes_con )
+				close( pes_con )
+				pes_lines <- iconv( pes_lines , "" , "ASCII//TRANSLIT" )
 				pes_lines <- gsub( "@00027( *)V8005( *)\\$3\\." , "@00027 V8005 3\\." , pes_lines )
 				writeLines( pes_lines , pes.sas )
 			}
@@ -146,7 +149,7 @@ lodown_pnad <-
 			if( class( first_attempt_dom ) == 'try-error' ){
 					
 				dom.fn2 <- tempfile()
-				fpx <- file( normalizePath( dom.fn ) , 'r' )
+				fpx <- file( normalizePath( dom.fn ) , 'r' , encoding = "windows-1252" )
 				# create a write-only file connection to the temporary file
 				fpt <- file( dom.fn2 , 'w' )
 
@@ -205,7 +208,7 @@ lodown_pnad <-
 
 				pes.fn2 <- tempfile()
 				
-				fpx <- file( normalizePath( pes.fn ) , 'r' )
+				fpx <- file( normalizePath( pes.fn ) , 'r' , encoding = "windows-1252" )
 				# create a write-only file connection to the temporary file
 				fpt <- file( pes.fn2 , 'w' )
 
@@ -402,7 +405,7 @@ pnad_remove_uf <-
 	function( sasfile ){
 
 		# read the SAS import file into R
-		sascon <- file( sasfile , "r", blocking = FALSE , encoding = "windows-1252" )
+		sascon <- file( sasfile , "r" , blocking = FALSE , encoding = "windows-1252" )
 		sas_lines <- readLines( sascon )
 		close( sascon )
 		
