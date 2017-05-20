@@ -402,8 +402,12 @@ pnad_remove_uf <-
 	function( sasfile ){
 
 		# read the SAS import file into R
-		sas_lines <- readLines( sasfile )
-
+		sascon <- file( sasfile , "r", blocking = FALSE , encoding = "windows-1252" )
+		sas_lines <- readLines( sascon )
+		close( sascon )
+		
+		sas_lines <- iconv( sas_lines , "" , "ASCII//TRANSLIT" )
+		
 		# remove any TAB characters, replace them with two spaces
 		sas_lines <- gsub( "\t" , "  " , sas_lines )
 		
