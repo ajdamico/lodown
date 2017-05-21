@@ -5,9 +5,9 @@
 MIsvyttest<-function(formula, design ,...){
 
 	# the MIcombine function runs differently than a normal svyglm() call
-	m <- eval(bquote(MIcombine( with( design , svyglm(formula,family=gaussian()))) ) )
+	m <- eval(bquote(mitools::MIcombine( with( design , survey::svyglm(formula,family=gaussian()))) ) )
 
-	rval<-list(statistic=coef(m)[2]/SE(m)[2],
+	rval<-list(statistic=coef(m)[2]/survey::SE(m)[2],
 			   parameter=m$df[2],		
 			   estimate=coef(m)[2],
 			   null.value=0,
@@ -31,7 +31,7 @@ MIsvyttest<-function(formula, design ,...){
 
 MIsvyciprop <-
 	function (formula, design, method = c("logit", "likelihood", 
-		"asin", "beta", "mean", "xlogit"), level = 0.95, df = mean(unlist(lapply(design$designs,degf))), 
+		"asin", "beta", "mean", "xlogit"), level = 0.95, df = mean(unlist(lapply(design$designs,survey::degf))), 
 		...) 
 	{
 		method <- match.arg(method)
@@ -45,7 +45,7 @@ MIsvyciprop <-
 		else if (method == "asin") {
 			m <- eval(bquote(mitools::MIcombine(with(design,survey::svymean(~as.numeric(.(formula[[2]])), ...)))))
 			m <- structure(coef(m), .Names = "1", var = m$variance[1], .Dim = c(1L, 1L), statistic = "mean", class = "svystat")
-			xform <- svycontrast(m, quote(asin(sqrt(`1`))))
+			xform <- survey::svycontrast(m, quote(asin(sqrt(`1`))))
 			ci <- sin(as.vector(confint(xform, 1, level = level, 
 				df = df, ...)))^2
 			rval <- coef(m)[1]
@@ -54,7 +54,7 @@ MIsvyciprop <-
 		else if (method == "xlogit") {
 			m <- eval(bquote(mitools::MIcombine(with(design,survey::svymean(~as.numeric(.(formula[[2]])), ...)))))
 			m <- structure(coef(m), .Names = "1", var = m$variance[1], .Dim = c(1L, 1L), statistic = "mean", class = "svystat")
-			xform <- svycontrast(m, quote(log(`1`/(1 - `1`))))
+			xform <- survey::svycontrast(m, quote(log(`1`/(1 - `1`))))
 			ci <- survey:::expit(as.vector(confint(xform, 1, level = level, 
 				df = df, ...)))
 			rval <- coef(m)[1]
@@ -67,7 +67,7 @@ MIsvyciprop <-
 			attr(rval, "var") <- vcov(m)
 			alpha <- 1 - level
 			n.eff <- n.eff * (qt(alpha/2, mean(unlist(lapply(design$designs,nrow))) - 1)/qt(alpha/2, 
-				mean(unlist(lapply(design$designs,degf)))))^2
+				mean(unlist(lapply(design$designs,survey::degf)))))^2
 			ci <- c(qbeta(alpha/2, n.eff * rval, n.eff * (1 - rval) + 
 				1), qbeta(1 - alpha/2, n.eff * rval + 1, n.eff * 
 				(1 - rval)))
@@ -78,7 +78,7 @@ MIsvyciprop <-
 			ci <- suppressMessages(as.numeric(survey:::expit(confint(m, 1, 
 				level = level, method = cimethod, ddf = df))))
 			rval <- survey:::expit(coef(m))[1]
-			attr(rval, "var") <- vcov(eval(bquote(MIcombine(with(design,survey::svymean(~as.numeric(.(formula[[2]])), ...))))))
+			attr(rval, "var") <- vcov(eval(bquote(mitools::MIcombine(with(design,survey::svymean(~as.numeric(.(formula[[2]])), ...))))))
 		}
 		halfalpha <- (1 - level)/2
 		names(ci) <- paste(round(c(halfalpha, (1 - halfalpha)) * 
@@ -90,3 +90,5 @@ MIsvyciprop <-
 	}
 	
 	
+# pulled from the R survey library
+expit <- function(eta) exp(eta)/(1 + exp(eta))

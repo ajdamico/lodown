@@ -1,5 +1,5 @@
 #' @importFrom utils download.file read.csv unzip getFromNamespace write.csv read.table read.fwf
-#' @importFrom stats as.formula vcov coef pf update
+#' @importFrom stats as.formula vcov coef pf update confint qbeta qt var
 #' @importFrom graphics plot rasterImage
 NULL
 
