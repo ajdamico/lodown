@@ -55,7 +55,7 @@ MIsvyciprop <-
 			m <- eval(bquote(mitools::MIcombine(with(design,survey::svymean(~as.numeric(.(formula[[2]])), ...)))))
 			m <- structure(coef(m), .Names = "1", var = m$variance[1], .Dim = c(1L, 1L), statistic = "mean", class = "svystat")
 			xform <- survey::svycontrast(m, quote(log(`1`/(1 - `1`))))
-			ci <- survey:::expit(as.vector(confint(xform, 1, level = level, 
+			ci <- expit(as.vector(confint(xform, 1, level = level, 
 				df = df, ...)))
 			rval <- coef(m)[1]
 			attr(rval, "var") <- vcov(m)
@@ -75,9 +75,9 @@ MIsvyciprop <-
 		else {
 			m <- eval(bquote(mitools::MIcombine(with(design,svyglm(.(formula[[2]]) ~ 1, family = quasibinomial)))))
 			cimethod <- switch(method, logit = "Wald", likelihood = "likelihood")
-			ci <- suppressMessages(as.numeric(survey:::expit(confint(m, 1, 
+			ci <- suppressMessages(as.numeric(expit(confint(m, 1, 
 				level = level, method = cimethod, ddf = df))))
-			rval <- survey:::expit(coef(m))[1]
+			rval <- expit(coef(m))[1]
 			attr(rval, "var") <- vcov(eval(bquote(mitools::MIcombine(with(design,survey::svymean(~as.numeric(.(formula[[2]])), ...))))))
 		}
 		halfalpha <- (1 - level)/2
