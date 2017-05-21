@@ -528,7 +528,7 @@ pnad_postStratify <-
 		
 		# so that the standard errors accurately reflect the
 		# process of post-stratification
-		design$postStrata <- list(index)
+		design$postStrata <- c( design$postStrata  , list(index) )
 
 		# return the updated database-backed survey design object
 		design
