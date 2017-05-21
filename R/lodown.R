@@ -553,7 +553,7 @@ lodown <-
 		
 		parameter_note <- "\r\n\nlodown is now exiting due to a parameter omission.\r\n\n"
 		
-		unknown_error_note <- "\r\n\nlodown is now exiting unexpectedly.\nwebsites that host publicly-downloadable microdata change often and sometimes those changes cause this software to break.\nif the error call stack below appears to be a hiccup in your internet connection, then please verify your connectivity and retry the download.\notherwise, please open a new issue at `https://github.com/ajdamico/lodown/issues` with the contents of this error call stack and also the output of your `sessionInfo()`.\r\n\n"
+		unknown_error_note <- "\r\n\nlodown is now exiting unexpectedly.\nwebsites that host publicly-downloadable microdata change often and sometimes those changes cause this software to break.\nif the error call stack below appears to be a hiccup in your internet connection, then please verify your connectivity and retry the download.\notherwise, please open a new issue at `https://github.com/ajdamico/asdfree/issues` with the contents of this error call stack and also the output of your `sessionInfo()`.\r\n\n"
 		
 		withCallingHandlers(
 			catalog <- load_fun( data_name = data_name , catalog , ... ) , 
