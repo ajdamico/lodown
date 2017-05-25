@@ -160,10 +160,10 @@ lodown_brfss <-
 			
 			} else {
 			
+				sas_con <- file( catalog[ i , 'sas_ri' ] , "r" , encoding = "windows-1252" )
+				z <- readLines( sas_con )
+				close( sas_con )
 						
-				# read the entire sas importation script into memory
-				z <- readLines( catalog[ i , 'sas_ri' ] )
-
 				# throw out a few columns that cause importation trouble with monetdb
 				if ( catalog[ i , 'year' ] == 2009 ) z <- z[ -159:-168 ]
 				if ( catalog[ i , 'year' ] == 2011 )	z <- z[ !grepl( "CHILDAGE" , z ) ]
