@@ -5,7 +5,7 @@ get_catalog_bsapuf <-
 
 		file_pages <- c( "Inpatient_Claims" , "BSA_DME_Line_Items_PUF" , "BSA_PDE_PUF" , "Hospice_Bene" , "Carrier_Line_Items" , "HHA_PUF" , "Outpatient_Proc" , "SNF_Bene_PUF", "Chronic_Conditions_PUF" , "IPBS_PUF" , "Prescription_Drug_Profiles" )
 
-		bsapuf_page <- "https://www.cms.gov/Research-Statistics-Data-and-Systems/Statistics-Trends-and-Reports/BSAPUFS/index.html"
+		bsapuf_page <- "https://www.cms.gov/Research-Statistics-Data-and-Systems/Downloadable-Public-Use-Files/BSAPUFS/index.html"
 
 		all_links <- rvest::html_attr( rvest::html_nodes( xml2::read_html( bsapuf_page ) , "a" ) , "href" )
 
