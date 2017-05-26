@@ -43,8 +43,10 @@ lodown_gss <-
 
 			stopifnot( length( this_sav <- grep( "\\.sav$" , unzipped_files , ignore.case = TRUE , value = TRUE ) ) == 1 )
 			
-			x <- data.frame( haven::read_spss( this_sav ) )
+			x <- foreign::read.spss( this_sav , to.data.frame = TRUE , use.value.labels = FALSE )
 
+			x$one <- 1
+			
 			# convert all column names to lowercase
 			names( x ) <- tolower( names( x ) )
 
