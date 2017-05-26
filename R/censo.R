@@ -479,7 +479,7 @@ ranc_censo <-
 		# loop through them all!
 		for ( infile in infiles ){
 
-			incon <- file( infile , "r")
+			incon <- file( infile , "r" , encoding = "windows-1252" )
 
 			line.num <- 0
 			
