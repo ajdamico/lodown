@@ -2,18 +2,22 @@ get_catalog_faers <-
 	function( data_name = "faers" , output_dir , ... ){
 
 		catalog <- NULL
+		
+		tf <- tempfile()
 	
 		# specify the homepage of the legacy fda quarterly data sets
-		legacy.url <- "http://www.fda.gov/Drugs/GuidanceComplianceRegulatoryInformation/Surveillance/AdverseDrugEffects/ucm083765.htm"
+		legacy.url <- "https://www.fda.gov/Drugs/GuidanceComplianceRegulatoryInformation/Surveillance/AdverseDrugEffects/ucm083765.htm"
 
 		# specify the homepage of the faers quarterly data sets
-		faers.url <- "http://www.fda.gov/Drugs/GuidanceComplianceRegulatoryInformation/Surveillance/AdverseDrugEffects/ucm082193.htm"
+		faers.url <- "https://www.fda.gov/Drugs/GuidanceComplianceRegulatoryInformation/Surveillance/AdverseDrugEffects/ucm082193.htm"
 
 		# loop through two text strings: `faers` and `legacy`
 		for ( f.l in c( "faers" , "legacy" ) ){
 
+			cachaca( get( paste0( f.l , ".url" ) ) , tf , mode = 'wb' )
+		
 			# for both, download the contents of the homepages
-			doc <- XML::htmlParse( get( paste0( f.l , ".url" ) ) )
+			doc <- XML::htmlParse( tf )
 
 			# extract all possible link blocks from the current document
 			possible.links <- XML::xpathSApply( doc , "//a" , XML::xmlAttrs )
