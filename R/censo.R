@@ -471,15 +471,15 @@ lodown_censo <-
 ranc_censo <- 
 	function( infiles , width ){
 
+		tf_a <- tempfile()
+
+		outcon <- file( tf_a , "w" )
+
 		# if there are multiple infiles,
 		# loop through them all!
 		for ( infile in infiles ){
 
-			tf_a <- tempfile()
-
 			incon <- file( infile , "r" , encoding = "windows-1252" )
-
-			outcon <- file( tf_a , "w" )
 
 			line.num <- 0
 			
@@ -498,14 +498,9 @@ ranc_censo <-
 			}
 
 			close( incon )
-			
-			close( outcon )
-
-			file.copy( tf_a , infile )
-
-			file.remove( tf_a )
-			
 		}
 
-		infiles
+		close( outcon )
+
+		tf_a
 	}
