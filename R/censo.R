@@ -117,7 +117,7 @@ lodown_censo <-
 			
 				read_SAScii_monetdb (
 					this_dom ,
-					sas_ri = catalog[ i , 'dom_sas' ] ,
+					sas_ri = censo_sas( catalog[ i , 'dom_sas' ] ) ,
 					zipped = FALSE ,
 					tl = TRUE ,
 					tablename = paste0( catalog[ i , 'db_table_prefix' ] , '_dom' ) ,
@@ -131,7 +131,7 @@ lodown_censo <-
 			
 				read_SAScii_monetdb (
 					this_pes ,
-					sas_ri = catalog[ i , 'pes_sas' ] ,
+					sas_ri = censo_sas( catalog[ i , 'pes_sas' ] ) ,
 					zipped = FALSE ,
 					tl = TRUE ,
 					tablename = paste0( catalog[ i , 'db_table_prefix' ] , '_pes' ) ,
@@ -144,7 +144,7 @@ lodown_censo <-
 			
 				read_SAScii_monetdb (
 					this_fam ,
-					sas_ri = catalog[ i , 'fam_sas' ] ,
+					sas_ri = censo_sas( catalog[ i , 'fam_sas' ] ) ,
 					zipped = FALSE ,
 					tl = TRUE ,
 					tablename = paste0( catalog[ i , 'db_table_prefix' ] , '_fam' ) ,
@@ -503,4 +503,18 @@ ranc_censo <-
 		close( outcon )
 
 		tf_a
+	}
+
+censo_sas <-
+	function( sasfile ){
+		
+		tf <- tempfile()
+		
+		incon <- file( sasfile , "r" , encoding = "windows-1252" )
+		
+		this_sas <- readLines( incon )
+		
+		writeLines( iconv( this_sas , "" , "ASCII//TRANSLIT" , sub = " " ) , tf )
+		
+		tf
 	}
