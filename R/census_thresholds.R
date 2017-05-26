@@ -45,7 +45,7 @@ census_thresholds <-
 				
 			} else {
 				
-				this_thresh <- readxl::read_excel( fn )
+				this_thresh <- data.frame( readxl::read_excel( fn ) )
 				
 			}
 			
