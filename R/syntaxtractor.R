@@ -42,7 +42,7 @@ syntaxtractor <-
 		
 		rmd_links <- gsub( "(.*)>(.*)\\.Rmd</a>(.*)" , "\\2" , grep( "Rmd" , repo_homepage , value = TRUE ) )
 		
-		this_rmd <- grep( data_name , rmd_links , value = TRUE )
+		this_rmd <- grep( paste0( "-" , data_name , "\\.Rmd" ) , rmd_links , value = TRUE )
 	
 		rmd_page <- readLines_retry( paste0( "https://raw.githubusercontent.com/" , repo , "/" , ref , "/" , this_rmd , ".Rmd" ) )
 
