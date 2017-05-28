@@ -24,8 +24,8 @@ get_catalog_meps <-
 
 			search_page <- paste0( "https://meps.ahrq.gov/mepsweb/data_stats/download_data_files_results.jsp?cboDataYear=" , this_year , "&buttonYearandDataType=Search" )
 
-			search_result <- readLines( search_page )
-
+			search_result <- strsplit( RCurl::getURL( search_page , ssl.verifypeer = FALSE ) , "(\r)?\n" )[[1]]
+			
 			tf <- tempfile()
 
 			writeLines( search_result , tf )
@@ -46,7 +46,7 @@ get_catalog_meps <-
 					
 				available_pufs[ i , 'this_link' ] <- unique( gsub( '(.*)href=\"(.*)\">(.*)</a>(.*)' , "\\2" , this_line ) )
 
-				puf_result <- readLines( paste0( "https://meps.ahrq.gov/mepsweb/data_stats/" , available_pufs[ i , 'this_link' ] ) )
+				puf_result <- strsplit( RCurl::getURL( paste0( "https://meps.ahrq.gov/mepsweb/data_stats/" , available_pufs[ i , 'this_link' ] ) , ssl.verifypeer = FALSE ) , "(\r)?\n" )[[1]]
 				
 				link_names <- gsub( '(.*)href=\"(.*)\">(.*)</a>(.*)' , "\\2" , puf_result[ grepl( "ssp\\.zip" , puf_result ) ] )
 				
