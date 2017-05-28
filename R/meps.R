@@ -50,7 +50,7 @@ get_catalog_meps <-
 				
 				link_names <- gsub( '(.*)href=\"(.*)\">(.*)</a>(.*)' , "\\2" , puf_result[ grepl( "ssp\\.zip" , puf_result ) ] )
 				
-				this_file <- merge( available_pufs[ i , ] , data.frame( full_url = paste0( "https://meps.ahrq.gov/mepsweb/" , gsub( "../" , "" , link_names , fixed = TRUE ) ) , file_num = if( length( link_names ) > 1 ) seq( link_names ) else NA , stringsAsFactors = FALSE ) )
+				this_file <- merge( available_pufs[ i , ] , data.frame( full_url = paste0( "https://meps.ahrq.gov/" , gsub( "../" , "" , link_names , fixed = TRUE ) ) , file_num = if( length( link_names ) > 1 ) seq( link_names ) else NA , stringsAsFactors = FALSE ) )
 			
 				catalog <- rbind( catalog , this_file )
 				
@@ -92,11 +92,11 @@ lodown_meps <-
 
 
 		for ( i in seq_len( nrow( catalog ) ) ){
-
-			RCurl::getURLContent( catalog[ i , "full_url" ] , ssl.verifypeer = FALSE ) 
 			
 			# download the file
-			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' , filesize_fun = 'unzip_verify' )
+			this_file <- cachaca( fn , FUN = httr::GET , config = httr::config( ssl_verifypeer = FALSE ) , filesize_fun = 'unzip_verify' )
+			
+			writeBin( httr::content( this_file , "raw" ) , catalog[ i , "output_filename" ] )
 
 			unzipped_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) )
 
