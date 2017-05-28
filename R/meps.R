@@ -94,7 +94,7 @@ lodown_meps <-
 		for ( i in seq_len( nrow( catalog ) ) ){
 			
 			# download the file
-			this_file <- cachaca( fn , FUN = httr::GET , config = httr::config( ssl_verifypeer = FALSE ) , filesize_fun = 'unzip_verify' )
+			this_file <- cachaca( catalog[ i , 'full_url' ] , FUN = httr::GET , config = httr::config( ssl_verifypeer = FALSE ) , filesize_fun = 'unzip_verify' )
 			
 			writeBin( httr::content( this_file , "raw" ) , catalog[ i , "output_filename" ] )
 
