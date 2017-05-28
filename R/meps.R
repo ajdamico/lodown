@@ -96,7 +96,7 @@ lodown_meps <-
 			# download the file
 			this_file <- cachaca( catalog[ i , 'full_url' ] , FUN = httr::GET , config = httr::config( ssl_verifypeer = FALSE ) , filesize_fun = 'unzip_verify' )
 			
-			writeBin( httr::content( this_file , "raw" ) , catalog[ i , "output_filename" ] )
+			writeBin( httr::content( this_file , "raw" ) , tf )
 
 			unzipped_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) )
 
