@@ -24,8 +24,8 @@ get_catalog_meps <-
 
 			search_page <- paste0( "https://meps.ahrq.gov/mepsweb/data_stats/download_data_files_results.jsp?cboDataYear=" , this_year , "&buttonYearandDataType=Search" )
 
-			search_result <- readLines( search_page )
-
+			search_result <- strsplit( RCurl::getURL( search_page , ssl.verifypeer = FALSE ) , "(\r)?\n" )[[1]]
+			
 			tf <- tempfile()
 
 			writeLines( search_result , tf )
@@ -46,11 +46,11 @@ get_catalog_meps <-
 					
 				available_pufs[ i , 'this_link' ] <- unique( gsub( '(.*)href=\"(.*)\">(.*)</a>(.*)' , "\\2" , this_line ) )
 
-				puf_result <- readLines( paste0( "https://meps.ahrq.gov/mepsweb/data_stats/" , available_pufs[ i , 'this_link' ] ) )
+				puf_result <- strsplit( RCurl::getURL( paste0( "https://meps.ahrq.gov/mepsweb/data_stats/" , available_pufs[ i , 'this_link' ] ) , ssl.verifypeer = FALSE ) , "(\r)?\n" )[[1]]
 				
 				link_names <- gsub( '(.*)href=\"(.*)\">(.*)</a>(.*)' , "\\2" , puf_result[ grepl( "ssp\\.zip" , puf_result ) ] )
 				
-				this_file <- merge( available_pufs[ i , ] , data.frame( full_url = paste0( "https://meps.ahrq.gov/mepsweb/" , gsub( "../" , "" , link_names , fixed = TRUE ) ) , file_num = if( length( link_names ) > 1 ) seq( link_names ) else NA , stringsAsFactors = FALSE ) )
+				this_file <- merge( available_pufs[ i , ] , data.frame( full_url = paste0( "https://meps.ahrq.gov/" , gsub( "../" , "" , link_names , fixed = TRUE ) ) , file_num = if( length( link_names ) > 1 ) seq( link_names ) else NA , stringsAsFactors = FALSE ) )
 			
 				catalog <- rbind( catalog , this_file )
 				
@@ -92,11 +92,11 @@ lodown_meps <-
 
 
 		for ( i in seq_len( nrow( catalog ) ) ){
-
-			RCurl::getURLContent( catalog[ i , "full_url" ] , ssl.verifypeer = FALSE ) 
 			
 			# download the file
-			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' , filesize_fun = 'unzip_verify' )
+			this_file <- cachaca( catalog[ i , 'full_url' ] , FUN = httr::GET , config = httr::config( ssl_verifypeer = FALSE ) , filesize_fun = 'unzip_verify' )
+			
+			writeBin( httr::content( this_file , "raw" ) , tf )
 
 			unzipped_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) )
 
