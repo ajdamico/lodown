@@ -18,7 +18,7 @@ get_catalog_censo <-
 		files_to_download_2010 <- all_files[ !( all_files %in% c( '1_Atualizacoes_20160311.txt' , 'Atualizacoes.txt' , 'Documentacao.zip' ) ) ]
 
 		catalog <-
-			rbind( 
+			rbind(
 				catalog ,
 				data.frame(
 					full_url = paste0( ftp_path_2010 , files_to_download_2010 ) ,
@@ -44,7 +44,7 @@ get_catalog_censo <-
 				)
 			)
 
-			
+
 		# designate the location of the 2000 general sample microdata files
 		ftp_path_2000 <-	"ftp://ftp.ibge.gov.br/Censos/Censo_Demografico_2000/Microdados/"
 
@@ -60,7 +60,7 @@ get_catalog_censo <-
 		files_to_download_2000 <- all_files[ !( all_files %in% c( '1_Documentacao.zip' , '2_Atualizacoes.txt' , '1_Documentacao_velho.zip' , "2_Atualizacoes_20160309.txt" , "1_Documentacao_20160309.zip" ) ) ]
 
 		catalog <-
-			rbind( 
+			rbind(
 				catalog ,
 				data.frame(
 					full_url = paste0( ftp_path_2000 , files_to_download_2000 ) ,
@@ -85,9 +85,9 @@ get_catalog_censo <-
 					stringsAsFactors = FALSE
 				)
 			)
-		
+
 		catalog
-	
+
 	}
 
 lodown_censo <-
@@ -101,7 +101,7 @@ lodown_censo <-
 			db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog[ i , 'dbfolder' ] )
 
 			cachaca( catalog[ i , 'full_url' ] , tf , mode = 'wb' )
-			
+
 			unzipped_files <- unzip_warn_fail( tf , exdir = tempdir() )
 
 			dom_file <- unzipped_files[ grep( 'DOM' , unzipped_files , useBytes = TRUE , ignore.case = TRUE ) ]
@@ -111,10 +111,10 @@ lodown_censo <-
 			if( !is.na( catalog[ i , 'dom_ranc' ] ) ) dom_file <- ranc_censo( dom_file , catalog[ i , 'dom_ranc' ] )
 			if( !is.na( catalog[ i , 'pes_ranc' ] ) ) pes_file <- ranc_censo( pes_file , catalog[ i , 'pes_ranc' ] )
 			if( !is.na( catalog[ i , 'fam_ranc' ] ) ) fam_file <- ranc_censo( fam_file , catalog[ i , 'fam_ranc' ] )
-			
-			
+
+
 			for( this_dom in dom_file ){
-			
+
 				read_SAScii_monetdb (
 					this_dom ,
 					sas_ri = censo_sas( catalog[ i , 'dom_sas' ] ) ,
@@ -125,10 +125,10 @@ lodown_censo <-
 				)
 
 			}
-			
-			
+
+
 			for( this_pes in pes_file ){
-			
+
 				read_SAScii_monetdb (
 					this_pes ,
 					sas_ri = censo_sas( catalog[ i , 'pes_sas' ] ) ,
@@ -139,9 +139,9 @@ lodown_censo <-
 				)
 
 			}
-			
+
 			for( this_fam in fam_file ){
-			
+
 				read_SAScii_monetdb (
 					this_fam ,
 					sas_ri = censo_sas( catalog[ i , 'fam_sas' ] ) ,
@@ -152,55 +152,61 @@ lodown_censo <-
 				)
 
 			}
-			
+
 			# add the number of records to the catalog
 			catalog[ i , 'case_count' ] <- DBI::dbGetQuery( db , paste0( "SELECT COUNT(*) FROM " , catalog[ i , 'db_table_prefix' ] , '_pes' ) )[ 1 , 1 ]
 
 			# disconnect from the current monet database
 			DBI::dbDisconnect( db , shutdown = TRUE )
 
+			# remove directory with extracted files
+			unlink( dirname( this_pes ) , recursive = TRUE )
+
+			# remove non-cached tf
+			file.remove( tf )
+
 			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'dbfolder' ] , "'\r\n\n" ) )
 
 		}
-		
+
 		# create unique survey designs
 		dom_designs <- unique( catalog[ , c( "year" , "dbfolder" , "dom_design" , 'weight' , paste0( 'fpc' , 1:5 ) ) ] )
 		pes_designs <- unique( catalog[ , c( "year" , "dbfolder" , "pes_design" , 'weight' , paste0( 'fpc' , 1:5 ) ) ] )
 		fam_designs <- unique( catalog[ , c( "year" , "dbfolder" , "fam_design" , 'weight' , paste0( 'fpc' , 1:5 ) ) ] )
-		
+
 		names( dom_designs ) <- c( "year" , 'dbfolder' , 'design' , 'weight' , paste0( 'fpc' , 1:5 ) )
 		names( pes_designs ) <- c( "year" , 'dbfolder' , 'design' , 'weight' , paste0( 'fpc' , 1:5 ) )
 		names( fam_designs ) <- c( "year" , 'dbfolder' , 'design' , 'weight' , paste0( 'fpc' , 1:5 ) )
-		
+
 		dom_designs$type <- 'dom'
 		pes_designs$type <- 'pes'
 		fam_designs$type <- 'fam'
-		
+
 		unique_designs <- rbind( dom_designs , pes_designs , fam_designs )
-		
+
 		unique_designs <- unique_designs[ !is.na( unique_designs$design ) , ]
-		
+
 		# dom first, fam second, pes third
 		unique_designs <- unique_designs[ order( unique_designs$type ) , ]
-		
+
 		for( i in seq_len( nrow( unique_designs ) ) ){
 
 			# open the connection to the monetdblite database
 			db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , unique_designs[ i , 'dbfolder' ] )
 
-			these_tables <- 
-				paste0( 
-					catalog[ catalog$dbfolder %in% unique_designs[ i , 'dbfolder' ] & catalog[ , paste0( unique_designs[ i , 'type' ] , "_design" ) ] %in% unique_designs[ i , 'design' ] , 'db_table_prefix' ] , 
-					"_" , 
-					unique_designs[ i , 'type' ] 
+			these_tables <-
+				paste0(
+					catalog[ catalog$dbfolder %in% unique_designs[ i , 'dbfolder' ] & catalog[ , paste0( unique_designs[ i , 'type' ] , "_design" ) ] %in% unique_designs[ i , 'design' ] , 'db_table_prefix' ] ,
+					"_" ,
+					unique_designs[ i , 'type' ]
 				)
-			
+
 			this_stack <-
 				paste0(
-					'create table c' , 
-					substr( unique_designs[ i , 'year' ] , 3 , 4 ) , 
-					"_" , 
-					unique_designs[ i , 'type' ] , 
+					'create table c' ,
+					substr( unique_designs[ i , 'year' ] , 3 , 4 ) ,
+					"_" ,
+					unique_designs[ i , 'type' ] ,
 					'_pre_fpc as (SELECT * FROM ' ,
 					paste0( these_tables , collapse = ') UNION ALL (SELECT * FROM ' ) ,
 					') WITH DATA'
@@ -209,32 +215,32 @@ lodown_censo <-
 			DBI::dbSendQuery( db , this_stack )
 
 			this_create <-
-				paste0( 'create table c' , 
-					substr( unique_designs[ i , 'year' ] , 3 , 4 ) , 
-					'_' , 
-					unique_designs[ i , 'type' ] , 
-					'_fpc as (select ' , 
+				paste0( 'create table c' ,
+					substr( unique_designs[ i , 'year' ] , 3 , 4 ) ,
+					'_' ,
+					unique_designs[ i , 'type' ] ,
+					'_fpc as (select ' ,
 					unique_designs[ i , 'fpc1' ] ,
 					' , sum( ' ,
 					unique_designs[ i , 'fpc2' ] ,
-					' ) as sum_fpc2 from c' , 
-					substr( unique_designs[ i , 'year' ] , 3 , 4 ) , 
-					'_' , 
-					unique_designs[ i , 'type' ] , 
-					'_pre_fpc group by ' , 
+					' ) as sum_fpc2 from c' ,
+					substr( unique_designs[ i , 'year' ] , 3 , 4 ) ,
+					'_' ,
+					unique_designs[ i , 'type' ] ,
+					'_pre_fpc group by ' ,
 					unique_designs[ i , 'fpc1' ] ,
 					') WITH DATA' )
 
 			DBI::dbSendQuery( db , this_create )
 
 			if( unique_designs[ i , 'type' ] == 'dom' ){
-			
+
 				count_create <-
 					paste0(
 						'create table c' ,
-						substr( unique_designs[ i , 'year' ] , 3 , 4 ) , 
+						substr( unique_designs[ i , 'year' ] , 3 , 4 ) ,
 						'_dom_count_pes as (select ' ,
-						unique_designs[ i , 'fpc3' ] , 
+						unique_designs[ i , 'fpc3' ] ,
 						' , ' ,
 						unique_designs[ i , 'fpc4' ] ,
 						' , count(*) as dom_count_pes from c' ,
@@ -242,27 +248,27 @@ lodown_censo <-
 						'_' ,
 						unique_designs[ i , 'type' ] ,
 						'_pre_fpc group by ' ,
-						unique_designs[ i , 'fpc3' ] , 
+						unique_designs[ i , 'fpc3' ] ,
 						' , ' ,
 						unique_designs[ i , 'fpc4' ] ,
 						' ) WITH DATA' )
 
 				DBI::dbSendQuery( db , count_create )
-				
+
 				dom_fpc_merge <-
-					paste0( 
+					paste0(
 						'create table c' ,
-						substr( unique_designs[ i , 'year' ] , 3 , 4 ) , 
+						substr( unique_designs[ i , 'year' ] , 3 , 4 ) ,
 						'_dom as ( select a1.* , b1.dom_count_pes from (select a2.* , b2.sum_fpc2 as dom_fpc from c' ,
-						substr( unique_designs[ i , 'year' ] , 3 , 4 ) , 
-						'_dom_pre_fpc as a2 inner join c' , 
-						substr( unique_designs[ i , 'year' ] , 3 , 4 ) , 
+						substr( unique_designs[ i , 'year' ] , 3 , 4 ) ,
+						'_dom_pre_fpc as a2 inner join c' ,
+						substr( unique_designs[ i , 'year' ] , 3 , 4 ) ,
 						'_dom_fpc as b2 on a2.' ,
 						unique_designs[ i , 'fpc1' ] ,
 						' = b2.' ,
 						unique_designs[ i , 'fpc1' ] ,
 						') as a1 inner join c' ,
-						substr( unique_designs[ i , 'year' ] , 3 , 4 ) , 
+						substr( unique_designs[ i , 'year' ] , 3 , 4 ) ,
 						'_dom_count_pes as b1 on a1.' ,
 						unique_designs[ i , 'fpc3' ] ,
 						' = b1.' ,
@@ -273,25 +279,25 @@ lodown_censo <-
 						unique_designs[ i , 'fpc4' ] ,
 						' ) WITH DATA'
 					)
-					
+
 				DBI::dbSendQuery( db , dom_fpc_merge )
 
 			} else {
-				
+
 				final_merge <-
-					paste0( 
-						'create table c' , 
-						substr( unique_designs[ i , 'year' ] , 3 , 4 ) , 
-						'_' , 
-						unique_designs[ i , 'type' ] , 
-						' as (select a.* , b.sum_fpc2 as ' ,
-						unique_designs[ i , 'type' ] ,
-						'_fpc from c' , 
-						substr( unique_designs[ i , 'year' ] , 3 , 4 ) , 
+					paste0(
+						'create table c' ,
+						substr( unique_designs[ i , 'year' ] , 3 , 4 ) ,
 						'_' ,
 						unique_designs[ i , 'type' ] ,
-						'_pre_fpc as a inner join c' , 
-						substr( unique_designs[ i , 'year' ] , 3 , 4 ) , 
+						' as (select a.* , b.sum_fpc2 as ' ,
+						unique_designs[ i , 'type' ] ,
+						'_fpc from c' ,
+						substr( unique_designs[ i , 'year' ] , 3 , 4 ) ,
+						'_' ,
+						unique_designs[ i , 'type' ] ,
+						'_pre_fpc as a inner join c' ,
+						substr( unique_designs[ i , 'year' ] , 3 , 4 ) ,
 						'_' ,
 						unique_designs[ i , 'type' ] ,
 						'_fpc as b on a.' ,
@@ -300,53 +306,53 @@ lodown_censo <-
 						unique_designs[ i , 'fpc1' ] ,
 						') WITH DATA'
 					)
-				
+
 				DBI::dbSendQuery( db , final_merge )
-			
+
 			}
-		
-		
-			DBI::dbSendQuery( 
-				db , 
-				paste0( 
-					"ALTER TABLE c" , 
+
+
+			DBI::dbSendQuery(
+				db ,
+				paste0(
+					"ALTER TABLE c" ,
 					substr( unique_designs[ i , 'year' ] , 3 , 4 ) ,
 					"_" ,
-					unique_designs[ i , 'type' ] , 
+					unique_designs[ i , 'type' ] ,
 					' ADD COLUMN ' ,
-					unique_designs[ i , 'type' ] , 
+					unique_designs[ i , 'type' ] ,
 					'_wgt DOUBLE PRECISION'
 				)
 			)
-		
-			DBI::dbSendQuery( 
-				db , 
-				paste0( 
-					"UPDATE c" , 
+
+			DBI::dbSendQuery(
+				db ,
+				paste0(
+					"UPDATE c" ,
 					substr( unique_designs[ i , 'year' ] , 3 , 4 ) ,
 					"_" ,
-					unique_designs[ i , 'type' ] , 
+					unique_designs[ i , 'type' ] ,
 					' SET ' ,
-					unique_designs[ i , 'type' ] , 
+					unique_designs[ i , 'type' ] ,
 					'_wgt = ' ,
 					unique_designs[ i , 'weight' ]
 				)
 			)
 
-			DBI::dbSendQuery( 
-				db , 
-				paste0( 
-					"ALTER TABLE c" , 
+			DBI::dbSendQuery(
+				db ,
+				paste0(
+					"ALTER TABLE c" ,
 					substr( unique_designs[ i , 'year' ] , 3 , 4 ) ,
 					"_" ,
-					unique_designs[ i , 'type' ] , 
+					unique_designs[ i , 'type' ] ,
 					' DROP COLUMN ' ,
 					unique_designs[ i , 'weight' ]
 				)
 			)
-			
+
 			if( unique_designs[ i , 'type' ] == 'fam' ){
-				
+
 				b_fields <- DBI::dbListFields( db , paste0( "c" , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , '_fam' ) )[ !( DBI::dbListFields( db , paste0( "c" , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , '_fam' ) ) %in% DBI::dbListFields( db , paste0( "c" , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , '_dom' ) ) ) ]
 
 				semifinal_merge <-
@@ -355,15 +361,15 @@ lodown_censo <-
 						paste( b_fields , collapse = ', b.' ) ,
 						' from c' , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , '_dom as a inner join c' , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , '_fam as b ON a.' , unique_designs[ i , 'fpc3' ] , ' = b.' , unique_designs[ i , 'fpc3' ] , ' AND a.' , unique_designs[ i , 'fpc4' ] , ' = b.' , unique_designs[ i , 'fpc4' ] , ') WITH DATA'
 					)
-					
+
 				DBI::dbSendQuery( db , semifinal_merge )
-			
+
 			}
-			
+
 			if( unique_designs[ i , 'type' ] == 'pes' ){
-				
+
 				if( paste0( 'c' , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , '_fam' ) %in% DBI::dbListTables( db ) ){
-					
+
 					b_fields <- DBI::dbListFields( db , paste0( 'c' , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , '_pes' ) )[ !( DBI::dbListFields( db , paste0( 'c' , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , '_pes' ) ) %in% DBI::dbListFields( db , paste0( 'c' , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , '_dom_fam' ) ) ) ]
 
 					final_merge <-
@@ -372,9 +378,9 @@ lodown_censo <-
 							paste( b_fields , collapse = ', b.' ) ,
 							' from c' , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , '_dom_fam as a inner join c' , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , '_pes as b ON a.' , unique_designs[ i , 'fpc3' ] , ' = b.' , unique_designs[ i , 'fpc3' ] , ' AND a.' , unique_designs[ i , 'fpc4' ] , ' = b.' , unique_designs[ i , 'fpc4' ] , ' AND a.' , unique_designs[ i , 'fpc5' ] , ' = b.' , unique_designs[ i , 'fpc5' ] , ' ) WITH DATA'
 						)
-				
+
 				} else {
-				
+
 
 					b_fields <- DBI::dbListFields( db , paste0( 'c' , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , '_pes' ) )[ !( DBI::dbListFields( db , paste0( 'c' , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , '_pes' ) ) %in% DBI::dbListFields( db , paste0( 'c' , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , '_dom' ) ) ) ]
 
@@ -386,51 +392,51 @@ lodown_censo <-
 						)
 
 
-				
+
 				}
 
-						
+
 				DBI::dbSendQuery( db , final_merge )
-			
+
 			}
-			
-		
+
+
 			# add columns named 'one' to each table..
-			DBI::dbSendQuery( 
-				db , 
-				paste0( 
-					'alter table c' , 
-					substr( unique_designs[ i , 'year' ] , 3 , 4 ) , 
-					'_' , 
-					unique_designs[ i , 'type' ] , 
-					' add column one int' 
-				)
-			)
-			
-			
-			# ..and fill them all with the number 1.
-			DBI::dbSendQuery( 
-				db , 
+			DBI::dbSendQuery(
+				db ,
 				paste0(
-					'UPDATE c' , 
-					substr( unique_designs[ i , 'year' ] , 3 , 4 ) , 
-					'_' , 
-					unique_designs[ i , 'type' ] , 
-					' SET one = 1' 
+					'alter table c' ,
+					substr( unique_designs[ i , 'year' ] , 3 , 4 ) ,
+					'_' ,
+					unique_designs[ i , 'type' ] ,
+					' add column one int'
 				)
 			)
-			
+
+
+			# ..and fill them all with the number 1.
+			DBI::dbSendQuery(
+				db ,
+				paste0(
+					'UPDATE c' ,
+					substr( unique_designs[ i , 'year' ] , 3 , 4 ) ,
+					'_' ,
+					unique_designs[ i , 'type' ] ,
+					' SET one = 1'
+				)
+			)
+
 			if( unique_designs[ i , 'type' ] == 'pes' ){
-				
-				stopifnot( 
-					DBI::dbGetQuery( db , paste0( "select count(*) as count from c" , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , "_pes" ) ) == 
+
+				stopifnot(
+					DBI::dbGetQuery( db , paste0( "select count(*) as count from c" , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , "_pes" ) ) ==
 					DBI::dbGetQuery( db , paste0( "select count(*) as count from c" , substr( unique_designs[ i , 'year' ] , 3 , 4 ) ) )
 				)
-			
+
 			}
-			
-			bootw <- 
-				survey::bootweights( 
+
+			bootw <-
+				survey::bootweights(
 					DBI::dbGetQuery( db , paste0( "SELECT " , unique_designs[ i , 'fpc1' ] , " FROM c" , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , ifelse( unique_designs[ i , 'type' ] == 'pes' , "" , paste0( "_" , unique_designs[ i , 'type' ] ) ) ) )[ , 1 ] ,
 					DBI::dbGetQuery( db , paste0( "SELECT " , unique_designs[ i , 'fpc4' ] , " FROM c" , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , ifelse( unique_designs[ i , 'type' ] == 'pes' , "" , paste0( "_" , unique_designs[ i , 'type' ] ) ) ) )[ , 1 ] ,
 					replicates = 80 ,
@@ -450,25 +456,25 @@ lodown_censo <-
 				)
 
 			saveRDS( this_design , file = unique_designs[ i , 'design' ] )
-			
+
 			# disconnect from the current monet database
 			DBI::dbDisconnect( db , shutdown = TRUE )
 
 			cat( paste0( data_name , " survey design entry " , i , " of " , nrow( unique_designs ) , " stored at '" , unique_designs[ i , 'design' ] , "'\r\n\n" ) )
-			
+
 		}
-		
+
 		catalog
 
 	}
 
-	
+
 
 # define a special function to   #
 # remove alphanumeric characters #
 # from any data files that have  #
 # been downloaded from ibge      #
-ranc_censo <- 
+ranc_censo <-
 	function( infiles , width ){
 
 		tf_a <- tempfile()
@@ -482,12 +488,12 @@ ranc_censo <-
 			incon <- file( infile , "r")
 
 			line.num <- 0
-			
+
 			while( length( line <- readLines( incon , 1 , skipNul = TRUE , warn = FALSE ) ) > 0 ){
 
 				# add blank spaces on the right side where they're absent.
 				line <- stringr::str_pad( line , width , side = "right" , pad = " " )
-				
+
 				# save the file on the disk, so long as there's no weird corruption
 				if( !is.na( iconv( line , "" , "ASCII" ) ) ) writeLines( line , outcon )
 				# like line 509,451 and 2,575,789 of the combined 2000 sao paulo file.
@@ -507,14 +513,14 @@ ranc_censo <-
 
 censo_sas <-
 	function( sasfile ){
-		
+
 		tf <- tempfile()
-		
+
 		incon <- file( sasfile , "r" , encoding = "windows-1252" )
-		
+
 		this_sas <- readLines( incon )
-		
+
 		writeLines( iconv( this_sas , "" , "ASCII//TRANSLIT" , sub = " " ) , tf )
-		
+
 		tf
 	}
