@@ -159,11 +159,8 @@ lodown_censo <-
 			# disconnect from the current monet database
 			DBI::dbDisconnect( db , shutdown = TRUE )
 
-			# remove directory with extracted files
-			unlink( dirname( this_pes ) , recursive = TRUE )
-
-			# remove non-cached tf
-			file.remove( tf )
+			# remove extracted files and tf
+			file.remove( c( tf , unzipped_files , if( !is.na( catalog[ i , 'dom_ranc' ] ) ) dom_file , if( !is.na( catalog[ i , 'pes_ranc' ] ) ) pes_file , if( !is.na( catalog[ i , 'fam_ranc' ] ) ) fam_file ) )
 
 			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'dbfolder' ] , "'\r\n\n" ) )
 
