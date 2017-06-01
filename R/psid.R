@@ -128,6 +128,12 @@ lodown_psid <-
 				
 				if( length( this_sas ) > 1 ) this_sas <- this_sas[ gsub( "\\.sas" , "" , basename( this_sas ) , ignore.case = TRUE ) == gsub( "\\.txt" , "" , basename( dat_files[ dat_num ] ) , ignore.case = TRUE ) ]
 				
+				# deal with unix/mac multibyte strings
+				this_con <- file( this_sas , "r" , encoding = "windows-1252" )
+				these_lines <- readLines( this_con )
+				close( this_con )
+				writeLines( these_lines , this_sas )
+				
 				# read the text file directly into an R data frame with `read.SAScii`
 				x <- read_SAScii( dat_files[ dat_num ] , this_sas )
 
