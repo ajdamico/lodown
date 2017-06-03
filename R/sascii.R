@@ -98,7 +98,8 @@ read_SAScii_monetdb <-
 		try_best_effort = FALSE ,
 		sas_stru = NULL ,
 		allow_zero_records = FALSE ,	# by default, expect more than zero records to be imported.
-		na_strings = ""					# by default, na strings are empty
+		na_strings = ""	,				# by default, na strings are empty
+		unzip_fun = unzip_warn_fail
 	) {
 		if( is.null( sas_ri ) & is.null( sas_stru ) ) stop( "either sas_ri= or sas_stru= must be specified" )
 		if( !is.null( sas_ri ) & !is.null( sas_stru ) ) stop( "either sas_ri= or sas_stru= must be specified, but not both" )
@@ -182,10 +183,12 @@ read_SAScii_monetdb <-
 		
 	#if the ASCII file is stored in an archive, unpack it to a temporary file and run that through read.fwf instead.
 	if ( zipped ){
-		#download the CPS repwgts zipped file
+		
+		# download the CPS repwgts zipped file
 		cachaca( fn , tf , mode = "wb" )
-		#unzip the file's contents and store the file name within the temporary directory
-		fn <- unzip_warn_fail( tf , exdir = td , overwrite = TRUE )
+		
+		# unzip the file's contents and store the file name within the temporary directory
+		fn <- unzip_fun( tf , td )
 		
 		on.exit( file.remove( tf ) )
 	}

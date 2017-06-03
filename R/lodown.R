@@ -596,4 +596,11 @@ no.na <- function( x , value = FALSE ){ x[ is.na( x ) ] <- value ; x }
 
 unzip_warn_fail <- function( ... ) tryCatch( { unzip( ... ) } , warning = function( w ) stop( conditionMessage( w ) ) )
 
+unarchive_nicely <- 
+	function( file_to_unzip , unzip_directory = tempdir() ) {
+		file.remove( list.files( file.path( unzip_directory , "archive_unzip" ) , recursive = TRUE , full.names = TRUE ) )
+		archive::archive_extract( file_to_unzip , dir = file.path( unzip_directory , "archive_unzip" ) )
+		list.files( file.path( unzip_directory , "archive_unzip" ) , recursive = TRUE , full.names = TRUE )
+	}
+
 np_dirname <- function( ... ) normalizePath( dirname( ... ) , mustWork = FALSE )

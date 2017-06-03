@@ -659,6 +659,7 @@ lodown_sipp <-
 						tl = TRUE ,
 						na_strings = "." ,
 						tablename = catalog[ i , 'db_tablename' ] ,
+						unzip_fun = unarchive_nicely ,
 						connection = db
 					)
 					
@@ -675,6 +676,7 @@ lodown_sipp <-
 						zipped = TRUE ,
 						tl = TRUE ,
 						tablename = catalog[ i , 'db_tablename' ] ,
+						unzip_fun = unarchive_nicely ,
 						connection = db
 					)
 					
