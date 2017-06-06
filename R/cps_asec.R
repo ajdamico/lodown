@@ -387,7 +387,7 @@ lodown_cps_asec <-
 				
 				if( catalog[ i , 'year' ] %in% c( 2014 , 2014.58 ) ){
 					
-					ace <- "http://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/asec14_now_anycov.dat"
+					ace <- "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/asec14_now_anycov.dat"
 
 					cachaca( ace , tf , mode = "wb" , filesize_fun = 'httr' )	
 
@@ -397,7 +397,7 @@ lodown_cps_asec <-
 
 				if( catalog[ i , 'year' ] %in% c( 2014 , 2014.38 ) ){
 					
-					ace <- "http://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/asec14_now_anycov_redes.dat"
+					ace <- "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/asec14_now_anycov_redes.dat"
 
 					cachaca( ace , tf , mode = "wb" , filesize_fun = 'httr' )	
 
@@ -407,13 +407,13 @@ lodown_cps_asec <-
 				
 				if ( catalog[ i , 'year' ] %in% c( 2014 , 2014.38 , 2014.58 ) ){
 				
-					ote <- "http://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/asec14_outtyp_full.dat"
+					ote <- "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/asec14_outtyp_full.dat"
 					
 					cachaca( ote , tf , mode = 'wb' , filesize_fun = 'httr' )
 					
 					ot <- read.fwf( tf , c( 5 , 2 , 2 , 1 ) )
 					
-					cachaca( "http://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/ppint14esi_offer_ext.sas7bdat" , tf , mode = 'wb' , filesize_fun = 'httr' )
+					cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/ppint14esi_offer_ext.sas7bdat" , tf , mode = 'wb' , filesize_fun = 'httr' )
 					
 					offer <- data.frame( haven::read_sas( tf ) )
 					
@@ -422,19 +422,19 @@ lodown_cps_asec <-
 				
 				if ( catalog[ i , 'year' ] %in% 2015 ){
 				
-					ote <- "http://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/asec15_outtyp.dat"
+					ote <- "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/asec15_outtyp.dat"
 				
 					cachaca( ote , tf , mode = 'wb' , filesize_fun = 'httr' )
 					
 					ot <- read.fwf( tf , c( 5 , 2 , 2 , 1 ) )
 					
-					ace <- "http://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/asec15_currcov_extract.dat"
+					ace <- "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/asec15_currcov_extract.dat"
 				
 					cachaca( ace , tf , mode = 'wb' , filesize_fun = 'httr' )
 					
 					ac <- read.fwf( tf , c( 5 , 2 , 1 ) ) 
 
-					cachaca( "http://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/ppint15esi_offer_ext.sas7bdat" , tf , mode = 'wb' , filesize_fun = 'httr' )
+					cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/ppint15esi_offer_ext.sas7bdat" , tf , mode = 'wb' , filesize_fun = 'httr' )
 					
 					offer <- data.frame( haven::read_sas( tf ) )
 				
@@ -442,19 +442,19 @@ lodown_cps_asec <-
 				
 				if ( catalog[ i , 'year' ] %in% 2016 ){
 				
-					ote <- "http://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2016/cps-redesign/asec16_outtyp_full.dat"
+					ote <- "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2016/cps-redesign/asec16_outtyp_full.dat"
 				
 					cachaca( ote , tf , mode = 'wb' , filesize_fun = 'httr' )
 					
 					ot <- read.fwf( tf , c( 5 , 2 , 2 , 1 ) )
 					
-					ace <- "http://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2016/cps-redesign/asec16_currcov_extract.dat"
+					ace <- "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2016/cps-redesign/asec16_currcov_extract.dat"
 				
 					cachaca( ace , tf , mode = 'wb' , filesize_fun = 'httr' )
 					
 					ac <- read.fwf( tf , c( 5 , 2 , 1 ) ) 
 
-					cachaca( "http://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/pubuse_esioffer_2016.sas7bdat" , tf , mode = 'wb' , filesize_fun = 'httr' )
+					cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/pubuse_esioffer_2016.sas7bdat" , tf , mode = 'wb' , filesize_fun = 'httr' )
 					
 					offer <- data.frame( haven::read_sas( tf ) )
 				

@@ -4,7 +4,7 @@ get_catalog_sbo <-
 		
 	catalog <-
 		data.frame(
-			full_url = "http://www2.census.gov/econ/sbo/07/pums/pums_csv.zip" ,
+			full_url = "https://www2.census.gov/econ/sbo/07/pums/pums_csv.zip" ,
 			db_tablename = "x" ,
 			dbfolder = paste0( output_dir , "/MonetDB" ) ,
 			stringsAsFactors = FALSE
@@ -46,7 +46,7 @@ lodown_sbo <-
 
 		# and use the weights displayed in the census bureau's technical documentation
 		DBI::dbSendQuery( db , paste0( 'UPDATE ' , catalog$db_tablename , ' SET newwgt = 10 * tabwgt * SQRT( 1 - 1 / tabwgt )' ) )
-		# http://www2.census.gov/econ/sbo/07/pums/2007_sbo_pums_users_guide.pdf#page=7
+		# https://www2.census.gov/econ/sbo/07/pums/2007_sbo_pums_users_guide.pdf#page=7
 
 		# disconnect from the current database
 		DBI::dbDisconnect( db , shutdown = TRUE )
@@ -108,7 +108,7 @@ with.sbosvyimputationList <-
 
 # also note, the 2007-specific variance adjustment.  this will change in other years
 # this adjustment statistic was pulled from the middle of page 8
-# http://www2.census.gov/econ/sbo/07/pums/2007_sbo_pums_users_guide.pdf#page=8
+# https://www2.census.gov/econ/sbo/07/pums/2007_sbo_pums_users_guide.pdf#page=8
 MIcombine.sboimputationResultList <-
 	function( x , adjustment = 1.992065 ){
 	
