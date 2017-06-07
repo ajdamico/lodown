@@ -3,7 +3,7 @@ get_catalog_acs <-
 
 		catalog <- NULL
 	
-		pums_ftp <- "http://www2.census.gov/programs-surveys/acs/data/pums/"
+		pums_ftp <- "https://www2.census.gov/programs-surveys/acs/data/pums/"
 	
 		ftp_listing <- rvest::html_table( xml2::read_html( pums_ftp ) )[[1]][ , "Name" ]
 
