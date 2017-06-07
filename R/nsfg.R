@@ -86,7 +86,20 @@ lodown_nsfg <-
 		for ( i in seq_len( nrow( catalog ) ) ){
 
 			cachaca( catalog[ i , "sas_ri" ] , tf2 , mode = 'wb' )
-
+			
+			if( grepl( "1976FemRespSetup.sas" , catalog[ i , "sas_ri" ] , fixed = TRUE ) ){
+			
+				# load this file into working memory
+				sasc <- readLines( tf2 )
+				
+				sasc <- gsub( "        F6TWOCOL 576-577        F7 578-579              F8 580" , "                F7 578-579              F8 580" , sasc , fixed = TRUE )
+				sasc <- gsub( "F48_TWOCOL 661-662      F49 663                 F50 664" , "F49 663                 F50 664" , sasc , fixed = TRUE )
+				
+				# save it back onto the disk
+				writeLines( sasc , tf2 )
+			
+			}
+			
 			if( grepl( "1982PregSetup.sas" , catalog[ i , "sas_ri" ] , fixed = TRUE ) ){
 			
 				# load this file into working memory
@@ -205,7 +218,7 @@ lodown_nsfg <-
 					# using the ftp filepath
 					tf ,
 					# using the parsed sas widths
-					readr::fwf_widths( abs( sasc$width ) , col_names = sasc[ , 'varname' ] ) ,
+					readr::fwf_widths( abs( sasc$width ) , col_names = ifelse( !is.na( sasc$varname ) , sasc[  , 'varname' ] , 'missing' ) ) ,
 					# using the parsed sas column types
 					col_types = paste0( ifelse( is.na( sasc$varname ) , "_" , ifelse( sasc$char , "c" , "d" ) ) , collapse = "" ) ,
 					
