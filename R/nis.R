@@ -150,6 +150,7 @@ lodown_nis <-
 
 			# copy the data.frame produced by the r script over to the object `x`
 			if( catalog[ i , 'directory' ] == 'flu' ) x <- get( "NHFSPUF" ) else x <- get( nis.df )
+			
 			rm( list = nis.df )
 
 		} else {
