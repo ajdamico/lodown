@@ -1,17 +1,37 @@
 get_catalog_nis <-
   function( data_name = "nis" , output_dir , ... ){
+	
+	combined_paths <- NULL
+  
+	for( nis_ftp_site in
+		c( 
+			"ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/nis/" ,
+			"ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/nis/NHFS/" 
+		) ) {
 
-	nis_ftp_site <- "ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/nis/"
+		nis_ftp_contents <- RCurl::getURL( nis_ftp_site , dirlistonly = TRUE )
 
-	nis_ftp_contents <- RCurl::getURL( nis_ftp_site , dirlistonly = TRUE )
+		nis_ftp_paths <- paste0( nis_ftp_site , strsplit( nis_ftp_contents , '(\r)?\n' )[[1]] )
 
-	nhfs_ftp_contents <- RCurl::getURL( paste0( nis_ftp_site , "NHFS/" ) , dirlistonly = TRUE )
+		combined_paths <- c( combined_paths , nis_ftp_paths )
 
-	nis_ftp_paths <- paste0( nis_ftp_site , strsplit( nis_ftp_contents , '(\r)?\n' )[[1]] )
+	}
+	
+	for( nis_ftp_site in
+		c(
+			"https://ftp.cdc.gov/pub/Vaccines_NIS/" ,
+			"https://ftp.cdc.gov/pub/vaccines2/nis-teen/"
+		) ) {
 
-	nhfs_ftp_paths <- paste0( nis_ftp_site , "NHFS/" , strsplit( nhfs_ftp_contents , '(\r)?\n' )[[1]] )
+		nis_ftp_contents <- RCurl::getURL( nis_ftp_site , dirlistonly = TRUE )
 
-	combined_paths <- c( nis_ftp_paths , nhfs_ftp_paths )
+		possible_filenames <- grep( "\\.dat$" , strsplit( nis_ftp_contents , '>|<' )[[1]] , value = TRUE , ignore.case = TRUE )
+		
+		nis_ftp_paths <- paste0( nis_ftp_site , possible_filenames )
+
+		combined_paths <- c( combined_paths , nis_ftp_paths )
+		
+	}
 
 	dat_files <- grep( "\\.dat$|dat\\.zip$" , combined_paths , value = TRUE , ignore.case = TRUE )
 
@@ -38,12 +58,22 @@ get_catalog_nis <-
 	# determine related R scripts
 	r_scripts <- as.character( sapply( paste0( ifelse( catalog$directory == 'flu' , 'nhfs' , ifelse( catalog$directory == 'teen' , 'teen' , 'nis' ) ) , "puf" , ifelse( catalog$directory != 'flu' , substr( catalog$year , 3 , 4 ), "" ) , "\\.r" ) , grep , combined_paths , ignore.case = TRUE , value = TRUE ) )
 
-	catalog$r_script <- ifelse( r_scripts == 'character(0)' , NA , r_scripts )
+	catalog$r_script <- 
+		ifelse( catalog$year > 2014 , 
+			paste0( "https://www.cdc.gov/vaccines/imz-managers/nis/downloads/nis-" ,
+				ifelse( catalog$directory == 'teen' , "teen-" , "" ) ,
+				"puf" ,
+				substr( catalog$year , 3 , 4 ) ,
+				".r" ) ,
+		ifelse( r_scripts == 'character(0)' , NA , 
+			r_scripts ) )
 
 	# determine related sas scripts
 	sas_scripts <- as.character( sapply( paste0( ifelse( catalog$directory == 'flu' , 'nhfs' , ifelse( catalog$directory == 'teen' , 'teen' , 'nis' ) ) , "puf" , ifelse( catalog$directory != 'flu' , substr( catalog$year , 3 , 4 ), "" ) , "\\.sas" ) , grep , combined_paths , ignore.case = TRUE , value = TRUE ) )
 
-	catalog$sas_script <- ifelse( sas_scripts == 'character(0)' , NA , sas_scripts )
+	catalog$sas_script <-
+		ifelse( catalog$year > 2014 , gsub( "\\.r$" , "\\.sas" , catalog$r_script ) ,
+		ifelse( sas_scripts == 'character(0)' , NA , sas_scripts ) )
 
 	catalog$output_filename <- paste0( output_dir , "/" , catalog$year , " " , catalog$directory , ".rds" )
 
