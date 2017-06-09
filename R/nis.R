@@ -140,10 +140,17 @@ lodown_nis <-
 			source( tf )
 
 			# create a character string containing the name of the nis puf data.frame object
-			nis.df <- paste0( 'NISPUF' , substr( catalog[ i , 'year' ] , 3 , 4 ) )
+			nis.df <- 
+				paste0( 
+					'NIS' , 
+					if( catalog[ i , 'directory' ] == 'teen' ) 'TEEN' , 
+					'PUF' , 
+					substr( catalog[ i , 'year' ] , 3 , 4 ) 
+				)
 
 			# copy the data.frame produced by the r script over to the object `x`
 			if( catalog[ i , 'directory' ] == 'flu' ) x <- get( "NHFSPUF" ) else x <- get( nis.df )
+			rm( list = nis.df )
 
 		} else {
 
