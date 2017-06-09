@@ -161,6 +161,9 @@ lodown_nis <-
 
       # convert all column names to lowercase
       names( x ) <- tolower( names( x ) )
+	  
+	  # add a column of ones
+	  x$one <- 1
 
 	  catalog[ i , 'case_count' ] <- nrow( x )
 	  
