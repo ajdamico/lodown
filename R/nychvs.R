@@ -35,7 +35,7 @@ get_catalog_nychvs <-
 
 				census_url <-
 					paste0( 
-						"http://www.census.gov/housing/nychvs/data/" , 
+						"https://www.census.gov/housing/nychvs/data/" , 
 						lateyear , 
 						prefix , 
 						"_" , 
@@ -76,7 +76,7 @@ get_catalog_nychvs <-
 						beginline <- 413
 					} else stop( "this filetype hasn't been implemented yet." )
 					
-					sas_script <- paste0( "http://www.census.gov/housing/nychvs/data/" , year , "/sas_import_program.txt" )
+					sas_script <- paste0( "https://www.census.gov/housing/nychvs/data/" , year , "/sas_import_program.txt" )
 					
 				}
 

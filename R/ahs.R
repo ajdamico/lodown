@@ -9,7 +9,7 @@ get_catalog_ahs <-
 		# figure out available ahs years
 
 		# hard-code the location of the census bureau's all ahs data page
-		download.file( "http://www.census.gov/programs-surveys/ahs/data.All.html" , tf , mode = 'wb' )
+		download.file( "https://www.census.gov/programs-surveys/ahs/data.All.html" , tf , mode = 'wb' )
 
 		# split up the page into separate lines
 		http.contents <- readLines( tf )
@@ -19,7 +19,7 @@ get_catalog_ahs <-
 			gsub( 
 				"(.*)>(.*)<(.*)" , 
 				"\\2" , 
-				grep( "http://www.census.gov/programs-surveys/ahs/data.([0-9][0-9][0-9][0-9]).html" , http.contents , value = TRUE )
+				grep( "https://www.census.gov/programs-surveys/ahs/data.([0-9][0-9][0-9][0-9]).html" , http.contents , value = TRUE )
 			)
 
 
@@ -27,12 +27,12 @@ get_catalog_ahs <-
 
 			puf.pages <- precise.files <- NULL
 		
-			download.file( paste0( "http://www.census.gov/programs-surveys/ahs/data." , year , ".html" ) , tf , mode = 'wb' )
+			download.file( paste0( "https://www.census.gov/programs-surveys/ahs/data." , year , ".html" ) , tf , mode = 'wb' )
 
 			# isolate all puf lines
 			puf.lines <- gsub('(.*)href=\"(.*)\" title(.*)' , '\\2' , grep( "href(.*)Public Use" , readLines( tf ) , value = TRUE ) )
 				
-			download.file( paste0( "http://www.census.gov/" , puf.lines ) , tf , mode = 'wb' )
+			download.file( paste0( "https://www.census.gov/" , puf.lines ) , tf , mode = 'wb' )
 			
 			these_lines <- gsub('(.*)href=\"(.*)\" title(.*)' , '\\2' , grep( "href(.*)Public Use" , readLines( tf ) , value = TRUE ) )
 			
@@ -44,7 +44,7 @@ get_catalog_ahs <-
 			# ..loop through each puf page searching for zipped files
 			for ( this.page in puf.pages ){
 
-				this.contents <- readLines( textConnection( RCurl::getURL( paste0( "http://www.census.gov/" , this.page ) ) ) )
+				this.contents <- readLines( textConnection( RCurl::getURL( paste0( "https://www.census.gov/" , this.page ) ) ) )
 				
 				zipped.file.lines <- this.contents[ grep( "\\.zip" , tolower( this.contents ) ) ]
 
