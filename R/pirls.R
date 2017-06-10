@@ -98,20 +98,17 @@ lodown_pirls <-
 			# here are the combinations to create #
 	
 			# asa alone #
-			asa_name <- readRDS( paste0( catalog[ i , 'output_folder' ] , '/asa.rds' ) )
-			asa <- get( asa_name )
+			asa <- readRDS( paste0( catalog[ i , 'output_folder' ] , '/asa.rds' ) )
 			asa_design <- pirls_pvsd( asa , 'totwgt' , pirls_rwcf( asa , 'totwgt' ) )
 			saveRDS( asa_design , file = paste0( catalog[ i , 'output_folder' ] , '/asa_design.rds' ) )
 			
 			# asg alone #
-			asg_name <- readRDS( paste0( catalog[ i , 'output_folder' ] , '/asg.rds' ) )
-			asg <- get( asg_name )
+			asg <- readRDS( paste0( catalog[ i , 'output_folder' ] , '/asg.rds' ) )
 			asg_design <- pirls_pvsd( asg , 'totwgt' , pirls_rwcf( asg , 'totwgt' ) )
 			saveRDS( asg_design , file = paste0( catalog[ i , 'output_folder' ] , '/asg_design.rds' ) )
 			
 			# asg + ash
-			ash_name <- readRDS( paste0( catalog[ i , 'output_folder' ] , '/ash.rds' ) )
-			ash <- get( ash_name )
+			ash <- readRDS( paste0( catalog[ i , 'output_folder' ] , '/ash.rds' ) )
 			# note: these two files are too big to merge in a smaller computer's RAM
 			# so only keep the weighting/jackknife variables from the `asg` table for this iteration.
 			asg_ash <- merge( asg[ , c( 'idcntry' , 'idstud' , 'totwgt' , 'jkzone' , 'jkrep' ) ] , ash , by = c( 'idcntry' , 'idstud' ) )
@@ -122,8 +119,7 @@ lodown_pirls <-
 
 			
 			# asg + acg
-			acg_name <- readRDS( paste0( catalog[ i , 'output_folder' ] , '/acg.rds' ) )
-			acg <- get( acg_name )
+			acg <- readRDS( paste0( catalog[ i , 'output_folder' ] , '/acg.rds' ) )
 			asg_acg <- merge( asg , acg , by = c( 'idcntry' , 'idschool' ) )
 			stopifnot( nrow( asg_acg ) == nrow( asg ) )
 			
@@ -132,15 +128,13 @@ lodown_pirls <-
 
 			
 			# ast alone #
-			ast_name <- readRDS( paste0( catalog[ i , 'output_folder' ] , '/ast.rds' ) )
-			ast <- get( ast_name )
+			ast <- readRDS( paste0( catalog[ i , 'output_folder' ] , '/ast.rds' ) )
 			ast_design <- pirls_pvsd( ast , 'tchwgt' , pirls_rwcf( ast , 'tchwgt' ) )
 			saveRDS( ast_design , file = paste0( catalog[ i , 'output_folder' ] , '/ast_design.rds' ) )
 
 			
 			# ast + atg
-			atg_name <- readRDS( paste0( catalog[ i , 'output_folder' ] , '/atg.rds' ) )
-			atg <- get( atg_name )
+			atg <- readRDS( paste0( catalog[ i , 'output_folder' ] , '/atg.rds' ) )
 			ast_atg <- merge( ast , atg , by = c( 'idcntry' , 'idteach' , 'idlink' ) )
 			stopifnot( nrow( ast_atg ) == nrow( ast ) )
 
