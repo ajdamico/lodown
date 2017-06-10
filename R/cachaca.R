@@ -14,17 +14,72 @@ gettmpdir <-
 
 
 rcurl_filesize <-
-	function( url ){
-		xx <- RCurl::getURL(url, nobody=1L, header=1L)
-		yy <- strsplit(xx, "(\r)?\n")[[1]]
-		as.numeric( gsub( "Content-Length: " , "" , grep( "Content-Length" , yy , value = TRUE ) ) )
+	function( url , attempts , sleepsec ){
+		# start out with a failed attempt, so the while loop below commences
+		failed.attempt <- try( stop() , silent = TRUE )
+
+		# keep trying the download until you run out of attempts
+		# and all previous attempts have failed
+
+		initial.attempts <- attempts
+
+		while( attempts > 0 & class( failed.attempt ) == 'try-error' ){
+
+			# only run this loop a few times..
+			attempts <- attempts - 1
+
+			failed.attempt <-
+				try( {
+
+					xx <- RCurl::getURL(url, nobody=1L, header=1L)
+					yy <- strsplit(xx, "(\r)?\n")[[1]]
+					return( as.numeric( gsub( "Content-Length: " , "" , grep( "Content-Length" , yy , value = TRUE ) ) ) )
+					} , silent = TRUE )
+
+			# if the download did not work, wait `sleepsec` seconds and try again.
+			if( class( failed.attempt ) == 'try-error' ){
+				cat( paste0( "download issue with\r\n'" , this_url , "'\r\n\n" ) )
+				Sys.sleep( sleepsec )
+			}
+			
+		}
+		
+		stop( paste( "RCurl::getURL(" , url , "), nobody=1L, header=1L)\nfailed after" , initial.attempts , "attempts" ) )
 	}
 
 httr_filesize <-
-	function( url ){
-		xx <- httr::HEAD(url)
-		yy <- httr::headers(xx)$`content-length`
-		as.numeric( yy )
+	function( url , attempts , sleepsec ){
+		# start out with a failed attempt, so the while loop below commences
+		failed.attempt <- try( stop() , silent = TRUE )
+
+		# keep trying the download until you run out of attempts
+		# and all previous attempts have failed
+
+		initial.attempts <- attempts
+
+		while( attempts > 0 & class( failed.attempt ) == 'try-error' ){
+
+			# only run this loop a few times..
+			attempts <- attempts - 1
+
+			failed.attempt <-
+				try( {
+
+					xx <- httr::HEAD(url)
+					yy <- httr::headers(xx)$`content-length`
+					return( as.numeric( yy ) )
+				} , silent = TRUE )
+
+			# if the download did not work, wait `sleepsec` seconds and try again.
+			if( class( failed.attempt ) == 'try-error' ){
+				cat( paste0( "download issue with\r\n'" , this_url , "'\r\n\n" ) )
+				Sys.sleep( sleepsec )
+			}
+			
+		}
+		
+		stop( paste( "httr::HEAD(" , url , ")\nfailed after" , initial.attempts , "attempts" ) )					
+
 	}
 
 download_get_filename <- function(url, curl=RCurl::getCurlHandle(), ...) {
@@ -138,9 +193,9 @@ cachaca <-
 		}
 
 		
-		if( filesize_fun == 'rcurl' ) this_filesize <- rcurl_filesize( this_url )
+		if( filesize_fun == 'rcurl' ) this_filesize <- rcurl_filesize( this_url , attempts , sleepsec )
 
-		if( filesize_fun == 'httr' ) this_filesize <- httr_filesize( this_url )
+		if( filesize_fun == 'httr' ) this_filesize <- httr_filesize( this_url , attempts , sleepsec )
 
 		if( filesize_fun != 'unzip_verify' && this_filesize == 0 ) stop( "remote server lists file size as zero" )
 
