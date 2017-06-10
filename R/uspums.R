@@ -368,7 +368,7 @@ get.tsv <-
 		dlfile <- tempfile()
 		txt_file <- tempfile()
 		
-		cachaca( fp , dlfile , mode = 'wb' )
+		cachaca( fp , dlfile , mode = 'wb' , filesize_fun = 'httr' )
 		
 		# the warning breakage can end now..
 		options( "warn" = previous.warning.setting )

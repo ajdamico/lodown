@@ -117,7 +117,7 @@ lodown_nychvs <-
 			cleaned.sas.script <- nychvs_sas_cleanup( catalog[ i , "sas_ri" ] )
 
 			# download the file
-			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
+			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' , filesize_fun = 'httr' )
 
 			# read the file into a data frame
 			x <- read_SAScii( tf , cleaned.sas.script , beginline = catalog[ i , 'beginline' ] )
