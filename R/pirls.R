@@ -30,10 +30,10 @@ lodown_pirls <-
 			# specify the pathway to each and every spss data set to download.
 			ftd <-
 				c(
-					"http://timssandpirls.bc.edu/pirls2011/downloads/P11_SPSSData_pt1.zip" ,
-					"http://timssandpirls.bc.edu/pirls2011/downloads/P11_SPSSData_pt2.zip" ,
-					"http://timssandpirls.bc.edu/PDF/PIRLS2006_SPSSData.zip" ,
-					"http://timssandpirls.bc.edu/pirls2001i/Pirls2001Database/pirls_2001_spssdata.zip"
+					"https://timssandpirls.bc.edu/pirls2011/downloads/P11_SPSSData_pt1.zip" ,
+					"https://timssandpirls.bc.edu/pirls2011/downloads/P11_SPSSData_pt2.zip" ,
+					"https://timssandpirls.bc.edu/PDF/PIRLS2006_SPSSData.zip" ,
+					"https://timssandpirls.bc.edu/pirls2001i/Pirls2001Database/pirls_2001_spssdata.zip"
 				)
 				
 			# for each file to download..
