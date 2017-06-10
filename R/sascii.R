@@ -120,7 +120,7 @@ read_SAScii_monetdb <-
 		tf2 <- tempfile() 
 	} else {
 		# otherwise, put them in the protected folder
-		tf.path <- normalizePath( tf.path )
+		tf.path <- normalizePath( tf.path , winslash = "/" )
 		td <- tf.path
 		tf <- paste0( tf.path , "/" , tablename , "1" )
 		tf2 <- paste0( tf.path , "/" , tablename , "2" )
@@ -264,7 +264,7 @@ read_SAScii_monetdb <-
 					"COPY INTO " , 
 					tablename , 
 					" FROM '" , 
-					normalizePath( fn ) , 
+					normalizePath( fn , winslash = "/" ) , 
 					"' NULL AS " ,
 					paste0( "'" , na_strings , "'" ) ,
 					" " ,
