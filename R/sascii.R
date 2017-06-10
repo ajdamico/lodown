@@ -104,7 +104,8 @@ read_SAScii_monetdb <-
 		sas_stru = NULL ,
 		allow_zero_records = FALSE ,	# by default, expect more than zero records to be imported.
 		na_strings = ""	,				# by default, na strings are empty
-		unzip_fun = unzip_warn_fail
+		unzip_fun = unzip_warn_fail ,
+		winslash_edit = "\\"
 	) {
 		if( is.null( sas_ri ) & is.null( sas_stru ) ) stop( "either sas_ri= or sas_stru= must be specified" )
 		if( !is.null( sas_ri ) & !is.null( sas_stru ) ) stop( "either sas_ri= or sas_stru= must be specified, but not both" )
@@ -120,7 +121,7 @@ read_SAScii_monetdb <-
 		tf2 <- tempfile() 
 	} else {
 		# otherwise, put them in the protected folder
-		tf.path <- normalizePath( tf.path , winslash = "/" )
+		tf.path <- normalizePath( tf.path , winslash = winslash_edit )
 		td <- tf.path
 		tf <- paste0( tf.path , "/" , tablename , "1" )
 		tf2 <- paste0( tf.path , "/" , tablename , "2" )
@@ -264,7 +265,7 @@ read_SAScii_monetdb <-
 					"COPY INTO " , 
 					tablename , 
 					" FROM '" , 
-					normalizePath( fn , winslash = "/" ) , 
+					normalizePath( fn , winslash = winslash_edit ) , 
 					"' NULL AS " ,
 					paste0( "'" , na_strings , "'" ) ,
 					" " ,
