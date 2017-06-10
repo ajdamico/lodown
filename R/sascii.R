@@ -200,7 +200,7 @@ read_SAScii_monetdb <-
 		cachaca( fn , tf , mode = "wb" )
 		
 		# unzip the file's contents and store the file name within the temporary directory
-		if( identical( unzip_warn_fail , unzip ) ){
+		if( identical( unzip_warn_fail , unzip_fun ) ){
 			fn <- unzip_fun( tf , exdir = td )
 		} else {
 			fn <- unzip_fun( tf , td )
