@@ -160,6 +160,7 @@ lodown_censo_escolar <-
                   ) , error = function(e) {
                     cat( "removing non-utf8 characters\r" )
                     cleaned_data_file <- remove_nonutf8_censo_escolar( this_data_file ) ;
+                    db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog[ i , 'dbfolder' ] )
                     DBI::dbWriteTable(
                       db,
                       ifelse( length( tabelas ) > 1 , tolower( gsub( "\\..*" , "" , basename( this_data_file ) ) ) , paste0( this_table_type , "_" , catalog[ i , "year" ] ) ),
