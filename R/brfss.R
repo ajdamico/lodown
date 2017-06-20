@@ -198,7 +198,7 @@ lodown_brfss <-
 				if ( catalog[ i , 'year' ] >= 2013 ){
 					
 					# create a read connection..
-					incon <- file( unzipped_files , "r")
+					incon <- file( unzipped_files , "r" , encoding = "windows-1252" )
 					
 					# ..and a write connection
 					outcon <- file( sasfile , "w" )
