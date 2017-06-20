@@ -123,7 +123,8 @@ get_catalog_nhis <-
 				# skip the 2010 sad_wgts.dat and sc_bwt10.dat files (although you may need them, depending what you're doing!)
 				if ( this_year == 2010 ) ftp_files <- ftp_files[ ! ( ftp_files %in% c( "sad_wgts.dat" , "sc_bwt10.dat" ) ) ]
 				
-				
+				# skip csv files
+				ftp_files <- ftp_files[ !grepl( "csv\\.zip$" , ftp_files , ignore.case = TRUE ) ]
 				
 				catalog <-
 					rbind(
