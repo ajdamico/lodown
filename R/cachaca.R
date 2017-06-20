@@ -38,7 +38,7 @@ rcurl_filesize <-
 
 			# if the download did not work, wait `sleepsec` seconds and try again.
 			if( class( failed.attempt ) == 'try-error' ){
-				cat( paste0( "download issue with\r\n'" , this_url , "'\r\n\n" ) )
+				cat( paste0( "download issue with\r\n'" , url , "'\r\n\n" ) )
 				Sys.sleep( sleepsec )
 			}
 			
