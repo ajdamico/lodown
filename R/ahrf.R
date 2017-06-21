@@ -3,7 +3,7 @@ get_catalog_ahrf <-
 
     lines_with_links <- grep( "(.*)\\.zip" , readLines( "https://datawarehouse.hrsa.gov/data/datadownload.aspx" , warn = FALSE ) , value = TRUE , ignore.case = TRUE )
 
-    lines_with_links <- grepl( "AHRF" , lines_with_links , value = TRUE )
+    lines_with_links <- grep( "AHRF" , lines_with_links , value = TRUE )
 
     partial_url <- gsub( '(.*)href=\"(.+?)\"(.*)' , '\\2' , lines_with_links )
 	
