@@ -22,7 +22,7 @@ get_catalog_nsch <-
 	
 		nsch_ftp_contents <- RCurl::getURL( dataset_hrefs[i] , ftp.use.epsv = TRUE, dirlistonly = TRUE )
 
-		nsch_ftp_paths <- paste0( dataset_hrefs[i] , strsplit( nsch_ftp_contents , '\r\n' )[[1]] )
+		nsch_ftp_paths <- paste0( dataset_hrefs[i] , strsplit( nsch_ftp_contents , '(\r)?\n' )[[1]] )
 
 		dat_files <- nsch_ftp_paths[ !grepl( "mimp|Multiple Imputation" , basename( nsch_ftp_paths ) ) ]
 
