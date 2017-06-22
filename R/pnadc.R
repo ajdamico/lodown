@@ -73,7 +73,7 @@ lodown_pnadc <-
 
 				
 			# if the year is 2012-2014 or 2015Q1-Q3, use the first sas import file..
-			if( catalog[ i , "year" ] < 2015 | ( catalog[ i , "year" ] < 2016 & catalog[ i , "quarter" ] < 4 ) ) {
+			if( catalog[ i , "year" ] < 2015 | ( catalog[ i , "year" ] < 2016 & catalog[ i , "quarter" ] != '04' ) ) {
 			
 				sasfile <- grep( "1Tri_2012 a 3Tri_2015" , sasfiles , value = TRUE ) 
 			
