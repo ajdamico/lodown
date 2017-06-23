@@ -67,7 +67,7 @@ lodown_bsapuf <-
 			
 			stopifnot( length( unzipped_files ) == 1 )
 			
-			if( grepl( "2010_Chronic" , unzipped_files ) ){
+			if( grepl( "chronic" , unzipped_files , ignore.case = TRUE ) ){
 				this_connection <- file( unzipped_files , 'r' , encoding = 'windows-1252' )
 				these_lines <- readLines( this_connection )
 				close( this_connection )
