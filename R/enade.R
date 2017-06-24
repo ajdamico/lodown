@@ -7,8 +7,6 @@ get_catalog_enade <-
 		
 		these_links <- w[ grep( "enade(.*)zip$|enade(.*)rar$" , basename( w ) , ignore.case = TRUE ) ]
 
-		these_links <- gsub( "http://download.inep.gov.br/microdados/Enade_Microdados/microdados_enade_2005.zip http://download.inep.gov.br/microdados/Enade_Microdados/microdados_enade_2006.zip" , "http://download.inep.gov.br/microdados/Enade_Microdados/microdados_enade_2006.zip" , these_links , fixed = TRUE )
-		
 		enade_years <- substr( gsub( "[^0-9]" , "" , these_links ) , 1 , 4 )
 
 		catalog <-
