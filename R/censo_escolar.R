@@ -40,7 +40,7 @@ lodown_censo_escolar <-
 
       for ( these_zips in grep( "\\.zip$" , unzipped_files , value = TRUE , ignore.case = TRUE ) ) unzipped_files <- c( unzipped_files , unzip_warn_fail( these_zips , exdir = np_dirname( these_zips ) ) )
 
-	  unzipped_files <- gsub( "\\\\" , "/" , unzipped_files )
+	  unzipped_files <- gsub( "\\\\" , if( .Platform$OS.type != 'windows' ) "_" else "/" , unzipped_files )
 	  
       if( catalog[ i , 'year' ] <= 2006 ){
 
