@@ -63,10 +63,12 @@ lodown_censo_escolar <-
 
         for ( j in seq( nrow( these_tables ) ) ){
 
-          Encoding( these_tables[ j , 'sas_script' ] ) <- ''
+          this_sas <- file( these_tables[ j , 'sas_script' ] , 'r' , encoding = 'windows-1252' )
 
           # write the file to the disk
-          w <- readLines( these_tables[ j , 'sas_script' ] )
+          w <- readLines( this_sas )
+		  
+		  close( this_sas )
 
           # remove all tab characters
           w <- gsub( '\t' , ' ' , w )
