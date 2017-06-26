@@ -66,9 +66,7 @@ lodown_censo_escolar <-
           this_sas <- file( these_tables[ j , 'sas_script' ] , 'r' , encoding = 'windows-1252' )
 
           # write the file to the disk
-          w <- readLines( this_sas )
-		  
-		  flush( this_sas )
+          w <- iconv( readLines( this_sas ) , "" , "ASCII//TRANSLIT" , sub = " " )
 		  
 		  close( this_sas )
 
