@@ -54,6 +54,9 @@ syntaxtractor <-
 		
 		rmd_page <- rmd_page[ lines_to_eval ]
 		
+		# if there's a `dbdir` line, use it for corruption sniffing
+		dbdir_line <- grep( "dbdir" , rmd_page , value = TRUE )
+		
 		if( !is.null( setup_test ) ){
 		
 			# find the second `library(lodown)` line
@@ -77,6 +80,21 @@ syntaxtractor <-
 				rmd_page[ lodown_command_line ] <- paste0( "stopifnot( nrow( " , data_name , "_cat ) > 0 )" )
 			
 			} else stop( "setup_test= must be 'setup' or 'test'" )
+		
+		}
+		
+		if( length( dbdir_line ) > 0 ){
+				
+			cs_query <- "select tables.name, columns.name, location from tables inner join columns on tables.id=columns.table_id left join storage on tables.name=storage.table and columns.name=storage.column where location is null and tables.name not in ('tables', 'columns', 'users', 'querylog_catalog', 'querylog_calls', 'querylog_history', 'tracelog', 'sessions', 'optimizers', 'environment', 'queue', 'rejects', 'storage', 'storagemodel', 'tablestoragemodel')"
+			
+			cs_lines <-
+				paste(
+					dbdir_line[1] ,
+					'\nwarnings()\ndb <- dbConnect( MonetDBLite::MonetDBLite() , dbdir )\ncs <- dbGetQuery( db , "' , cs_query , '" )\nprint(cs)\nstopifnot(nrow(cs) == 0)\ndbDisconnect( db , shutdown = TRUE )'
+				)
+				
+			rmd_page <- c( rmd_page , cs_lines )
+				
 		
 		}
 		
