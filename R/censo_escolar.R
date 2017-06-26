@@ -68,6 +68,8 @@ lodown_censo_escolar <-
           # write the file to the disk
           w <- readLines( this_sas )
 		  
+		  flush( this_sas )
+		  
 		  close( this_sas )
 
           # remove all tab characters
