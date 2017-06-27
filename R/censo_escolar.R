@@ -35,8 +35,8 @@ lodown_censo_escolar <-
 
       # download the file
       cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
-      unzipped_files <- unzip_warn_fail( tf , exdir = catalog[ i , "output_folder" ] )
-      for ( these_zips in grep( "\\.zip$" , unzipped_files , value = TRUE , ignore.case = TRUE ) ) unzipped_files <- c( unzipped_files , unzip_warn_fail( these_zips , exdir = np_dirname( these_zips ) ) )
+      unzipped_files <- archive::archive_extract( tf , dir = catalog[ i , "output_folder" ] )
+      for ( these_zips in grep( "\\.zip$" , unzipped_files , value = TRUE , ignore.case = TRUE ) ) unzipped_files <- c( unzipped_files , archive::archive_extract( these_zips , dir = np_dirname( these_zips ) ) )
 	if( .Platform$OS.type != 'windows' ){
 		sapply(unique(dirname(gsub( "\\\\" ,  "/" , unzipped_files ))),dir.create,showWarnings=FALSE)
 		file.rename( unzipped_files , gsub( "\\\\" ,  "/" , unzipped_files ) )
