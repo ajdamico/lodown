@@ -1,6 +1,8 @@
 get_catalog_nls <-
 	function( data_name = "nls" , output_dir , ... ){
 
+		stop( "fix with https://www.nlsinfo.org/accessing-data-cohorts" )
+	
 		catalog <- NULL
 		
 		# open the jsp box
