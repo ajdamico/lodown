@@ -66,7 +66,7 @@ lodown_enade <-
 
 			tablename <- tolower( gsub( "\\.(.*)" , "" , basename( csvfile ) ) )
 
-			x <- data.frame( readr::read_delim( csvfile , delim = ";" , locale = locale( decimal_mark = "." , grouping_mark = "," ) ) )
+			x <- data.frame( readr::read_delim( csvfile , delim = ";" , locale = readr::locale( decimal_mark = "." , grouping_mark = "," ) ) )
 			
 			names( x ) <- tolower( names( x ) )
 			

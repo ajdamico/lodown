@@ -114,7 +114,7 @@ lodown_ipums <-
 								col_names = cn , 
 								col_types = paste0( ifelse( csv_file_structure == 'character' , 'c' , 'd' ) , collapse = "" ) , 
 								skip = 1 ,
-								locale = locale( decimal_mark = "." , grouping_mark = "," ) 
+								locale = readr::locale( decimal_mark = "." , grouping_mark = "," ) 
 							) 
 						)
 					

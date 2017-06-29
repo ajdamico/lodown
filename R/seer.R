@@ -200,7 +200,7 @@ seer_pop_read_in <-
 					
 					na = c( "NA" , "" , "." ) ,
 					
-					locale = locale( decimal_mark = "." , grouping_mark = "," ) 
+					locale = readr::locale( decimal_mark = "." , grouping_mark = "," ) 
 				)
 			)
 

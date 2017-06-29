@@ -224,7 +224,7 @@ lodown_nsfg <-
 					
 					na = c( "NA" , "" , "." ) ,
 					
-					locale = locale( decimal_mark = "." , grouping_mark = "," ) 
+					locale = readr::locale( decimal_mark = "." , grouping_mark = "," ) 
 				)
 				
 			x <- data.frame( x )
