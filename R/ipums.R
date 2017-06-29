@@ -107,7 +107,16 @@ lodown_ipums <-
 				if( !is.na( catalog[ i , 'output_filename' ] ) ){
 
 					# read in as a data.frame
-					x <- data.frame( readr::read_csv( csv_filename , col_names = cn , col_types = paste0( ifelse( csv_file_structure == 'character' , 'c' , 'd' ) , collapse = "" ) , skip = 1 ) )
+					x <- 
+						data.frame( 
+							readr::read_csv( 
+								csv_filename , 
+								col_names = cn , 
+								col_types = paste0( ifelse( csv_file_structure == 'character' , 'c' , 'd' ) , collapse = "" ) , 
+								skip = 1 ,
+								locale = locale( decimal_mark = "." , grouping_mark = "," ) 
+							) 
+						)
 					
 					saveRDS( x , file = catalog[ i , 'output_filename' ] )
 				

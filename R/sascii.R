@@ -39,6 +39,8 @@ read_SAScii <-
 				
 				na = na_values ,
 				
+				locale = locale( decimal_mark = "." , grouping_mark = "," ) ,
+				
 				# passed in from read_SAScii
 				...
 			)

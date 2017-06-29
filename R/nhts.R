@@ -157,7 +157,8 @@ lodown_nhts <-
 						this_txt , 
 						col_positions = readr::fwf_widths( floor( as.numeric( txt.w ) ) , col_names = txt.field ) ,
 						na = c( 'NA' , '' , ' ' ) ,
-						col_types = paste( ifelse( txt.type == 'Numeric' , 'd' , 'c' ) , collapse = "" )
+						col_types = paste( ifelse( txt.type == 'Numeric' , 'd' , 'c' ) , collapse = "" ) ,
+						locale = locale( decimal_mark = "." , grouping_mark = "," ) 
 					)
 					
 				x <- data.frame( x )

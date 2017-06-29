@@ -222,7 +222,9 @@ lodown_nsfg <-
 					# using the parsed sas column types
 					col_types = paste0( ifelse( is.na( sasc$varname ) , "_" , ifelse( sasc$char , "c" , "d" ) ) , collapse = "" ) ,
 					
-					na = c( "NA" , "" , "." )
+					na = c( "NA" , "" , "." ) ,
+					
+					locale = locale( decimal_mark = "." , grouping_mark = "," ) 
 				)
 				
 			x <- data.frame( x )

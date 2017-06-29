@@ -74,7 +74,7 @@ lodown_nps <-
 			if ( length( unzipped_files ) > 1 ) stop( 'multi-file zipped' )
 			
 			# load the unzipped csv file into an R data.frame object
-			suppressMessages( x <- data.frame( readr::read_csv( unzipped_files ) ) )
+			suppressMessages( x <- data.frame( readr::read_csv( unzipped_files , locale = locale( decimal_mark = "." , grouping_mark = "," ) ) ) )
 			
 			# convert all column names to lowercase
 			names( x ) <- tolower( names( x ) )

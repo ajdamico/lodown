@@ -188,7 +188,21 @@ seer_pop_read_in <-
 		pop.names <- c( 'year' , 'stateab' , 'statefips' , 'countyfips' , 'registry' , 'race' , 'origin' , 'sex' , 'age' , 'population' )
 
 		# actually read the text data into working memory
-		pop <- data.frame( readr::read_fwf( fp , readr::fwf_widths( pop.widths , col_names = pop.names ) , col_types = pop_types ) , na = c( "NA" , "" , "." ) )
+		pop <- 
+			data.frame( 
+				readr::read_fwf( 
+					
+					fp , 
+					
+					readr::fwf_widths( pop.widths , col_names = pop.names ) , 
+				
+					col_types = pop_types , 
+					
+					na = c( "NA" , "" , "." ) ,
+					
+					locale = locale( decimal_mark = "." , grouping_mark = "," ) 
+				)
+			)
 
 		# divide the population column by ten, as specified by the data dictionary
 		pop$population <- pop$population / 10
