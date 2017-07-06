@@ -35,13 +35,13 @@ lodown_censo_escolar <-
 
       # download the file
       cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
-      unzipped_files <- archive::archive_extract( tf , dir = catalog[ i , "output_folder" ] )
-      for ( these_zips in grep( "\\.zip$" , unzipped_files , value = TRUE , ignore.case = TRUE ) ) unzipped_files <- c( unzipped_files , archive::archive_extract( these_zips , dir = np_dirname( these_zips ) ) )
-	if( .Platform$OS.type != 'windows' ){
-		sapply(unique(dirname(gsub( "\\\\" ,  "/" , unzipped_files ))),dir.create,showWarnings=FALSE)
-		file.rename( unzipped_files , gsub( "\\\\" ,  "/" , unzipped_files ) )
-		unzipped_files <- gsub( "\\\\" ,  "/" , unzipped_files )
-	}
+      unzipped_files <- custom_extract( tf , ext_dir = catalog[ i , "output_folder" ] )
+
+      if( .Platform$OS.type != 'windows' ){
+        sapply(unique(dirname(gsub( "\\\\" ,  "/" , unzipped_files ))),dir.create,showWarnings=FALSE)
+        file.rename( unzipped_files , gsub( "\\\\" ,  "/" , unzipped_files ) )
+        unzipped_files <- gsub( "\\\\" ,  "/" , unzipped_files )
+      }
 
       if( catalog[ i , 'year' ] <= 2006 ){
 
@@ -67,8 +67,8 @@ lodown_censo_escolar <-
 
           # write the file to the disk
           w <- iconv( readLines( this_sas ) , "" , "ASCII//TRANSLIT" , sub = " " )
-		  
-		  close( this_sas )
+
+          close( this_sas )
 
           # remove all tab characters
           w <- gsub( '\t' , ' ' , w )
@@ -117,11 +117,7 @@ lodown_censo_escolar <-
 
             if ( grepl( "\\.rar$" , tabelas[ j ] , ignore.case = TRUE ) ) {
 
-				archive::archive_extract( normalizePath( tabelas[ j ] ) , dir = normalizePath( catalog[ i , "output_folder" ] ) )
-
-				this_data_file <- list.files( catalog[ i , "output_folder" ] , full.names = TRUE )
-
-				this_data_file <- grep( "\\.csv$", this_data_file, value = TRUE, ignore.case = TRUE )
+              this_data_file <- custom_extract( normalizePath( tabelas[ j ] ) , ext_dir = np_dirname( normalizePath( tabelas[ j ] ) ) , rm.main = TRUE )
 
             } else {
 
@@ -147,7 +143,6 @@ lodown_censo_escolar <-
                   #nrow.check = 70000
                   colClasses = ifelse( grepl( "num" , codebook$Tipo , ignore.case = TRUE ) , "numeric" , "character" )
                 ) )
-              file.remove( this_data_file )
 
             } else {
 
@@ -176,12 +171,13 @@ lodown_censo_escolar <-
                       temporary = TRUE ,
                       colClasses = ifelse( grepl( "num" , codebook$Tipo , ignore.case = TRUE ) , "numeric" , "character" )
                     )
+                    file.remove( cleaned_data_file )
                   } )
               )
 
-              file.remove( this_data_file )
-
               if ( j == length( tabelas ) & length( tabelas ) > 1 ) {
+
+                db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog[ i , 'dbfolder' ] )
 
                 field.names <- data.frame( tablename = NULL , field = NULL )
                 for ( tabela in tolower( gsub( "\\..*" , "" , basename( tabelas ) ) ) ) {
@@ -208,26 +204,25 @@ lodown_censo_escolar <-
 
             }
 
+            file.remove( this_data_file )
+
             cat( tolower( gsub( "\\..*" , "" , basename( this_data_file ) ) ), "stored at" , paste0( this_table_type , "_" , catalog[ i , "year" ] ) , "\r\n\r" )
 
           }
 
         }
 
+        db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog[ i , 'dbfolder' ] )
         catalog[ i , 'case_count' ] <- DBI::dbGetQuery( db , paste0( "SELECT COUNT(*) FROM matricula_" , catalog[ i , "year" ] ) )[ 1 , 1 ]
 
       }
+
 
       # disconnect from the current monet database
       DBI::dbDisconnect( db , shutdown = TRUE )
 
       # delete the temporary files?  or move some docs to a save folder?
       suppressWarnings( file.remove( tf ) )
-
-      # remove raw data files already loaded
-      for ( rm.dir in grep( "/DADOS/.*", unzipped_files , value = TRUE , ignore.case = TRUE ) ) {
-        suppressWarnings( unlink( rm.dir , recursive = TRUE )  )
-      }
 
       cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'dbfolder' ] , "'\r\n\n" ) )
 
@@ -297,3 +292,28 @@ read_excel_metadata <- function( metadata_file , table_type ) {
   codebook
 
 }
+
+
+custom_extract <- function( zipfile , ext_dir , rm.main = FALSE ) {
+
+  td <- file.path( tempdir() , "temp_unzip" )
+
+  archive::archive_extract( zipfile , dir = td )
+
+  new_files <- list.files( td , recursive = TRUE , full.names = FALSE )
+
+  for ( expath in unique( np_dirname( paste0( ext_dir , "/" , new_files ) ) ) ) {
+    if ( !dir.exists( expath ) ) dir.create( expath , showWarnings = FALSE , recursive = TRUE )
+  }
+
+  file.copy( from = paste0( td , "/" , new_files ) , to = paste0( ext_dir , "/" , new_files ) )
+
+  unlink( td , recursive = TRUE )
+
+  if ( rm.main ) { file.remove( zipfile ) }
+
+  return( paste0( ext_dir , "/" , new_files ) )
+
+}
+
+
