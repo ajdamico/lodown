@@ -36,17 +36,12 @@ lodown_censo_escolar <-
       # download the file
       cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
       unzipped_files <- archive::archive_extract( tf , dir = catalog[ i , "output_folder" ] )
-      unzipped_files <- list.files( catalog[ i , "output_folder" ] , recursive = TRUE , full.names = TRUE )
-      for ( these_zips in grep( "\\.zip$|\\.rar$" , unzipped_files , value = TRUE , ignore.case = TRUE ) ) {
-        archive::archive_extract( these_zips , dir = np_dirname( these_zips ) ) ; file.remove( np_dirname( these_zips ) )
-      }
-      unzipped_files <- list.files( catalog[ i , "output_folder" ] , recursive = TRUE , full.names = TRUE )
-
-      if( .Platform$OS.type != 'windows' ){
-        sapply(unique(dirname(gsub( "\\\\" ,  "/" , unzipped_files ))),dir.create,showWarnings=FALSE)
-        file.rename( unzipped_files , gsub( "\\\\" ,  "/" , unzipped_files ) )
-        unzipped_files <- gsub( "\\\\" ,  "/" , unzipped_files )
-      }
+      for ( these_zips in grep( "\\.zip$" , unzipped_files , value = TRUE , ignore.case = TRUE ) ) unzipped_files <- c( unzipped_files , archive::archive_extract( these_zips , dir = np_dirname( these_zips ) ) )
+	if( .Platform$OS.type != 'windows' ){
+		sapply(unique(dirname(gsub( "\\\\" ,  "/" , unzipped_files ))),dir.create,showWarnings=FALSE)
+		file.rename( unzipped_files , gsub( "\\\\" ,  "/" , unzipped_files ) )
+		unzipped_files <- gsub( "\\\\" ,  "/" , unzipped_files )
+	}
 
       if( catalog[ i , 'year' ] <= 2006 ){
 
@@ -72,8 +67,8 @@ lodown_censo_escolar <-
 
           # write the file to the disk
           w <- iconv( readLines( this_sas ) , "" , "ASCII//TRANSLIT" , sub = " " )
-
-          close( this_sas )
+		  
+		  close( this_sas )
 
           # remove all tab characters
           w <- gsub( '\t' , ' ' , w )
@@ -110,7 +105,7 @@ lodown_censo_escolar <-
       } else {
 
         this_excel_file <- unzipped_files [ grep( "^ANEXO I -" , basename( unzipped_files ), value = FALSE, ignore.case = TRUE ) ]
-        data_files <- grep( "\\.csv$", unzipped_files, value = TRUE , ignore.case = TRUE )
+        data_files <- grep( "\\.rar$|\\.csv$", unzipped_files, value = TRUE , ignore.case = TRUE )
 
         for ( this_table_type in c( "docente" , "matricula" , "turma" , "escola" ) ) {
 
@@ -120,7 +115,19 @@ lodown_censo_escolar <-
 
             codebook <- read_excel_metadata( this_excel_file , this_table_type )
 
-            this_data_file <- tabelas[ j ]
+            if ( grepl( "\\.rar$" , tabelas[ j ] , ignore.case = TRUE ) ) {
+
+				archive::archive_extract( normalizePath( tabelas[ j ] ) , dir = normalizePath( catalog[ i , "output_folder" ] ) )
+
+				this_data_file <- list.files( catalog[ i , "output_folder" ] , full.names = TRUE )
+
+				this_data_file <- grep( "\\.csv$", this_data_file, value = TRUE, ignore.case = TRUE )
+
+            } else {
+
+              this_data_file <- tabelas[ j ]
+
+            }
 
             columns.in.datafile <- strsplit( readLines( this_data_file , n = 1 ) , "\\|" )[ 1 ] [[ 1 ]]
             columns.in.datafile <- tolower( columns.in.datafile )
