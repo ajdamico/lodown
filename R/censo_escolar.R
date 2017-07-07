@@ -45,6 +45,8 @@ lodown_censo_escolar <-
 
       if( catalog[ i , 'year' ] <= 2006 ){
 
+        for ( zipfile in grep( "\\.zip$" , unzipped_files , ignore.case = TRUE , value = TRUE ) ) { unzipped_files <- c( unzipped_files , custom_extract( zipfile = zipfile , ext_dir = np_dirname( zipfile ) , rm.main = TRUE ) ) }
+
         sas_files <- grep( "\\.sas$", unzipped_files, value = TRUE , ignore.case = TRUE )
 
         sas_scaledowns <- gsub( "SAS|_" , "" , gsub( "\\.sas|\\.SAS" , "" , gsub( paste0( "INPUT|" , catalog[ i , 'year' ] ) , "" , basename( sas_files ) ) ) )
