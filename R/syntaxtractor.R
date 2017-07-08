@@ -49,8 +49,6 @@ syntaxtractor <-
 		v <- grep( "```" , rmd_page )
 		
 		lines_to_eval <- unlist( mapply( `:` , v[ seq( 1 , length( v ) - 1 , 2 ) ] + 1 , v[ seq( 2 , length( v ) + 1 , 2 ) ] - 1 ) )
-
-		for ( this_replacement in replacements ) rmd_page[ lines_to_eval ] <- gsub( this_replacement[ 1 ] , this_replacement[ 2 ] , rmd_page[ lines_to_eval ] , fixed = TRUE )
 		
 		rmd_page <- rmd_page[ lines_to_eval ]
 		
@@ -113,6 +111,8 @@ syntaxtractor <-
 		}
 		
 		temp_script <- tempfile()
+
+		for ( this_replacement in replacements ) rmd_page <- gsub( this_replacement[ 1 ] , this_replacement[ 2 ] , rmd_page , fixed = TRUE )
 
 		writeLines( rmd_page , temp_script )
 
