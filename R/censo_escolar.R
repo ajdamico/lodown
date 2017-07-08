@@ -45,7 +45,7 @@ lodown_censo_escolar <-
 
       if( catalog[ i , 'year' ] <= 2006 ){
 
-        for ( zipfile in grep( "\\.zip$" , unzipped_files , ignore.case = TRUE , value = TRUE ) ) { unzipped_files <- c( unzipped_files , custom_extract( zipfile = zipfile , ext_dir = np_dirname( zipfile ) , rm.main = TRUE ) ) }
+        for ( zipfile in grep( "\\.zip$" , unzipped_files , ignore.case = TRUE , value = TRUE ) ) { unzipped_files <- unique( c( unzipped_files , custom_extract( zipfile = zipfile , ext_dir = np_dirname( zipfile ) , rm.main = TRUE ) ) ) }
 
         sas_files <- grep( "\\.sas$", unzipped_files, value = TRUE , ignore.case = TRUE )
 
@@ -308,14 +308,12 @@ custom_extract <- function( zipfile , ext_dir , rm.main = FALSE ) {
     if ( !dir.exists( expath ) ) dir.create( expath , showWarnings = FALSE , recursive = TRUE )
   }
 
-  file.copy( from = paste0( td , "/" , new_files ) , to = paste0( ext_dir , "/" , new_files ) )
+  file.copy( from = file.path( td , new_files ) , to = file.path( ext_dir , new_files ) )
 
   unlink( td , recursive = TRUE )
 
   if ( rm.main ) { file.remove( zipfile ) }
 
-  return( paste0( ext_dir , "/" , new_files ) )
+  return( normalizePath( ( file.path( ext_dir , new_files ) ) , mustWork = FALSE ) )
 
 }
-
-
