@@ -86,6 +86,7 @@ lodown_censo_escolar <-
           writeLines( w , these_tables[ j , 'sas_script' ] )
 
           x <- read_SAScii( these_tables[ j , 'data_file' ] , these_tables[ j , 'sas_script' ] , na_values = c( "" , "." ) )
+          file.remove( these_tables[ j , 'data_file' ] )
 
           # convert column names to lowercase
           names( x ) <- tolower( names( x ) )
@@ -103,6 +104,7 @@ lodown_censo_escolar <-
           catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , DBI::dbGetQuery( db , paste( "SELECT COUNT(*) FROM" , these_tables[ j , 'db_tablename' ] ) )[ 1 , 1 ] , na.rm = TRUE )
 
         }
+
 
       } else {
 
@@ -146,6 +148,8 @@ lodown_censo_escolar <-
                   colClasses = ifelse( grepl( "num" , codebook$Tipo , ignore.case = TRUE ) , "numeric" , "character" )
                 ) )
 
+              file.remove( this_data_file )
+
             } else {
 
               suppressMessages(
@@ -157,7 +161,7 @@ lodown_censo_escolar <-
                     sep = "|" ,
                     lower.case.names = TRUE ,
                     overwrite = TRUE ,
-                    temporary = TRUE ,
+                    temporary = ifelse( length( tabelas ) > 1 , FALSE , TRUE ) ,
                     colClasses = ifelse( grepl( "num" , codebook$Tipo , ignore.case = TRUE ) , "numeric" , "character" )
                   ) , error = function(e) {
                     cat( "removing non-utf8 characters\r" )
@@ -170,12 +174,14 @@ lodown_censo_escolar <-
                       sep = "|" ,
                       lower.case.names = TRUE ,
                       overwrite = TRUE ,
-                      temporary = TRUE ,
+                      temporary = ifelse( length( tabelas ) > 1 , FALSE , TRUE ) ,
                       colClasses = ifelse( grepl( "num" , codebook$Tipo , ignore.case = TRUE ) , "numeric" , "character" )
                     )
                     file.remove( cleaned_data_file )
                   } )
               )
+
+              file.remove( this_data_file )
 
               if ( j == length( tabelas ) & length( tabelas ) > 1 ) {
 
@@ -200,13 +206,11 @@ lodown_censo_escolar <-
 
                 DBI::dbSendQuery( db , create.stacked )
 
-                DBI::dbSendQuery( db , paste0( " DROP TABLE " , paste0( colnames( field.names )[ - 1 ] , collapse = " ; DROP TABLE " ) , " ;" ) )
+                for ( tabela in colnames( field.names )[ -1 ] ) DBI::dbRemoveTable( db , tabela )
 
               }
 
             }
-
-            file.remove( this_data_file )
 
             cat( tolower( gsub( "\\..*" , "" , basename( this_data_file ) ) ), "stored at" , paste0( this_table_type , "_" , catalog[ i , "year" ] ) , "\r\n\r" )
 
