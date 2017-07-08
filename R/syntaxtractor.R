@@ -72,12 +72,12 @@ syntaxtractor <-
 				if( data_name == 'acs' ){
 				
 					rmd_page <-
-						'library(lodown)\nacs_cat <- get_catalog( "acs" , , output_dir = file.path( path.expand( "~" ) , "AHRF" ) )\nlodown( "acs" , subset( acs_cat , year <= 2011 ) )'
+						'library(lodown)\nacs_cat <- get_catalog( "acs" , , output_dir = file.path( path.expand( "~" ) , "ACS" ) )\nlodown( "acs" , subset( acs_cat , year <= 2011 ) )'
 					
 				} else if( data_name == 'acs2' ){
 				
 					rmd_page <-
-						'library(lodown)\nacs_cat <- get_catalog( "acs" , , output_dir = file.path( path.expand( "~" ) , "AHRF" ) )\nlodown( "acs" , subset( acs_cat , year >= 2011 ) )'
+						'library(lodown)\nacs_cat <- get_catalog( "acs" , , output_dir = file.path( path.expand( "~" ) , "ACS" ) )\nlodown( "acs" , subset( acs_cat , year >= 2011 ) )'
 					
 				} else {
 					
