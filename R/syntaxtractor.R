@@ -37,12 +37,12 @@
 #' @export
 syntaxtractor <-
 	function( data_name , repo = "ajdamico/asdfreebook" , ref = "master" , replacements = NULL , setup_test = NULL ){
-
+	
 		repo_homepage <- readLines_retry( paste0( "https://github.com/" , repo , "/tree/" , ref , "/" ) )
 		
 		rmd_links <- gsub( "(.*)>(.*)\\.Rmd</a>(.*)" , "\\2" , grep( "Rmd" , repo_homepage , value = TRUE ) )
 		
-		this_rmd <- grep( paste0( "-" , data_name , "$" ) , rmd_links , value = TRUE )
+		this_rmd <- grep( paste0( "-" , ifelse( data_name == 'acs2' , 'acs' , data_name ) , "$" ) , rmd_links , value = TRUE )
 	
 		rmd_page <- readLines_retry( paste0( "https://raw.githubusercontent.com/" , repo , "/" , ref , "/" , this_rmd , ".Rmd" ) )
 
@@ -69,7 +69,21 @@ syntaxtractor <-
 			
 			if( setup_test == "setup" ){
 				
-				rmd_page <- rmd_page[ seq_along( rmd_page ) < second_library_lodown_line ]
+				if( data_name == 'acs' ){
+				
+					rmd_page <-
+						'library(lodown)\nacs_cat <- get_catalog( "acs" , , output_dir = file.path( path.expand( "~" ) , "AHRF" ) )\nlodown( "acs" , subset( acs_cat , year <= 2011 ) )'
+					
+				} else if( data_name == 'acs2' ){
+				
+					rmd_page <-
+						'library(lodown)\nacs_cat <- get_catalog( "acs" , , output_dir = file.path( path.expand( "~" ) , "AHRF" ) )\nlodown( "acs" , subset( acs_cat , year >= 2011 ) )'
+					
+				} else {
+					
+					rmd_page <- rmd_page[ seq_along( rmd_page ) < second_library_lodown_line ]
+					
+				}
 			
 			} else if( setup_test == "test" ) {
 			
@@ -77,7 +91,7 @@ syntaxtractor <-
 				
 				lodown_command_line <- grep( "^lodown\\(" , rmd_page )
 				
-				rmd_page[ lodown_command_line ] <- paste0( "stopifnot( nrow( " , data_name , "_cat ) > 0 )" )
+				rmd_page[ lodown_command_line ] <- paste0( "stopifnot( nrow( " , ifelse( data_name == 'acs2' , 'acs' , data_name ) , "_cat ) > 0 )" )
 			
 			} else stop( "setup_test= must be 'setup' or 'test'" )
 		
