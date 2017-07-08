@@ -136,7 +136,7 @@ lodown_acs <-
 				# the american community survey data only contains integers and character strings..
 				# so store integer columns as numbers and all others as characters
 				# note: this won't work on other data sets, since they might have columns with non-integers (decimals)
-				colTypes <- ifelse( cl == 'integer' , 'INT' , 'STRING' )
+				colTypes <- ifelse( cl == 'integer' , 'DOUBLE PRECISION' , 'STRING' )
 				
 				# create a character vector grouping each column name with each column type..
 				colDecl <- paste( names( headers ) , colTypes )
