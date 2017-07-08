@@ -4,7 +4,7 @@ Title: locally download and prepare publicly-available microdata
 Version: 0.1.0
 Author: Anthony Joseph Damico [aut, cre]
 Maintainer: Anthony Joseph Damico <ajdamico@gmail.com>
-Description: the lodown package enforces a reproducible starting point for your analysis of public data.  use this software with caution if you pay your internet service provider per megabyte downloaded.
+Description: the lodown package enforces a reproducible starting point for your analysis of public data.  this software downloads large files so use with caution on a metered (pay per gigabyte) internet connection.
 URL: http://asdfree.com/
 BugReports: https://github.com/ajdamico/lodown/issues
 Imports: survey, SAScii, RCurl, digest, readr, httr, Hmisc, XML, foreign, stringr, rvest, haven, xml2, DBI, MonetDBLite, R.utils, archive
