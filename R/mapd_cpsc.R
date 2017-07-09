@@ -71,6 +71,9 @@ lodown_mapd_cpsc <-
 		
 		this_enr$enrolled <- as.numeric( gsub( "," , "" , this_enr$Enrollment ) )
 		
+		this_enr$Plan.ID <- as.numeric( this_enr$Plan.ID )
+		this_cont$Plan.ID <- as.numeric( this_cont$Plan.ID )
+		
 		this_enr <- this_enr[ , c( 'this_date' , 'Contract.ID' , 'Plan.ID' , 'FIPS.State.County.Code' , 'enrolled' ) ]
 
 		this_enr <- unique( this_enr )
