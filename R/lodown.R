@@ -220,6 +220,13 @@ NULL
 #' meps_cat <- get_catalog( "meps" , output_dir = file.path( path.expand( "~" ) , "MEPS" ) )
 #' lodown( "meps" , meps_cat[ grepl( "2013" , meps_cat$year ) , ] )
 #'
+#' # Medicare Advantage/Part D - Contract Plan State County
+#' # download all available microdata
+#' lodown( "mapd_cpsc" , output_dir = file.path( path.expand( "~" ) , "MAPD_CPSC" ) )
+#' # download only the 2016 files
+#' mapd_cpsc_cat <- get_catalog( "mapd_cpsc" , output_dir = file.path( path.expand( "~" ) , "MAPD_CPSC" ) )
+#' lodown( "mapd_cpsc" , mapd_cpsc_cat[ grepl( "2016" , mapd_cpsc_cat$year_month ) , ] )
+#'
 #' # Multiple Indicator Cluster Surveys
 #' # download all available microdata
 #' lodown( "mics" , output_dir = file.path( path.expand( "~" ) , "MICS" ) , 
