@@ -57,9 +57,9 @@ lodown_mapd_cpsc <-
 		# your local computer to each of the unzipped files
 		unzipped_files <- unzip_warn_fail( tf , exdir = np_dirname( catalog[ i , 'output_filename' ] ) )
 
-		this_cont <- readr::read_csv( grep( "Contract_Info" , unzipped_files , value = TRUE ) )
+		this_cont <- data.frame( readr::read_csv( grep( "Contract_Info" , unzipped_files , value = TRUE ) ) )
 
-		this_enr <- readr::read_csv( grep( "Enrollment_Info" , unzipped_files , value = TRUE ) )
+		this_enr <- data.frame( readr::read_csv( grep( "Enrollment_Info" , unzipped_files , value = TRUE ) ) )
 
 		names( this_cont ) <- gsub( "Contract.Number" , "Contract.ID" , names( this_cont ) , fixed = TRUE )
 		names( this_enr ) <- gsub( "Contract.Number" , "Contract.ID" , names( this_enr ) , fixed = TRUE )
