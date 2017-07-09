@@ -26,7 +26,7 @@ get_catalog_mapd_cpsc <-
 	
 	for( this_row in seq( nrow( this_catalog ) ) ){
 		
-		link_text <- readLines( this_catalog[ this_row , 'full_url' ] )
+		link_text <- readLines_retry( this_catalog[ this_row , 'full_url' ] )
 		link_line <- grep( "zip" , link_text , value = TRUE )
 		link_line <- gsub( '(.*) href=\"' , "" , gsub( '(.*) href=\"/' , prefix , link_line ) )
 		this_catalog[ this_row , 'full_url' ] <- gsub( '\">(.*)' , "" , link_line )
@@ -70,9 +70,8 @@ lodown_mapd_cpsc <-
 		this_enr$this_date <- catalog[ i , 'year_month' ]
 		
 		this_enr$enrolled <- as.numeric( gsub( "," , "" , this_enr$Enrollment ) )
+		
 		this_enr <- this_enr[ , c( 'this_date' , 'Contract.ID' , 'Plan.ID' , 'FIPS.State.County.Code' , 'enrolled' ) ]
-
-		this_cont <- this_cont[ , c( 'this_date' , 'Parent.Organization' , 'Plan.Type' , 'EGHP' , 'Contract.ID' , 'Plan.ID' ) ]
 
 		this_enr <- unique( this_enr )
 		
@@ -81,7 +80,6 @@ lodown_mapd_cpsc <-
 		x <- merge( this_cont , this_enr )
 		
 		stopifnot( nrow( x ) == nrow( this_enr ) )
-
 
 		# convert all column names to lowercase
 		names( x ) <- tolower( names( x ) )
