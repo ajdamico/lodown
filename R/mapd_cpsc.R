@@ -59,7 +59,7 @@ lodown_mapd_cpsc <-
 
 		this_cont <- data.frame( readr::read_csv( grep( "Contract_Info" , unzipped_files , value = TRUE ) ) )
 
-		this_enr <- data.frame( readr::read_csv( grep( "Enrollment_Info" , unzipped_files , value = TRUE ) ) )
+		this_enr <- data.frame( readr::read_csv( grep( "Enrollment_Info" , unzipped_files , value = TRUE ) , col_types = 'ccccc' ) )
 
 		names( this_cont ) <- gsub( "Contract.Number" , "Contract.ID" , names( this_cont ) , fixed = TRUE )
 		names( this_enr ) <- gsub( "Contract.Number" , "Contract.ID" , names( this_enr ) , fixed = TRUE )
