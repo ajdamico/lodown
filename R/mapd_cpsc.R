@@ -47,7 +47,7 @@ lodown_mapd_cpsc <-
     for ( i in seq_len( nrow( catalog ) ) ){
 
 		# download the file
-		cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
+		cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' , filesize_fun = 'httr' )
 
 
 		# extract the contents of the zipped file
