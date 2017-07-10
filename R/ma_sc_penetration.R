@@ -43,7 +43,7 @@ lodown_ma_sc_penetration <-
 
 		unique_savefiles <- unique( catalog$output_filename )
 		
-		for( this_savefile in unique_savefile ){
+		for( this_savefile in unique_savefiles ){
 
 			these_entries <- catalog[ catalog$output_filename == this_savefile , ]
 
@@ -91,7 +91,7 @@ lodown_ma_sc_penetration <-
 			
 			saveRDS( this_result , file = this_savefile )
 
-			cat( paste0( data_name , " catalog entry " , which( this_savefile == unique_savefile ) , " of " , length( unique_savefile ) , " stored at '" , this_savefile , "'\r\n\n" ) )
+			cat( paste0( data_name , " catalog entry " , which( this_savefile == unique_savefiles ) , " of " , length( unique_savefiles ) , " stored at '" , this_savefile , "'\r\n\n" ) )
 
 		}
 
