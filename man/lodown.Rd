@@ -237,6 +237,13 @@ lodown( "mapd_cpsc" , output_dir = file.path( path.expand( "~" ) , "MAPD_CPSC" )
 mapd_cpsc_cat <- get_catalog( "mapd_cpsc" , output_dir = file.path( path.expand( "~" ) , "MAPD_CPSC" ) )
 lodown( "mapd_cpsc" , mapd_cpsc_cat[ grepl( "2016" , mapd_cpsc_cat$year_month ) , ] )
 
+# Medicare Advantage State/County Penetration Files
+# download all available microdata
+lodown( "ma_sc_penetration" , output_dir = file.path( path.expand( "~" ) , "MA_SC_PENETRATION" ) )
+# download only the 2016 files
+ma_sc_penetration_cat <- get_catalog( "ma_sc_penetration" , output_dir = file.path( path.expand( "~" ) , "MA_SC_PENETRATION" ) )
+lodown( "ma_sc_penetration" , ma_sc_penetration_cat[ grepl( "2016" , ma_sc_penetration_cat$year_month ) , ] )
+
 # Multiple Indicator Cluster Surveys
 # download all available microdata
 lodown( "mics" , output_dir = file.path( path.expand( "~" ) , "MICS" ) , 
