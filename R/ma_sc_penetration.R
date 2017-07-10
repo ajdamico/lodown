@@ -16,7 +16,7 @@ get_catalog_ma_sc_penetration <-
 
 		this_catalog <-
 		  data.frame(
-			  output_filename = paste0( output_dir , "/" , all_dates , " sc penetration.rds" ) ,
+			  output_filename = paste0( output_dir , "/ma sc penetration " , all_dates[ 1 ] , " to " , all_dates[ length( all_dates ) ] , ".rds" ) ,
 			  full_url = as.character( all_links ) ,
 			  year_month = all_dates ,
 			  stringsAsFactors = FALSE
@@ -41,46 +41,57 @@ lodown_ma_sc_penetration <-
 
 		tf <- tempfile()
 
+		unique_savefiles <- unique( catalog$output_filename )
+		
+		for( this_savefile in unique_savefile ){
 
-		for ( i in seq_len( nrow( catalog ) ) ){
+			these_entries <- catalog[ catalog$output_filename == this_savefile , ]
 
-			# download the file
-			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' , filesize_fun = 'httr' )
-
-
-			# extract the contents of the zipped file
-			# into the current year-month-specific directory
-			# and (at the same time) create an object called
-			# `unzipped_files` that contains the paths on
-			# your local computer to each of the unzipped files
-			unzipped_files <- unzip_warn_fail( tf , exdir = np_dirname( catalog[ i , 'output_filename' ] ) )
-
-			x <- data.frame( readr::read_csv( grep( "State_County" , unzipped_files , value = TRUE ) , guess_max = 100000 ) )
-
-			x$this_date <- catalog[ i , 'year_month' ]
+			this_result <- NULL
 			
-			x <- unique( x )
+			for ( i in seq_len( nrow( these_entries ) ) ){
 
-			x$medicare_beneficiaries <- as.numeric( gsub( "," , "" , x$Eligibles ) )
+				# download the file
+				cachaca( these_entries[ i , "full_url" ] , tf , mode = 'wb' , filesize_fun = 'httr' )
 
-			x$medicare_advantage_enrollees <- as.numeric( gsub( "," , "" , x$Enrolled ) )
 
-			x$medicare_advantage_penetration <- as.numeric( gsub( "\\%" , "" , x$Penetration ) )
+				# extract the contents of the zipped file
+				# into the current year-month-specific directory
+				# and (at the same time) create an object called
+				# `unzipped_files` that contains the paths on
+				# your local computer to each of the unzipped files
+				unzipped_files <- unzip_warn_fail( tf , exdir = np_dirname( these_entries[ i , 'output_filename' ] ) )
+
+				x <- data.frame( readr::read_csv( grep( "State_County" , unzipped_files , value = TRUE ) , guess_max = 100000 ) )
+
+				x$this_date <- these_entries[ i , 'year_month' ]
+				
+				x <- unique( x )
+
+				x$medicare_beneficiaries <- as.numeric( gsub( "," , "" , x$Eligibles ) )
+
+				x$medicare_advantage_enrollees <- as.numeric( gsub( "," , "" , x$Enrolled ) )
+
+				x$medicare_advantage_penetration <- as.numeric( gsub( "\\%" , "" , x$Penetration ) )
+				
+				# convert all column names to lowercase
+				names( x ) <- tolower( names( x ) )
+
+				names( x ) <- gsub( "\\." , "_" , names( x ) )
+				
+				this_result <- rbind( this_result , x )
+
+				# add the number of records to the catalog
+				catalog[ catalog$output_filename == this_savefile , ][ i , 'case_count' ] <- nrow( x )
+				
+				# delete the temporary files
+				file.remove( tf , unzipped_files )
+
+			}
 			
-			# convert all column names to lowercase
-			names( x ) <- tolower( names( x ) )
+			saveRDS( this_result , file = this_savefile )
 
-			names( x ) <- gsub( "\\." , "_" , names( x ) )
-
-			saveRDS( x , file = catalog[ i , 'output_filename' ] )
-
-			# add the number of records to the catalog
-			catalog[ i , 'case_count' ] <- nrow( x )
-
-			# delete the temporary files
-			file.remove( tf , unzipped_files )
-
-			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , catalog[ i , 'output_filename' ] , "'\r\n\n" ) )
+			cat( paste0( data_name , " catalog entry " , which( this_savefile == unique_savefile ) , " of " , length( unique_savefile ) , " stored at '" , this_savefile , "'\r\n\n" ) )
 
 		}
 
