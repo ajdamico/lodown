@@ -75,7 +75,7 @@ lodown_mapd_cpsc <-
 		this_cont$Plan.ID <- as.numeric( this_cont$Plan.ID )
 		
 		this_enr <- this_enr[ , c( 'this_date' , 'Contract.ID' , 'Plan.ID' , 'FIPS.State.County.Code' , 'enrolled' ) ]
-
+		
 		this_enr <- unique( this_enr )
 		
 		this_cont <- unique( this_cont )
@@ -86,6 +86,10 @@ lodown_mapd_cpsc <-
 
 		# convert all column names to lowercase
 		names( x ) <- tolower( names( x ) )
+		
+		names( x ) <- gsub( "\\." , "_" , names( x ) )
+		
+		names( x )[ names( x ) == 'fips_state_county_code' ] <- 'fips'
 
 		saveRDS( x , file = catalog[ i , 'output_filename' ] )
 
