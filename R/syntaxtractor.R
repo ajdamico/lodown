@@ -110,6 +110,8 @@ syntaxtractor <-
 		
 		}
 		
+		rmd_page <- c( "memory.limit(256000)" , rmd_page )
+		
 		temp_script <- tempfile()
 
 		for ( this_replacement in replacements ) rmd_page <- gsub( this_replacement[ 1 ] , this_replacement[ 2 ] , rmd_page , fixed = TRUE )

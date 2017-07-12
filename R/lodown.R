@@ -561,7 +561,7 @@ lodown <-
 
 		cat( paste0( "locally downloading " , data_name , "\r\n\n" ) )
 
-		memory_note <- "\r\n\nlodown is now exiting due to a memory error.\nyour computing performance would suffer due to disk paging,\nbut you can increase your memory limits with beyond your available hardware with the `?memory.limit` function.\nfor example, you can set the memory ceiling of an R session to 128 GB by typing `memory.limit(128000)`.\r\n\n"
+		memory_note <- "\r\n\nlodown is now exiting due to a memory error.\nyour computing performance would suffer due to disk paging,\nbut you can increase your memory limits with beyond your available hardware with the `?memory.limit` function.\nfor example, you can set the memory ceiling of an R session to 256 GB by typing `memory.limit(256000)`.\r\n\n"
 		
 		installation_note <- "\r\n\nlodown is now exiting due to an installation error.\r\n\n"
 		
