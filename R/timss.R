@@ -330,7 +330,7 @@ lodown_timss <-
 
 					catalog[ i , 'case_count' ] <- nrow( design )
 					
-					saveRDS( design , file = paste0( catalog[ i , 'output_folder' ] , '/' , dfx , '_design.rds' ) )
+					saveRDS( design , file = paste0( catalog[ i , 'output_folder' ] , '/' , gsub( "(.*)\\.(.*)" , "\\1" , basename( rdss ) ) , '_design.rds' ) )
 					
 				}
 				
