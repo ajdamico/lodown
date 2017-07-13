@@ -40,15 +40,32 @@ lodown_enem <-
 
 			if( !grepl( "\\.rar" , catalog[ i , "full_url" ] ) ){
 
-				archive::archive_extract( tf , dir = normalizePath( catalog[ i , "output_folder" ] ) )
+				if( catalog[ i , 'year' ] < 2011 ){
+				
+					unzip( tf , exdir = normalizePath( catalog[ i , "output_folder" ] ) )
 
+				} else {
+
+					archive::archive_extract( tf , dir = normalizePath( catalog[ i , "output_folder" ] ) )
+
+				}
+				
+				
 				z <- unique( list.files( catalog[ i , 'output_folder' ] , recursive = TRUE , full.names = TRUE  ) )
 
 				zf <- grep( "\\.zip|\\.ZIP" , list.files( catalog[ i , 'output_folder' ] , recursive = TRUE , full.names = TRUE  ) , value = TRUE )
 
 				if( length( zf ) > 0 ){
 
-					archive::archive_extract( zf , dir = normalizePath( catalog[ i , "output_folder" ] ) )
+					if( catalog[ i , 'year' ] < 2011 ){
+					
+						unzip( zf , exdir = normalizePath( catalog[ i , "output_folder" ] ) )
+
+					} else {
+
+						archive::archive_extract( zf , dir = normalizePath( catalog[ i , "output_folder" ] ) )
+
+					}
 
 					z <- unique( c( z , list.files( catalog[ i , 'output_folder' ] , recursive = TRUE , full.names = TRUE  ) ) )
 
@@ -66,7 +83,15 @@ lodown_enem <-
 
 			if( length( rfi ) > 0 ) {
 
-				archive::archive_extract( rfi , dir = normalizePath( catalog[ i , "output_folder" ] ) )
+				if( catalog[ i , 'year' ] < 2011 ){
+				
+					unzip( rfi , exdir = normalizePath( catalog[ i , "output_folder" ] ) )
+
+				} else {
+
+					archive::archive_extract( rfi , dir = normalizePath( catalog[ i , "output_folder" ] ) )
+
+				}
 
 				z <- unique( c( z , list.files( catalog[ i , 'output_folder' ] , recursive = TRUE , full.names = TRUE  ) ) )
 
