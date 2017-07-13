@@ -3,7 +3,7 @@ get_catalog_timss <-
 
 		catalog <-
 			data.frame(
-				year = c( 1995 , 1999 , 2003 , 2007 , 2011 ) ,
+				year = c( 1995 , 1999 , 2003 , 2007 , 2011 , 2015 ) ,
 				stringsAsFactors = FALSE
 			)
 
@@ -40,34 +40,37 @@ lodown_timss <-
 			# specify the pathway to each and every spss data set to download.
 			ftd <-
 				c(
-					paste0( "http://timss.bc.edu/timss2011/downloads/T11_G4_SPSSData_pt" , 1:3 , ".zip" ) ,
-					paste0( "http://timss.bc.edu/timss2011/downloads/T11_G8_SPSSData_pt" , 1:4 , ".zip" ) ,
+					paste0( "https://timss.bc.edu/timss2015/international-database/downloads/T15_G4_SPSSData_pt" , 1:3 , ".zip" ) ,
+					paste0( "https://timss.bc.edu/timss2015/international-database/downloads/T15_G8_SPSSData_pt" , 1:4 , ".zip" ) ,
+				
+					paste0( "https://timss.bc.edu/timss2011/downloads/T11_G4_SPSSData_pt" , 1:3 , ".zip" ) ,
+					paste0( "https://timss.bc.edu/timss2011/downloads/T11_G8_SPSSData_pt" , 1:4 , ".zip" ) ,
 
-					paste0( "http://timss.bc.edu/TIMSS2007/PDF/T07_SPSS_G4_" , 1:2 , ".zip" ) ,
-					paste0( "http://timss.bc.edu/TIMSS2007/PDF/T07_SPSS_G8_" , 1:2 , ".zip" ) ,
+					paste0( "https://timss.bc.edu/TIMSS2007/PDF/T07_SPSS_G4_" , 1:2 , ".zip" ) ,
+					paste0( "https://timss.bc.edu/TIMSS2007/PDF/T07_SPSS_G8_" , 1:2 , ".zip" ) ,
 					
-					paste0( "http://timss.bc.edu/timss2003i/PDF/t03_spss_" , 1:2 , ".zip" ) ,
+					paste0( "https://timss.bc.edu/timss2003i/PDF/t03_spss_" , 1:2 , ".zip" ) ,
 					
-					paste0( "http://timss.bc.edu/timss1999i/data/bm2_" , c99 , ".zip" ) ,
+					paste0( "https://timss.bc.edu/timss1999i/data/bm2_" , c99 , ".zip" ) ,
 					
-					paste0( "http://timss.bc.edu/timss1995i/database/pop1/POP1_" , c95_1 , ".ZIP" ) ,
-					paste0( "http://timss.bc.edu/timss1995i/database/pop2/POP2_" , c95_2 , ".ZIP" ) ,
-					paste0( "http://timss.bc.edu/timss1995i/database/pop3/POP3_" , c95_3 , ".ZIP" ) 
+					paste0( "https://timss.bc.edu/timss1995i/database/pop1/POP1_" , c95_1 , ".ZIP" ) ,
+					paste0( "https://timss.bc.edu/timss1995i/database/pop2/POP2_" , c95_2 , ".ZIP" ) ,
+					paste0( "https://timss.bc.edu/timss1995i/database/pop3/POP3_" , c95_3 , ".ZIP" ) 
 				)
 
 			if( catalog[ i , 'year' ] == 1999 ){
 				# download the 1999 sas import scripts
-				cachaca( 'http://timss.bc.edu/timss1999i/data/bm2_progs.zip' , tf , mode = 'wb' )
+				cachaca( 'https://timss.bc.edu/timss1999i/data/bm2_progs.zip' , tf , mode = 'wb' )
 				s99 <- unzip( tf , exdir = tempdir() )
 			}
 			
 			if( catalog[ i , 'year' ] == 1995 ){
 				# download the 1995 sas import scripts
-				cachaca( 'http://timss.bc.edu/timss1995i/database/pop1/POP1PGRM.ZIP' , tf , mode = 'wb' )
+				cachaca( 'https://timss.bc.edu/timss1995i/database/pop1/POP1PGRM.ZIP' , tf , mode = 'wb' )
 				s95_1 <- unzip( tf , exdir = tempdir() )
-				cachaca( 'http://timss.bc.edu/timss1995i/database/pop2/POP2PGRM.ZIP' , tf , mode = 'wb' )
+				cachaca( 'https://timss.bc.edu/timss1995i/database/pop2/POP2PGRM.ZIP' , tf , mode = 'wb' )
 				s95_2 <- unzip( tf , exdir = tempdir() )
-				cachaca( 'http://timss.bc.edu/timss1995i/database/pop3/POP3PGRM.ZIP' , tf , mode = 'wb' )
+				cachaca( 'https://timss.bc.edu/timss1995i/database/pop3/POP3PGRM.ZIP' , tf , mode = 'wb' )
 				s95_3 <- unzip( tf , exdir = tempdir() )
 				s95 <- c( s95_1 , s95_2 , s95_3 )
 			}
