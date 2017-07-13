@@ -350,3 +350,5 @@ lodown_timss <-
 
 	}
 
+
+timss_MIcombine <- scf_MIcombine
