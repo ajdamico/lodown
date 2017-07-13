@@ -226,7 +226,7 @@ lodown_timss <-
 			
 				dfx <- readRDS( rdss )
 				
-				ppv <- grep( "(.*)0[1-5]$" , names( get( dfx ) ) , value = TRUE )
+				ppv <- grep( "(.*)0[1-5]$" , names( dfx ) , value = TRUE )
 				
 				ppv <- unique( gsub( "0[1-5]$" , "" , ppv ) )
 				
@@ -234,7 +234,7 @@ lodown_timss <-
 				pv <- NULL
 				
 				# confirm '01' thru '05' are in the data set.
-				for ( j in ppv ) if ( all( paste0( j , '0' , 1:5 ) %in% names( get( dfx ) ) ) ) pv <- c( pv , j )
+				for ( j in ppv ) if ( all( paste0( j , '0' , 1:5 ) %in% names( dfx ) ) ) pv <- c( pv , j )
 				
 				# if there are any plausible values variables,
 				# the survey design needs to be both multiply-imputed and replicate-weighted.
@@ -243,7 +243,7 @@ lodown_timss <-
 					# loop through all five iterations of the plausible value
 					for ( j in 1:5 ){
 							
-						y <- get( dfx )
+						y <- dfx
 				
 						# loop through each plausible value variable
 						for ( vn in pv ){
@@ -257,24 +257,24 @@ lodown_timss <-
 						}
 						
 						# save the implicate
-						DBI::dbWriteTable( db , paste0( dfx , catalog[ i , 'year' ] , j ) , y )
+						DBI::dbWriteTable( db , paste( gsub( "(.*)\\.(.*)" , "\\1" , basename( rdss ) ) , catalog[ i , 'year' ] , j , sep = "_" ) , y )
 						
 					}
 					
 				} else {	
 				
-					DBI::dbWriteTable( db , paste0( dfx , catalog[ i , 'year' ] ) , get( dfx ) )
+					DBI::dbWriteTable( db , paste( gsub( "(.*)\\.(.*)" , "\\1" , basename( rdss ) ) , catalog[ i , 'year' ] , sep = "_" ) , dfx )
 				
 				}
 				
 				# make the replicate weights table, make the survey design
-				if( 'totwgt' %in% names( get( dfx ) ) | 'tchwgt' %in% names( get( dfx ) ) ){
+				if( 'totwgt' %in% names( dfx ) | 'tchwgt' %in% names( dfx ) ){
 					
-					if( 'totwgt' %in% names( get( dfx ) ) ) wgt <- 'totwgt' else wgt <- 'tchwgt'
+					if( 'totwgt' %in% names( dfx ) ) wgt <- 'totwgt' else wgt <- 'tchwgt'
 				
-					z <- get( dfx )[ , c( wgt , 'jkrep' , 'jkzone' ) ]
+					z <- dfx[ , c( wgt , 'jkrep' , 'jkzone' ) ]
 
-					rm( list = dfx ) ; gc()
+					rm( dfx ) ; gc()
 
 					for ( j in 1:75 ){
 						z[ z$jkzone != j , paste0( 'rw' , j ) ] <- z[ z$jkzone != j , wgt ]
@@ -294,7 +294,7 @@ lodown_timss <-
 							survey::svrepdesign( 
 								weights = as.formula( paste( "~" , wgt ) )  , 
 								repweights = z , 
-								data = mitools::imputationList( datasets = as.list( paste0( dfx , catalog[ i , 'year' ] , 1:5 ) ) , dbtype = "MonetDBLite" ) , 
+								data = mitools::imputationList( datasets = as.list( paste( gsub( "(.*)\\.(.*)" , "\\1" , basename( rdss ) ) , catalog[ i , 'year' ] , 1:5 , sep = "_" ) ) , dbtype = "MonetDBLite" ) , 
 								type = "other" ,
 								combined.weights = TRUE , 
 								dbtype = "MonetDBLite" ,
@@ -316,7 +316,7 @@ lodown_timss <-
 							survey::svrepdesign( 
 								weights = as.formula( paste( "~" , wgt ) )  , 
 								repweights = z , 
-								data = paste0( dfx , catalog[ i , 'year' ] ) , 
+								data = paste( gsub( "(.*)\\.(.*)" , "\\1" , basename( rdss ) ) , catalog[ i , 'year' ] , sep = "_" ) , 
 								type = "other" ,
 								combined.weights = TRUE ,
 								dbtype = "MonetDBLite" ,
