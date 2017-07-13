@@ -183,7 +183,7 @@ lodown_scf <-
 
 # MIcombine() variant (code from the `mitools` package) that only uses
 # the sampling variance from the *first* imputation instead of averaging all five
-scf_MIcombine <-
+pirls_MIcombine <- timss_MIcombine <- scf_MIcombine <-
 	function (results, variances, call = sys.call(), df.complete = Inf, ...) {
 		m <- length(results)
 		oldcall <- attr(results, "call")
