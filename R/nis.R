@@ -108,6 +108,10 @@ lodown_nis <-
 
 		if( !is.na( catalog[ i , 'r_script' ] ) ){
 
+			before_encoding <- getOption( "encoding" )
+
+			options( encoding = "windows-1252" )
+
 			# load the r script into a character vector
 			script.r <- readLines( catalog[ i , 'r_script' ] , warn = FALSE )
 
@@ -135,9 +139,11 @@ lodown_nis <-
 
 			# save the r script back to the local disk
 			writeLines( script.r , tf )
-
+			
 			# run the now-reduced r script
 			source( tf )
+			
+			options( encoding = before_encoding )
 
 			# create a character string containing the name of the nis puf data.frame object
 			nis.df <- 
