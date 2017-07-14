@@ -282,7 +282,9 @@ lodown_timss <-
 						z[ z$jkzone == j & z$jkrep == 0 , paste0( 'rw' , j ) ] <- 0
 					}
 
-					z <- z[ , paste0( 'rw' , 1:75 ) ]
+					design_weights <- z[ , paste0( 'rw' , 1:75 ) ]
+					
+					rm( z )
 						
 					# where there any imputed variables?
 					if( length( pv ) > 0 ){
@@ -295,7 +297,7 @@ lodown_timss <-
 						design <- 
 							survey::svrepdesign( 
 								weights = as.formula( paste( "~" , wgt ) )  , 
-								repweights = z , 
+								repweights = design_weights , 
 								data = mitools::imputationList( datasets = as.list( five_tablenames ) , dbtype = "MonetDBLite" ) , 
 								type = "other" ,
 								combined.weights = TRUE , 
@@ -319,7 +321,7 @@ lodown_timss <-
 						design <- 
 							survey::svrepdesign( 
 								weights = as.formula( paste( "~" , wgt ) )  , 
-								repweights = z , 
+								repweights = design_weights , 
 								data = one_tablename , 
 								type = "other" ,
 								combined.weights = TRUE ,
@@ -335,6 +337,8 @@ lodown_timss <-
 					catalog[ i , 'case_count' ] <- nrow( design )
 					
 					saveRDS( design , file = paste0( catalog[ i , 'output_folder' ] , '/' , gsub( "(.*)\\.(.*)" , "\\1" , basename( rdss ) ) , '_design.rds' ) )
+					
+					saveRDS( design_weights , file = paste0( catalog[ i , 'output_folder' ] , '/' , gsub( "(.*)\\.(.*)" , "\\1" , basename( rdss ) ) , '_weights.rds' ) )
 					
 				}
 				
