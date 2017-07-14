@@ -131,7 +131,8 @@ lodown_enem <-
 				if( length( sas_ri ) > 1 ) sas_ri <- sas_ri[ !grepl( "questionario|prova" , tolower( basename( sas_ri ) ) ) ]
 
 				# if( catalog[ i , 'year' ] %in% 1999:2000 ) options( encoding = 'native.enc' )
-				sas_t <- readLines( sas_ri )
+				sas_con <- file( sas_ri , "r" , encoding = 'windows-1252' )
+				sas_t <- readLines( sas_con )
 				sas_t <- gsub( "\t" , " " , sas_t )
 				sas_t <- gsub( "char(.*)" , "\\1" , tolower( sas_t ) )
 				sas_t <- gsub( "datetime(.*)" , "$ \\1" , tolower( sas_t ) )
