@@ -287,6 +287,8 @@ lodown_timss <-
 					# where there any imputed variables?
 					if( length( pv ) > 0 ){
 					
+						five_tablenames <- paste( gsub( "(.*)\\.(.*)" , "\\1" , basename( rdss ) ) , catalog[ i , 'year' ] , 1:5 , sep = "_" )
+					
 						# if so, construct a multiply-imputed,
 						# database-backed, replicate-weighted
 						# complex sample survey design.
@@ -294,7 +296,7 @@ lodown_timss <-
 							survey::svrepdesign( 
 								weights = as.formula( paste( "~" , wgt ) )  , 
 								repweights = z , 
-								data = mitools::imputationList( datasets = as.list( paste( gsub( "(.*)\\.(.*)" , "\\1" , basename( rdss ) ) , catalog[ i , 'year' ] , 1:5 , sep = "_" ) ) , dbtype = "MonetDBLite" ) , 
+								data = mitools::imputationList( datasets = as.list( five_tablenames ) , dbtype = "MonetDBLite" ) , 
 								type = "other" ,
 								combined.weights = TRUE , 
 								dbtype = "MonetDBLite" ,
@@ -308,6 +310,8 @@ lodown_timss <-
 
 					} else {
 					
+						one_tablename <- paste( gsub( "(.*)\\.(.*)" , "\\1" , basename( rdss ) ) , catalog[ i , 'year' ] , sep = "_" )
+					
 						# otherwise, construct a
 						# database-backed, replicate-weighted
 						# complex sample survey design
@@ -316,7 +320,7 @@ lodown_timss <-
 							survey::svrepdesign( 
 								weights = as.formula( paste( "~" , wgt ) )  , 
 								repweights = z , 
-								data = paste( gsub( "(.*)\\.(.*)" , "\\1" , basename( rdss ) ) , catalog[ i , 'year' ] , sep = "_" ) , 
+								data = one_tablename , 
 								type = "other" ,
 								combined.weights = TRUE ,
 								dbtype = "MonetDBLite" ,
