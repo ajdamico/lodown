@@ -33,7 +33,7 @@ get_catalog_anes <-
 
 		files_to_download <- ifelse( available_dtas , dta_files , sav_files )
 		
-		catalog <- do.call( rbind , mapply( merge , files_to_download , study_names ) )
+		catalog <- do.call( rbind , mapply( merge , files_to_download , study_names , SIMPLIFY = FALSE ) )
 		
 		names( catalog ) <- c( 'full_url' , 'directory' )
 		
