@@ -44,8 +44,8 @@ get_catalog_ahs <-
 			# ..loop through each puf page searching for zipped files
 			for ( this.page in puf.pages ){
 
-				this.contents <- readLines( textConnection( RCurl::getURL( paste0( "https://www.census.gov/" , this.page ) ) ) )
-				
+				this.contents <- strsplit( httr::content( httr::GET( paste0( "https://www.census.gov/" , this.page ) ) , 'text' ) , '\n' )[[1]]
+
 				zipped.file.lines <- this.contents[ grep( "\\.zip" , tolower( this.contents ) ) ]
 
 				precise.files <- unique( c( precise.files , gsub( '\"(.*)' , "" , gsub( '(.*)href=\"' , "" , zipped.file.lines ) ) ) )
