@@ -229,7 +229,7 @@ enem_ranc <-
 
 		outcon <- file( tf_a , "w" )
 
-		incon <- file( infile , "r" , encoding = 'windows-1252' )
+		incon <- file( infile , "r")
 
 		line.num <- 0
 			
