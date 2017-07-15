@@ -89,7 +89,11 @@ get_catalog_ahs <-
 			# remove the 1983 sas file, which isn't there.
 			precise.files <-
 				precise.files[ precise.files != 'https://www2.census.gov/programs-surveys/ahs/1983/AHS_1983/AHS_1983_Metro_PUF_SAS.zip' ]
-				
+			
+			# remove the 1999 table specifications, which doesn't unzip cleanly and serves no purpose
+			precise.files <-
+				precise.files[ precise.files != 'http://www2.census.gov/programs-surveys/ahs/1999/AHS%201999%20Table%20Specifications.zip' ]
+			
 			# remove duplicates
 			precise.files <- unique( precise.files )
 				
