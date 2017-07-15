@@ -87,6 +87,11 @@ lodown_nsfg <-
 
 			cachaca( catalog[ i , "sas_ri" ] , tf2 , mode = 'wb' )
 			
+			this_sas <- file( tf2 , 'r' , encoding = 'windows-1252' )
+			sas_lines <- readLines( this_sas )
+			close( this_sas )
+			writeLines( sas_lines , tf2 )
+			
 			if( grepl( "1976FemRespSetup.sas" , catalog[ i , "sas_ri" ] , fixed = TRUE ) ){
 			
 				# load this file into working memory
