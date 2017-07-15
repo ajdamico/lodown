@@ -40,7 +40,7 @@ lodown_enem <-
 
 			if( !grepl( "\\.rar" , catalog[ i , "full_url" ] ) ){
 
-				if( catalog[ i , 'year' ] < 2009 ){
+				if( catalog[ i , 'year' ] < 2005 ){
 				
 					unzip( tf , exdir = normalizePath( catalog[ i , "output_folder" ] ) )
 
