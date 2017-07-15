@@ -18,6 +18,10 @@ get_catalog_enem <-
 				stringsAsFactors = FALSE
 			)
 
+		# skip 2009 until
+		# https://github.com/ajdamico/asdfree/issues/265
+		catalog <- subset( catalog , year != 2009 )
+			
 		catalog
 
 	}
