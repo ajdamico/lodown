@@ -43,7 +43,15 @@ lodown_mapd_landscape <-
 
 			unzipped_files <- unzip_warn_fail( tf , exdir = catalog[ i , 'output_folder' ] )
 
-			for( this_zip in grep( "\\.zip$" , unzipped_files , ignore.case = TRUE , value = TRUE ) ) unzipped_files <- c( unzipped_files , unzip_warn_fail( this_zip , exdir = catalog[ i , 'output_folder' ] ) )
+			second_round <- grep( "\\.zip$" , unzipped_files , ignore.case = TRUE , value = TRUE )
+			
+			for( this_zip in second_round ) unzipped_files <- c( unzipped_files , unzip_warn_fail( this_zip , exdir = catalog[ i , 'output_folder' ] ) )
+			
+			third_round <- grep( "\\.zip$" , unzipped_files , ignore.case = TRUE , value = TRUE )
+			
+			third_round <- setdiff( third_round , second_round )
+			
+			for( this_zip in third_round ) unzipped_files <- c( unzipped_files , unzip_warn_fail( this_zip , exdir = catalog[ i , 'output_folder' ] ) )
 			
 			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'output_folder' ] , "'\r\n\n" ) )
 
