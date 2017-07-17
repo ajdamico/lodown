@@ -29,16 +29,11 @@ get_catalog_mapd_landscape <-
 		
 		early_lsc$year <- NULL
 		
-		early_prem <- subset( these_zips , zip_names == "2006-2012 Plan and Premium Information for Medicare Plans Offering Part D" )
-
-		early_prem$year <- NULL
-		
-		these_zips <- subset( these_zips , !( zip_names %in% c( "2006-2012 Plan and Premium Information for Medicare Plans Offering Part D" , "2007-2012 PDP, MA, and SNP Landscape Files" ) ) )
+		these_zips <- subset( these_zips , !( zip_names %in% "2007-2012 PDP, MA, and SNP Landscape Files" ) )
 
 		these_zips <-
 			rbind( 
 				these_zips , 
-				merge( expand.grid( year = 2006:2012 ) , early_prem ) , 
 				merge( expand.grid( year = 2007:2012 ) , early_lsc )
 			)
 		
@@ -62,18 +57,12 @@ get_catalog_mapd_landscape <-
 		
 		mmp_landscape_zips$type <- "MMP"
 		
-		plan_report_zips <-
-			subset( these_zips , grepl( "and Premium" , zip_names ) )
-		
-		plan_report_zips$type <- "Plan Report"
-		
 		this_catalog <-
 			rbind(
 				ma_landscape_zips ,
 				pdp_landscape_zips ,
 				snp_landscape_zips ,
-				mmp_landscape_zips ,
-				plan_report_zips
+				mmp_landscape_zips
 			)
 			
 		this_catalog$output_filename <-
@@ -113,11 +102,19 @@ lodown_mapd_landscape <-
 			for( this_zip in third_round ) unzipped_files <- c( unzipped_files , unzip_warn_fail( this_zip , exdir = np_dirname( catalog[ i , 'output_filename' ] ) ) )
 			
 			# find relevant csv files
-			these_csv_files <- grep( paste0( catalog[ i , 'type' ] , "(.*)\\.(csv|CSV)" ) , unzipped_files , value = TRUE )
+			these_csv_files <- unzipped_files[ grep( paste0( catalog[ i , 'year' ] , "(.*)" ,  catalog[ i , 'type' ] , "(.*)\\.(csv|CSV)" ) , basename( unzipped_files ) ) ]
 			
 			out <- NULL
 			
-			for( this_csv in these_csv_files ) out <- rbind( out , data.frame( readr::read_csv( this_csv ) ) )
+			for( this_csv in these_csv_files ){
+				
+				csv_df <- data.frame( readr::read_csv( this_csv ) )
+				
+				if( grepl( "sanction" , this_csv , ignore.case = TRUE ) ) csv_df$sanctioned <- TRUE else csv_df$sanctioned <- FALSE
+				
+				out <- rbind( out , csv_df )
+				
+			}
 			
 			names( out ) <- tolower( names( out ) )
 			
