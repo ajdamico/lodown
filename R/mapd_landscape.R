@@ -75,7 +75,7 @@ get_catalog_mapd_landscape <-
 				".rds" 
 			)
 		
-		this_catalog[ order( this_catalog[ , c( 'year' , 'type' ) ] ) , ]
+		this_catalog[ order( this_catalog$year ) , ]
 	}
 
 
@@ -110,7 +110,7 @@ lodown_mapd_landscape <-
 				
 				first_twenty_lines <- readLines( this_csv , n = 20 )
 				
-				which_state_county <- min( grep( "state(.*)county" , first_twenty_lines , ignore.case = TRUE ) )
+				which_state_county <- min( grep( "State" , first_twenty_lines ) )
 				
 				csv_df <- data.frame( readr::read_csv( this_csv , skip = ( which_state_county - 1 ) ) )
 				
