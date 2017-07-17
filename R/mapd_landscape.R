@@ -70,7 +70,7 @@ get_catalog_mapd_landscape <-
 				output_dir , 
 				"/" , 
 				this_catalog$year , 
-				"/" , 
+				" " , 
 				tolower( this_catalog$type ) , 
 				".rds" 
 			)
