@@ -118,6 +118,8 @@ lodown_mapd_landscape <-
 				
 				if( grepl( "sanction" , this_csv , ignore.case = TRUE ) ) csv_df$sanctioned <- TRUE else csv_df$sanctioned <- FALSE
 				
+				out$X16 <- NULL
+				
 				out <- rbind( out , csv_df )
 				
 			}
