@@ -20,7 +20,7 @@ get_catalog_mapd_landscape <-
 		these_zips <-
 			data.frame(
 				zip_names = zip_names , 
-				zip_links = zip_links ,
+				full_url = zip_links ,
 				year = substr( zip_names , 1 , 4 ) ,
 				stringsAsFactors = FALSE
 			)
