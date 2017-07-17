@@ -114,7 +114,7 @@ lodown_mapd_landscape <-
 
 				which_state_county <- min( which( first_twenty_lines[ , 1 ] == 'State') )
 				
-				csv_df <- data.frame( readr::read_csv( this_csv , skip = ( which_state_county - 1 ) , guess_max = Inf ) )
+				csv_df <- data.frame( readr::read_csv( this_csv , skip = which_state_county , guess_max = 100000 ) )
 				
 				if( grepl( "sanction" , this_csv , ignore.case = TRUE ) ) csv_df$sanctioned <- TRUE else csv_df$sanctioned <- FALSE
 				
