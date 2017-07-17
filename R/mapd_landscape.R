@@ -20,7 +20,7 @@ get_catalog_mapd_landscape <-
 		
 		this_catalog <-
 		  data.frame(
-			  output_directory = paste0( output_dir , "/" , zip_names , "/" ) ,
+			  output_folder = paste0( output_dir , "/" , zip_names , "/" ) ,
 			  full_url = zip_links ,
 			  stringsAsFactors = FALSE
 		  )
@@ -41,10 +41,10 @@ lodown_mapd_landscape <-
 			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' , filesize_fun = 'httr' )
 
 
-			unzipped_files <- unzip_warn_fail( tf , exdir = catalog[ i , 'output_directory' ] )
+			unzipped_files <- unzip_warn_fail( tf , exdir = catalog[ i , 'output_folder' ] )
 
 			
-			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'output_directory' ] , "'\r\n\n" ) )
+			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'output_folder' ] , "'\r\n\n" ) )
 
 		}
 
