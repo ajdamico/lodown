@@ -108,7 +108,11 @@ lodown_mapd_landscape <-
 			
 			for( this_csv in these_csv_files ){
 				
-				csv_df <- data.frame( readr::read_csv( this_csv ) )
+				first_twenty_lines <- readLines( this_csv , n = 20 )
+				
+				which_state_county <- min( grep( "state(.*)county" , first_twenty_lines , ignore.case = TRUE ) )
+				
+				csv_df <- data.frame( readr::read_csv( this_csv , skip = ( which_state_county - 1 ) ) )
 				
 				if( grepl( "sanction" , this_csv , ignore.case = TRUE ) ) csv_df$sanctioned <- TRUE else csv_df$sanctioned <- FALSE
 				
