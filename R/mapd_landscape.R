@@ -120,6 +120,8 @@ lodown_mapd_landscape <-
 				
 				if( grepl( "sanction" , this_csv , ignore.case = TRUE ) ) csv_df$sanctioned <- TRUE else csv_df$sanctioned <- FALSE
 				
+				if( !is.null( out ) & ( "Type.of..Additional.Coverage.Offered.in.the.Gap" %in% names( csv_df ) ) ) out[ , "Type.of..Additional.Coverage.Offered.in.the.Gap" ] <- NA
+				
 				out <- rbind( out , csv_df )
 				
 			}
