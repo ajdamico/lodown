@@ -86,7 +86,7 @@ get_catalog_mapd_landscape <-
 				".rds" 
 			)
 		
-		this_catalog
+		this_catalog[ order( this_catalog[ , c( 'year' , 'type' ) ] ) , ]
 	}
 
 
@@ -111,6 +111,17 @@ lodown_mapd_landscape <-
 			third_round <- setdiff( third_round , second_round )
 			
 			for( this_zip in third_round ) unzipped_files <- c( unzipped_files , unzip_warn_fail( this_zip , exdir = np_dirname( catalog[ i , 'output_filename' ] ) ) )
+			
+			# find relevant csv files
+			these_csv_files <- grep( paste0( catalog[ i , 'type' ] , "(.*)\\.(csv|CSV)" ) , unzipped_files , value = TRUE )
+			
+			out <- NULL
+			
+			for( this_csv in these_csv_files ) out <- rbind( out , data.frame( readr::read_csv( this_csv ) ) )
+			
+			names( out ) <- tolower( names( out ) )
+			
+			saveRDS( out , file = catalog[ i , 'output_filename' ] )
 			
 			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'output_filename' ] , "'\r\n\n" ) )
 
