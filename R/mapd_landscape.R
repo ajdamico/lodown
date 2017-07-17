@@ -75,6 +75,8 @@ get_catalog_mapd_landscape <-
 				".rds" 
 			)
 		
+		this_catalog <- subset( this_catalog , !( type == 'SNP' & year == 2007 ) )
+		
 		this_catalog[ order( this_catalog$year ) , ]
 	}
 
