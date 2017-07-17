@@ -125,9 +125,11 @@ lodown_mapd_landscape <-
 			names( out ) <- tolower( names( out ) )
 			
 			saveRDS( out , file = catalog[ i , 'output_filename' ] )
+
+			file.remove( unzipped_files )
 			
 			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'output_filename' ] , "'\r\n\n" ) )
-
+			
 		}
 
 		catalog
