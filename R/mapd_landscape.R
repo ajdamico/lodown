@@ -104,13 +104,13 @@ lodown_mapd_landscape <-
 
 			second_round <- grep( "\\.zip$" , unzipped_files , ignore.case = TRUE , value = TRUE )
 			
-			for( this_zip in second_round ) unzipped_files <- c( unzipped_files , unzip_warn_fail( this_zip , exdir = np_dirname( catalog[ i , 'output_filename' ] ) )
+			for( this_zip in second_round ) unzipped_files <- c( unzipped_files , unzip_warn_fail( this_zip , exdir = np_dirname( catalog[ i , 'output_filename' ] ) ) )
 			
 			third_round <- grep( "\\.zip$" , unzipped_files , ignore.case = TRUE , value = TRUE )
 			
 			third_round <- setdiff( third_round , second_round )
 			
-			for( this_zip in third_round ) unzipped_files <- c( unzipped_files , unzip_warn_fail( this_zip , exdir = np_dirname( catalog[ i , 'output_filename' ] ) )
+			for( this_zip in third_round ) unzipped_files <- c( unzipped_files , unzip_warn_fail( this_zip , exdir = np_dirname( catalog[ i , 'output_filename' ] ) ) )
 			
 			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'output_filename' ] , "'\r\n\n" ) )
 
