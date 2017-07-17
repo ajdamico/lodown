@@ -20,7 +20,7 @@ get_catalog_mapd_landscape <-
 		
 		this_catalog <-
 		  data.frame(
-			  output_folder = paste0( output_dir , "/" , zip_names , "/" ) ,
+			  output_folder = paste0( output_dir , "/" , zip_names ) ,
 			  full_url = zip_links ,
 			  stringsAsFactors = FALSE
 		  )
