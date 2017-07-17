@@ -114,17 +114,19 @@ lodown_mapd_landscape <-
 
 				which_state_county <- min( which( first_twenty_lines[ , 1 ] == 'State') )
 				
-				csv_df <- data.frame( readr::read_csv( this_csv , skip = which_state_county , guess_max = 100000 ) )
+				csv_df <- read.csv( this_csv , skip = which_state_county )
+				
+				csv_df <- csv_df[ , !grepl( "^X" , names( csv_df ) ) ]
 				
 				if( grepl( "sanction" , this_csv , ignore.case = TRUE ) ) csv_df$sanctioned <- TRUE else csv_df$sanctioned <- FALSE
-				
-				out$X16 <- NULL
 				
 				out <- rbind( out , csv_df )
 				
 			}
 			
 			names( out ) <- tolower( names( out ) )
+			
+			if( any( !( out$state %in%  c( state.name , "Washington D.C." , "Puerto Rico" , "Northern Mariana Islands" , "American Samoa" , "Virgin Islands" ) ) ) ) stop( "illegal state name" )
 			
 			saveRDS( out , file = catalog[ i , 'output_filename' ] )
 
