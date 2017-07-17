@@ -110,11 +110,11 @@ lodown_mapd_landscape <-
 			
 			for( this_csv in these_csv_files ){
 				
-				first_twenty_lines <- readLines( this_csv , n = 20 )
+				first_twenty_lines <- read.csv( this_csv , nrows = 20 , stringsAsFactors = FALSE )
+
+				which_state_county <- min( which( first_twenty_lines[ , 1 ] == 'State') )
 				
-				which_state_county <- min( grep( "State" , first_twenty_lines ) )
-				
-				csv_df <- data.frame( readr::read_csv( this_csv , skip = ( which_state_county - 1 ) ) )
+				csv_df <- data.frame( readr::read_csv( this_csv , skip = ( which_state_county - 1 ) , guess_max = Inf ) )
 				
 				if( grepl( "sanction" , this_csv , ignore.case = TRUE ) ) csv_df$sanctioned <- TRUE else csv_df$sanctioned <- FALSE
 				

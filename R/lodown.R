@@ -227,6 +227,13 @@ NULL
 #' mapd_cpsc_cat <- get_catalog( "mapd_cpsc" , output_dir = file.path( path.expand( "~" ) , "MAPD_CPSC" ) )
 #' lodown( "mapd_cpsc" , mapd_cpsc_cat[ grepl( "2016" , mapd_cpsc_cat$year_month ) , ] )
 #'
+#' # Medicare Advantage/Part D - Landscape Files
+#' # download all available microdata
+#' lodown( "mapd_landscape" , output_dir = file.path( path.expand( "~" ) , "MAPD_LANDSCAPE" ) )
+#' # download only the 2016 files
+#' mapd_landscape_cat <- get_catalog( "mapd_landscape" , output_dir = file.path( path.expand( "~" ) , "MAPD_LANDSCAPE" ) )
+#' lodown( "mapd_landscape" , mapd_landscape_cat[ grepl( "2016" , mapd_landscape_cat$year_month ) , ] )
+#'
 #' # Medicare Advantage State/County Penetration Files
 #' # download all available microdata
 #' lodown( "ma_sc_penetration" , output_dir = file.path( path.expand( "~" ) , "MA_SC_PENETRATION" ) )
