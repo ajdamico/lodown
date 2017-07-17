@@ -41,7 +41,7 @@ lodown_mapd_landscape <-
 			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' , filesize_fun = 'httr' )
 
 
-			unzipped_files <- unzip_warn_fail( tf , exdir = np_dirname( catalog[ i , 'output_directory' ] ) )
+			unzipped_files <- unzip_warn_fail( tf , exdir = catalog[ i , 'output_directory' ] )
 
 			
 			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'output_directory' ] , "'\r\n\n" ) )
