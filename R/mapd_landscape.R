@@ -19,17 +19,17 @@ get_catalog_mapd_landscape <-
 		
 		these_zips <-
 			data.frame(
-				zip_names = zip_names , 
+				data_name = zip_names , 
 				full_url = zip_links ,
 				year = substr( zip_names , 1 , 4 ) ,
 				stringsAsFactors = FALSE
 			)
 		
-		early_lsc <- subset( these_zips , zip_names == "2007-2012 PDP, MA, and SNP Landscape Files" )
+		early_lsc <- subset( these_zips , data_name == "2007-2012 PDP, MA, and SNP Landscape Files" )
 		
 		early_lsc$year <- NULL
 		
-		these_zips <- subset( these_zips , !( zip_names %in% "2007-2012 PDP, MA, and SNP Landscape Files" ) )
+		these_zips <- subset( these_zips , !( data_name %in% "2007-2012 PDP, MA, and SNP Landscape Files" ) )
 
 		these_zips <-
 			rbind( 
@@ -38,22 +38,22 @@ get_catalog_mapd_landscape <-
 			)
 		
 		ma_landscape_zips <- 
-			subset( these_zips , grepl( "MA(.*)Landscape|Landscape and" , zip_names ) )
+			subset( these_zips , grepl( "MA(.*)Landscape|Landscape and" , data_name ) )
 		
 		ma_landscape_zips$type <- "MA"
 		
 		pdp_landscape_zips <- 
-			subset( these_zips , grepl( "PDP(.*)Landscape|Landscape and" , zip_names ) )
+			subset( these_zips , grepl( "PDP(.*)Landscape|Landscape and" , data_name ) )
 		
 		pdp_landscape_zips$type <- "PDP"
 		
 		snp_landscape_zips <- 
-			subset( these_zips , grepl( "SNP(.*)Landscape|Landscape and" , zip_names ) )
+			subset( these_zips , grepl( "SNP(.*)Landscape|Landscape and" , data_name ) )
 		
 		snp_landscape_zips$type <- "SNP"
 		
 		mmp_landscape_zips <- 
-			subset( these_zips , grepl( "MMP(.*)Landscape|Landscape and" , zip_names ) )
+			subset( these_zips , grepl( "MMP(.*)Landscape|Landscape and" , data_name ) )
 		
 		mmp_landscape_zips$type <- "MMP"
 		
@@ -75,7 +75,7 @@ get_catalog_mapd_landscape <-
 				".rds" 
 			)
 		
-		this_catalog <- subset( this_catalog , !( type == 'SNP' & year == 2007 ) )
+		this_catalog <- subset( this_catalog , !( type == 'SNP' & year == 2007 ) & !( type == 'MMP' & year == 2013 ) )
 		
 		this_catalog[ order( this_catalog$year ) , ]
 	}
