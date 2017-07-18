@@ -66,8 +66,11 @@ lodown_enade <-
 
 			tablename <- tolower( gsub( "\\.(.*)" , "" , basename( csvfile ) ) )
 
-			x <- data.frame( readr::read_csv2( csvfile ) )
-			
+			# are decimals , or . ?
+			dots_in_row <- grepl( "\\." , readLines( csvfile , n = 2 )[2] )
+
+			x <- data.frame( readr::read_delim( csvfile , ';' , locale = readr::locale( decimal_mark = if( dots_in_row ) "." else "," ) ) )
+
 			names( x ) <- tolower( names( x ) )
 			
 			stopifnot( R.utils::countLines( csvfile ) == nrow( x ) + 1 )
