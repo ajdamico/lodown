@@ -16,6 +16,5 @@ after_failure:
 - find *Rcheck -name '*.fail' -print -exec cat '{}' \;
 
 r_github_packages:
- - hannesmuehleisen/MonetDBLite
  - jimhester/archive
  
