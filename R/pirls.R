@@ -77,7 +77,7 @@ lodown_pirls <-
 					x <- as.data.frame( x )
 					
 					# stack it
-					y <- rbind( y , x )
+					y <- rbind( y , x ) ; rm( x ) ; gc()
 					
 					# remove the original file from the disk
 					file.remove( this.file )
@@ -90,7 +90,7 @@ lodown_pirls <-
 				catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , nrow( y ) , na.rm = TRUE )
 				
 				# save that single all-country stack-a-mole
-				saveRDS( y , file = paste0( catalog[ i , 'output_folder' ] , '/' , p , '.rds' ) )
+				saveRDS( y , file = paste0( catalog[ i , 'output_folder' ] , '/' , p , '.rds' ) ) ; rm( y ) ; gc()
 				
 			}
 
@@ -99,13 +99,13 @@ lodown_pirls <-
 	
 			# asa alone #
 			asa <- readRDS( paste0( catalog[ i , 'output_folder' ] , '/asa.rds' ) )
-			asa_design <- pirls_pvsd( asa , 'totwgt' , pirls_rwcf( asa , 'totwgt' ) )
-			saveRDS( asa_design , file = paste0( catalog[ i , 'output_folder' ] , '/asa_design.rds' ) )
+			asa_design <- pirls_pvsd( asa , 'totwgt' , pirls_rwcf( asa , 'totwgt' ) ) ; rm( asa ) ; gc()
+			saveRDS( asa_design , file = paste0( catalog[ i , 'output_folder' ] , '/asa_design.rds' ) ) ; rm( asa_design ) ; gc()
 			
 			# asg alone #
 			asg <- readRDS( paste0( catalog[ i , 'output_folder' ] , '/asg.rds' ) )
 			asg_design <- pirls_pvsd( asg , 'totwgt' , pirls_rwcf( asg , 'totwgt' ) )
-			saveRDS( asg_design , file = paste0( catalog[ i , 'output_folder' ] , '/asg_design.rds' ) )
+			saveRDS( asg_design , file = paste0( catalog[ i , 'output_folder' ] , '/asg_design.rds' ) ) ; rm( asg_design ) ; gc()
 			
 			# asg + ash
 			ash <- readRDS( paste0( catalog[ i , 'output_folder' ] , '/ash.rds' ) )
@@ -114,32 +114,32 @@ lodown_pirls <-
 			asg_ash <- merge( asg[ , c( 'idcntry' , 'idstud' , 'totwgt' , 'jkzone' , 'jkrep' ) ] , ash , by = c( 'idcntry' , 'idstud' ) )
 			stopifnot( nrow( asg_ash ) == nrow( ash ) & nrow( ash ) == nrow( asg ) )
 
-			asg_ash_design <- pirls_pvsd( asg_ash , 'totwgt' , pirls_rwcf( asg_ash , 'totwgt' ) )
-			saveRDS( asg_ash_design , file = paste0( catalog[ i , 'output_folder' ] , '/asg_ash_design.rds' ) )
+			asg_ash_design <- pirls_pvsd( asg_ash , 'totwgt' , pirls_rwcf( asg_ash , 'totwgt' ) ) ; rm( asg_ash ) ; gc()
+			saveRDS( asg_ash_design , file = paste0( catalog[ i , 'output_folder' ] , '/asg_ash_design.rds' ) ) ; rm( asg_ash_design ) ; gc()
 
 			
 			# asg + acg
 			acg <- readRDS( paste0( catalog[ i , 'output_folder' ] , '/acg.rds' ) )
-			asg_acg <- merge( asg , acg , by = c( 'idcntry' , 'idschool' ) )
-			stopifnot( nrow( asg_acg ) == nrow( asg ) )
+			asg_acg <- merge( asg , acg , by = c( 'idcntry' , 'idschool' ) ) ; rm( acg ) ; gc()
+			stopifnot( nrow( asg_acg ) == nrow( asg ) ) ; rm( asg ) ; gc()
 			
-			asg_acg_design <- pirls_pvsd( asg_acg , 'totwgt' , pirls_rwcf( asg_acg , 'totwgt' ) )
-			saveRDS( asg_acg_design , file = paste0( catalog[ i , 'output_folder' ] , '/asg_acg_design.rds' ) )
+			asg_acg_design <- pirls_pvsd( asg_acg , 'totwgt' , pirls_rwcf( asg_acg , 'totwgt' ) ) ; rm( asg_acg ) ; gc()
+			saveRDS( asg_acg_design , file = paste0( catalog[ i , 'output_folder' ] , '/asg_acg_design.rds' ) ) ; rm( asg_acg_design ) ; gc()
 
 			
 			# ast alone #
 			ast <- readRDS( paste0( catalog[ i , 'output_folder' ] , '/ast.rds' ) )
 			ast_design <- pirls_pvsd( ast , 'tchwgt' , pirls_rwcf( ast , 'tchwgt' ) )
-			saveRDS( ast_design , file = paste0( catalog[ i , 'output_folder' ] , '/ast_design.rds' ) )
+			saveRDS( ast_design , file = paste0( catalog[ i , 'output_folder' ] , '/ast_design.rds' ) ) ; rm( ast_design ) ; gc()
 
 			
 			# ast + atg
 			atg <- readRDS( paste0( catalog[ i , 'output_folder' ] , '/atg.rds' ) )
-			ast_atg <- merge( ast , atg , by = c( 'idcntry' , 'idteach' , 'idlink' ) )
+			ast_atg <- merge( ast , atg , by = c( 'idcntry' , 'idteach' , 'idlink' ) ) ; rm( atg ) ; gc()
 			stopifnot( nrow( ast_atg ) == nrow( ast ) )
 
-			ast_atg_design <- pirls_pvsd( ast_atg , 'tchwgt' , pirls_rwcf( ast_atg , 'tchwgt' ) )
-			saveRDS( ast_atg_design , file = paste0( catalog[ i , 'output_folder' ] , '/ast_atg_design.rds' ) )
+			ast_atg_design <- pirls_pvsd( ast_atg , 'tchwgt' , pirls_rwcf( ast_atg , 'tchwgt' ) ) ; rm( ast_atg ) ; gc()
+			saveRDS( ast_atg_design , file = paste0( catalog[ i , 'output_folder' ] , '/ast_atg_design.rds' ) ) ; rm( ast_atg_design ) ; gc()
 			
 			# delete the temporary files
 			suppressWarnings( file.remove( tf , unzipped_files ) )
