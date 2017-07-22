@@ -138,7 +138,7 @@ lodown_scf <-
 			imp4 <- merge( scf.4 , scf.e )
 			imp5 <- merge( scf.5 , scf.e )
 						
-			rm( scf. , scf.2 , scf.3 , scf.4 , scf.5 , scf.m , scf.e ) ; gc()
+			rm( scf.1 , scf.2 , scf.3 , scf.4 , scf.5 , scf.m , scf.e ) ; gc()
 			
 			# confirm that the number of records did not change
 			stopifnot( 
