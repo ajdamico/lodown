@@ -36,16 +36,25 @@
 #'
 #' @export
 syntaxtractor <-
-	function( data_name , repo = "ajdamico/asdfreebook" , ref = "master" , replacements = NULL , setup_test = NULL ){
+	function( data_name , repo = "ajdamico/asdfreebook" , ref = "master" , replacements = NULL , setup_test = NULL , local_comp = FALSE ){
 	
-		repo_homepage <- readLines_retry( paste0( "https://github.com/" , repo , "/tree/" , ref , "/" ) )
+		if( !local_comp ){
+			repo_homepage <- readLines_retry( paste0( "https://github.com/" , repo , "/tree/" , ref , "/" ) )
+			
+			rmd_links <- gsub( "(.*)>(.*)\\.Rmd</a>(.*)" , "\\2" , grep( "Rmd" , repo_homepage , value = TRUE ) )
+			
+			this_rmd <- grep( paste0( "-" , ifelse( data_name == 'acs2' , 'acs' , data_name ) , "$" ) , rmd_links , value = TRUE )
 		
-		rmd_links <- gsub( "(.*)>(.*)\\.Rmd</a>(.*)" , "\\2" , grep( "Rmd" , repo_homepage , value = TRUE ) )
+			rmd_page <- readLines_retry( paste0( "https://raw.githubusercontent.com/" , repo , "/" , ref , "/" , this_rmd , ".Rmd" ) )
 		
-		this_rmd <- grep( paste0( "-" , ifelse( data_name == 'acs2' , 'acs' , data_name ) , "$" ) , rmd_links , value = TRUE )
-	
-		rmd_page <- readLines_retry( paste0( "https://raw.githubusercontent.com/" , repo , "/" , ref , "/" , this_rmd , ".Rmd" ) )
-
+		} else {
+			
+			this_rmd <- grep( paste0( "-" , ifelse( data_name == 'acs2' , 'acs' , data_name ) , "\\.Rmd$" ) , list.files( "C:/Users/anthonyd/Documents/GitHub/asdfreebook/" , full.names = TRUE ) , value = TRUE )
+			
+			rmd_page <- readLines( this_rmd )
+		
+		}
+		
 		v <- grep( "```" , rmd_page )
 		
 		lines_to_eval <- unlist( mapply( `:` , v[ seq( 1 , length( v ) - 1 , 2 ) ] + 1 , v[ seq( 2 , length( v ) + 1 , 2 ) ] - 1 ) )
