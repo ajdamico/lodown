@@ -90,6 +90,11 @@ syntaxtractor <-
 				lodown_command_line <- grep( "^lodown\\(" , rmd_page )
 				
 				rmd_page[ lodown_command_line ] <- paste0( "stopifnot( nrow( " , ifelse( data_name == 'acs2' , 'acs' , data_name ) , "_cat ) > 0 )" )
+				
+				# following two lines might include usernames/passwords
+				if( grepl( "your_" , rmd_page[ lodown_command_line + 1 ] ) ) rmd_page[ lodown_command_line + 1 ] <- ""
+				if( grepl( "your_" , rmd_page[ lodown_command_line + 2 ] ) ) rmd_page[ lodown_command_line + 2 ] <- ""
+			
 			
 			} else stop( "setup_test= must be 'setup' or 'test'" )
 		
