@@ -138,6 +138,8 @@ lodown_scf <-
 			imp4 <- merge( scf.4 , scf.e )
 			imp5 <- merge( scf.5 , scf.e )
 						
+			rm( scf. , scf.2 , scf.3 , scf.4 , scf.5 , scf.m , scf.e ) ; gc()
+			
 			# confirm that the number of records did not change
 			stopifnot( 
 				sum( nrow( imp1 ) , nrow( imp2 ) , nrow( imp3 ) , nrow( imp4 ) , nrow( imp5 ) ) == m.rows 
@@ -166,6 +168,8 @@ lodown_scf <-
 			# save the five implicates and the replicate weights file
 			saveRDS( list( imp1 , imp2 , imp3 , imp4 , imp5 ) , file = catalog[ i , 'output_filename' ] )
 			saveRDS( rw , file = catalog[ i , 'rw_filename' ] )
+			
+			rm( imp1 , imp2 , imp3 , imp4 , imp5 , rw ) ; gc()
 			
 			catalog[ i , 'case_count' ] <- nrow( imp1 )
 			
