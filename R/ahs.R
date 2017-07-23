@@ -408,6 +408,8 @@ lodown_ahs <-
 				# confirm both tables have only one intersecting column name: `control`
 				stopifnot( all( intersect( names( hhlf_df ) , names( wgtf_df ) ) %in% c( 'smsa' , 'control' ) ) )
 				
+				hhlf_df$smsa <- as.numeric( hhlf_df$smsa )
+				
 				# merge these two files together
 				x <- merge( hhlf_df , wgtf_df )
 				
