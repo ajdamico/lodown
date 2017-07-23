@@ -204,8 +204,10 @@ pirls_pvsd <-
 				}
 				
 				# save the implicate
-				assign( paste0( 'x' , i ) , y )
+				assign( paste0( 'x' , i ) , y ) ; rm( y ) ; gc()
 			}
+			
+			rm( x ) ; gc()
 			
 			z <-
 				survey::svrepdesign( 	
@@ -217,6 +219,8 @@ pirls_pvsd <-
 					data = mitools::imputationList( mget( paste0( "x" , 1:5 ) ) ) ,
 					mse = TRUE
 				)
+				
+			rm( x1 , x2 , x3 , x4 , x5 ) ; gc()
 				
 		# otherwise, it's simply replicate-weighted.
 		} else {
@@ -231,6 +235,8 @@ pirls_pvsd <-
 					data = x ,
 					mse = TRUE
 				)
+				
+			rm( x ) ; gc()
 				
 		}
 	
