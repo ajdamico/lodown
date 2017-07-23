@@ -129,6 +129,10 @@ get_catalog_ess <-
 	# skip ESS7 - parents' occupation..all country files and integrated isco file
 	catalog <- catalog[ !grepl( "PoccInte" , catalog[ , 'file_name' ] ) , ]
 	
+	# skip ESS1 - contacts file
+	catalog <- catalog[ !grepl( "ESS1CFe01" , catalog[ , 'file_name' ] ) , ]
+	
+	
 	catalog
   
   }
