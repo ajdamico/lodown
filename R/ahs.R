@@ -299,7 +299,7 @@ lodown_ahs <-
 						names( x ) <- tolower( names( x ) )
 											
 						# save the newly-renamed object as an `.rds` file on the local disk
-						saveRDS( x , file = this.filename )
+						saveRDS( x , file = this.filename ) ; rm( x ) ; gc()
 									
 						# confirm that this data file has been loaded.
 						data.loaded <- TRUE
@@ -413,7 +413,7 @@ lodown_ahs <-
 				
 				# confirm that the resultant `x` table has the same number of records
 				# as the household-level data table
-				stopifnot( nrow( x ) == nrow( hhlf_df ) )
+				stopifnot( nrow( x ) == nrow( hhlf_df ) ) ; rm( hhlf_df , wgtf_df ) ; gc()
 				
 				# determine the name of the hhlf+weights object..
 				mergef <- paste( hhlf , wgtf , sep = '_' )
@@ -434,6 +434,7 @@ lodown_ahs <-
 				# add the number of records to the catalog
 				catalog[ i , 'case_count' ] <- nrow( x )
 
+				rm( x ) ; gc()
 				# end of data.frame merge #
 					
 				# delete the temporary files
