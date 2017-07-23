@@ -243,7 +243,7 @@ lodown_ahs <-
 						
 								if ( tolower( extension[ this_ext ] ) == 'xpt' ) x <- foreign::read.xport( tf[ this_ext ] )
 								
-								if ( tolower( extension[ this_ext ] )  == 'csv' ) x <- read.csv( tf[ this_ext ] , stringsAsFactors = FALSE , quote = "'" )
+								if ( tolower( extension[ this_ext ] )  == 'csv' ) x <- data.frame( readr::read_csv( tf[ this_ext ] , quote = "'" ) )
 								
 								if ( tolower( extension[ this_ext ] )  == 'sas7bdat' ) x <- data.frame( haven::read_sas( tf[ this_ext ] ) )
 
