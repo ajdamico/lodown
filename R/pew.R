@@ -57,7 +57,7 @@ get_catalog_pew <-
 				for( page_num in all_pages ){
 
 					# figure out datasets #
-					these_data_webpage <- paste0( year_link_refs[ year_num ] , "page/" , page_num , "/" )
+					these_data_webpage <- paste0( year_link_refs[ year_num ] , "/page/" , page_num , "/" )
 
 					these_data_page <- xml2::read_html( these_data_webpage )
 
