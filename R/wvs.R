@@ -180,7 +180,7 @@ lodown_wvs <-
 					
 				} else file.copy( unzipped_files , paste0( catalog[ i , 'output_folder' ] , "/" , basename( unzipped_files ) ) )
 
-				suppressWarnings( rm( x ) ; gc() )				
+				suppressWarnings( rm( x ) )	; gc()
 				
 				suppressWarnings( rm( list = dfn ) )
 				
