@@ -30,16 +30,6 @@ get_catalog_pew <-
 
 			year_link_text <- to_link_text[ grep( "^[0-9][0-9][0-9][0-9]$" , to_link_text ) ]
 
-			if( length( year_link_refs ) == 0 ){
-				
-				year_link_text <- ra_link_text[ topic_num ]
-				
-				year_link_refs <- ra_link_refs[ topic_num ]
-
-				year_filters <- FALSE
-			
-			} else year_filters <- TRUE
-						
 			for( year_num in seq_along( year_link_text ) ){
 
 				# figure out pages #
@@ -61,68 +51,49 @@ get_catalog_pew <-
 
 					these_data_page <- xml2::read_html( these_data_webpage )
 
+					these_data_link_link <- rvest::html_attr( rvest::html_nodes( these_data_page , "a" ) , "dataset-dl-link" )
+
 					these_data_link_refs <- rvest::html_attr( rvest::html_nodes( these_data_page , "a" ) , "href" )
-						
+
+					these_data_link_title <- rvest::html_attr( rvest::html_nodes( these_data_page , "a" ) , "title" )
+					
 					these_data_link_text <- rvest::html_text( rvest::html_nodes( these_data_page , "a" ) )
 					
-					if( year_filters ){
-
-						these_data_text <- these_data_link_text[ ( grepl( "\\?download=[0-9]+$" , these_data_link_refs ) ) ]
+					these_data_link_text <- these_data_link_text[ !is.na( these_data_link_link ) ]
 					
-						these_data_refs <- these_data_link_refs[ ( grepl( "\\?download=[0-9]+$" , these_data_link_refs ) ) ]
+					these_data_link_title <- these_data_link_title[ !is.na( these_data_link_link ) ]
 					
-					} else {
+					these_data_link_refs <- these_data_link_refs[ !is.na( these_data_link_link ) ]
 					
-						these_data_text <- these_data_link_text[ ( grepl( "/datasets/" , these_data_link_refs ) & !grepl( "/page/" , these_data_link_refs ) ) ]
+					these_data_link_link <- these_data_link_link[ !is.na( these_data_link_link ) ]
 					
-						these_data_refs <- these_data_link_refs[ ( grepl( "/datasets/" , these_data_link_refs ) & !grepl( "/page/" , these_data_link_refs ) ) ]
+					
+					
+					if( length( these_data_link_refs ) > 0 ){
+						
+						this_catalog <-
+							data.frame(
+								full_url = these_data_link_link ,
+								name = these_data_link_title ,
+								download_id = gsub( "(.*)\\((.*)\\)" , "\\2" , these_data_link_refs ) ,
+								year = year_link_text[ year_num ] ,
+								topic = ra_link_text[ topic_num ] ,
+								stringsAsFactors = FALSE
+							)
+						
+						this_catalog[ this_catalog$topic == this_catalog$year , 'year' ] <- gsub( "(.*)([0-9][0-9][0-9][0-9])(.*)" , "\\2" , this_catalog[ this_catalog$topic == this_catalog$year , 'name' ] )
+						
+						# this_catalog[ !grepl( "^[0-9][0-9][0-9][0-9]$" , this_catalog$year ) , 'year' ] <- NA
+						
+						# keep only datasets with dl-links for now
+						# this_catalog <- subset( this_catalog , these_data_link_link != '' )
+						
+						catalog <- rbind( catalog , this_catalog )
+						
+						cat( paste0( "loading " , data_name , " catalog from " , these_data_webpage , "\r\n\n" ) )
 					
 					}
 					
-					these_data_text <- lapply( strsplit( these_data_text , "\n" ) , function( z ) { a <- stringr::str_trim( z ) ; a[ a!='' & !grepl("^[A-z]+ [0-9]+, [0-9][0-9][0-9][0-9]$" , a ) ] } )
-					
-					these_data_info <- if( all( sapply( these_data_text , length ) >= 2 ) ) sapply( these_data_text , "[[" , 2 ) else NA
-					
-					these_data_text <- these_data_text[ these_data_refs != year_link_refs[ year_num ] ]
-					these_data_info <- these_data_info[ these_data_refs != year_link_refs[ year_num ] ]
-					these_data_refs <- these_data_refs[ these_data_refs != year_link_refs[ year_num ] ]
-					
-					for( incomplete_url in which( grepl( year_link_refs[ year_num ] , these_data_refs ) ) ){
-					
-						# this_data_page <- xml2::read_html( these_data_refs[ incomplete_url ] )
-							
-						# input_tags <- rvest::html_nodes( this_data_page , "input" )
-							
-						# tag_names <- rvest::html_attr( input_tags , "name" )
-						
-						# tag_values <- rvest::html_attr( input_tags , "value" )
-						
-						# these_data_refs[ incomplete_url ] <- gsub( year_link_refs[ year_num ] , "" , paste0( these_data_refs[ incomplete_url ] , "?download=" , tag_values[ tag_names %in% "download_id" ] ) )
-						
-						these_data_refs[ incomplete_url ] <- gsub( year_link_refs[ year_num ] , "" , paste0( these_data_refs[ incomplete_url ] , "?submitted" ) )
-						
-					}
-					
-					
-					this_catalog <-
-						data.frame(
-							full_url = paste0( year_link_refs[ year_num ] , these_data_refs ) ,
-							name = sapply( these_data_text , '[[' , 1 ) ,
-							download_id = gsub( "(.*)\\?download=" , "" , these_data_refs ) ,
-							year = year_link_text[ year_num ] ,
-							topic = ra_link_text[ topic_num ] ,
-							info = these_data_info ,
-							stringsAsFactors = FALSE
-						)
-					
-					this_catalog[ this_catalog$topic == this_catalog$year , 'year' ] <- gsub( "(.*)([0-9][0-9][0-9][0-9])(.*)" , "\\2" , this_catalog[ this_catalog$topic == this_catalog$year , 'name' ] )
-					
-					this_catalog[ !grepl( "^[0-9][0-9][0-9][0-9]$" , this_catalog$year ) , 'year' ] <- NA
-					
-					catalog <- rbind( catalog , this_catalog )
-					
-					cat( paste0( "loading " , data_name , " catalog from " , these_data_webpage , "\r\n\n" ) )
-
 				}
 
 			}
