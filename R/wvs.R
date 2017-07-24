@@ -108,10 +108,10 @@ lodown_wvs <-
 
 			response <- wvs_appreq( catalog[ i , 'full_url' ] , the_cookie = my_cookie )
 			
-			writeBin(response$content, tf )
+			writeBin( response$content , tf )
 
 			# extract the filename from the website's response header
-			this_fn <- basename( response$url )
+			this_fn <- basename( response$url ) ; rm( response ) ; gc()
 
 			# correct filenames for WVS longitudinal documents as of 2015-05-09
 			if(catalog[ i , 'wave' ] == -1 & this_fn == "")	this_fn = "WVS_EVS_Integrated_Dictionary_Codebook v_2014_09_22.xls"
@@ -180,7 +180,7 @@ lodown_wvs <-
 					
 				} else file.copy( unzipped_files , paste0( catalog[ i , 'output_folder' ] , "/" , basename( unzipped_files ) ) )
 
-				suppressWarnings( rm( x ) )				
+				suppressWarnings( rm( x ) ; gc() )				
 				
 				suppressWarnings( rm( list = dfn ) )
 				
