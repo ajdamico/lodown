@@ -170,7 +170,7 @@ lodown_dhs <-
 			unzipped_files <- unzip_warn_fail( catalog[ i , 'output_filename' ] , exdir = catalog[ i , 'output_folder' ] )
 
 			# figure out the correct location for the rds
-			rds_name <- tolower( paste0( gsub( "\\.zip" , ".rds" , catalog[ i , 'output_filename' ] ) ) )
+			rds_name <- gsub( "\\.zip" , ".rds" , catalog[ i , 'output_filename' ] )
 			
 			# and now, if there's a stata file, import it!
 			if ( any( st <- grepl( "\\.dta$" , tolower( unzipped_files ) ) ) ){
