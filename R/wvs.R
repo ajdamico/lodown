@@ -129,10 +129,22 @@ lodown_wvs <-
 				stopifnot ( length( unzipped_files ) == 1 | !( grepl( 'stata_dta|spss|rdata' , this_fn ) ) ) 
 
 				# if it's a stata file, import with `read.dta`
-				if( grepl( 'stata_dta' , tolower( this_fn ) ) ) try( x <- foreign::read.dta( unzipped_files , convert.factors = FALSE ) , silent = TRUE )
+				if( grepl( 'stata_dta' , tolower( this_fn ) ) ){
+				
+					attempt_one <- try( x <- data.frame( haven::read_dta( unzipped_files ) ) , silent = TRUE )
+				
+					if( class( attempt_one ) == 'try-error' ) try( x <- foreign::read.dta( unzipped_files , convert.factors = FALSE ) , silent = TRUE )
+					
+				}
 				
 				# if it's an spss file, import with `read.spss`
-				if( grepl( 'spss' , tolower( this_fn ) ) ) try( x <- foreign::read.spss( unzipped_files , to.data.frame = TRUE , use.value.labels = FALSE ) , silent = TRUE )
+				if( grepl( 'spss' , tolower( this_fn ) ) ){
+
+					attempt_one <- try( x <- data.frame( haven::read_sav( unzipped_files ) ) , silent = TRUE )
+				
+					if( class( attempt_one ) == 'try-error' ) try( x <- foreign::read.spss( unzipped_files , to.data.frame = TRUE , use.value.labels = FALSE ) , silent = TRUE )
+					
+				}
 				
 				# if it's an r data file, hey the work has been done for you!
 				if( grepl( 'rdata' , tolower( this_fn ) ) ){
