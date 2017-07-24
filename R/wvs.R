@@ -89,6 +89,14 @@ get_catalog_wvs <-
 			catalog[ this_entry , 'full_url' ] <- wvs_getFileById( catalog[ this_entry , 'this_id' ] , my_cookie )
 			
 		}
+		
+		
+
+		# universally dump spss files
+		catalog <- subset( catalog , !grepl( "_spss_|_sas_" , full_url ) )
+		
+		# only grab the r longitudinal file
+		catalog <- subset( catalog , !grepl( "Longitudinal" , full_url , ignore.case = TRUE ) | !grepl( "_spss_|_stata_|_sas_" , full_url ) )
 
 		catalog$output_folder <- paste0( output_dir , ifelse( catalog$wave == -1 , "/longitudinal/" , paste0( "/wave " , catalog$wave , "/" ) ) )
 		
@@ -194,7 +202,7 @@ lodown_wvs <-
 			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'output_folder' ] , "'\r\n\n" ) )
 
 		}
-
+		
 		catalog
 
 	}
