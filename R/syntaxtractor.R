@@ -105,6 +105,7 @@ syntaxtractor <-
 					# following two lines might include usernames/passwords
 					if( grepl( "your_" , rmd_page[ lodown_command_line + 1 ] ) ) rmd_page[ lodown_command_line + 1 ] <- ""
 					if( grepl( "your_" , rmd_page[ lodown_command_line + 2 ] ) ) rmd_page[ lodown_command_line + 2 ] <- ""
+					if( grepl( "your_" , rmd_page[ lodown_command_line + 3 ] ) ) rmd_page[ lodown_command_line + 3 ] <- ""
 					
 				}
 			
