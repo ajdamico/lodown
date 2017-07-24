@@ -147,7 +147,7 @@ lodown_hrs <-
 			# download the file
 			this_file <- cachaca( catalog[ i , "full_url" ] , FUN = httr::GET , filesize_fun = 'unzip_verify' )
 
-			writeBin( httr::content( this_file , "raw" ) , catalog[ i , "output_filename" ] )
+			writeBin( httr::content( this_file , "raw" ) , catalog[ i , "output_filename" ] ) ; rm( this_file ) ; gc()
 			
 			if( !is.na( catalog[ i , 'output_folder' ] ) ){
 		
@@ -168,6 +168,8 @@ lodown_hrs <-
 						catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , nrow( x ) , na.rm = TRUE )
 						
 						saveRDS( x , file = paste0( catalog[ i , 'output_folder' ] , "/" , tolower( gsub( "\\.dta" , ".rds" , basename( this_stata ) , ignore.case = TRUE ) ) ) )
+						
+						rm( x ) ; gc()
 						
 					}
 
@@ -243,6 +245,8 @@ lodown_hrs <-
 
 						saveRDS( x , file = paste0( catalog[ i , 'output_folder' ] , "/" , tolower( gsub( "\\.da" , ".rds" , basename( this_dat ) , ignore.case = TRUE ) ) ) )
 
+						rm( x ) ; gc()
+						
 					}
 					
 				
