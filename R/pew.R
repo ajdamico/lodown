@@ -86,7 +86,7 @@ get_catalog_pew <-
 						# this_catalog[ !grepl( "^[0-9][0-9][0-9][0-9]$" , this_catalog$year ) , 'year' ] <- NA
 						
 						# keep only datasets with dl-links for now
-						# this_catalog <- subset( this_catalog , these_data_link_link != '' )
+						this_catalog <- subset( this_catalog , these_data_link_link != '' )
 						
 						catalog <- rbind( catalog , this_catalog )
 						
@@ -118,49 +118,11 @@ lodown_pew <-
 	function( data_name = "pew" , catalog , ... ){
 
 		tf <- tempfile()
-
-		
-		if( !( 'your_name' %in% names(list(...)) ) ) stop( paste0( "`your_name` parameter must be specified.  review terms at " , catalog[ 1 , "full_url" ] ) )
-		if( !( 'your_org' %in% names(list(...)) ) ) stop( paste0( "`your_org` parameter must be specified.  review terms at " , catalog[ 1 , "full_url" ] ) )
-		if( !( 'your_phone' %in% names(list(...)) ) ) stop( paste0( "`your_phone` parameter must be specified.  review terms at " , catalog[ 1 , "full_url" ] )  )
-		if( !( 'your_email' %in% names(list(...)) ) ) stop( paste0( "`your_email` parameter must be specified.  review terms at " , catalog[ 1 , "full_url" ] ) )
-		if( !( 'agree_to_terms' %in% names(list(...)) ) ) stop( paste0( "`agree_to_terms` parameter must be `TRUE`.  review terms at " , catalog[ 1 , "full_url" ] ) )
-
-		your_name <- list(...)[["your_name"]]
-		your_org <- list(...)[["your_org"]]
-		your_phone <- list(...)[["your_phone"]]
-		your_email <- list(...)[["your_email"]]
-		agree_to_terms <- list(...)[["agree_to_terms"]]
-
-		authentication_list <-
-			list( 
-				Name=your_name , 
-				Title= "" , 
-				Organization=your_org , 
-				Address1="" , 
-				Address2="" ,
-				City="" ,
-				State="" , 
-				Zip="", 
-				Phone=your_phone , 
-				Email=your_email , 
-				Human="" , 
-				Agreement=if(agree_to_terms)"Y"else"N" , 
-				Action="Post" 
-			)
 		
 		for ( i in seq_len( nrow( catalog ) ) ){
 
-			this_valid_url <- paste0( catalog[ i , "full_url" ] , "&valid=y" )
+			cachaca( catalog[ i , 'full_url' ] , tf , mode = 'wb' )
 			
-			this_authentication_list <- c( authentication_list , list( download_id = catalog[ i , "download_id" ] ) )
-			
-			resp <- httr::POST( this_valid_url , body = this_authentication_list )
-		
-			this_file <- cachaca( resp$url , FUN = httr::GET )
-			
-			writeBin( this_file$content , tf )
-
 			if( grepl( "\\.zip$" , resp$url , ignore.case = TRUE ) ){
 				
 				unzipped_files <- unzip_warn_fail( tf , exdir = catalog[ i , "output_folder" ] , junkpaths = TRUE )
