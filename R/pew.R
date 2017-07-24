@@ -123,7 +123,7 @@ lodown_pew <-
 
 			cachaca( catalog[ i , 'full_url' ] , tf , mode = 'wb' )
 			
-			if( grepl( "\\.zip$" , resp$url , ignore.case = TRUE ) ){
+			if( grepl( "\\.zip$" , catalog[ i , 'full_url' ] , ignore.case = TRUE ) ){
 				
 				unzipped_files <- unzip_warn_fail( tf , exdir = catalog[ i , "output_folder" ] , junkpaths = TRUE )
 
@@ -137,7 +137,7 @@ lodown_pew <-
 							
 			} else {
 				
-				sav_files <- paste0( catalog[ i , "output_folder" ] , "/" , gsub( "%20" , " " , basename( resp$url ) ) )
+				sav_files <- paste0( catalog[ i , "output_folder" ] , "/" , gsub( "%20" , " " , basename( catalog[ i , 'full_url' ] ) ) )
 				
 				file.copy( tf , sav_files )
 				
