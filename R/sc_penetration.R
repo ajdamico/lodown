@@ -78,16 +78,15 @@ lodown_sc_penetration <-
 				
 				x <- unique( x )
 
-				x$medicare_beneficiaries <- as.numeric( gsub( "," , "" , x$Eligibles ) )
-
-				x$enrollees <- as.numeric( gsub( "," , "" , x$Enrolled ) )
-
-				x$penetration <- as.numeric( gsub( "\\%" , "" , x$Penetration ) )
-				
-				# convert all column names to lowercase
 				names( x ) <- tolower( names( x ) )
-
+				
 				names( x ) <- gsub( "\\." , "_" , names( x ) )
+
+				x$eligibles <- as.numeric( gsub( "," , "" , x$eligibles ) )
+
+				x$enrolled <- as.numeric( gsub( "," , "" , x$enrolled ) )
+
+				x$penetration <- as.numeric( gsub( "\\%" , "" , x$penetration ) )
 				
 				this_result <- rbind( this_result , x )
 
