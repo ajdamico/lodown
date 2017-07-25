@@ -16,7 +16,7 @@ get_catalog_ma_sc_penetration <-
 
 		this_catalog <-
 		  data.frame(
-			  output_filename = paste0( output_dir , "/ma sc penetration " , all_dates[ 1 ] , " to " , all_dates[ length( all_dates ) ] , ".rds" ) ,
+			  output_filename = paste0( output_dir , "/ma sc penetration.rds" ) ,
 			  full_url = as.character( all_links ) ,
 			  year_month = all_dates ,
 			  stringsAsFactors = FALSE
@@ -64,7 +64,7 @@ lodown_ma_sc_penetration <-
 
 				x <- data.frame( readr::read_csv( grep( "State_County" , unzipped_files , value = TRUE ) , guess_max = 100000 ) )
 
-				x$this_date <- these_entries[ i , 'year_month' ]
+				x$year_month <- these_entries[ i , 'year_month' ]
 				
 				x <- unique( x )
 

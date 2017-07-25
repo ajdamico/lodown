@@ -66,15 +66,15 @@ lodown_mapd_cpsc <-
 		names( this_enr ) <- gsub( "SSA.Code" , "SSA.State.County.Code" , names( this_enr ) , fixed = TRUE )
 		names( this_enr ) <- gsub( "FIPS.Code" , "FIPS.State.County.Code" , names( this_enr ) , fixed = TRUE )
 
-		this_cont$this_date <- catalog[ i , 'year_month' ]
-		this_enr$this_date <- catalog[ i , 'year_month' ]
+		this_cont$year_month <- catalog[ i , 'year_month' ]
+		this_enr$year_month <- catalog[ i , 'year_month' ]
 		
 		this_enr$enrolled <- as.numeric( gsub( "," , "" , this_enr$Enrollment ) )
 		
 		this_enr$Plan.ID <- as.numeric( this_enr$Plan.ID )
 		this_cont$Plan.ID <- as.numeric( this_cont$Plan.ID )
 		
-		this_enr <- this_enr[ , c( 'this_date' , 'Contract.ID' , 'Plan.ID' , 'FIPS.State.County.Code' , 'enrolled' ) ]
+		this_enr <- this_enr[ , c( 'year_month' , 'Contract.ID' , 'Plan.ID' , 'FIPS.State.County.Code' , 'enrolled' ) ]
 		
 		this_enr <- unique( this_enr )
 		
