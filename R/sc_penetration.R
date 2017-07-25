@@ -1,43 +1,53 @@
-get_catalog_ma_sc_penetration <-
-	function( data_name = "ma_sc_penetration" , output_dir , ... ){
+get_catalog_sc_penetration <-
+	function( data_name = "sc_penetration" , output_dir , ... ){
 
-		pene_url <- "https://www.cms.gov/Research-Statistics-Data-and-Systems/Statistics-Trends-and-Reports/MCRAdvPartDEnrolData/MA-State-County-Penetration.html"
+		catalog <- NULL
+	
+		for( ma_pd in c( "MA" , "PDP" ) ){
+		
+			pene_url <- paste0( "https://www.cms.gov/Research-Statistics-Data-and-Systems/Statistics-Trends-and-Reports/MCRAdvPartDEnrolData/" , ma_pd , "-State-County-Penetration.html" )
 
-		all_dates <- rvest::html_table( xml2::read_html( pene_url ) )
+			all_dates <- rvest::html_table( xml2::read_html( pene_url ) )
 
-		all_dates <- all_dates[[1]][ , "Report Period" ]
+			all_dates <- all_dates[[1]][ , "Report Period" ]
 
-		all_links <- rvest::html_nodes( xml2::read_html( pene_url ) , xpath = '//td/a' )
+			all_links <- rvest::html_nodes( xml2::read_html( pene_url ) , xpath = '//td/a' )
 
-		prefix <- "https://www.cms.gov/"
+			prefix <- "https://www.cms.gov/"
 
-		all_links <- gsub( '<a href=\"' , prefix , all_links )
-		all_links <- gsub( "\">(.*)" , "" , all_links )
+			all_links <- gsub( '<a href=\"' , prefix , all_links )
+			all_links <- gsub( "\">(.*)" , "" , all_links )
 
-		this_catalog <-
-		  data.frame(
-			  output_filename = paste0( output_dir , "/ma sc penetration.rds" ) ,
-			  full_url = as.character( all_links ) ,
-			  year_month = all_dates ,
-			  stringsAsFactors = FALSE
-		  )
+			this_catalog <-
+			  data.frame(
+				  output_filename = paste0( output_dir , "/" , tolower( ma_pd ) , "_sc penetration.rds" ) ,
+				  full_url = as.character( all_links ) ,
+				  year_month = all_dates ,
+				  stringsAsFactors = FALSE
+			  )
 
-		for( this_row in seq( nrow( this_catalog ) ) ){
+			for( this_row in seq( nrow( this_catalog ) ) ){
+				
+				link_text <- readLines( this_catalog[ this_row , 'full_url' ] )
+				link_line <- grep( "zip" , link_text , value = TRUE )
+				link_line <- gsub( '(.*) href=\"' , "" , gsub( '(.*) href=\"/' , prefix , link_line ) )
+				this_catalog[ this_row , 'full_url' ] <- gsub( '\">(.*)' , "" , link_line )
+
+			}
+	
+			this_catalog$ma_pd <- ma_pd
 			
-			link_text <- readLines( this_catalog[ this_row , 'full_url' ] )
-			link_line <- grep( "zip" , link_text , value = TRUE )
-			link_line <- gsub( '(.*) href=\"' , "" , gsub( '(.*) href=\"/' , prefix , link_line ) )
-			this_catalog[ this_row , 'full_url' ] <- gsub( '\">(.*)' , "" , link_line )
-
+			catalog <- rbind( catalog , this_catalog )
+			
 		}
-	
-	
-		this_catalog[ order( this_catalog$year_month ) , ]
+		
+		catalog[ order( catalog$year_month ) , ]
+		
 	}
 
 
-lodown_ma_sc_penetration <-
-	function( data_name = "ma_sc_penetration" , catalog , ... ){
+lodown_sc_penetration <-
+	function( data_name = "sc_penetration" , catalog , ... ){
 
 		tf <- tempfile()
 
@@ -70,9 +80,9 @@ lodown_ma_sc_penetration <-
 
 				x$medicare_beneficiaries <- as.numeric( gsub( "," , "" , x$Eligibles ) )
 
-				x$medicare_advantage_enrollees <- as.numeric( gsub( "," , "" , x$Enrolled ) )
+				x$enrollees <- as.numeric( gsub( "," , "" , x$Enrolled ) )
 
-				x$medicare_advantage_penetration <- as.numeric( gsub( "\\%" , "" , x$Penetration ) )
+				x$penetration <- as.numeric( gsub( "\\%" , "" , x$Penetration ) )
 				
 				# convert all column names to lowercase
 				names( x ) <- tolower( names( x ) )

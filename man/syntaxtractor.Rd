@@ -5,7 +5,7 @@
 \title{rmarkdown syntax extractor for sisyphean perpetual testing}
 \usage{
 syntaxtractor(data_name, repo = "ajdamico/asdfreebook", ref = "master",
-  replacements = NULL, setup_test = NULL)
+  replacements = NULL, setup_test = NULL, local_comp = FALSE)
 }
 \arguments{
 \item{data_name}{a character vector with a microdata abbreviation}
