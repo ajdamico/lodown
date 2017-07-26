@@ -265,15 +265,16 @@ read_excel_metadata <- function( metadata_file , table_type ) {
 
   sheet_name <- grep( table_type, iconv( quietly_sheets( metadata_file )$result , from = "utf8" , to = "ASCII//TRANSLIT" ) , ignore.case = TRUE )
   codebook <-  data.frame( quietly_readxl( metadata_file , sheet = sheet_name , skip = 0 )$result , stringsAsFactors = FALSE )
-  codebook <- codebook [ which( codebook[ , 1 ] == "N" ): nrow(codebook) , ]
+  codebook <- codebook [ which( codebook[ , 1 ] %in% c("N" , "ORD" ) ): nrow(codebook) , ]
   colnames( codebook ) <- codebook[ 1 , ]
   codebook <- codebook[ -1 , ]
+  codebook <- codebook[ !is.na( suppressWarnings( as.integer( codebook[ , 1 ] ) ) ), ]
   colnames( codebook ) <- iconv( colnames( codebook ) , from = "utf8" , to = "ASCII//TRANSLIT" )
   codebook <- tryCatch(
     codebook <- codebook[ !is.na( codebook[ , 2 ] ) , c( "Nome da Variavel" , "Tipo" , "Tam.(1)" ) ] ,
     error = function( e ) {
 
-      possible.names <- list( c( "Nome da Variavel" , "Tipo" , "Tam. (1)" ) , c( "Nome novo da Variavel" , "Tipo" , "Tam. (1)" ), c( "Nome novo da Variavel" , "Tipo" , "Tam.(1)" ) )
+      possible.names <- list( c( "Nome da Variavel" , "Tipo" , "Tam. (1)" ) , c( "Nome novo da Variavel" , "Tipo" , "Tam. (1)" ), c( "Nome novo da Variavel" , "Tipo" , "Tam.(1)" ) , c( "NOME DA VARIAVEL" , "TIPO" , "TAMANHO" ) )
 
       for( name_set in possible.names ) {
 
@@ -294,6 +295,8 @@ read_excel_metadata <- function( metadata_file , table_type ) {
   codebook[ is.na( codebook$Tipo ) , "Tam.(1)" ] <- 4
   codebook[ grepl( "^co_curso_[1-9]" , codebook$`Nome da Variavel` ) , c( "Tipo" ) ] <- "Char"
   codebook[ grepl( "^co_curso_[1-9]" , codebook$`Nome da Variavel` ) , c( "Tam.(1)" ) ] <- 10
+  codebook[ grepl( "^dt_" , codebook$`Nome da Variavel` ) , c( "Tipo" ) ] <- "Char"
+  codebook[ grepl( "^dt_" , codebook$`Nome da Variavel` ) , c( "Tam.(1)" ) ] <- 10
 
   codebook
 
@@ -312,9 +315,13 @@ custom_extract <- function( zipfile , ext_dir , rm.main = FALSE ) {
     if ( !dir.exists( expath ) ) dir.create( expath , showWarnings = FALSE , recursive = TRUE )
   }
 
-  file.copy( from = file.path( td , new_files ) , to = file.path( ext_dir , new_files ) )
+  file.copy( from = file.path( td , new_files ) , to = file.path( ext_dir , new_files ) , recursive = TRUE )
 
-  unlink( td , recursive = TRUE )
+  if ( .Platform$OS.type == 'windows' ) {
+    unlink( td , recursive = TRUE , force = TRUE )
+  } else {
+    for ( this_file in file.path( td , new_files ) ) { file.remove( this_file ) }
+  }
 
   if ( rm.main ) { file.remove( zipfile ) }
 
