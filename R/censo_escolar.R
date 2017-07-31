@@ -68,7 +68,7 @@ lodown_censo_escolar <-
           this_sas <- file( these_tables[ j , 'sas_script' ] , 'r' , encoding = 'windows-1252' )
 
           # write the file to the disk
-          w <- iconv( readLines( this_sas ) , "" , "ASCII//TRANSLIT" , sub = " " )
+          w <- custom_strip_special( readLines( this_sas ) )
 
           close( this_sas )
 
@@ -83,6 +83,7 @@ lodown_censo_escolar <-
           w <- gsub( "VEE1412( +)/" , "VEE1412 7. /" , w )
 
           # overwrite the file on the disk with the newly de-tabbed text
+          file.remove( these_tables[ j , 'sas_script' ] )
           writeLines( w , these_tables[ j , 'sas_script' ] )
 
           x <- read_SAScii( these_tables[ j , 'data_file' ] , these_tables[ j , 'sas_script' ] , na_values = c( "" , "." ) )
@@ -249,7 +250,7 @@ remove_nonutf8_censo_escolar <-
 
     incon <- file( infile , "r" )
 
-    while( length( line <- readLines( incon , 1 , warn = FALSE ) ) > 0 ) writeLines( iconv( line , "" , "ASCII//TRANSLIT" , sub = " " ) , outcon )
+    while( length( line <- readLines( incon , 1 , warn = FALSE ) ) > 0 ) writeLines( custom_strip_special( line ) , outcon )
 
     close( incon )
 
@@ -263,13 +264,14 @@ read_excel_metadata <- function( metadata_file , table_type ) {
   quietly_sheets <- purrr::quietly(readxl::excel_sheets)
   quietly_readxl <- purrr::quietly(readxl::read_excel)
 
-  sheet_name <- grep( table_type, iconv( quietly_sheets( metadata_file )$result , from = "utf8" , to = "ASCII//TRANSLIT" ) , ignore.case = TRUE )
+  sheet_name <- grep( table_type, custom_strip_special( quietly_sheets( metadata_file )$result ) , ignore.case = TRUE )
+
   codebook <-  data.frame( quietly_readxl( metadata_file , sheet = sheet_name , skip = 0 )$result , stringsAsFactors = FALSE )
   codebook <- codebook [ which( codebook[ , 1 ] %in% c("N" , "ORD" ) ): nrow(codebook) , ]
   colnames( codebook ) <- codebook[ 1 , ]
   codebook <- codebook[ -1 , ]
   codebook <- codebook[ !is.na( suppressWarnings( as.integer( codebook[ , 1 ] ) ) ), ]
-  colnames( codebook ) <- iconv( colnames( codebook ) , from = "utf8" , to = "ASCII//TRANSLIT" )
+  colnames( codebook ) <- custom_strip_special( colnames(codebook) )
   codebook <- tryCatch(
     codebook <- codebook[ !is.na( codebook[ , 2 ] ) , c( "Nome da Variavel" , "Tipo" , "Tam.(1)" ) ] ,
     error = function( e ) {
@@ -305,7 +307,8 @@ read_excel_metadata <- function( metadata_file , table_type ) {
 
 custom_extract <- function( zipfile , ext_dir , rm.main = FALSE ) {
 
-  td <- file.path( tempdir() , "temp_unzip" )
+  # td <- file.path( tempdir() , "temp_unzip" )
+  td <- ifelse( .Platform$OS.type == 'windows' , file.path( tempdir() , "temp_unzip" ) , normalizePath( "~/temp_unzip" , mustWork = FALSE ) )
 
   archive::archive_extract( zipfile , dir = td )
 
@@ -315,16 +318,18 @@ custom_extract <- function( zipfile , ext_dir , rm.main = FALSE ) {
     if ( !dir.exists( expath ) ) dir.create( expath , showWarnings = FALSE , recursive = TRUE )
   }
 
-  file.copy( from = file.path( td , new_files ) , to = file.path( ext_dir , new_files ) , recursive = TRUE )
+  file.copy( from = file.path( td , new_files ) , to = file.path( ext_dir , new_files ) )
 
-  if ( .Platform$OS.type == 'windows' ) {
-    unlink( td , recursive = TRUE , force = TRUE )
-  } else {
-    for ( this_file in file.path( td , new_files ) ) { file.remove( this_file ) }
-  }
+  unlink( td , recursive = TRUE , force = TRUE )
 
   if ( rm.main ) { file.remove( zipfile ) }
 
   return( normalizePath( ( file.path( ext_dir , new_files ) ) , mustWork = FALSE ) )
 
+}
+
+custom_strip_special <- function(x) {
+  y <- iconv( x , from = ifelse( .Platform$OS.type == 'windows' , "utf8" , "" ) , to = "ASCII//TRANSLIT" , sub = " " )
+  y <- gsub( "'|~" , "" , y  )
+  y
 }
