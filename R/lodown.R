@@ -114,19 +114,19 @@ NULL
 #'
 #' # Current Population Survey - Annual Social and Economic Supplement
 #' # download all available microdata
-#' lodown( "cps_asec" , output_dir = file.path( path.expand( "~" ) , "CPS_ASEC" ) )
+#' lodown( "cpsasec" , output_dir = file.path( path.expand( "~" ) , "CPSASEC" ) )
 #' # download only the 2013 files
-#' cps_asec_cat <- get_catalog( "cps_asec" , 
-#' 		output_dir = file.path( path.expand( "~" ) , "CPS_ASEC" ) )
-#' lodown( "cps_asec" , cps_asec_cat[ cps_asec_cat$year == 2013 , ] )
+#' cpsasec_cat <- get_catalog( "cpsasec" , 
+#' 		output_dir = file.path( path.expand( "~" ) , "CPSASEC" ) )
+#' lodown( "cpsasec" , cps_asec_cat[ cpsasec_cat$year == 2013 , ] )
 #'
 #' # Current Population Survey - Basic Monthly
 #' # download all available microdata
-#' lodown( "cps_basic" , output_dir = file.path( path.expand( "~" ) , "CPS_BASIC" ) )
+#' lodown( "cpsbasic" , output_dir = file.path( path.expand( "~" ) , "CPSBASIC" ) )
 #' # download only the november files
-#' cps_basic_cat <- get_catalog( "cps_basic" , 
-#' 		output_dir = file.path( path.expand( "~" ) , "CPS_BASIC" ) )
-#' lodown( "cps_basic" , cps_basic_cat[ cps_basic_cat$month == 11 , ] )
+#' cpsbasic_cat <- get_catalog( "cpsbasic" , 
+#' 		output_dir = file.path( path.expand( "~" ) , "CPSBASIC" ) )
+#' lodown( "cpsbasic" , cpsbasic_cat[ cpsbasic_cat$month == 11 , ] )
 #'
 #' # Demographic and Health Surveys
 #' # download all available microdata
