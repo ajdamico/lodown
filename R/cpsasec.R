@@ -1,5 +1,5 @@
-get_catalog_cps_asec <-
-	function( data_name = "cps_asec" , output_dir , ... ){
+get_catalog_cpsasec <-
+	function( data_name = "cpsasec" , output_dir , ... ){
 
 		cps_ftp <- "http://thedataweb.rm.census.gov/ftp/cps_ftp.html#cpsmarch"
 
@@ -14,33 +14,28 @@ get_catalog_cps_asec <-
 		catalog <-
 			data.frame(
 				year = asec_years ,
-				db_tablename = paste0( "asec" , substr( asec_years , 3 , nchar( asec_years ) ) ) ,
-				dbfolder = paste0( output_dir , "/MonetDB" ) ,
+				output_filename = file.path( output_dir , paste0( "cpsasec" , substr( asec_years , 3 , nchar( asec_years ) ) , ".rds" ) ) ,
 				stringsAsFactors = FALSE
 			)
 
 		# overwrite 2014.38 with three-eights
-		catalog$db_tablename <- gsub( "\\.38" , "_3x8" , catalog$db_tablename )
+		catalog$output_filename <- gsub( "\\.38" , "_3x8" , catalog$output_filename )
 
 		# overwrite 2014.58 with three-eights
-		catalog$db_tablename <- gsub( "\\.58" , "_5x8" , catalog$db_tablename )
+		catalog$output_filename <- gsub( "\\.58" , "_5x8" , catalog$output_filename )
 
 		catalog
 
 	}
 
 
-lodown_cps_asec <-
-	function( data_name = "cps_asec" , catalog , ... ){
+lodown_cpsasec <-
+	function( data_name = "cpsasec" , catalog , ... ){
 
 		tf <- tempfile()
 
-
 		for ( i in seq_len( nrow( catalog ) ) ){
 					
-			# open the connection to the monetdblite database
-			db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog[ i , 'dbfolder' ] )
-
 			# # # # # # # # # # # #
 			# load the main file  #
 			# # # # # # # # # # # #
@@ -57,37 +52,35 @@ lodown_cps_asec <-
 				cachaca( "https://www.census.gov/housing/extract_files/data%20extracts/cpsasec14/family.sas7bdat" , tf2 , mode = 'wb' , filesize_fun = 'httr' )
 				cachaca( "https://www.census.gov/housing/extract_files/data%20extracts/cpsasec14/person.sas7bdat" , tf3 , mode = 'wb' , filesize_fun = 'httr' )
 
-				hhld <- data.frame( haven::read_sas( tf1 ) )
-				names( hhld ) <- tolower( names( hhld ) )
-				for ( j in names( hhld ) ) hhld[ , j ] <- as.numeric( hhld[ , j ] )
-				hhld$hsup_wgt <- hhld$hsup_wgt / 100
-				DBI::dbWriteTable( db , 'hhld' , hhld )
-				rm( hhld ) ; gc() ; file.remove( tf1 )
 				
 				fmly <- data.frame( haven::read_sas( tf2 ) )
 				names( fmly ) <- tolower( names( fmly ) )
 				for ( j in names( fmly ) ) fmly[ , j ] <- as.numeric( fmly[ , j ] )
 				fmly$fsup_wgt <- fmly$fsup_wgt / 100
-				DBI::dbWriteTable( db , 'family' , fmly )
-				rm( fmly ) ; gc() ; file.remove( tf2 )
+				file.remove( tf2 )
 				
 				prsn <- data.frame( haven::read_sas( tf3 ) )
+				number_of_records <- nrow( prsn )
 				names( prsn ) <- tolower( names( prsn ) )
 				for ( j in names( prsn ) ) prsn[ , j ] <- as.numeric( prsn[ , j ] )
 				for ( j in c( 'marsupwt' , 'a_ernlwt' , 'a_fnlwgt' ) ) prsn[ , j ] <- prsn[ , j ] / 100
-				DBI::dbWriteTable( db , 'person' , prsn )
-				rm( prsn ) ; gc() ; file.remove( tf3 )
+				names( fmly )[ names( fmly ) == 'fh_seq' ] <- 'h_seq'
+				names( prsn )[ names( prsn ) == 'ph_seq' ] <- 'h_seq'
+				names( prsn )[ names( prsn ) == 'phf_seq' ] <- 'ffpos'
+				x <- merge( fmly , prsn )
+				rm( fmly , prsn ) ; gc() ; file.remove( tf3 )
 
-				mmf <- DBI::dbListFields( db , 'person' )[ !( DBI::dbListFields( db , 'person' ) %in% DBI::dbListFields( db , 'family' ) ) ]
-				DBI::dbSendQuery( db , paste( "create table f_p as select a.* ," , paste( "b." , mmf , sep = "" , collapse = "," ) , "from family as a inner join person as b on a.fh_seq = b.ph_seq AND a.ffpos = b.phf_seq" ) )
-			
-				mmf <- DBI::dbListFields( db , 'f_p' )[ !( DBI::dbListFields( db , 'f_p' ) %in% DBI::dbListFields( db , 'hhld' ) ) ]
-				DBI::dbSendQuery( db , paste( "create table hfpz as select a.* ," , paste( "b." , mmf , sep = "" , collapse = "," ) , "from hhld as a inner join f_p as b on a.h_seq = b.ph_seq" ) )
-
-				stopifnot( DBI::dbGetQuery( db , 'select count(*) from hfpz' )[ 1 , 1 ] == DBI::dbGetQuery( db , 'select count(*) from person' )[ 1 , 1 ] )
-
-				DBI::dbRemoveTable( db , 'f_p' )
+				hhld <- data.frame( haven::read_sas( tf1 ) )
+				names( hhld ) <- tolower( names( hhld ) )
+				for ( j in names( hhld ) ) hhld[ , j ] <- as.numeric( hhld[ , j ] )
+				hhld$hsup_wgt <- hhld$hsup_wgt / 100
+				x <- merge( hhld , x )
+				rm( hhld ) ; gc() ; file.remove( tf1 )
 				
+				names( x ) <- toupper( names( x ) )
+				
+				stopifnot( nrow( x ) == number_of_records )
+
 			} else {
 				
 				# note: this CPS March Supplement ASCII (fixed-width file) contains household-, family-, and person-level records.
@@ -137,13 +130,13 @@ lodown_cps_asec <-
 
 				} else {
 					
-					if( catalog[ i , 'year' ] >= 2016 ) sas_ris <- cps_asec_dd_parser( paste0( "http://thedataweb.rm.census.gov/pub/cps/march/Asec" , catalog[ i , 'year' ] , "_Data_Dict_Full.txt" ) )
-					if( catalog[ i , 'year' ] == 2015 ) sas_ris <- cps_asec_dd_parser( "http://thedataweb.rm.census.gov/pub/cps/march/asec2015early_pubuse.dd.txt" )
-					if( catalog[ i , 'year' ] == 2014.38 ) sas_ris <- cps_asec_dd_parser( "http://thedataweb.rm.census.gov/pub/cps/march/asec2014R_pubuse.dd.txt" )
-					if( catalog[ i , 'year' ] == 2014.58 ) sas_ris <- cps_asec_dd_parser( "http://thedataweb.rm.census.gov/pub/cps/march/asec2014early_pubuse.dd.txt" )
-					if( catalog[ i , 'year' ] == 2013 ) sas_ris <- cps_asec_dd_parser( "http://thedataweb.rm.census.gov/pub/cps/march/asec2013early_pubuse.dd.txt" )
-					if( catalog[ i , 'year' ] == 2012 ) sas_ris <- cps_asec_dd_parser( "http://thedataweb.rm.census.gov/pub/cps/march/asec2012early_pubuse.dd.txt" )
-					if( catalog[ i , 'year' ] == 2011 ) sas_ris <- cps_asec_dd_parser( "http://thedataweb.rm.census.gov/pub/cps/march/asec2011_pubuse.dd.txt" )
+					if( catalog[ i , 'year' ] >= 2016 ) sas_ris <- cpsasec_dd_parser( paste0( "http://thedataweb.rm.census.gov/pub/cps/march/Asec" , catalog[ i , 'year' ] , "_Data_Dict_Full.txt" ) )
+					if( catalog[ i , 'year' ] == 2015 ) sas_ris <- cpsasec_dd_parser( "http://thedataweb.rm.census.gov/pub/cps/march/asec2015early_pubuse.dd.txt" )
+					if( catalog[ i , 'year' ] == 2014.38 ) sas_ris <- cpsasec_dd_parser( "http://thedataweb.rm.census.gov/pub/cps/march/asec2014R_pubuse.dd.txt" )
+					if( catalog[ i , 'year' ] == 2014.58 ) sas_ris <- cpsasec_dd_parser( "http://thedataweb.rm.census.gov/pub/cps/march/asec2014early_pubuse.dd.txt" )
+					if( catalog[ i , 'year' ] == 2013 ) sas_ris <- cpsasec_dd_parser( "http://thedataweb.rm.census.gov/pub/cps/march/asec2013early_pubuse.dd.txt" )
+					if( catalog[ i , 'year' ] == 2012 ) sas_ris <- cpsasec_dd_parser( "http://thedataweb.rm.census.gov/pub/cps/march/asec2012early_pubuse.dd.txt" )
+					if( catalog[ i , 'year' ] == 2011 ) sas_ris <- cpsasec_dd_parser( "http://thedataweb.rm.census.gov/pub/cps/march/asec2011_pubuse.dd.txt" )
 
 				}
 					
@@ -258,78 +251,66 @@ lodown_cps_asec <-
 				close( outcon.xwalk )
 				close( incon , add = T )
 
+				number_of_records <- R.utils::countLines( tf.xwalk )
 
 				# the 2011 SAS file produced by the National Bureau of Economic Research (NBER)
 				# begins each INPUT block after lines 988, 1121, and 1209, 
 				# so skip SAS import instruction lines before that.
 				# NOTE that this 'beginline' parameters of 988, 1121, and 1209 will change for different years.
 
-				if( catalog[ i , 'year' ] < 2011 ){
-					# store CPS ASEC march household records as a MonetDB database
-					read_SAScii_monetdb ( 
-						tf.household , 
-						CPS.ASEC.mar.SAS.read.in.instructions , 
-						beginline = hh_beginline , 
-						zipped = FALSE ,
-						tl = TRUE ,
-						tablename = 'household' ,
-						connection = db
-					)
-
-					# store CPS ASEC march family records as a MonetDB database
-					read_SAScii_monetdb ( 
-						tf.family , 
-						CPS.ASEC.mar.SAS.read.in.instructions , 
-						beginline = fa_beginline , 
-						zipped = FALSE ,
-						tl = TRUE ,
-						tablename = 'family' ,
-						connection = db
-					)
-
-					# store CPS ASEC march person records as a MonetDB database
-					read_SAScii_monetdb ( 
-						tf.person , 
-						CPS.ASEC.mar.SAS.read.in.instructions , 
-						beginline = pe_beginline , 
-						zipped = FALSE ,
-						tl = TRUE ,
-						tablename = 'person' ,
-						connection = db
-					)
+				if( catalog[ i , 'year' ] < 2011 ) {
+					hhld <-
+						read_SAScii(
+							tf.household , 
+							CPS.ASEC.mar.SAS.read.in.instructions , 
+							beginline = hh_beginline , 
+							zipped = FALSE
+						)
+					
+					fmly <-
+						read_SAScii(
+							tf.family , 
+							CPS.ASEC.mar.SAS.read.in.instructions , 
+							beginline = fa_beginline , 
+							zipped = FALSE
+						)
+					
+					prsn <-
+						read_SAScii(
+							tf.person , 
+							CPS.ASEC.mar.SAS.read.in.instructions , 
+							beginline = pe_beginline , 
+							zipped = FALSE
+						)
+					
 				} else {
-					# store CPS ASEC march household records as a MonetDB database
-					read_SAScii_monetdb ( 
-						tf.household , 
-						sas_stru = sas_ris[[1]] ,
-						zipped = FALSE ,
-						tl = TRUE ,
-						tablename = 'household' ,
-						connection = db
-					)
-
-					# store CPS ASEC march family records as a MonetDB database
-					read_SAScii_monetdb ( 
-						tf.family , 
-						sas_stru = sas_ris[[2]] ,
-						zipped = FALSE ,
-						tl = TRUE ,
-						tablename = 'family' ,
-						connection = db
-					)
-
-					# store CPS ASEC march person records as a MonetDB database
-					read_SAScii_monetdb ( 
-						tf.person , 
-						sas_stru = sas_ris[[3]] ,
-						zipped = FALSE ,
-						tl = TRUE ,
-						tablename = 'person' ,
-						connection = db
-					)
-				}
-
 				
+					hhld <-
+						read_SAScii(
+							tf.household , 
+							sas_stru = sas_ris[[1]] , 
+							beginline = hh_beginline , 
+							zipped = FALSE
+						)
+					
+					fmly <-
+						read_SAScii(
+							tf.family , 
+							sas_stru = sas_ris[[2]]  , 
+							beginline = fa_beginline , 
+							zipped = FALSE
+						)
+					
+					prsn <-
+						read_SAScii(
+							tf.person , 
+							sas_stru = sas_ris[[3]]  , 
+							beginline = pe_beginline , 
+							zipped = FALSE
+						)
+					
+					
+				}
 
 				# create a fake sas input script for the crosswalk..
 				xwalk.sas <-
@@ -344,38 +325,26 @@ lodown_cps_asec <-
 				writeLines ( xwalk.sas , con = xwalk.sas.tf )
 
 				
-				# store CPS ASEC march xwalk records as a MonetDB database
-				read_SAScii_monetdb ( 
-					tf.xwalk , 
-					xwalk.sas.tf , 
-					zipped = FALSE ,
-					tl = TRUE ,
-					tablename = 'xwalk' ,
-					connection = db
-				)
+				xwalk <-
+					read_SAScii ( 
+						tf.xwalk , 
+						xwalk.sas.tf , 
+						zipped = FALSE
+					)
 				
-				# clear up RAM
-				gc()
-
+				x <- merge( xwalk , hhld ) ; rm( xwalk , hhld ) ; gc()
+				names( fmly )[ names( fmly ) == 'FH_SEQ' ] <- 'H_SEQ'
+				x <- merge( x , fmly ) ; rm( fmly ) ; gc()
+				names( prsn )[ names( prsn ) == 'PH_SEQ' ] <- 'H_SEQ'
+				x <- merge( x , prsn )
 				
-				# create the merged file
-				DBI::dbSendQuery( db , "create table h_xwalk as select a.ffpos , a.pppos , b.* from xwalk as a inner join household as b on a.h_seq = b.h_seq" )
-				
-				mmf <- DBI::dbListFields( db , 'family' )[ !( DBI::dbListFields( db , 'family' ) %in% DBI::dbListFields( db , 'h_xwalk' ) ) ]
-				DBI::dbSendQuery( db , paste( "create table h_f_xwalk as select a.* , " , paste( "b." , mmf , sep = "" , collapse = "," ) , " from h_xwalk as a inner join family as b on a.h_seq = b.fh_seq AND a.ffpos = b.ffpos" ) )
-			
-				mmf <- DBI::dbListFields( db , 'person' )[ !( DBI::dbListFields( db , 'person' ) %in% DBI::dbListFields( db , 'h_f_xwalk' ) ) ]
-				DBI::dbSendQuery( db , paste( "create table hfpz as select a.* , " , paste( "b." , mmf , sep = "" , collapse = "," ) , " from h_f_xwalk as a inner join person as b on a.h_seq = b.ph_seq AND a.pppos = b.pppos" ) )
+				stopifnot( nrow( x ) == number_of_records )
 			
 			}
 				
 			# tack on _anycov_ variables
 			# tack on _outtyp_ variables
 			if( catalog[ i , 'year' ] > 2013 ){
-				
-				DBI::dbSendQuery( db , "create table hfp_pac as select * from hfpz" )
-				
-				DBI::dbRemoveTable( db , 'hfpz' )
 				
 				stopifnot( catalog[ i , 'year' ] %in% c( 2016 , 2015 , 2014.58 , 2014.38 , 2014 ) )
 				
@@ -391,7 +360,7 @@ lodown_cps_asec <-
 
 					cachaca( ace , tf , mode = "wb" , filesize_fun = 'httr' )	
 
-					ac <- rbind( ac , read.fwf( tf , c( 5 , 2 , 1 ) ) )
+					ac <- rbind( ac , data.frame( readr::read_fwf( tf , readr::fwf_widths( c( 5 , 2 , 1 ) ) , col_types = 'nnn' ) ) )
 					
 				}
 
@@ -401,7 +370,7 @@ lodown_cps_asec <-
 
 					cachaca( ace , tf , mode = "wb" , filesize_fun = 'httr' )	
 
-					ac <- rbind( ac , read.fwf( tf , c( 5 , 2 , 1 ) ) )
+					ac <- rbind( ac , data.frame( readr::read_fwf( tf , readr::fwf_widths( c( 5 , 2 , 1 ) ) , col_types = 'nnn' ) ) )
 					
 				}
 				
@@ -411,7 +380,7 @@ lodown_cps_asec <-
 					
 					cachaca( ote , tf , mode = 'wb' , filesize_fun = 'httr' )
 					
-					ot <- read.fwf( tf , c( 5 , 2 , 2 , 1 ) )
+					ot <- data.frame( readr::read_fwf( tf , readr::fwf_widths( c( 5 , 2 , 2 , 1 ) ) , col_types = 'nnnn' ) )
 					
 					cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/ppint14esi_offer_ext.sas7bdat" , tf , mode = 'wb' , filesize_fun = 'httr' )
 					
@@ -426,13 +395,13 @@ lodown_cps_asec <-
 				
 					cachaca( ote , tf , mode = 'wb' , filesize_fun = 'httr' )
 					
-					ot <- read.fwf( tf , c( 5 , 2 , 2 , 1 ) )
+					ot <- data.frame( readr::read_fwf( tf , readr::fwf_widths( c( 5 , 2 , 2 , 1 ) ) , col_types = 'nnnn' ) )
 					
 					ace <- "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/asec15_currcov_extract.dat"
 				
 					cachaca( ace , tf , mode = 'wb' , filesize_fun = 'httr' )
 					
-					ac <- read.fwf( tf , c( 5 , 2 , 1 ) ) 
+					ac <- data.frame( readr::read_fwf( tf , readr::fwf_widths( c( 5 , 2 , 1 ) ) , col_types = 'nnn' ) )
 
 					cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/ppint15esi_offer_ext.sas7bdat" , tf , mode = 'wb' , filesize_fun = 'httr' )
 					
@@ -446,13 +415,13 @@ lodown_cps_asec <-
 				
 					cachaca( ote , tf , mode = 'wb' , filesize_fun = 'httr' )
 					
-					ot <- read.fwf( tf , c( 5 , 2 , 2 , 1 ) )
+					ot <- data.frame( readr::read_fwf( tf , readr::fwf_widths( c( 5 , 2 , 2 , 1 ) ) , col_types = 'nnnn' ) )
 					
 					ace <- "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2016/cps-redesign/asec16_currcov_extract.dat"
 				
 					cachaca( ace , tf , mode = 'wb' , filesize_fun = 'httr' )
 					
-					ac <- read.fwf( tf , c( 5 , 2 , 1 ) ) 
+					ac <- data.frame( readr::read_fwf( tf , readr::fwf_widths( c( 5 , 2 , 1 ) ) , col_types = 'nnn' ) )
 
 					cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/pubuse_esioffer_2016.sas7bdat" , tf , mode = 'wb' , filesize_fun = 'httr' )
 					
@@ -472,46 +441,19 @@ lodown_cps_asec <-
 				
 				ot_ac_of <- merge( ot_ac , offer , by.x = c( 'ph_seq' , 'ppposold' ) , by.y = c( 'h_seq' , 'ppposold' ) )
 				
-				DBI::dbWriteTable( db , 'ot_ac_of' , ot_ac_of )
+				x <- merge( x , ot_ac_of , by.x = c( 'H_SEQ' , 'PPPOSOLD' ) , by.y = c( "ph_seq" , "ppposold" ) )
 				
 				rm( ot , ac , ot_ac , ot_ac_of ) ; gc()
 				
-				
-				mmf <- DBI::dbListFields( db , 'ot_ac_of' )[ !( DBI::dbListFields( db , 'ot_ac_of' ) %in% DBI::dbListFields( db , 'hfp_pac' ) ) ]
-				DBI::dbSendQuery( 
-					db , 
-					paste( 
-						"create table hfp as select a.* , " , 
-						paste( "b." , mmf , sep = "" , collapse = "," ) , 
-						" from hfp_pac as a inner join ot_ac_of as b on a.h_seq = b.ph_seq AND a.ppposold = b.ppposold" 
-					)
-				)
-				
-				stopifnot( DBI::dbGetQuery( db , 'select count(*) from hfp' )[ 1 , 1 ] == DBI::dbGetQuery( db , 'select count(*) from hfp_pac' )[ 1 , 1 ] )
-				
-				DBI::dbRemoveTable( db , 'ot_ac_of' )
-				
-				DBI::dbRemoveTable( db , 'hfp_pac' )
+				stopifnot( nrow( x ) == number_of_records )
 				
 				file.remove( tf )
 			
-			} else {
-			
-				DBI::dbSendQuery( db , "create table hfp as select * from hfpz" )
-				
-				DBI::dbRemoveTable( db , 'hfpz' )
-				
 			}
 			
 			
 
 			if( catalog[ i , 'year' ] > 2004 ){
-				
-
-				# confirm that the number of records in the 2011 cps asec merged file
-				# matches the number of records in the person file
-				stopifnot( DBI::dbGetQuery( db , "select count(*) as count from hfp" ) == DBI::dbGetQuery( db , "select count(*) as count from person" ) )
-
 
 				# # # # # # # # # # # # # # # # # #
 				# load the replicate weight file  #
@@ -579,56 +521,26 @@ lodown_cps_asec <-
 				}
 				
 				# store the CPS ASEC march 2011 replicate weight file as an R data frame
-				read_SAScii_monetdb ( 
-					CPS.replicate.weight.file.location , 
-					CPS.replicate.weight.SAS.read.in.instructions , 
-					zipped = zip_file , 
-					tl = TRUE ,
-					tablename = 'rw' ,
-					connection = db
-				)
+				rw <-
+					read_SAScii( 
+						CPS.replicate.weight.file.location , 
+						CPS.replicate.weight.SAS.read.in.instructions , 
+						zipped = zip_file
+					)
 
 
 				###################################################
 				# merge cps asec file with replicate weights file #
 				###################################################
 
-				mmf <- DBI::dbListFields( db , 'rw' )[ !( DBI::dbListFields( db , 'rw' ) %in% DBI::dbListFields( db , 'hfp' ) ) ]
+				x <- merge( x , rw ) ; rm( rw ) ; gc()
 				
-				sql <- paste( "create table" , catalog[ i , 'db_tablename' ] , "as select a.* , " , paste( "b." , mmf , sep = "" , collapse = "," ) , " from hfp as a inner join rw as b on a.h_seq = b.h_seq AND a.pppos = b.pppos" )
+				stopifnot( nrow( x ) == number_of_records )
 				
-				DBI::dbSendQuery( db , sql )
-
-			} else {
-			
-				mmf <- DBI::dbListFields( db , 'person' )[ !( DBI::dbListFields( db , 'person' ) %in% DBI::dbListFields( db , 'h_f_xwalk' ) ) ]
-				
-				sql <- paste( "create table" , catalog[ i , 'db_tablename' ] , "as select a.* , " , paste( "b." , mmf , sep = "" , collapse = "," ) , " from h_f_xwalk as a inner join person as b on a.h_seq = b.ph_seq AND a.pppos = b.pppos" )
-				
-				DBI::dbSendQuery( db , sql )
-					
 			}
-				
-			# confirm that the number of records in the 2011 person file
-			# matches the number of records in the merged file
-			stopifnot( DBI::dbGetQuery( db , paste( "select count(*) as count from " , catalog[ i , 'db_tablename' ] ) ) == DBI::dbGetQuery( db , "select count(*) as count from person" ) )
-
-			# drop unnecessary tables
-			try( DBI::dbSendQuery( db , "drop table h_xwalk" ) , silent = TRUE )
-			try( DBI::dbSendQuery( db , "drop table h_f_xwalk" ) , silent = TRUE )
-			try( DBI::dbSendQuery( db , "drop table xwalk" ) , silent = TRUE )
-			DBI::dbSendQuery( db , "drop table hfp" )
-			try( DBI::dbSendQuery( db , "drop table rw" ) , silent = TRUE )
-			try( DBI::dbSendQuery( db , "drop table household" ) , silent = TRUE )
-			try( DBI::dbSendQuery( db , "drop table hhld" ) , silent = TRUE )
-			DBI::dbSendQuery( db , "drop table family" )
-			DBI::dbSendQuery( db , "drop table person" )
-
 			
-			# add a new column "one" that simply contains the number 1 for every record in the data set
-			DBI::dbSendQuery( db , paste( "ALTER TABLE" , catalog[ i , 'db_tablename' ] , "ADD one REAL" ) )
-			DBI::dbSendQuery( db , paste( "UPDATE" , catalog[ i , 'db_tablename' ] , "SET one = 1" ) )
-
+			x$one <- 1
+				
 			# # # # # # # # # # # # # # # # # # # # # # # # # #
 			# import the supplemental poverty research files  #
 			# # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -647,7 +559,7 @@ lodown_cps_asec <-
 				
 				cachaca( sp.url , tf , mode = 'wb' , filesize_fun = 'httr' )
 				
-				sp <- haven::read_sas( tf )
+				sp <- data.frame( haven::read_sas( tf ) )
 			
 				if ( catalog[ i , 'year' ] == 2014 ){
 					
@@ -655,7 +567,7 @@ lodown_cps_asec <-
 						
 					cachaca( sp.url , tf , mode = 'wb' , filesize_fun = 'httr' )
 					
-					sp2 <- haven::read_sas( tf )
+					sp2 <- data.frame( haven::read_sas( tf ) )
 				
 					sp <- rbind( sp , sp2 )
 					
@@ -663,61 +575,29 @@ lodown_cps_asec <-
 					
 				} 
 				
-				names( sp ) <- tolower( names( sp ) )
-
-				sp <- sp[ , !( names( sp ) %in% overlapping.spm.fields ) ]
-
-				DBI::dbWriteTable( db , paste0( catalog[ i , 'db_tablename' ] , "_sp" ) , sp )
+				names( sp ) <- toupper( names( sp ) )
+				
+				non_merge_cols <- setdiff( intersect( names( x ) , names( sp ) ) , c( 'H_SEQ' , 'PPPOS' ) )
+				
+				sp <- sp[ !( names( sp ) %in% non_merge_cols ) ]
+				
+				x <- merge( x , sp ) ; rm( sp ) ; gc()
 				
 				
-				rm( sp ) ; gc()
-			
-				DBI::dbSendQuery( db , paste( 'create table temp as select * from' , catalog[ i , 'db_tablename' ] ) )
-				
-				DBI::dbRemoveTable( db , catalog[ i , 'db_tablename' ] )
-				
-				mmf <- DBI::dbListFields( db , paste0( catalog[ i , 'db_tablename' ] , '_sp' ) )[ !( DBI::dbListFields( db , paste0( catalog[ i , 'db_tablename' ] , '_sp' ) ) %in% DBI::dbListFields( db , 'temp' ) ) ]
-				
-				DBI::dbSendQuery( 
-					db , 
-					paste0( 
-						"create table " , 
-						catalog[ i , 'db_tablename' ] , 
-						" as select a.* , " , paste( "b." , mmf , sep = "" , collapse = "," ) , " from temp as a inner join " ,
-						catalog[ i , 'db_tablename' ] , 
-						"_sp as b on a.h_seq = b.h_seq AND a.pppos = b.pppos" 
-					) 
-				)
-
-				stopifnot( DBI::dbGetQuery( db , paste( "select count(*) as count from " , catalog[ i , 'db_tablename' ] ) ) == DBI::dbGetQuery( db , "select count(*) as count from temp" ) )
-			
-				DBI::dbRemoveTable( db , 'temp' )
-						
 			}
 			
+			stopifnot( nrow( x ) == number_of_records )
 			
-			# remove redundant colon fields
-			ftk <- DBI::dbListFields( db , catalog[ i , 'db_tablename' ] )[ !grepl( ":" , DBI::dbListFields( db , catalog[ i , 'db_tablename' ] ) ) ]
+			catalog[ i , 'case_count' ] <- nrow( x )
 			
-			# copy over the fields-to-keep into a new table
-			DBI::dbSendQuery( db , paste( "CREATE TABLE temp AS SELECT" , paste( ftk , collapse = "," ) , "FROM" , catalog[ i , 'db_tablename' ] ) )
+			names( x ) <- tolower( names( x ) )
 			
-			# drop the original
-			DBI::dbSendQuery( db , paste( "DROP TABLE" , catalog[ i , 'db_tablename' ] ) )
+			saveRDS( x , file = catalog[ i , 'output_filename' ] ) ; rm( x ) ; gc()
 			
-			# rename the temporary table
-			DBI::dbSendQuery( db , paste( "CREATE TABLE" , catalog[ i , 'db_tablename' ] , "AS SELECT * FROM temp WITH DATA" ) )
-			DBI::dbRemoveTable( db , "temp" )
-			
-			catalog[ i , 'case_count' ] <- DBI::dbGetQuery( db , paste0( "SELECT COUNT(*) FROM " , catalog[ i , 'db_tablename' ] ) )[ 1 , 1 ]
-			
-			# disconnect from the current monet database
-			DBI::dbDisconnect( db , shutdown = TRUE )
-
 			# delete the temporary files
 			suppressWarnings( file.remove( tf ) )
 
-			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'db_tablename' ] , "'\r\n\n" ) )
+			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , catalog[ i , 'output_filename' ] , "'\r" ) )
 
 		}
 
@@ -729,7 +609,7 @@ lodown_cps_asec <-
 	
 	
 # data dictionary parser
-cps_asec_dd_parser <-
+cpsasec_dd_parser <-
 	function( url ){
 
 		# read in the data dictionary
