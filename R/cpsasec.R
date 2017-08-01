@@ -14,7 +14,7 @@ get_catalog_cpsasec <-
 		catalog <-
 			data.frame(
 				year = asec_years ,
-				output_filename = file.path( output_dir , paste0( "cpsasec" , substr( asec_years , 3 , nchar( asec_years ) ) , ".rds" ) ) ,
+				output_filename = file.path( output_dir , paste0( asec_years , " cps asec.rds" ) ) ,
 				stringsAsFactors = FALSE
 			)
 

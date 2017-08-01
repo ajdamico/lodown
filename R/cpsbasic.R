@@ -1,5 +1,5 @@
-get_catalog_cps_basic <-
-	function( data_name = "cps_basic" , output_dir , ... ){
+get_catalog_cpsbasic <-
+	function( data_name = "cpsbasic" , output_dir , ... ){
 
 		cps_ftp <- "http://thedataweb.rm.census.gov/ftp/cps_ftp.html"
 		
@@ -45,7 +45,7 @@ get_catalog_cps_basic <-
 				stringsAsFactors = FALSE
 			)
 
-		catalog$output_filename = paste0( output_dir , "/" , catalog$year , "_" , stringr::str_pad( catalog$month , 2 , pad = "0" ) , "_cps_basic.rds" )
+		catalog$output_filename = paste0( output_dir , "/" , catalog$year , " " , stringr::str_pad( catalog$month , 2 , pad = "0" ) , " cps basic.rds" )
 		
 		rownames( catalog ) <- NULL
 			
@@ -54,8 +54,8 @@ get_catalog_cps_basic <-
 	}
 
 
-lodown_cps_basic <-
-	function( data_name = "cps_basic" , catalog , ... ){
+lodown_cpsbasic <-
+	function( data_name = "cpsbasic" , catalog , ... ){
 
 		tf <- tempfile()
 
@@ -76,7 +76,7 @@ lodown_cps_basic <-
 
 			catalog[ i , 'case_count' ] <- nrow( x )
 			
-			saveRDS( x , file = catalog[ i , 'output_filename' ] )
+			saveRDS( x , file = catalog[ i , 'output_filename' ] ) ; rm( x ) ; gc()
 
 			# delete the temporary files
 			suppressWarnings( file.remove( tf , unzipped_files ) )
