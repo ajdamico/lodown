@@ -102,7 +102,13 @@ lodown_addhealth <-
 			}
 			
 			
-			consolidated_filename <- paste0( unique( catalog[ catalog$wave == unique( catalog$wave )[ curWave ] , 'output_folder' ] ) , 'wave ' , curWave , ' consolidated.rds' )
+			consolidated_filename <- 
+				paste0( 
+					unique( catalog[ catalog$wave == unique( catalog$wave )[ curWave ] , 'output_folder' ] ) , 
+					'wave ' , 
+					unique( catalog$wave )[ curWave ] , 
+					' consolidated.rds' 
+				)
 			
 			# once you've merged as many files as you can,
 			# save the final `cons` object to the local disk
