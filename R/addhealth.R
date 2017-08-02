@@ -8,6 +8,8 @@ get_catalog_addhealth <-
 	catalog$data_title <- tolower( stringr::str_trim( gsub( "[[:punct:]]" , "" , sapply( strsplit( catalog$dataset_name , ":" ) , "[[" , 2 ) ) ) )
 	
 	catalog$unzip_folder <- paste0( output_dir , "/" , catalog$wave , "/" , catalog$data_title , "/" )
+	
+	catalog$output_folder <- paste0( output_dir , "/" , catalog$wave , "/" )
 
 	catalog
 
@@ -42,7 +44,9 @@ lodown_addhealth <-
 				df_name <- load( this_rda )
 				
 				# make sure it's called `x`
-				if( df_name != 'x' ) x <- get( df_name ) ; rm( list = df_name ) ; gc()
+				if( df_name != 'x' ) { x <- get( df_name ) ; rm( list = df_name ) ; gc() }
+				
+				names( x ) <- tolower( names( x ) )
 				
 				# confirm the file must be one-record-per-unique ID
 				if ( length( unique( x$aid ) ) == nrow( x ) ){
@@ -99,10 +103,15 @@ lodown_addhealth <-
 				gc()
 			}
 			
+			
+			consolidated_filename <- paste0( catalog[ catalog$wave == unique( catalog$wave )[ curWave ] , 'output_folder' ] , 'wave ' , curWave , ' consolidated.rds' )
+			
 			# once you've merged as many files as you can,
 			# save the final `cons` object to the local disk
-			saveRDS( cons , file = paste0( 'wave ' , curWave , ' consolidated.rds' ) )
+			saveRDS( cons , file = consolidated_filename )
 			
+			cat( paste0( data_name , " consolidated file stored at '" , consolidated_filename , "'\r" ) )
+
 			# remove the `cons` object from working memory
 			rm( cons )
 			
