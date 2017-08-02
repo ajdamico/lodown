@@ -27,7 +27,7 @@ lodown_addhealth <-
 			rda_files_to_merge <- 
 				unlist( 
 					lapply( 
-						catalog[ catalog$wave == curWave , 'unzip_folder' ] , 
+						catalog[ catalog$wave == unique( catalog$wave )[ curWave ] , 'unzip_folder' ] , 
 						function( w ) grep( "rda$" , list.files( w , full.names = TRUE , recursive = TRUE ) , value = TRUE ) 
 					) 
 				)
