@@ -52,11 +52,9 @@ lodown_addhealth <-
 				if ( length( unique( x$aid ) ) == nrow( x ) ){
 				
 					# print current progress to the screen
-					cat( paste( "currently merging" , this_rda , "from wave" , curWave , "\r" ) )
+					cat( paste( "currently merging" , this_rda , "from wave" , curWave , "\r                               " ) )
 			
-					# if it's the Main file, throw out the cluster2 variable
-					# since the weights file has it with the appropriate number of decimals
-					if ( grepl( 'Main' , this_rda ) ) x$cluster2 <- NULL
+					if ( !grepl( 'weight' , this_rda ) ) x$cluster2 <- NULL
 			
 					# if the `cons` object is missing..
 					if ( is.null( cons ) ){
@@ -75,7 +73,7 @@ lodown_addhealth <-
 						if ( 'aid' %in% names( cons ) ) cons$caseid <- NULL
 						
 						# print what you're doing, just to keep everyone abreast of current inner-workings.
-						cat( paste0( paste( "merging with" , intersect( names( x ) , names( cons ) ) , collapse = " and " ) , "\r" ) )
+						cat( paste0( paste( "merging with" , intersect( names( x ) , names( cons ) ) , collapse = " and " ) , "\r                                  " ) )
 					
 						# merge the current .rda with what's already in `cons`,
 						# keeping matching records in *either* data set
@@ -90,7 +88,7 @@ lodown_addhealth <-
 				} else {
 				
 					# otherwise no merge..
-					cat( paste( "did not merge" , this_rda , " -- copying to working directory" , "\r" ) )
+					cat( paste( "did not merge" , this_rda , " -- copying to working directory" , "\r                                  " ) )
 					
 					# just save the data.frame object into the main output folder
 					saveRDS( x , file = gsub( "/individual tables" , "" , gsub( "\\.rda" , ".rds" , this_rda ) ) )
@@ -104,13 +102,13 @@ lodown_addhealth <-
 			}
 			
 			
-			consolidated_filename <- paste0( catalog[ catalog$wave == unique( catalog$wave )[ curWave ] , 'output_folder' ] , 'wave ' , curWave , ' consolidated.rds' )
+			consolidated_filename <- paste0( unique( catalog[ catalog$wave == unique( catalog$wave )[ curWave ] , 'output_folder' ] ) , 'wave ' , curWave , ' consolidated.rds' )
 			
 			# once you've merged as many files as you can,
 			# save the final `cons` object to the local disk
 			saveRDS( cons , file = consolidated_filename )
 			
-			cat( paste0( data_name , " consolidated file stored at '" , consolidated_filename , "'\r" ) )
+			cat( paste0( data_name , " consolidated file stored at '" , consolidated_filename , "'\r                                  " ) )
 
 			# remove the `cons` object from working memory
 			rm( cons )
