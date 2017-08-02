@@ -105,7 +105,6 @@ lodown_addhealth <-
 			consolidated_filename <- 
 				paste0( 
 					unique( catalog[ catalog$wave == unique( catalog$wave )[ curWave ] , 'output_folder' ] ) , 
-					'wave ' , 
 					unique( catalog$wave )[ curWave ] , 
 					' consolidated.rds' 
 				)
