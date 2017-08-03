@@ -1,7 +1,7 @@
 get_catalog_cpsbasic <-
 	function( data_name = "cpsbasic" , output_dir , ... ){
 
-		cps_ftp <- "http://thedataweb.rm.census.gov/ftp/cps_ftp.html"
+		cps_ftp <- "https://thedataweb.rm.census.gov/ftp/cps_ftp.html"
 		
 		link_page <- rvest::html_nodes( xml2::read_html( cps_ftp ) , "a" )
 		
@@ -18,7 +18,7 @@ get_catalog_cpsbasic <-
 		zips <- grep( "\\.zip$" , basic_refs , value = TRUE , ignore.case = TRUE )
 		
 		# hardcoded exclusions
-		zips <- zips[ !( zips %in% c( "http://thedataweb.rm.census.gov/pub/cps/basic/200701-/dec07revwgts.zip" , "http://thedataweb.rm.census.gov/pub/cps/basic/199801-/pubuse2000_2002.tar.zip" , "http://thedataweb.rm.census.gov/pub/cps/basic/200701-/disability.zip" ) ) ]
+		zips <- zips[ !( zips %in% c( "https://thedataweb.rm.census.gov/pub/cps/basic/200701-/dec07revwgts.zip" , "https://thedataweb.rm.census.gov/pub/cps/basic/199801-/pubuse2000_2002.tar.zip" , "https://thedataweb.rm.census.gov/pub/cps/basic/200701-/disability.zip" ) ) ]
 		
 		cps_version <- gsub( "(.*)/(.*)" , "\\2" , dirname( zips ) )
 		
@@ -105,7 +105,7 @@ cps_dd_parser <-
 		
 		the_lines <- gsub( "794 - 680" , "679 - 680" , the_lines )
 		
-		if( dd_url %in% c( "http://thedataweb.rm.census.gov/pub/cps/basic/200701-/jan07dd.txt" , "http://thedataweb.rm.census.gov/pub/cps/basic/200508-/augnov05dd.txt" ) ){
+		if( dd_url %in% c( "https://thedataweb.rm.census.gov/pub/cps/basic/200701-/jan07dd.txt" , "https://thedataweb.rm.census.gov/pub/cps/basic/200508-/augnov05dd.txt" ) ){
 			the_lines <- gsub( "PRNMCHLD" , "PRNMCHLD 2" , the_lines )
 			the_lines <- gsub( "PEHGCOMP" , "PEHGCOMP 2" , the_lines )
 			the_lines <- gsub( "HURHHSCRN*" , "HURHHSCRN" , the_lines , fixed = TRUE ) 
@@ -113,13 +113,13 @@ cps_dd_parser <-
 			the_lines <- gsub( "PURKAT2*" , "PURKAT2" , the_lines , fixed = TRUE ) 
 		}
 		
-		if( dd_url == "http://thedataweb.rm.census.gov/pub/cps/basic/200508-/augnov05dd.txt" ){
+		if( dd_url == "https://thedataweb.rm.census.gov/pub/cps/basic/200508-/augnov05dd.txt" ){
 		
 			the_lines <- the_lines[ !grepl( "FILLER          1      August - October 2005 Only                       886-886" , the_lines , fixed = TRUE ) ]
 		
 		}
 		
-		if( dd_url == "http://thedataweb.rm.census.gov/pub/cps/basic/200405-/may04dd.txt" ){
+		if( dd_url == "https://thedataweb.rm.census.gov/pub/cps/basic/200405-/may04dd.txt" ){
 		
 			the_lines <- gsub( "HRHHID partII 5" , "HRHHID 5" , the_lines )
 			the_lines <- gsub( "411 - 412" , "410 - 411" , the_lines )
@@ -128,7 +128,7 @@ cps_dd_parser <-
 		}
 		
 		
-		if( dd_url == "http://thedataweb.rm.census.gov/pub/cps/basic/200301-/jan03dd.txt" ){
+		if( dd_url == "https://thedataweb.rm.census.gov/pub/cps/basic/200301-/jan03dd.txt" ){
 		
 			the_lines <- gsub( "PULKPS4      2     SAME AS PULKPS2 FOURTH METHOD" , "PULKPS4      2     SAME AS PULKPS2 FOURTH METHOD 326 - 327" , the_lines )
 			the_lines <- gsub( "PRNMCHLD" , "PRNMCHLD 2" , the_lines )
@@ -137,13 +137,13 @@ cps_dd_parser <-
 		}
 		
 		
-		if( dd_url %in% c( "http://thedataweb.rm.census.gov/pub/cps/basic/199506-199508/jun95_aug95_dd.txt" , "http://thedataweb.rm.census.gov/pub/cps/basic/199404-199505/apr94_may95_dd.txt" ,  "http://thedataweb.rm.census.gov/pub/cps/basic/199401-199403/jan94_mar94_dd.txt" ) ){
+		if( dd_url %in% c( "https://thedataweb.rm.census.gov/pub/cps/basic/199506-199508/jun95_aug95_dd.txt" , "https://thedataweb.rm.census.gov/pub/cps/basic/199404-199505/apr94_may95_dd.txt" ,  "https://thedataweb.rm.census.gov/pub/cps/basic/199401-199403/jan94_mar94_dd.txt" ) ){
 		
 			the_lines <- gsub( "PEAFNOW      2     ARE YOU NOW IN THE ARMED FORCES      134 - 136" , "PEAFNOW      2     ARE YOU NOW IN THE ARMED FORCES      135 - 136" , the_lines )
 			
 		}
 		
-		if( dd_url == "http://thedataweb.rm.census.gov/pub/cps/basic/199801-/2000-2extract.txt" ){
+		if( dd_url == "https://thedataweb.rm.census.gov/pub/cps/basic/199801-/2000-2extract.txt" ){
 		
 			the_lines <- the_lines[ !grepl( "PADDING      4     January 2000 - December 2000 Only                         116-119" , the_lines ) ]
 		
@@ -220,7 +220,7 @@ cps_dd_parser <-
 		the_dd <- the_dd[ rows_to_keep ] ; idp <- match( idp , rows_to_keep )
 		
 		# hardcoded removals
-		if( dd_url %in% c( "http://thedataweb.rm.census.gov/pub/cps/basic/201205-/may12dd.txt" , "http://thedataweb.rm.census.gov/pub/cps/basic/201001-/jan10dd.txt" ,  "http://thedataweb.rm.census.gov/pub/cps/basic/200901-/jan09dd.txt" , "http://thedataweb.rm.census.gov/pub/cps/basic/200701-/jan07dd.txt" , "http://thedataweb.rm.census.gov/pub/cps/basic/200508-/augnov05dd.txt" , "http://thedataweb.rm.census.gov/pub/cps/basic/200405-/may04dd.txt" ) ){
+		if( dd_url %in% c( "https://thedataweb.rm.census.gov/pub/cps/basic/201205-/may12dd.txt" , "https://thedataweb.rm.census.gov/pub/cps/basic/201001-/jan10dd.txt" ,  "https://thedataweb.rm.census.gov/pub/cps/basic/200901-/jan09dd.txt" , "https://thedataweb.rm.census.gov/pub/cps/basic/200701-/jan07dd.txt" , "https://thedataweb.rm.census.gov/pub/cps/basic/200508-/augnov05dd.txt" , "https://thedataweb.rm.census.gov/pub/cps/basic/200405-/may04dd.txt" ) ){
 		
 			the_dd <- the_dd[ !grepl( "^PROLDRRP" , the_dd ) ]
 			
