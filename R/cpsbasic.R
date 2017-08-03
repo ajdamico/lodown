@@ -9,6 +9,8 @@ get_catalog_cpsbasic <-
 		
 		link_refs <- rvest::html_attr( link_page , "href" )
 		
+		link_refs <- gsub( "http://" , "https://" , link_refs , fixed = TRUE )
+		
 		cps_table <- rvest::html_table( xml2::read_html( cps_ftp ) , fill = TRUE )[[2]]
 		
 		basic_text <- link_text[ grep( "/basic/" , link_refs ) ]
@@ -44,6 +46,9 @@ get_catalog_cpsbasic <-
 				full_url = zips ,
 				stringsAsFactors = FALSE
 			)
+			
+		# hardcoded fix
+		catalog[ catalog$year == "2017" & catalog$month %in% 1:5 , "dd" ] <- "https://thedataweb.rm.census.gov/pub/cps/basic/201701-/January_2017_Record_Layout.txt"
 
 		catalog$output_filename = paste0( output_dir , "/" , catalog$year , " " , stringr::str_pad( catalog$month , 2 , pad = "0" ) , " cps basic.rds" )
 		
