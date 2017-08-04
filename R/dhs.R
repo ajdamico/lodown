@@ -116,7 +116,7 @@ get_catalog_dhs <-
 
 		catalog$output_folder <- gsub( "\\.zip" , "" , catalog$output_filename , ignore.case = TRUE )
 		
-		catalog
+		unique( catalog )
 
 	}
 
