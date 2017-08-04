@@ -187,7 +187,7 @@ lodown_dhs <-
 				catalog[ i , 'case_count' ] <- nrow( x )
 				
 				# save the file on the local disk, within the appropriate country-survey filepath
-				saveRDS( x , file = rds_name )
+				saveRDS( x , file = rds_name ) ; rm( x ) ; gc()
 				
 			}
 
@@ -210,7 +210,7 @@ lodown_dhs <-
 					catalog[ i , 'case_count' ] <- nrow( x )
 
 					# save the file on the local disk, within the appropriate country-survey filepath
-					saveRDS( x , file = rds_name )
+					saveRDS( x , file = rds_name ) ; rm( x ) ; gc()
 					
 				}
 			}
