@@ -95,7 +95,7 @@ lodown_sbo <-
 # re-create the `with` function that looks for both
 # the coefficient and the variance survey objects
 sbo_with <-
-	function ( sbo.svy , expr ){
+	function ( sbo.svy , expr , ... ){
 	
 		pf <- parent.frame()
 		
@@ -256,11 +256,11 @@ sbo_degf <- function( x ) survey:::degf( x$coef )
 
 
 # svychisq()  on multiply-imputed data
-sbo_MIsvychisq<-function(formula, design , statistic = "Chisq" , with_fun = sbo_with , ... ) {
+sbo_MIsvychisq<-function(formula, design , statistic = "Chisq" , ... ) {
 
   if ( !( statistic %in% c( "Chisq" ) ) ) { stop( " This method is only implemented for `statistic = 'Chisq'`." ) }
 
-  m <- with_fun( design , svychisq( formula , statistic = statistic ) )
+  m <- sbo_with( design , svychisq( formula , statistic = statistic ) )
 
   dk  <- as.numeric( sapply( m , FUN = function( x ) x[["statistic"]] ) )
   df <- as.numeric( sapply( m , FUN = function( x ) x[["parameter"]][ "df" ] ) )
@@ -274,10 +274,10 @@ sbo_MIsvychisq<-function(formula, design , statistic = "Chisq" , with_fun = sbo_
 
 # svyttest() variant (code from the `survey` package)
 # that works on multiply-imputed data
-sbo_MIsvyttest<-function(formula, design , micombineFUN=sbo_MIcombine,with_fun=sbo_with,...){
+sbo_MIsvyttest<-function(formula, design , ...){
 
 	# the MIcombine function runs differently than a normal svyglm() call
-	m <- eval(bquote(micombineFUN( with_fun( design , survey::svyglm(formula,family=gaussian()))) ) )
+	m <- eval(bquote(sbo_MIcombine( sbo_with( design , survey::svyglm(formula,family=gaussian()))) ) )
 
 	rval<-list(statistic=coef(m)[2]/survey::SE(m)[2],
 			   parameter=m$df[2],
@@ -302,19 +302,18 @@ sbo_MIsvyttest<-function(formula, design , micombineFUN=sbo_MIcombine,with_fun=s
 sbo_MIsvyciprop <-
 	function (formula, design, method = c("logit", "likelihood",
 		"asin", "beta", "mean", "xlogit"), level = 0.95, df = mean(unlist(lapply(design$designs,survey::degf))),
-		micombineFUN=sbo_MIcombine,with_fun=sbo_with,
 		...)
 	{
 		method <- match.arg(method)
 		if (method == "mean") {
-			m <- eval(bquote(micombineFUN(with_fun(design,survey::svymean(~as.numeric(.(formula[[2]])),...)))))
+			m <- eval(bquote(sbo_MIcombine(sbo_with(design,survey::svymean(~as.numeric(.(formula[[2]])),...)))))
 			ci <- as.vector(confint(m, 1, level = level, df = df,
 				...))
 			rval <- coef(m)[1]
 			attr(rval, "var") <- vcov(m)
 		}
 		else if (method == "asin") {
-			m <- eval(bquote(micombineFUN(with_fun(design,survey::svymean(~as.numeric(.(formula[[2]])), ...)))))
+			m <- eval(bquote(sbo_MIcombine(sbo_with(design,survey::svymean(~as.numeric(.(formula[[2]])), ...)))))
 			m <- structure(coef(m), .Names = "1", var = m$variance[1], .Dim = c(1L, 1L), statistic = "mean", class = "svystat")
 			xform <- survey::svycontrast(m, quote(asin(sqrt(`1`))))
 			ci <- sin(as.vector(confint(xform, 1, level = level,
@@ -323,7 +322,7 @@ sbo_MIsvyciprop <-
 			attr(rval, "var") <- vcov(m)
 		}
 		else if (method == "xlogit") {
-			m <- eval(bquote(micombineFUN(with_fun(design,survey::svymean(~as.numeric(.(formula[[2]])), ...)))))
+			m <- eval(bquote(sbo_MIcombine(sbo_with(design,survey::svymean(~as.numeric(.(formula[[2]])), ...)))))
 			m <- structure(coef(m), .Names = "1", var = m$variance[1], .Dim = c(1L, 1L), statistic = "mean", class = "svystat")
 			xform <- survey::svycontrast(m, quote(log(`1`/(1 - `1`))))
 			ci <- expit(as.vector(confint(xform, 1, level = level,
@@ -332,7 +331,7 @@ sbo_MIsvyciprop <-
 			attr(rval, "var") <- vcov(m)
 		}
 		else if (method == "beta") {
-			m <- eval(bquote(micombineFUN(with_fun(design,survey::svymean(~as.numeric(.(formula[[2]])), ...)))))
+			m <- eval(bquote(sbo_MIcombine(sbo_with(design,survey::svymean(~as.numeric(.(formula[[2]])), ...)))))
 			n.eff <- coef(m) * (1 - coef(m))/vcov(m)
 			rval <- coef(m)[1]
 			attr(rval, "var") <- vcov(m)
@@ -344,12 +343,12 @@ sbo_MIsvyciprop <-
 				(1 - rval)))
 		}
 		else {
-			m <- eval(bquote(micombineFUN(with_fun(design,svyglm(.(formula[[2]]) ~ 1, family = quasibinomial)))))
+			m <- eval(bquote(sbo_MIcombine(sbo_with(design,svyglm(.(formula[[2]]) ~ 1, family = quasibinomial)))))
 			cimethod <- switch(method, logit = "Wald", likelihood = "likelihood")
 			ci <- suppressMessages(as.numeric(expit(confint(m, 1,
 				level = level, method = cimethod, ddf = df))))
 			rval <- expit(coef(m))[1]
-			attr(rval, "var") <- vcov(eval(bquote(micombineFUN(with_fun(design,survey::svymean(~as.numeric(.(formula[[2]])), ...))))))
+			attr(rval, "var") <- vcov(eval(bquote(sbo_MIcombine(sbo_with(design,survey::svymean(~as.numeric(.(formula[[2]])), ...))))))
 		}
 		halfalpha <- (1 - level)/2
 		names(ci) <- paste(round(c(halfalpha, (1 - halfalpha)) *
