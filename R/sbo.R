@@ -255,49 +255,6 @@ sbo_update <-
 sbo_degf <- function( x ) survey:::degf( x$coef )
 
 
-# svychisq()  on multiply-imputed data
-sbo_MIsvychisq<-function(formula, design , statistic = "Chisq" , ... ) {
-
-  if ( !( statistic %in% c( "Chisq" ) ) ) { stop( " This method is only implemented for `statistic = 'Chisq'`." ) }
-
-  m <- sbo_with( design , svychisq( formula , statistic = statistic ) )
-
-  dk  <- as.numeric( sapply( m , FUN = function( x ) x[["statistic"]] ) )
-  df <- as.numeric( sapply( m , FUN = function( x ) x[["parameter"]][ "df" ] ) )
-
-  return( miceadds_micombine.chisquare( dk=dk, df=df[[1]] , display = TRUE , version = 1 ) )
-
-}
-
-
-
-
-# svyttest() variant (code from the `survey` package)
-# that works on multiply-imputed data
-sbo_MIsvyttest<-function(formula, design , ...){
-
-	# the MIcombine function runs differently than a normal svyglm() call
-	m <- eval(bquote(sbo_MIcombine( sbo_with( design , survey::svyglm(formula,family=gaussian()))) ) )
-
-	rval<-list(statistic=coef(m)[2]/survey::SE(m)[2],
-			   parameter=m$df[2],
-			   estimate=coef(m)[2],
-			   null.value=0,
-			   alternative="two.sided",
-			   method="Design-based t-test",
-			   data.name=deparse(formula))
-
-	rval$p.value <- ( 1 - pf( ( rval$statistic )^2 , 1 , m$df[2] ) )
-
-	names(rval$statistic)<-"t"
-	names(rval$parameter)<-"df"
-	names(rval$estimate)<-"difference in mean"
-	names(rval$null.value)<-"difference in mean"
-	class(rval)<-"htest"
-
-	return(rval)
-
-}
 
 sbo_MIsvyciprop <-
 	function (formula, design, method = c("logit", "likelihood",
