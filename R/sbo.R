@@ -94,7 +94,7 @@ lodown_sbo <-
 
 # re-create the `with` function that looks for both
 # the coefficient and the variance survey objects
-with.sbosvyimputationList <-
+sbo_with <-
 	function ( sbo.svy , expr ){
 	
 		pf <- parent.frame()
@@ -133,7 +133,7 @@ with.sbosvyimputationList <-
 # also note, the 2007-specific variance adjustment.  this will change in other years
 # this adjustment statistic was pulled from the middle of page 8
 # https://www2.census.gov/econ/sbo/07/pums/2007_sbo_pums_users_guide.pdf#page=8
-MIcombine.sboimputationResultList <-
+sbo_MIcombine <-
 	function( x , adjustment = 1.992065 ){
 	
 		# just pull the structure of a variance-covariance matrix
@@ -179,7 +179,7 @@ MIcombine.sboimputationResultList <-
 
 # construct a way to subset sbo.svy objects,
 # since they're actually two separate database-backed survey objects, not one.
-subset.sbosvyimputationList <-
+sbo_subset <-
 	function( x , ... ){
 		
 		# subset the survey object that's going to be used for
