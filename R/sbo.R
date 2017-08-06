@@ -17,6 +17,8 @@ get_catalog_sbo <-
 lodown_sbo <-
 	function( data_name = "sbo" , catalog , ... ){
 	
+		if ( !requireNamespace( "mitools" , quietly = TRUE ) ) stop( "mitools needed for this function to work. to install it, type `install.packages( 'mitools' )`" , call. = FALSE )
+
 		if( nrow( catalog ) != 1 ) stop( "sbo catalog must be exactly one record" )
 	
 		tf <- tempfile()
@@ -46,7 +48,7 @@ lodown_sbo <-
 		# create a survey design object with the SBO design
 		# to use for the coefficients: means, medians, totals, etc.
 		sbo_coef <-
-			svydesign(
+			survey::svydesign(
 				id = ~1 ,
 				weight = ~tabwgt ,
 				data = x
@@ -57,10 +59,10 @@ lodown_sbo <-
 		# create a survey design object with the SBO design
 		# to use for the variance and standard error
 		sbo_var <-
-			svydesign(
+			survey::svydesign(
 				id = ~1 ,
 				weight = ~newwgt ,
-				data = imputationList( var_list )
+				data = mitools::imputationList( var_list )
 			)
 		
 		rm( var_list ) ; gc()
