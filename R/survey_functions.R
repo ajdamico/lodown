@@ -2,10 +2,10 @@
 
 # svyttest() variant (code from the `survey` package)
 # that works on multiply-imputed data
-MIsvyttest<-function(formula, design , micombineFUN=mitools::MIcombine,...){
+MIsvyttest<-function(formula, design , ...){
 
 	# the MIcombine function runs differently than a normal svyglm() call
-	m <- eval(bquote(micombineFUN( with( design , survey::svyglm(formula,family=gaussian()))) ) )
+	m <- eval(bquote(mitools::MIcombine( with( design , survey::svyglm(formula,family=gaussian()))) ) )
 
 	rval<-list(statistic=coef(m)[2]/survey::SE(m)[2],
 			   parameter=m$df[2],
@@ -29,20 +29,18 @@ MIsvyttest<-function(formula, design , micombineFUN=mitools::MIcombine,...){
 
 MIsvyciprop <-
 	function (formula, design, method = c("logit", "likelihood",
-		"asin", "beta", "mean", "xlogit"), level = 0.95, df = mean(unlist(lapply(design$designs,survey::degf))),
-		micombineFUN=mitools::MIcombine,
-		...)
+		"asin", "beta", "mean", "xlogit"), level = 0.95, df = mean(unlist(lapply(design$designs,survey::degf))),...)
 	{
 		method <- match.arg(method)
 		if (method == "mean") {
-			m <- eval(bquote(micombineFUN(with(design,survey::svymean(~as.numeric(.(formula[[2]])),...)))))
+			m <- eval(bquote(mitools::MIcombine(with(design,survey::svymean(~as.numeric(.(formula[[2]])),...)))))
 			ci <- as.vector(confint(m, 1, level = level, df = df,
 				...))
 			rval <- coef(m)[1]
 			attr(rval, "var") <- vcov(m)
 		}
 		else if (method == "asin") {
-			m <- eval(bquote(micombineFUN(with(design,survey::svymean(~as.numeric(.(formula[[2]])), ...)))))
+			m <- eval(bquote(mitools::MIcombine(with(design,survey::svymean(~as.numeric(.(formula[[2]])), ...)))))
 			m <- structure(coef(m), .Names = "1", var = m$variance[1], .Dim = c(1L, 1L), statistic = "mean", class = "svystat")
 			xform <- survey::svycontrast(m, quote(asin(sqrt(`1`))))
 			ci <- sin(as.vector(confint(xform, 1, level = level,
@@ -51,7 +49,7 @@ MIsvyciprop <-
 			attr(rval, "var") <- vcov(m)
 		}
 		else if (method == "xlogit") {
-			m <- eval(bquote(micombineFUN(with(design,survey::svymean(~as.numeric(.(formula[[2]])), ...)))))
+			m <- eval(bquote(mitools::MIcombine(with(design,survey::svymean(~as.numeric(.(formula[[2]])), ...)))))
 			m <- structure(coef(m), .Names = "1", var = m$variance[1], .Dim = c(1L, 1L), statistic = "mean", class = "svystat")
 			xform <- survey::svycontrast(m, quote(log(`1`/(1 - `1`))))
 			ci <- expit(as.vector(confint(xform, 1, level = level,
@@ -60,7 +58,7 @@ MIsvyciprop <-
 			attr(rval, "var") <- vcov(m)
 		}
 		else if (method == "beta") {
-			m <- eval(bquote(micombineFUN(with(design,survey::svymean(~as.numeric(.(formula[[2]])), ...)))))
+			m <- eval(bquote(mitools::MIcombine(with(design,survey::svymean(~as.numeric(.(formula[[2]])), ...)))))
 			n.eff <- coef(m) * (1 - coef(m))/vcov(m)
 			rval <- coef(m)[1]
 			attr(rval, "var") <- vcov(m)
@@ -72,12 +70,12 @@ MIsvyciprop <-
 				(1 - rval)))
 		}
 		else {
-			m <- eval(bquote(micombineFUN(with(design,svyglm(.(formula[[2]]) ~ 1, family = quasibinomial)))))
+			m <- eval(bquote(mitools::MIcombine(with(design,svyglm(.(formula[[2]]) ~ 1, family = quasibinomial)))))
 			cimethod <- switch(method, logit = "Wald", likelihood = "likelihood")
 			ci <- suppressMessages(as.numeric(expit(confint(m, 1,
 				level = level, method = cimethod, ddf = df))))
 			rval <- expit(coef(m))[1]
-			attr(rval, "var") <- vcov(eval(bquote(micombineFUN(with(design,survey::svymean(~as.numeric(.(formula[[2]])), ...))))))
+			attr(rval, "var") <- vcov(eval(bquote(mitools::MIcombine(with(design,survey::svymean(~as.numeric(.(formula[[2]])), ...))))))
 		}
 		halfalpha <- (1 - level)/2
 		names(ci) <- paste(round(c(halfalpha, (1 - halfalpha)) *
@@ -127,7 +125,7 @@ miceadds_micombine.chisquare <-
 
 
 # svychisq()  on multiply-imputed data
-MIsvychisq<-function(formula, design , statistic = "Chisq" , with_fun = with , ... ) {
+MIsvychisq<-function(formula, design , statistic = "Chisq" , ... ) {
 
   if ( !( statistic %in% c( "Chisq" ) ) ) { stop( " This method is only implemented for `statistic = 'Chisq'`." ) }
 
