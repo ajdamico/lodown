@@ -48,7 +48,7 @@ get_catalog_nps <-
 			data.frame(
 				year = years ,
 				full_url = full_url ,
-				output_filename = paste0( output_dir , "/" , years , "/" , service_names[ service_ids ] , ".rds" ) ,
+				output_filename = paste0( output_dir , "/" , years , " " , service_names[ service_ids ] , ".rds" ) ,
 				stringsAsFactors = FALSE
 			)
 
