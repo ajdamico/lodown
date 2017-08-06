@@ -119,7 +119,9 @@ lodown_pof <-
 			leitura <- files[ grep( 'leitura' , tolower( files ) ) ]
 
 			# read the whole thing into memory
-			z <- readLines( leitura )
+			leitura_con <- file( leitura , encoding = 'windows-1252' )
+			
+			z <- readLines( leitura_con )
 
 			# remove all those goofy tab characters (which will screw up SAScii)
 			z <- gsub( "\t" , " " , z )
@@ -234,10 +236,12 @@ lodown_pof <-
 				# figure out which beginline position to use
 				cur.beginline <- which( tolower( dfn ) == tolower( data.files.to.import ) )
 
+				curfile_con <- file( curfile , encoding = 'windows-1252' )
+				
 				# import the data file into R
 				x <-
 					read_SAScii(
-						curfile ,
+						curfile_con ,
 						tf2 ,
 						beginline = all.beginlines[ cur.beginline ] ,
 						skip_decimal_division = TRUE
