@@ -124,7 +124,8 @@ get_catalog_pew <-
 					
 					# https://github.com/tidyverse/haven/issues/304
 					'http://assets.pewresearch.org/wp-content/uploads/sites/2/2009/09/Pew-GAP-Fall-2009-BW-survey-for-website.zip' ,
-					'http://assets.pewresearch.org/wp-content/uploads/sites/2/2017/07/20111442/Pew-GAP-Spring-2007-survey-for-website.zip'
+					'http://assets.pewresearch.org/wp-content/uploads/sites/2/2017/07/20111442/Pew-GAP-Spring-2007-survey-for-website.zip' ,
+					'http://assets.pewresearch.org/wp-content/uploads/sites/2/2009/06/Pew-GAP-Spring-2009-survey-for-website.zip'
 				) ) , ]
 		
 		catalog
