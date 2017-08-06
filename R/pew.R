@@ -116,6 +116,7 @@ get_catalog_pew <-
 					"http://www.pewforum.org/datasets/a-portrait-of-jewish-americans/?submitted" ,
 					'http://assets.pewresearch.org/wp-content/uploads/sites/5/datasets/Jan%2030-Feb%202%202014%20omnibus.zip' ,
 					'http://assets.pewresearch.org/wp-content/uploads/sites/5/datasets/Oct+27-30+2011+omnibus.zip' ,
+					'http://assets.pewresearch.org/wp-content/uploads/sites/5/datasets/Oct16.zip' ,
 					
 					# https://github.com/tidyverse/haven/issues/304
 					'http://assets.pewresearch.org/wp-content/uploads/sites/2/2009/09/Pew-GAP-Fall-2009-BW-survey-for-website.zip' 
