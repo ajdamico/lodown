@@ -117,6 +117,9 @@ get_catalog_pew <-
 					'http://assets.pewresearch.org/wp-content/uploads/sites/5/datasets/Jan%2030-Feb%202%202014%20omnibus.zip' ,
 					'http://assets.pewresearch.org/wp-content/uploads/sites/5/datasets/Oct+27-30+2011+omnibus.zip' ,
 					'http://assets.pewresearch.org/wp-content/uploads/sites/5/datasets/Oct16.zip' ,
+					'http://assets.pewresearch.org/wp-content/uploads/sites/14/2015/05/November-2010-–-Facebook-and-Social-Support.zip' ,
+					'http://www.people-press.org/files/datasets/Aug16.zip' ,
+					'http://assets.pewresearch.org/wp-content/uploads/sites/14/old-datasets/November-2010--Paid-Content-(Omnibus).zip' ,
 					
 					# https://github.com/tidyverse/haven/issues/304
 					'http://assets.pewresearch.org/wp-content/uploads/sites/2/2009/09/Pew-GAP-Fall-2009-BW-survey-for-website.zip' 
