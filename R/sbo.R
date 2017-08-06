@@ -251,3 +251,9 @@ sbo_update <-
 		# ..return it.  done.
 		upd.svy
 	}
+
+	
+
+sbo_MIsvyttest <- MIsvyttest( ... , micombineFUN = sbo_MIcombine )
+sbo_MIsvyciprop <- MIsvyciprop( ... , micombineFUN = sbo_MIcombine )
+sbo_MIsvychisq <- MIsvychisq( ... , with_fun = sbo_width )
