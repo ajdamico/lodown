@@ -37,7 +37,7 @@ lodown_sbo <-
 		x$newwgt <- 10 * x$tabwgt * sqrt( 1 - 1 / x$tabwgt )
 		# https://www2.census.gov/econ/sbo/07/pums/2007_sbo_pums_users_guide.pdf#page=7
 
-		var_list <- list( NULL )
+		var_list <- NULL
 		
 		for( i in 1:10 ) { var_list <- c( var_list , list( subset( x , rg == i ) ) ) ; gc() }
 		
