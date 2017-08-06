@@ -5,8 +5,7 @@ get_catalog_sbo <-
 	catalog <-
 		data.frame(
 			full_url = "https://www2.census.gov/econ/sbo/07/pums/pums_csv.zip" ,
-			db_tablename = "x" ,
-			dbfolder = paste0( output_dir , "/MonetDB" ) ,
+			output_filename = paste0( output_dir , "/2007 main.rds" ) ,
 			stringsAsFactors = FALSE
 		)
 
@@ -26,31 +25,54 @@ lodown_sbo <-
 		
 		unzipped_files <- unzip_warn_fail( tf , exdir = tempdir() )
 	
-		# connect to the MonetDBLite database (.db)
-		db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog$dbfolder )
-
-		# read the comma separated value (csv) file you just downloaded
-		# directly into the monetdb database you just created.
-		DBI::dbWriteTable( db , catalog$db_tablename , unzipped_files , sep = "," , header = TRUE , lower.case.names = TRUE )
-		# yes.  you did all that.  nice work.
-
-		catalog$case_count <- DBI::dbGetQuery( db , paste0( "SELECT COUNT(*) FROM " , catalog$db_tablename ) )
+		x <- data.frame( readr::read_csv( unzipped_files ) ) ; gc()
 		
-		# add a new numeric column called `one` to the `y` data table
-		DBI::dbSendQuery( db , paste0( 'ALTER TABLE ' , catalog$db_tablename , ' ADD COLUMN one DOUBLE PRECISION' ) )
-		# and fill it with all 1s for every single record.
-		DBI::dbSendQuery( db , paste0( 'UPDATE ' , catalog$db_tablename , ' SET one = 1' ) )
-
-		# add a new numeric column called `newwgt` to the `y` data table
-		DBI::dbSendQuery( db , paste0( 'ALTER TABLE ' , catalog$db_tablename , ' ADD COLUMN newwgt DOUBLE PRECISION' ) )
-
+		names( x ) <- tolower( names( x ) )
+		
+		x$one <- 1
+		
 		# and use the weights displayed in the census bureau's technical documentation
-		DBI::dbSendQuery( db , paste0( 'UPDATE ' , catalog$db_tablename , ' SET newwgt = 10 * tabwgt * SQRT( 1 - 1 / tabwgt )' ) )
+		x$newwgt <- 10 * x$tabwgt * sqrt( 1 - 1 / x$tabwgt )
 		# https://www2.census.gov/econ/sbo/07/pums/2007_sbo_pums_users_guide.pdf#page=7
 
-		# disconnect from the current database
-		DBI::dbDisconnect( db , shutdown = TRUE )
+		var_list <- list( NULL )
+		
+		for( i in 1:10 ) { var_list <- c( var_list , list( subset( x , rg == i ) ) ) ; gc() }
+		
+		#####################################################
+		# survey design for a hybrid database-backed object #
+		#####################################################
 
+		# create a survey design object with the SBO design
+		# to use for the coefficients: means, medians, totals, etc.
+		sbo_coef <-
+			svydesign(
+				id = ~1 ,
+				weight = ~tabwgt ,
+				data = x
+			)
+		rm( x ) ; gc()
+		# this one just uses the original table `x`
+
+		# create a survey design object with the SBO design
+		# to use for the variance and standard error
+		sbo_var <-
+			svydesign(
+				id = ~1 ,
+				weight = ~newwgt ,
+				data = imputationList( var_list )
+			)
+		
+		rm( var_list ) ; gc()
+		# this one uses the ten `x1` thru `x10` tables you just made.
+
+
+		# slap 'em together into a single list object..
+		sbo_svy <- list( coef = sbo_coef , var = sbo_var )
+		class( sbo_svy ) <- 'sbosvyimputationList'
+		
+		saveRDS( sbo_svy , file = catalog$output_filename ) ; rm( sbo_svy ) ; gc()
+		
 		# delete the temporary files
 		suppressWarnings( file.remove( tf , unzipped_files ) )
 
