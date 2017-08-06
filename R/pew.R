@@ -108,6 +108,7 @@ get_catalog_pew <-
 		
 		# broken zips
 		catalog <- catalog[ !( catalog$full_url %in% c( "http://assets.pewresearch.org/wp-content/uploads/sites/11/2015/12/Religion-in-Latin-America-Dataset.zip" , "http://www.people-press.org/files/datasets/Jan%2030-Feb%202%202014%20omnibus.zip" , "http://www.pewforum.org/datasets/a-portrait-of-jewish-americans/?submitted" ,
+		'http://assets.pewresearch.org/wp-content/uploads/sites/5/datasets/Jan%2030-Feb%202%202014%20omnibus.zip' ,
 		
 		# https://github.com/tidyverse/haven/issues/304
 		'http://assets.pewresearch.org/wp-content/uploads/sites/2/2009/09/Pew-GAP-Fall-2009-BW-survey-for-website.zip' ) ) , ]
