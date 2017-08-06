@@ -92,8 +92,8 @@ get_catalog_wvs <-
 		
 		
 
-		# universally dump spss files
-		catalog <- subset( catalog , !grepl( "_spss_|_sas_" , full_url ) )
+		# universally dump sas files
+		catalog <- subset( catalog , !grepl( "_sas_" , full_url ) )
 		
 		# only grab the r longitudinal file
 		catalog <- subset( catalog , !grepl( "Longitudinal" , full_url , ignore.case = TRUE ) | !grepl( "_spss_|_stata_|_sas_" , full_url ) )
