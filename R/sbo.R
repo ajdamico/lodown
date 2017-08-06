@@ -254,6 +254,7 @@ sbo_update <-
 
 	
 
-sbo_MIsvyttest <- function( ... ) MIsvyttest( micombineFUN = sbo_MIcombine , ... )
-sbo_MIsvyciprop <- function( ... ) MIsvyciprop( micombineFUN = sbo_MIcombine , ... )
-sbo_MIsvychisq <- function( ... ) MIsvychisq( with_fun = sbo_width , ... )
+sbo_MIsvyttest <- function( ... ) MIsvyttest( ... , micombineFUN = sbo_MIcombine )
+sbo_MIsvyciprop <- function( ... ) MIsvyciprop( ... , micombineFUN = sbo_MIcombine )
+sbo_MIsvychisq <- function( ... ) MIsvychisq( ... , with_fun = sbo_with )
+sbo_degf <- function( x ) survey:::degf( x$coef )
