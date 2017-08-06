@@ -107,6 +107,8 @@ sbo_with <-
 		# notice it uses sbo.svy$coef
 		results <- eval( expr , list( .design = sbo.svy$coef ) )
 		
+		gc()
+		
 		# this is used to calculate the variance, adjusted variance, standard error
 		# notice it uses the sbo.svy$var object
 		variances <- 
@@ -117,11 +119,15 @@ sbo_with <-
 				} 
 			)
 		
+		gc()
+		
 		# combine both results..
 		rval <- list( coef = results , var = variances )
 		
 		# ..into a brand new object class
-		class( rval ) <- 'sboimputationResultList'
+		class( rval ) <- 'imputationResultList'
+		
+		gc()
 		
 		# and return it.
 		rval
@@ -186,11 +192,15 @@ sbo_subset <-
 		# means, medians, totals, etc.
 		coef.sub <- subset( x$coef , ... )
 		
+		gc()
+		
 		# replicate `var.sub` so it's got all the same attributes as `x$var`
 		var.sub <- x$var
 		
 		# but then overwrite the `designs` attribute with a subset
 		var.sub$designs <- lapply( x$var$designs , subset , ... )
+		
+		gc()
 		
 		# now re-create the `sbosvyimputationList` just as before
 		sub.svy <-
@@ -199,12 +209,45 @@ sbo_subset <-
 				var = var.sub
 			)
 		
-		# name it..
-		class( sub.svy ) <- 'sbosvyimputationList'
-		
 		# ..class it..
 		sub.svy$call <- sys.call(-1)
 		
+		gc()
+		
 		# ..return it.  done.
 		sub.svy
+	}
+
+	
+
+# construct a way to update sbo.svy objects,
+# since they're actually two separate database-backed survey objects, not one.
+sbo_update <-
+	function( x , ... ){
+		
+		# update the survey object that's going to be used for
+		# means, medians, totals, etc.
+		coef.upd <- update( x$coef , ... )
+		
+		gc()
+		
+		# replicate `var.upd` so it's got all the same attributes as `x$var`
+		var.upd <- x$var
+		
+		# but then overwrite the `designs` attribute with an update
+		var.upd$designs <- lapply( x$var$designs , update , ... )
+		
+		gc()
+		
+		# now re-create the `sbosvyimputationList` just as before
+		upd.svy <-
+			list(
+				coef = coef.upd ,
+				var = var.upd
+			)
+			
+		gc()
+		
+		# ..return it.  done.
+		upd.svy
 	}
