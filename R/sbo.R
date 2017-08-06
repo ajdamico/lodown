@@ -21,7 +21,7 @@ lodown_sbo <-
 	
 		tf <- tempfile()
 	
-		cachaca( catalog$full_url , tf , mode = 'wb' )
+		cachaca( catalog$full_url , tf , mode = 'wb' , filesize_fun = 'httr' )
 		
 		unzipped_files <- unzip_warn_fail( tf , exdir = tempdir() )
 	
