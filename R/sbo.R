@@ -4,7 +4,7 @@ get_catalog_sbo <-
 		
 	catalog <-
 		data.frame(
-			full_url = "https://www2.census.gov/econ/sbo/07/pums/pums_csv.zip" ,
+			full_url = "https://www2.census.gov/programs-surveys/sbo/datasets/2007/pums_csv.zip" ,
 			output_filename = paste0( output_dir , "/2007 main.rds" ) ,
 			stringsAsFactors = FALSE
 		)
