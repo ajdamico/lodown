@@ -244,7 +244,8 @@ lodown_pof <-
 						curfile_con ,
 						tf2 ,
 						beginline = all.beginlines[ cur.beginline ] ,
-						skip_decimal_division = TRUE
+						skip_decimal_division = TRUE ,
+						sas_encoding = "latin1"
 					)
 
 				# convert all column names to lowercase

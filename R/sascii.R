@@ -2,13 +2,13 @@
 
 
 read_SAScii <-
-	function( dat_path , sas_path = NULL , beginline = 1 , lrecl = NULL , skip_decimal_division = NULL , zipped = FALSE , na_values = c( "NA" , "" , "." ) , sas_stru = NULL , ... ){
+	function( dat_path , sas_path = NULL , beginline = 1 , lrecl = NULL , skip_decimal_division = NULL , zipped = FALSE , na_values = c( "NA" , "" , "." ) , sas_stru = NULL , sas_encoding = "windows-1252" , ... ){
 
 		if( is.null( sas_path ) & is.null( sas_stru ) ) stop( "either sas_path= or sas_stru= must be specified" )
 		if( !is.null( sas_path ) & !is.null( sas_stru ) ) stop( "either sas_path= or sas_stru= must be specified, but not both" )
 
 		if( is.null( sas_stru ) ){
-			this_con <- file( sas_path , "r" , encoding = "windows-1252" )
+			this_con <- file( sas_path , "r" , encoding = sas_encoding )
 			this_sas <- readLines( this_con )
 			close( this_con )
 			tf <- tempfile()
