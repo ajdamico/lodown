@@ -1,9 +1,13 @@
 get_catalog_censo_escolar <-
   function( data_name = "censo_escolar" , output_dir , ... ){
 
-    inep_portal <- "http://portal.inep.gov.br/microdados"
+    inep_portal <- "ftp://ftp.inep.gov.br/microdados/"
 
-    w <- rvest::html_attr( rvest::html_nodes( xml2::read_html( inep_portal ) , "a" ) , "href" )
+    if ( .Platform$OS.type == "windows"  ) {
+      w <- recursive_ftp_scrape( inep_portal )
+    } else {
+      w <- gsub( ".* " , inep_portal , readLines( inep_portal ) )
+    }
 
     these_links <- grep( "censo_escolar(.*)zip$" , w , value = TRUE , ignore.case = TRUE )
 
@@ -18,7 +22,7 @@ get_catalog_censo_escolar <-
         stringsAsFactors = FALSE
       )
 
-    catalog
+    catalog[ order( catalog$year ) , ]
 
   }
 
@@ -34,7 +38,7 @@ lodown_censo_escolar <-
       db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog[ i , 'dbfolder' ] )
 
       # download the file
-      cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
+      cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' , method = ifelse( .Platform$OS.type == "unix" , "wget" , "auto" ) , quiet = TRUE )
       unzipped_files <- custom_extract( tf , ext_dir = catalog[ i , "output_folder" ] )
 
       if( .Platform$OS.type != 'windows' ){
@@ -144,7 +148,7 @@ lodown_censo_escolar <-
                   this_data_file ,
                   sep = "|" ,
                   lower.case.names = TRUE ,
-                  append = TRUE ,
+                  append = ( paste0( this_table_type , "_" , catalog[ i , "year" ] ) %in% DBI::dbListTables( db ) ) ,
                   #nrow.check = 70000
                   colClasses = ifelse( grepl( "num" , codebook$Tipo , ignore.case = TRUE ) , "numeric" , "character" )
                 ) )
