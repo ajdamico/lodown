@@ -226,7 +226,7 @@ lodown_pof <-
 				# otherwise, the file must be unzipped with 7-zip
 				} else {
 
-					archive::archive_extract( normalizePath( data.file ) , dir = normalizePath( paste0( tempdir() , '\\unzips' ) ) )
+					archive::archive_extract( normalizePath( data.file ) , dir = file.path( tempdir() , 'unzips' ) )
 
 					# find the name of the final ASCII data file to be imported
 					curfile <- paste0( tempdir() , '/unzips/' , gsub( ".7z" , ".txt" , basename( data.file ) ) )
