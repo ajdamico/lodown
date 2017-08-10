@@ -60,7 +60,7 @@ lodown_censo_escolar <-
         sas_scaledowns <- gsub( "SAS|_" , "" , gsub( "\\.sas|\\.SAS" , "" , gsub( paste0( "INPUT|" , catalog[ i , 'year' ] ) , "" , basename( sas_files ) ) ) )
         sas_scaledowns <- ifelse( grepl( "ESC" , sas_scaledowns ) & !grepl( "INDICESC" , sas_scaledowns ) , gsub( "ESC" , "" , sas_scaledowns ) , sas_scaledowns )
 
-        datafile_matches <- lapply( sas_scaledowns , function( z ) unzipped_files[ grepl( z , basename( unzipped_files ) , ignore.case = TRUE ) & grepl( "dados" , unzipped_files , ignore.case = TRUE ) ] )
+        datafile_matches <- lapply( sas_scaledowns , function( z ) unzipped_files[ grepl( ifelse( grepl( "DESPORTO" , z , ignore.case = TRUE ) , "DESP" , z ) , basename( unzipped_files ) , ignore.case = TRUE ) & grepl( "dados" , unzipped_files , ignore.case = TRUE ) ] )
         datafile_matches <- lapply( datafile_matches , function( z ) z[ !grepl( "\\.zip" , z , ignore.case = TRUE ) ] )
 
         these_tables <-
