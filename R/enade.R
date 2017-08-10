@@ -1,11 +1,13 @@
 get_catalog_enade <-
 	function( data_name = "enade" , output_dir , ... ){
 
-		inep_portal <- "http://portal.inep.gov.br/microdados"
+		dat_dir <- "ftp://ftp.inep.gov.br/microdados/Enade_Microdados/"
 
-		w <- rvest::html_attr( rvest::html_nodes( xml2::read_html( inep_portal ) , "a" ) , "href" )
+		dat_ftp <- readLines( textConnection( RCurl::getURL( dat_dir ) ) )
+
+		all_files <- gsub( "(.*) (.*)" , "\\2" , dat_ftp )
 		
-		these_links <- w[ grep( "enade(.*)zip$|enade(.*)rar$" , basename( w ) , ignore.case = TRUE ) ]
+		these_links <- file.path( dat_dir , all_files[ grep( "enade(.*)zip$|enade(.*)rar$" , basename( all_files ) , ignore.case = TRUE ) ] )
 
 		enade_years <- substr( gsub( "[^0-9]" , "" , these_links ) , 1 , 4 )
 
