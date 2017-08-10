@@ -23,7 +23,7 @@ get_catalog_censo_escolar <-
       )
 
     # drop wrong 2009 file
-    catalog <- cataog[ !( catalog$full_url %in% "ftp://ftp.inep.gov.br/microdados/micro_censo_escolar2009.zip" ) , ]
+    catalog <- catalog[ !( catalog$full_url %in% "ftp://ftp.inep.gov.br/microdados/micro_censo_escolar2009.zip" ) , ]
 
     # sort by year
     catalog[ order( catalog$year ) , ]
