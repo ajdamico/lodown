@@ -11,7 +11,7 @@ get_catalog_nls <-
 		
 		link_refs <- rvest::html_attr( link_page , "href" )
 		
-		microdata_text <- link_text[ grep( "\\.zip$" , link_refs ) ]
+		microdata_text <- stringr::str_trim( link_text[ grep( "\\.zip$" , link_refs ) ] )
 		
 		microdata_refs <- stringr::str_trim( link_refs[ grep( "\\.zip$" , link_refs ) ] )
 		
