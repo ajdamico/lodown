@@ -3,9 +3,9 @@ get_catalog_psid <-
 
 		catalog <- NULL
 
-		zipsmain <- xml2::read_html( "http://simba.isr.umich.edu/Zips/ZipMain.aspx" )
+		zipsmain <- xml2::read_html( "https://simba.isr.umich.edu/Zips/ZipMain.aspx" )
 		
-		table_urls <- xml2::url_absolute( rvest::html_attr( rvest::html_nodes( zipsmain , ".rtIn" ) , "href") , "http://simba.isr.umich.edu/Zips/" )
+		table_urls <- xml2::url_absolute( rvest::html_attr( rvest::html_nodes( zipsmain , ".rtIn" ) , "href") , "https://simba.isr.umich.edu/Zips/" )
 		  
 		table_text <- rvest::html_text( rvest::html_nodes( zipsmain , ".rtIn" ) )
 
@@ -31,7 +31,7 @@ get_catalog_psid <-
 			
 			desired_pane <- gsub( "(.*)pane=" , "" , catalog[ this_url , 'full_url' ] )
 			
-			desired_url <- paste0( "http://simba.isr.umich.edu/Zips/" , getfiles[ all_panes == desired_pane ] )
+			desired_url <- paste0( "https://simba.isr.umich.edu/Zips/" , getfiles[ all_panes == desired_pane ] )
 			
 			catalog[ this_url , 'full_url' ] <- desired_url
 			
@@ -53,9 +53,9 @@ lodown_psid <-
 
 		tf <- tempfile()
 
-		if( !( 'your_email' %in% names(list(...)) ) ) stop( "`your_email` parameter must be specified.  create an account at http://simba.isr.umich.edu/U/ca.aspx" )
+		if( !( 'your_email' %in% names(list(...)) ) ) stop( "`your_email` parameter must be specified.  create an account at https://simba.isr.umich.edu/U/ca.aspx" )
 
-		if( !( 'your_password' %in% names(list(...)) ) ) stop( "`your_password` parameter must be specified.  create an account at http://simba.isr.umich.edu/U/ca.aspx" )
+		if( !( 'your_password' %in% names(list(...)) ) ) stop( "`your_password` parameter must be specified.  create an account at https://simba.isr.umich.edu/U/ca.aspx" )
 		
 		your_email <- list(...)[["your_email"]]
 						
@@ -63,7 +63,7 @@ lodown_psid <-
 		
 				
 		# follow the authentication technique described on this stackoverflow post
-		# http://stackoverflow.com/questions/15853204/how-to-login-and-then-download-a-file-from-aspx-web-pages-with-r
+		# https://stackoverflow.com/questions/15853204/how-to-login-and-then-download-a-file-from-aspx-web-pages-with-r
 
 
 		# initiate and then set a curl handle to store information about this download
@@ -77,7 +77,7 @@ lodown_psid <-
 		)
 
 		# connect to the login page to download the contents of the `viewstate` option
-		html <- RCurl::getURL( 'http://simba.isr.umich.edu/u/Login.aspx' , curl = curl )
+		html <- RCurl::getURL( 'https://simba.isr.umich.edu/u/Login.aspx' , curl = curl )
 
 		# extract the `viewstate` string
 		viewstate <- as.character( sub( '.*id="__VIEWSTATE" value="([0-9a-zA-Z+/=]*).*' , '\\1' , html ) )
@@ -100,7 +100,7 @@ lodown_psid <-
 		for ( i in seq_len( nrow( catalog ) ) ){
 
 			# logs into the umich form
-			html = RCurl::postForm('http://simba.isr.umich.edu/U/Login.aspx', .params = params, curl = curl)
+			html = RCurl::postForm('https://simba.isr.umich.edu/U/Login.aspx', .params = params, curl = curl)
 			
 			# confirms the result's contents contains the word `Logout` because
 			# if it does not contain this text, you're not logged in.  sorry.
