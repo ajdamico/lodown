@@ -56,12 +56,18 @@ lodown_nls <-
 
 			cachaca( catalog[ i , 'full_url' ] , tf , mode = 'wb' )
 			
+			archive::archive_extract( 
+				tf , 
+				dir = file.path( catalog[ i , 'output_folder' ] , 'unzips' ) 
+			)
+
 			unzipped_files <- 
-				unzip_warn_fail( 
-					tf , 
-					exdir = paste0( catalog[ i , 'output_folder' ] , '/unzips' ) 
+				list.files( 
+					file.path( catalog[ i , 'output_folder' ] , 'unzips' ) ,
+					full.names = TRUE ,
+					recursive = TRUE
 				)
-			
+				
 			r_load_script <- grep( "\\.R$" , unzipped_files , value = TRUE )
 			
 			dat_file <- grep( "\\.dat$" , unzipped_files , value = TRUE )
@@ -82,6 +88,14 @@ lodown_nls <-
 					"new_data <- qnames(new_data)" , 
 					script_lines , 
 					fixed = TRUE 
+				)
+				
+			script_lines <-
+				gsub(
+					"sep=' '" ,
+					"sep=' ',colClasses = 'numeric'" ,
+					script_lines ,
+					fixed = TRUE
 				)
 			
 			writeLines( script_lines , r_load_script ) ; rm( script_lines ) ; gc()
