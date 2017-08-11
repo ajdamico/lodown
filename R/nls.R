@@ -77,7 +77,7 @@ lodown_nls <-
 			script_lines <- 
 				gsub( 
 					basename( dat_file ) , 
-					dat_file , 
+					normalizePath( dat_file ) , 
 					script_lines , 
 					fixed = TRUE 
 				)
