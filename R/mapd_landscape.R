@@ -130,6 +130,8 @@ lodown_mapd_landscape <-
 			
 			out <- unique( subset( out , contract.id != '' ) )
 			
+			names( out ) <- gsub( " " , "_" , stringr::str_trim( gsub( "( +)" , " " , gsub( "\\." , " " , names( out ) ) ) ) )
+			
 			if( any( !( out$state %in%  c( datasets::state.name , "Washington D.C." , "Puerto Rico" , "Guam" , "Northern Mariana Islands" , "American Samoa" , "Virgin Islands" ) ) ) ) stop( "illegal state name" )
 			
 			saveRDS( out , file = catalog[ i , 'output_filename' ] )
