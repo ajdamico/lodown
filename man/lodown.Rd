@@ -230,6 +230,13 @@ lodown( "meps" , output_dir = file.path( path.expand( "~" ) , "MEPS" ) )
 meps_cat <- get_catalog( "meps" , output_dir = file.path( path.expand( "~" ) , "MEPS" ) )
 lodown( "meps" , meps_cat[ grepl( "2013" , meps_cat$year ) , ] )
 
+# Medicare Advantage/Part D - Plan Benefits Data
+# download all available microdata
+lodown( "mapd_benefits" , output_dir = file.path( path.expand( "~" ) , "MAPD_BENEFITS" ) )
+# download only the 2016 files
+mapd_benefits_cat <- get_catalog( "mapd_benefits" , output_dir = file.path( path.expand( "~" ) , "MAPD_BENEFITS" ) )
+lodown( "mapd_benefits" , subset( mapd_benefits_cat , year == 2016 ) )
+
 # Medicare Advantage/Part D - Contract Plan State County
 # download all available microdata
 lodown( "mapd_cpsc" , output_dir = file.path( path.expand( "~" ) , "MAPD_CPSC" ) )
