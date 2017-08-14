@@ -62,9 +62,9 @@ lodown_mapd_benefits <-
 
 				names( x ) <- tolower( names( x ) )
 
-				if( grepl( '_hnumber' , names( x ) ) ) names( x )[ grepl( '_hnumber' , names( x ) ) ] <- 'contract_id'
+				if( any( grepl( '_hnumber' , names( x ) ) ) ) names( x )[ grepl( '_hnumber' , names( x ) ) ] <- 'contract_id'
 				
-				if( grepl( 'plan_identifier' , names( x ) ) ) {
+				if( any( grepl( 'plan_identifier' , names( x ) ) ) ) {
 					x[ , grepl( 'plan_identifier' , names( x ) ) ] <- as.numeric( x[ , grepl( 'plan_identifier' , names( x ) ) ] )
 					names( x )[ grepl( 'plan_identifier' , names( x ) ) ] <- 'plan_id'
 				}
