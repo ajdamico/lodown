@@ -62,15 +62,24 @@ lodown_mapd_benefits <-
 
 				names( x ) <- tolower( names( x ) )
 
-				if( any( grepl( '_hnumber' , names( x ) ) ) ) names( x )[ grepl( '_hnumber' , names( x ) ) ] <- 'contract_id'
+				# confirm the first column is always the contract_id
+				stopifnot( grepl( "_hnumber" , names( x )[ 1 ] ) )
 				
-				if( any( grepl( 'plan_identifier' , names( x ) ) ) ) {
-					x[ , grepl( 'plan_identifier' , names( x ) ) ] <- as.numeric( x[ , grepl( 'plan_identifier' , names( x ) ) ] )
-					names( x )[ grepl( 'plan_identifier' , names( x ) ) ] <- 'plan_id'
-				}
+				# confirm the second column is always the plan_id
+				stopifnot( grepl( "plan_identifier" , names( x )[ 2 ] ) )
 				
+				names( x )[ 1:2 ] <- c( 'contract_id' , 'plan_id' )
 				
-				saveRDS( x , file = file.path( catalog[ i , 'output_folder' ] , gsub( "\\.txt" , ".rds" , basename( txt_files[ j ] ) ) ) )
+				x[ , 2 ] <- as.numeric( x[ , 2 ] )
+				
+				saveRDS( 
+					x , 
+					file = 
+						file.path( 
+							catalog[ i , 'output_folder' ] , 
+							gsub( "\\.txt" , ".rds" , basename( txt_files[ j ] ) ) 
+						)
+				)
 
 				rm( x ) ; gc()
 
