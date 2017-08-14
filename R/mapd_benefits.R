@@ -18,7 +18,7 @@ get_catalog_mapd_benefits <-
 
     this_catalog <-
       data.frame(
-          output_directory = paste0( output_dir , "/" , all_dates ) ,
+          output_folder = paste0( output_dir , "/" , all_dates ) ,
           full_url = as.character( these_links ) ,
           year = all_dates ,
 		  stringsAsFactors = FALSE
@@ -48,7 +48,7 @@ lodown_mapd_benefits <-
 			# download the file
 			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' , filesize_fun = 'httr' )
 
-			unzipped_files <- unzip_warn_fail( tf , exdir = np_dirname( catalog[ i , 'output_directory' ] ) )
+			unzipped_files <- unzip_warn_fail( tf , exdir = np_dirname( catalog[ i , 'output_folder' ] ) )
 
 			txt_files <- grep( "\\.txt$" , unzipped_files , value = TRUE )
 
@@ -62,7 +62,7 @@ lodown_mapd_benefits <-
 
 				names( x ) <- tolower( names( x ) )
 
-				saveRDS( x , file = file.path( catalog[ i , 'output_directory' ] , gsub( "\\.txt" , ".rds" , basename( txt_files[ j ] ) ) ) )
+				saveRDS( x , file = file.path( catalog[ i , 'output_folder' ] , gsub( "\\.txt" , ".rds" , basename( txt_files[ j ] ) ) ) )
 
 				rm( x ) ; gc()
 
@@ -70,7 +70,7 @@ lodown_mapd_benefits <-
 			
 			file.remove( unzipped_files )
 
-			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'output_directory' ] , "'\r\n\n" ) )
+			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'output_folder' ] , "'\r\n\n" ) )
 
 		}
 
