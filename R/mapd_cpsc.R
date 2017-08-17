@@ -87,6 +87,8 @@ lodown_mapd_cpsc <-
 		# convert all column names to lowercase
 		names( x ) <- tolower( names( x ) )
 		
+		x$year_month <- catalog[ i , 'year_month' ]
+		
 		names( x ) <- gsub( "\\." , "_" , names( x ) )
 		
 		names( x )[ names( x ) == 'fips_state_county_code' ] <- 'fips'

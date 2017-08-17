@@ -134,6 +134,8 @@ lodown_mapd_landscape <-
 			
 			if( any( !( out$state %in%  c( datasets::state.name , "Washington D.C." , "Puerto Rico" , "Guam" , "Northern Mariana Islands" , "American Samoa" , "Virgin Islands" ) ) ) ) stop( "illegal state name" )
 			
+			out$year <- catalog[ i , 'year' ]
+			
 			saveRDS( out , file = catalog[ i , 'output_filename' ] )
 
 			file.remove( unzipped_files )

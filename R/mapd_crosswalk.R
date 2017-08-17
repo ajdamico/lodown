@@ -57,13 +57,13 @@ lodown_mapd_crosswalk <-
 		# your local computer to each of the unzipped files
 		unzipped_files <- unzip_warn_fail( tf , exdir = np_dirname( catalog[ i , 'output_filename' ] ) )
 
-		this_xwalk <- NULL
+		x <- NULL
 		
-		for( this_fn in grep( "\\.xls" , unzipped_files , value = TRUE ) ) this_xwalk <- rbind( this_xwalk , data.frame( readxl::read_excel( this_fn ) ) )
+		for( this_fn in grep( "\\.xls" , unzipped_files , value = TRUE ) ) x <- rbind( x , data.frame( readxl::read_excel( this_fn ) ) )
 		
-		this_xwalk <- unique( this_xwalk )
+		x <- unique( x )
 		
-		this_xwalk$year <- catalog[ i , 'year' ]
+		x$year <- catalog[ i , 'year' ]
 		
 		# convert all column names to lowercase
 		names( x ) <- tolower( names( x ) )
