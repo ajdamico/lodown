@@ -128,8 +128,7 @@ lodown_pnad <-
 					dom.fn , 
 					dom.sas ,
 					zipped = FALSE ,
-					na = c( "" , "NA" , "." ) ,
-					guess_max = 100000
+					na = c( "" , "NA" , "." )
 				)
 			
 			pes_df <-
@@ -137,8 +136,7 @@ lodown_pnad <-
 					pes.fn ,
 					pes.sas ,
 					zipped = FALSE ,
-					na = c( "" , "NA" , "." ) ,
-					guess_max = 100000
+					na = c( "" , "NA" , "." )
 				)
 	
 			names( dom_df ) <- tolower( names( dom_df ) )
@@ -220,9 +218,9 @@ lodown_pnad <-
 
 			
 			if( catalog[ i , 'year' ] < 2004 ){
-				x$pre_wgt <- x$v4610
+				x$pre_wgt <- as.numeric( x$v4610 )
 			} else {
-				x$pre_wgt <- x$v4619 * x$v4610
+				x$pre_wgt <- as.numeric( x$v4619 ) * as.numeric( x$v4610 )
 			}
 			
 
