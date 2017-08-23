@@ -215,7 +215,8 @@ lodown_pnad <-
 			# for 2012, the variable v4619 is one and so it is not needed.
 			# if it does not, create it.
 			if( !( 'v4619' %in% names( x ) ) ) x$v4619 <- 1
-
+			
+			x$v4609 <- as.numeric( x$v4609 )
 			
 			if( catalog[ i , 'year' ] < 2004 ){
 				x$pre_wgt <- as.numeric( x$v4610 )
@@ -286,94 +287,3 @@ pnad_remove_uf <-
 		# return the filepath to the temporary file containing the updated sas input script
 		tf
 }
-
-
-# initiate a function that post-stratifies the PNAD survey object,
-# because the R `survey` package does not currently allow post-stratification of database-backed survey objects
-pnad_postStratify <-
-	function( design , strata.col , oldwgt ){
-		
-		# extract the tablename within the MonetDBLite database
-		tablename <- design$db$tablename
-		
-		# extract the MonetDBLite connection
-		conn <- design$db$connection
-
-		# create an R data frame containing one record per strata
-		# that will be used to determine the weights-multiplier for each strata in survey dataset
-		# this table contains one record per strata
-		population <- 
-			DBI::dbGetQuery( 
-				conn , 
-				paste(
-					'select' ,
-					strata.col ,
-					", CAST( " ,
-					strata.col ,
-					' AS DOUBLE ) as newwgt , sum( ' ,
-					oldwgt ,
-					' ) as oldwgt from ' ,
-					tablename , 
-					'group by' ,
-					strata.col
-				)
-			)
-		
-		# calculate the multiplier
-		population$mult <- population$oldwgt / population$newwgt
-		
-		# retain only the strata identifier and the multiplication value
-		population <- population[ , c( strata.col , 'mult' ) ]
-		
-		# pull the strata and the original weight variable from the original table
-		# this data.frame contains one record per respondent in the PNAD dataset
-		# as opposed to one record per strata
-		so.df <- 
-			DBI::dbGetQuery( 
-				conn , 
-				paste( 
-					'select' , 
-					strata.col , 
-					"," ,
-					oldwgt ,
-					'from' , 
-					tablename 
-				) 
-			)
-		
-		# add a row number variable to re-order post-merge
-		so.df$n <- 1:nrow( so.df )
-			
-		# merge the strata with the multipliers
-		so.df <-
-			merge( so.df , population )
-		
-		# since ?merge undid the order relative to the original table,
-		# put the strata and old weight table back in order
-		so.df <-
-			so.df[ order( so.df$n ) , ]
-		
-		# extract the multipliers into a numeric vector
-		prob.multipliers <- so.df[ , 'mult' ]
-		
-		# overwrite the design's probability attribute with post-stratified probabilities
-		design$prob <- design$prob * prob.multipliers
-
-		# construct the `postStrata` attribute of the survey design object
-		index <- as.numeric( so.df[ , strata.col ] )
-		
-		# extract the original weights..
-		attr( index , 'oldweights' ) <- so.df[ , oldwgt ]
-		
-		# ..and the new weights
-		attr( index , 'weights' ) <-  1 / design$prob
-		
-		# so that the standard errors accurately reflect the
-		# process of post-stratification
-		design$postStrata <- c( design$postStrata  , list(index) )
-
-		# return the updated database-backed survey design object
-		design
-	}
-
-# thanks for playing
