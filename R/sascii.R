@@ -43,7 +43,10 @@ read_SAScii <-
 				
 				# passed in from read_SAScii
 				...
+				
 			)
+			
+		gc()
 
 		x <- data.frame( x )
 			
