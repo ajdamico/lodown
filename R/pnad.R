@@ -44,9 +44,7 @@ get_catalog_pnad <-
 			
 		}
 		
-		catalog$dbfolder <- paste0( output_dir , "/MonetDB" )
-		
-		catalog$db_tablename <- paste0( "pnad" , catalog$year )
+		catalog$output_filename <- paste0( output_dir , "/" , catalog$year , " main.rds" )
 		
 		catalog
 
@@ -80,9 +78,6 @@ lodown_pnad <-
 		
 		
 		for ( i in seq_len( nrow( catalog ) ) ){
-
-			# open the connection to the monetdblite database
-			db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog[ i , 'dbfolder' ] )
 
 			# download the file
 			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
@@ -128,124 +123,27 @@ lodown_pnad <-
 			dom.fn <- unzipped_files[ grepl( paste0( '/dom' , catalog[ i , 'year' ] ) , tolower( unzipped_files ) ) ]
 			pes.fn <- unzipped_files[ grepl( paste0( '/pes' , catalog[ i , 'year' ] ) , tolower( unzipped_files ) ) ]
 
-			first_attempt_dom <- 
-				try({
-					# store the PNAD household records as a MonetDBLite database
-					read_SAScii_monetdb( 
-						dom.fn , 
-						dom.sas , 
-						zipped = F , 
-						tl = TRUE ,
-						# this default table naming setup will name the household-level tables dom2001, dom2002, dom2003 and so on
-						tablename = paste0( 'dom' , catalog[ i , 'year' ] ) ,
-						connection = db
-					)
-
-					} , silent = TRUE )
-			
-			# if the read_SAScii_monetdbattempts broke,
-			# remove the dots in the files
-			# and try again
-			if( class( first_attempt_dom ) == 'try-error' ){
-					
-				dom.fn2 <- tempfile()
-				fpx <- file( normalizePath( dom.fn ) , 'r' , encoding = "windows-1252" )
-				# create a write-only file connection to the temporary file
-				fpt <- file( dom.fn2 , 'w' )
-
-				# loop through every line in the original file..
-				while ( length( line <- readLines( fpx , 1 ) ) > 0 ){
-				
-					# replace '.' with nothings..
-					line <- gsub( " ." , "  " , line , fixed = TRUE )
-					line <- gsub( ". " , "  " , line , fixed = TRUE )
-					
-					# and write the result to the temporary file connection
-					writeLines( line , fpt )
-				}
-				
-				# close the temporary file connection
-				close( fpx )
-				close( fpt )
-
-				# store the PNAD household records as a MonetDBLite database
-				read_SAScii_monetdb( 
-					dom.fn2 , 
-					dom.sas , 
-					zipped = F , 
-					tl = TRUE ,
-					# this default table naming setup will name the household-level tables dom2001, dom2002, dom2003 and so on
-					tablename = paste0( 'dom' , catalog[ i , 'year' ] ) ,
-					connection = db
+			dom_df <-
+				read_SAScii(
+					dom.fn , 
+					dom.sas ,
+					zipped = FALSE ,
+					na = c( "" , "NA" , "." ) ,
+					guess_max = 100000
 				)
-				
-				unzipped_files <- c( unzipped_files , dom.fn2 )
-				
-				stopifnot( R.utils::countLines( dom.fn ) == DBI::dbGetQuery( db , paste0( "SELECT COUNT(*) FROM dom" , catalog[ i , 'year' ] ) )[ 1 , 1 ] )
-				
-			}
 			
-			first_attempt_pes <- 
-				try({
-				
-					# store the PNAD person records as a MonetDBLite database
-					read_SAScii_monetdb( 
-						pes.fn , 
-						pes.sas , 
-						zipped = F , 
-						tl = TRUE ,
-						# this default table naming setup will name the person-level tables pes2001, pes2002, pes2003 and so on
-						tablename = paste0( 'pes' , catalog[ i , 'year' ] ) ,
-						connection = db
-					)
-			
-				} , silent = TRUE )
-			
-			# if the read_SAScii_monetdbattempts broke,
-			# remove the dots in the files
-			# and try again
-			if( class( first_attempt_pes ) == 'try-error' ){
-
-				pes.fn2 <- tempfile()
-				
-				fpx <- file( normalizePath( pes.fn ) , 'r' , encoding = "windows-1252" )
-				# create a write-only file connection to the temporary file
-				fpt <- file( pes.fn2 , 'w' )
-
-				# loop through every line in the original file..
-				while ( length( line <- readLines( fpx , 1 ) ) > 0 ){
-				
-					# replace '.' with nothings..
-					line <- gsub( " ." , "  " , line , fixed = TRUE )
-					line <- gsub( ". " , "  " , line , fixed = TRUE )
-					line <- gsub( "\U00A0" , " " , line )
-
-					# and write the result to the temporary file connection
-					writeLines( line , fpt )
-				}
-				
-				# close the temporary file connection
-				close( fpx )
-				close( fpt )
-				
-			
-				# store the PNAD person records as a MonetDBLite database
-				read_SAScii_monetdb( 
-					pes.fn2 , 
-					pes.sas , 
-					zipped = F , 
-					tl = TRUE ,
-					# this default table naming setup will name the person-level tables pes2001, pes2002, pes2003 and so on
-					tablename = paste0( 'pes' , catalog[ i , 'year' ] ) ,
-					connection = db
+			pes_df <-
+				read_SAScii(
+					pes.fn ,
+					pes.sas ,
+					zipped = FALSE ,
+					na = c( "" , "NA" , "." ) ,
+					guess_max = 100000
 				)
-
-				unzipped_files <- c( unzipped_files , pes.fn2 )
-				
-				stopifnot( R.utils::countLines( pes.fn ) == DBI::dbGetQuery( db , paste0( "SELECT COUNT(*) FROM pes" , catalog[ i , 'year' ] ) )[ 1 , 1 ] )
-				
-			}
-					
+	
+			names( dom_df ) <- tolower( names( dom_df ) )
+			names( pes_df ) <- tolower( names( pes_df ) )
+	
 			# the ASCII and SAS importation instructions stored in temporary files
 			# on the local disk are no longer necessary, so delete them.
 			attempt.one <- try( file.remove( unzipped_files ) , silent = TRUE )
@@ -255,11 +153,8 @@ lodown_pnad <-
 			# add 4617 and 4618 to 2001 file
 			if( catalog[ i , 'year' ] == 2001 ){
 			
-				DBI::dbSendQuery( db , "ALTER TABLE dom2001 ADD COLUMN v4617 real" )
-				DBI::dbSendQuery( db , "ALTER TABLE dom2001 ADD COLUMN v4618 real" )
-			
-				DBI::dbSendQuery( db , "UPDATE dom2001 SET v4617 = strat" )
-				DBI::dbSendQuery( db , "UPDATE dom2001 SET v4618 = psu" )
+				dom_df$v4617 <- dom_df$strat
+				dom_df$v4618 <- dom_df$psu
 				
 			}
 			
@@ -274,25 +169,12 @@ lodown_pnad <-
 			for ( curRow in seq( nrow( household.nr ) ) ){
 
 				# if the variable is in the current table..
-				if( household.nr[ curRow , 'variable' ] %in% DBI::dbListFields( db , paste0( 'dom' , catalog[ i , 'year' ] ) ) ){
+				if( household.nr[ curRow , 'variable' ] %in% names( dom_df ) ){
 
 					# ..and the variable should be recoded for that year
 					if( catalog[ i , 'year' ] %in% eval( parse( text = household.nr[ curRow , 'year' ] ) ) ){
 				
-						# update all variables where that code equals the `missing` code to NA (NULL in MonetDBLite)
-						DBI::dbSendQuery( 
-							db , 
-							paste0( 
-								'update dom' , 
-								catalog[ i , 'year' ] , 
-								' set ' , 
-								household.nr[ curRow , 'variable' ] , 
-								" = NULL where " ,
-								household.nr[ curRow , 'variable' ] ,
-								' = ' ,
-								household.nr[ curRow , 'code' ]
-							)
-						)
+						dom_df[ dom_df[ , household.nr[ curRow , 'variable' ] ] %in% household.nr[ curRow , 'code' ] , household.nr[ curRow , 'variable' ] ] <- NA
 					
 					}
 				}
@@ -302,94 +184,56 @@ lodown_pnad <-
 			for ( curRow in seq( nrow( person.nr ) ) ){
 
 				# if the variable is in the current table..
-				if( person.nr[ curRow , 'variable' ] %in% DBI::dbListFields( db , paste0( 'pes' , catalog[ i , 'year' ] ) ) ){
+				if( person.nr[ curRow , 'variable' ] %in% names( pes_df ) ){
 				
 					# ..and the variable should be recoded for that year
 					if( catalog[ i , 'year' ] %in% eval( parse( text = person.nr[ curRow , 'year' ] ) ) ){
 				
-						# update all variables where that code equals the `missing` code to NA (NULL in MonetDBLite)
-						DBI::dbSendQuery( 
-							db , 
-							paste0( 
-								'update pes' , 
-								catalog[ i , 'year' ] , 
-								' set ' , 
-								person.nr[ curRow , 'variable' ] , 
-								" = NULL where " ,
-								person.nr[ curRow , 'variable' ] ,
-								' = ' ,
-								person.nr[ curRow , 'code' ]
-							)
-						)
+				
+						pes_df[ pes_df[ , person.nr[ curRow , 'variable' ] ] %in% person.nr[ curRow , 'code' ] , person.nr[ curRow , 'variable' ] ] <- NA
+					
 					
 					}
 				}
 			}
 
 			# confirm no fields are in `dom` unless they are in `pes`
-			b_fields <- DBI::dbListFields( db , paste0( 'dom' , catalog[ i , 'year' ] ) )[ !( DBI::dbListFields( db , paste0( 'dom' , catalog[ i , 'year' ] ) ) %in% DBI::dbListFields( db , paste0( 'pes' , catalog[ i , 'year' ] ) ) ) ]
+			b_fields <- c( 'v0101' , 'v0102' , 'v0103' , setdiff( names( pes_df ) , names( dom_df ) ) )
 			
-			# create the merged file
-			DBI::dbSendQuery( 
-				db , 
-				paste0( 
-					# this default table naming setup will name the final merged tables pes2001, pes2002, pes2003 and so on
-					"create table " ,
-					catalog[ i , 'db_tablename' ] ,
-					# also add a new column "one" that simply contains the number 1 for every record in the data set
-					# also add a new column "uf" that contains the state code, since these were thrown out of the SAS script
-					# also add a new column "region" that contains the larger region, since these are shown in the tables
-					# NOTE: the substr() function luckily works in MonetDBLite::MonetDBLite() databases, but may not work if you change SQL database engines to something else.
-					" as select a.* , " ,
-					paste( b_fields , collapse = "," ) ,
-					" , 1 as one , substr( a.v0102 , 1 , 2 ) as uf , substr( a.v0102 , 1 , 1 ) as region from pes" , 
-					catalog[ i , 'year' ] , 
-					" as a inner join dom" , 
-					catalog[ i , 'year' ] , 
-					" as b on a.v0101 = b.v0101 AND a.v0102 = b.v0102 AND a.v0103 = b.v0103" 
-				)
-			)
-
+			pes_df <- pes_df[ b_fields ]
+			
+			pes_df$uf <- substr( pes_df$v0102 , 1 , 2 )
+			
+			pes_df$region <- substr( pes_df$v0102 , 1 , 1 )
+			
+			pes_df$one <- 1
+			
+			x <- merge( dom_df , pes_df )
+			
+			stopifnot( nrow( x ) == nrow( pes_df ) ) ; rm( pes_df , dom_df ) ; gc()
+			
 			# determine if the table contains a `v4619` variable.
 			# v4619 is the factor of subsampling used to compensate the loss of units in some states
 			# for 2012, the variable v4619 is one and so it is not needed.
 			# if it does not, create it.
-			any.v4619 <- 'v4619' %in% DBI::dbListFields( db , catalog[ i , 'db_tablename' ] )
+			if( !( 'v4619' %in% names( x ) ) ) x$v4619 <- 1
 
-			# if it's not in there, copy it over
-			if ( !any.v4619 ) {
-				DBI::dbSendQuery( db , paste0( 'alter table ' , catalog[ i , 'db_tablename' ] , ' add column v4619 real' ) )
-				DBI::dbSendQuery( db , paste0( 'update ' , catalog[ i , 'db_tablename' ] , ' set v4619 = 1' ) )
-			}
 			
-			# now create the pre-stratified weight to be used in all of the survey designs
-			# if it's not in there, copy it over
-			DBI::dbSendQuery( db , paste0( 'alter table ' , catalog[ i , 'db_tablename' ] , ' add column pre_wgt real' ) )
-
 			if( catalog[ i , 'year' ] < 2004 ){
-				DBI::dbSendQuery( db , paste0( 'update ' , catalog[ i , 'db_tablename' ] , ' set pre_wgt = v4610' ) )
+				x$pre_wgt <- x$v4610
 			} else {
-				DBI::dbSendQuery( db , paste0( 'update ' , catalog[ i , 'db_tablename' ] , ' set pre_wgt = v4619 * v4610' ) )	
+				x$pre_wgt <- x$v4619 * x$v4610
 			}
 			
-			# confirm that the number of records in the pnad merged file
-			# matches the number of records in the person file
-			stopifnot( 
-				DBI::dbGetQuery( db , paste0( "select count(*) as count from pes" , catalog[ i , 'year' ] ) ) == 
-				DBI::dbGetQuery( db , paste0( "select count(*) as count from " , catalog[ i , 'db_tablename' ] ) ) 
-			)
 
+			catalog[ i , 'case_count' ] <- nrow( x )
 
-			catalog[ i , 'case_count' ] <- DBI::dbGetQuery( db , paste0( "SELECT COUNT(*) FROM " , catalog[ i , 'db_tablename' ] ) )
-
-
-			# disconnect from the current monet database
-			DBI::dbDisconnect( db , shutdown = TRUE )
-
+			saveRDS( x , file = catalog[ i , 'output_filename' ] ) ; rm( x ) ; gc()
+			
 			# delete the temporary files
 			suppressWarnings( file.remove( tf , unzipped_files ) )
 
-			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored as '" , catalog[ i , 'db_tablename' ] , "' in '" , catalog[ i , 'dbfolder' ] , "'\r\n\n" ) )
+			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , catalog[ i , 'output_filename' ] , "'\r\n\n" ) )
 
 		}
 
