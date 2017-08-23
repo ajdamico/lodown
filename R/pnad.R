@@ -129,7 +129,11 @@ lodown_pnad <-
 					dom.sas ,
 					zipped = FALSE ,
 					na = c( "" , "NA" , "." )
-				) ; gc()
+				) 
+				
+			# dump 100% missing columns
+			dom_df <- dom_df[ !sapply( dom_df , function( w ) all( is.na( w ) ) ) ]
+			gc()
 			
 			pes_df <-
 				read_SAScii(
@@ -137,7 +141,11 @@ lodown_pnad <-
 					pes.sas ,
 					zipped = FALSE ,
 					na = c( "" , "NA" , "." )
-				) ; gc()
+				) 
+				
+			# dump 100% missing columns
+			pes_df <- pes_df[ !sapply( pes_df , function( w ) all( is.na( w ) ) ) ]
+			gc()
 	
 			names( dom_df ) <- tolower( names( dom_df ) )
 			names( pes_df ) <- tolower( names( pes_df ) )
