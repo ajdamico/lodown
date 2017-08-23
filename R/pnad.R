@@ -142,6 +142,11 @@ lodown_pnad <-
 			names( dom_df ) <- tolower( names( dom_df ) )
 			names( pes_df ) <- tolower( names( pes_df ) )
 	
+			# confirm no fields are in `dom` unless they are in `pes`
+			b_fields <- c( 'v0101' , 'v0102' , 'v0103' , setdiff( names( pes_df ) , names( dom_df ) ) )
+			
+			pes_df <- pes_df[ b_fields ] ; gc()
+			
 			# the ASCII and SAS importation instructions stored in temporary files
 			# on the local disk are no longer necessary, so delete them.
 			attempt.one <- try( file.remove( unzipped_files ) , silent = TRUE )
@@ -195,11 +200,6 @@ lodown_pnad <-
 					}
 				}
 			}
-
-			# confirm no fields are in `dom` unless they are in `pes`
-			b_fields <- c( 'v0101' , 'v0102' , 'v0103' , setdiff( names( pes_df ) , names( dom_df ) ) )
-			
-			pes_df <- pes_df[ b_fields ]
 			
 			pes_df$uf <- substr( pes_df$v0102 , 1 , 2 )
 			
