@@ -129,7 +129,7 @@ lodown_pnad <-
 					dom.sas ,
 					zipped = FALSE ,
 					na = c( "" , "NA" , "." )
-				)
+				) ; gc()
 			
 			pes_df <-
 				read_SAScii(
@@ -137,7 +137,7 @@ lodown_pnad <-
 					pes.sas ,
 					zipped = FALSE ,
 					na = c( "" , "NA" , "." )
-				)
+				) ; gc()
 	
 			names( dom_df ) <- tolower( names( dom_df ) )
 			names( pes_df ) <- tolower( names( pes_df ) )
@@ -173,6 +173,7 @@ lodown_pnad <-
 					if( catalog[ i , 'year' ] %in% eval( parse( text = household.nr[ curRow , 'year' ] ) ) ){
 				
 						dom_df[ dom_df[ , household.nr[ curRow , 'variable' ] ] %in% household.nr[ curRow , 'code' ] , household.nr[ curRow , 'variable' ] ] <- NA
+						gc()
 					
 					}
 				}
@@ -189,7 +190,7 @@ lodown_pnad <-
 				
 				
 						pes_df[ pes_df[ , person.nr[ curRow , 'variable' ] ] %in% person.nr[ curRow , 'code' ] , person.nr[ curRow , 'variable' ] ] <- NA
-					
+						gc()
 					
 					}
 				}
