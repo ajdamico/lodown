@@ -31,10 +31,9 @@ get_catalog_brfss <-
 		catalog <-
 			data.frame(
 				year = available_years ,
-				db_tablename = paste0( 'x' , available_years ) ,
 				full_url = path_to_files ,
 				sas_ri = sas_files ,
-				dbfolder = paste0( output_dir , "/MonetDB" ) ,
+				output_filename = paste0( output_dir , "/" , available_years , " data frame.rds" ) ,
 				weight = c( rep( 'x_finalwt' , 18 ) , rep( 'xfinalwt' , 9 ) , rep( 'xllcpwt' , length( available_years ) - 27 ) ) ,
 				psu = c( rep( 'x_psu' , 18 ) , rep( 'xpsu' , length( available_years ) - 18 ) ) ,
 				strata = c( rep( 'x_ststr' , 18 ) , rep( 'xststr' , length( available_years ) - 18 ) ) ,
@@ -55,9 +54,6 @@ lodown_brfss <-
 		
 		for ( i in seq_len( nrow( catalog ) ) ){
 
-			# open the connection to the monetdblite database
-			db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog[ i , 'dbfolder' ] )
-
 			# download the file
 			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
 
@@ -68,96 +64,6 @@ lodown_brfss <-
 				# read the sas transport file into r
 				x <- foreign::read.xport( unzipped_files ) 
 				
-				# convert all column names in the table to all lowercase
-				names( x ) <- tolower( names( x ) )
-				
-				# do not allow this illegal sql column name
-				names( x )[ names( x ) == 'level' ] <- 'level_'
-				
-				# immediately export the data table to a comma separated value (.csv) file,
-				# also stored on the local hard drive
-				write.csv( x , csvfile , row.names = FALSE )
-
-				# count the total number of records in the table
-				# rows to check then read
-				rtctr <- nrow( x )
-				
-				# prepare to handle errors if they occur (and they do occur)
-				# reset all try-error objects
-				first.attempt <- second.attempt <- NULL
-
-				# first try to read the csv file into the monet database with NAs for NA strings
-				first.attempt <- try( DBI::dbWriteTable( db , catalog[ i , 'db_tablename' ] , csvfile , na.strings = "NA" , nrow.check = rtctr , lower.case.names = TRUE ) , silent = TRUE )
-				
-				# if the dbWriteTable() function returns an error instead of working properly..
-				if( class( first.attempt ) == "try-error" ) {
-				
-					# try re-exporting the csv file (overwriting the original csv file)
-					# using "" for the NA strings
-					write.csv( x , csvfile , row.names = FALSE , na = "" )
-					
-					# try to remove the data table from the monet database
-					try( DBI::dbRemoveTable( db , catalog[ i , 'db_tablename' ] ) , silent = TRUE )
-					
-					# and re-try reading the csv file directly into the monet database, this time with a different NA string setting
-					second.attempt <-
-						try( DBI::dbWriteTable( db , catalog[ i , 'db_tablename' ] , csvfile , na.strings = "" , nrow.check = rtctr , lower.case.names = TRUE ) , silent = TRUE )
-				}
-
-				# if that still doesn't work, import the table manually
-				if( class( second.attempt ) == "try-error" ) {
-				
-					# try to remove the data table from the monet database
-					try( DBI::dbRemoveTable( db , catalog[ i , 'db_tablename' ] ) , silent = TRUE )
-				
-					# determine the class of each element of the brfss data table (it's either numeric or its not)
-					colTypes <- 
-						ifelse( 
-							sapply( x , class ) == 'numeric' , 
-							'DOUBLE PRECISION' , 
-							'VARCHAR(255)' 
-						)
-					
-					# combine the column names with their respective types,
-					# into a single character vector containing every field
-					colDecl <- paste( names( x ) , colTypes )
-
-					# build the full sql CREATE TABLE string that will be used
-					# to create the data table in the monet database
-					sql.create <-
-						sprintf(
-							paste(
-								"CREATE TABLE" ,
-								catalog[ i , 'db_tablename' ] ,
-								"(%s)"
-							) ,
-							paste(
-								colDecl ,
-								collapse = ", "
-							)
-						)
-					
-					# create the table in the database
-					DBI::dbSendQuery( db , sql.create )
-					
-					# now build the sql command that will copy all records from the csv file (still on the local hard disk)
-					# into the monet database, using the structure that's just been defined by the sql.create object above
-					sql.update <- 
-						paste0( 
-							"copy " , 
-							rtctr , 
-							" offset 2 records into " , 
-							catalog[ i , 'db_tablename' ] , 
-							" from '" , 
-							csvfile , 
-							"' using delimiters ',' null as ''" 
-						)
-						
-					# run the sql command
-					DBI::dbSendQuery( db , sql.update )
-						
-				}
-			
 			} else {
 			
 				sas_con <- file( catalog[ i , 'sas_ri' ] , "r" , encoding = "windows-1252" )
@@ -193,66 +99,26 @@ lodown_brfss <-
 				
 				# re-write the sas importation script to a file on the local hard drive
 				writeLines( z , impfile )
-
-				# if it's 2013 or beyond..
-				if ( catalog[ i , 'year' ] >= 2013 ){
+	
+				x <- 
+					read_SAScii (
+						unzipped_files ,
+						impfile ,
+						beginline = 70
+					)
 					
-					# create a read connection..
-					incon <- file( unzipped_files , "r" , encoding = "windows-1252" )
-					
-					# ..and a write connection
-					outcon <- file( sasfile , "w" )
-				
-					# read through every line
-					while( length( line <- readLines( incon , 1 , skipNul = TRUE ) ) > 0 ){
-					
-						# remove the stray slash
-						line <- gsub( "\\" , " " , line , fixed = TRUE )
-						
-						# remove the stray everythings
-						line <- gsub( "[^[:alnum:]///' \\.]" , " " , line )
-						
-						# mac/unix converts some weird characters to two digits
-						# while windows convers the to one.  deal with it.
-						line <- iconv( line , "" , "ASCII" , sub = "abcxyz" )
-						line <- gsub( "abcxyzabcxyz" , " " , line )
-						line <- gsub( "abcxyz" , " " , line )
-				
-						# write the result to the output connection
-						writeLines( line , outcon )
-						
-					}
-					
-					# remove the original
-					file.remove( unzipped_files )
-					
-					# redirect the local filename to the new file
-					unzipped_files <- sasfile
-					
-					# close both connections
-					close( outcon )
-					close( incon )
-					
-				}
-				
-				# actually run the read.SAScii.monetdb() function
-				# and import the current fixed-width file into the monet database
-				read_SAScii_monetdb (
-					unzipped_files ,
-					impfile ,
-					beginline = 70 ,
-					zipped = F ,						# the ascii file is no longer stored in a zipped file
-					tl = TRUE ,							# convert all column names to lowercase
-					tablename = catalog[ i , 'db_tablename' ] ,	# the table will be stored in the monet database as bYYYY.. for example, 2010 will be stored as the 'b2010' table
-					connection = db
-				)
-				
 			}
+
+			# convert all column names in the table to all lowercase
+			names( x ) <- tolower( names( x ) )
 			
-			# add a column containing all ones to the current table
-			DBI::dbSendQuery( db , paste0( 'alter table ' , catalog[ i , 'db_tablename' ] , ' add column one int' ) )
-			DBI::dbSendQuery( db , paste0( 'UPDATE ' , catalog[ i , 'db_tablename' ] , ' SET one = 1' ) )
+			x$one <- 1
 			
+			saveRDS( x , file = catalog[ i , 'output_filename' ] )
+
+			# add the number of records to the catalog
+			catalog[ i , 'case_count' ] <- nrow( x )
+
 			# create a database-backed complex sample design object
 			brfss_design <-
 				survey::svydesign(
@@ -260,28 +126,18 @@ lodown_brfss <-
 					nest = TRUE ,
 					strata = as.formula( paste( "~" , catalog[ i , 'strata' ] ) ) ,
 					id = as.formula( paste( "~" , catalog[ i , 'psu' ] ) ) ,
-					data = catalog[ i , 'db_tablename' ] ,
-					dbtype = "MonetDBLite" ,
-					dbname = catalog[ i , 'dbfolder' ]
-				)
+					data = x
+				) ; rm( x ) ; gc()
 
 			# save the complex sample survey design
 			# into a single r data file (.rds) that can now be
 			# analyzed quicker than anything else.
-			saveRDS( brfss_design , file = catalog[ i , 'design_filename' ] )
-
-			# add the number of records to the catalog
-			catalog[ i , 'case_count' ] <- nrow( brfss_design )
-
-			# repeat.
-			
-			# disconnect from the current monet database
-			DBI::dbDisconnect( db , shutdown = TRUE )
+			saveRDS( brfss_design , file = catalog[ i , 'design_filename' ] ) ; rm( brfss_design ) ; gc()
 
 			# delete the temporary files
 			suppressWarnings( file.remove( tf , impfile , unzipped_files , sasfile , csvfile ) )
 
-			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'db_tablename' ] , "'\r\n\n" ) )
+			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , catalog[ i , 'design_filename' ] , "'\r\n\n" ) )
 
 		}
 
