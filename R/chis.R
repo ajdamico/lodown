@@ -201,5 +201,3 @@ chis_authenticate <-
 		curl
 	}
 	
-	
-chis_authenticate( "ajdamico" , "ca123456" )
