@@ -43,7 +43,7 @@ get_catalog_brfss <-
 				stringsAsFactors = FALSE
 			)
 
-		subset( catalog , year < 2016 )
+		catalog
 
 	}
 
