@@ -121,33 +121,74 @@ chis_authenticate <-
 		viewstate <- 
 			as.character(
 				sub(
-					'.*id="__VIEWSTATE" value="([0-9a-zA-Z+/=]*).*' , 
+					'.*id="__VIEWSTATE" value="([0-9a-zA-Z+/=]+)".*' , 
 					'\\1' , 
 					html
 				)
 			)
-
+			
+		viewstategenerator <- 
+			as.character(
+				sub(
+					'.*id="__VIEWSTATEGENERATOR" value="([0-9a-zA-Z+/=]+)".*' , 
+					'\\1' , 
+					html
+				)
+			)
+			
 		# extract the `eventvalidation` string
 		eventvalidation <- 
 			as.character(
 				sub(
-					'.*id="__EVENTVALIDATION" value="([0-9a-zA-Z+/=]*).*' , 
+					'.*id="__EVENTVALIDATION" value="([0-9a-zA-Z+/=]+)".*' , 
 					'\\1' , 
 					html
 				)
 			)
 
-
+		requestdigest <-
+			as.character(
+				sub(
+					'.*id="__REQUESTDIGEST" value="([0-9a-zA-Z+/=:\\, \\-]+)".*' , 
+					'\\1' , 
+					html
+				)
+			)
 			
 		# construct a list full of parameters to pass to the ucla website
 		params <- 
 			list(
 				'ctl00$ctl29$g_3a8b961a_097a_4aa2_a7b2_9959a01104bd$ctl00$UserName'    = your_username ,
 				'ctl00$ctl29$g_3a8b961a_097a_4aa2_a7b2_9959a01104bd$ctl00$Password'    = your_password ,
-				'ctl00$ctl29$g_3a8b961a_097a_4aa2_a7b2_9959a01104bd$ctl00$LoginLinkButton' = 'uclaButton' ,
+				'ctl00$ctl29$g_3a8b961a_097a_4aa2_a7b2_9959a01104bd$ctl00$LoginLinkButton' = TRUE ,
 				'__VIEWSTATE'                                  = viewstate ,
-				'__EVENTVALIDATION'                            = eventvalidation
+				'__EVENTVALIDATION'                            = eventvalidation ,
+				'__REQUESTDIGEST'							   = requestdigest ,
+				'__VIEWSTATEGENERATOR'						   = viewstategenerator ,
+				'__EVENTTARGET' = '' ,
+				'__EVENTARGUMENT' = '' ,
+				'__LASTFOCUS' = '' ,
+				'MSOWebPartPage_PostbackSource' = '' ,
+				'MSOTlPn_SelectedWpId' = '' ,
+				'MSOTlPn_View' = '0' ,
+				'MSOTlPn_ShowSettings' = 'False' ,
+				'MSOGallery_SelectedLibrary' = '' ,
+				'MSOGallery_FilterString' = '' ,
+				'MSOTlPn_Button' = 'none' ,
+				'MSOSPWebPartManager_DisplayModeName' = 'Browse' ,
+				'MSOSPWebPartManager_ExitingDesignMode' = 'false' ,
+				'MSOWebPartPage_Shared' = '' ,
+				'MSOLayout_LayoutChanges' = '' ,
+				'MSOLayout_InDesignMode' = '' ,
+				'_wpSelected' = '' ,
+				'_wzSelected' = '' ,
+				'MSOSPWebPartManager_OldDisplayModeName' = 'Browse' ,
+				'MSOSPWebPartManager_StartWebPartEditingName' = 'false' ,
+				'MSOSPWebPartManager_EndWebPartEditing' = 'false'
 			)
+			
+			
+			
 			
 			
 		# post these parameters to the login page to authenticate
@@ -159,3 +200,6 @@ chis_authenticate <-
 
 		curl
 	}
+	
+	
+chis_authenticate( "ajdamico" , "ca123456" )
