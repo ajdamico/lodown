@@ -124,7 +124,7 @@ lodown_brfss <-
 			# delete the temporary files
 			suppressWarnings( file.remove( tf , impfile , unzipped_files , sasfile , csvfile ) )
 
-			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , catalog[ i , 'design_filename' ] , "'\r\n\n" ) )
+			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , catalog[ i , 'output_filename' ] , "'\r\n\n" ) )
 
 		}
 
