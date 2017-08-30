@@ -123,18 +123,6 @@ lodown_pnad <-
 			dom.fn <- unzipped_files[ grepl( paste0( '/dom' , catalog[ i , 'year' ] ) , tolower( unzipped_files ) ) ]
 			pes.fn <- unzipped_files[ grepl( paste0( '/pes' , catalog[ i , 'year' ] ) , tolower( unzipped_files ) ) ]
 
-			dom_df <-
-				read_SAScii(
-					dom.fn , 
-					dom.sas ,
-					zipped = FALSE ,
-					na = c( "" , "NA" , "." )
-				) 
-				
-			# dump 100% missing columns
-			dom_df <- dom_df[ !sapply( dom_df , function( w ) all( is.na( w ) ) ) ]
-			gc()
-			
 			pes_df <-
 				read_SAScii(
 					pes.fn ,
@@ -147,6 +135,18 @@ lodown_pnad <-
 			pes_df <- pes_df[ !sapply( pes_df , function( w ) all( is.na( w ) ) ) ]
 			gc()
 	
+			dom_df <-
+				read_SAScii(
+					dom.fn , 
+					dom.sas ,
+					zipped = FALSE ,
+					na = c( "" , "NA" , "." )
+				) 
+				
+			# dump 100% missing columns
+			dom_df <- dom_df[ !sapply( dom_df , function( w ) all( is.na( w ) ) ) ]
+			gc()
+			
 			names( dom_df ) <- tolower( names( dom_df ) )
 			names( pes_df ) <- tolower( names( pes_df ) )
 	
