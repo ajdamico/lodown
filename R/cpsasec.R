@@ -573,13 +573,26 @@ lodown_cpsasec <-
 			
 			if( catalog[ i , 'year' ] %in% c( 2010:2017 , 2014.38 , 2014.58 ) ){
 
-				sp.url <- 
-					paste0( 
-						"https://www.census.gov/housing/povmeas/spmresearch/spmresearch" , 
-						floor( catalog[ i , 'year' ] - 1 ) , 
-						if ( catalog[ i , 'year' ] == 2014.38 ) "_redes" else if ( catalog[ i , 'year' ] >= 2016 ) "" else "new" ,
-						".sas7bdat" 
-					)
+				if( catalog[ i , 'year' ] >= 2017 ){
+				
+					sp.url <-
+						paste0(
+							"https://www2.census.gov/programs-surveys/supplemental-poverty-measure/datasets/spm/spmresearch" , 
+							catalog[ i , 'year' ] - 1 , 
+							".sas7bdat"
+						)
+						
+				} else {
+				
+					sp.url <- 
+						paste0( 
+							"https://www.census.gov/housing/povmeas/spmresearch/spmresearch" , 
+							floor( catalog[ i , 'year' ] - 1 ) , 
+							if ( catalog[ i , 'year' ] == 2014.38 ) "_redes" else if ( catalog[ i , 'year' ] >= 2016 ) "" else "new" ,
+							".sas7bdat" 
+						)
+				
+				}
 				
 				cachaca( sp.url , tf , mode = 'wb' , filesize_fun = 'httr' )
 				
