@@ -105,7 +105,10 @@ lodown_cpsasec <-
 										"http://thedataweb.rm.census.gov/pub/cps/march/asec2014_pubuse_tax_fix_5x8_2017.zip" ,
 										ifelse( catalog[ i , 'year' ] == 2016 ,
 											paste0( "http://thedataweb.rm.census.gov/pub/cps/march/asec" , catalog[ i , 'year' ] , "_pubuse_v3.zip" ) ,
-											paste0( "http://thedataweb.rm.census.gov/pub/cps/march/asec" , catalog[ i , 'year' ] , "_pubuse.zip" )
+											ifelse( catalog[ i , 'year' ] == 2017 ,
+												"http://thedataweb.rm.census.gov/pub/cps/march/asec2017early_pubuse.zip" ,
+												paste0( "http://thedataweb.rm.census.gov/pub/cps/march/asec" , catalog[ i , 'year' ] , "_pubuse.zip" )
+											)
 										)
 									)
 								)
@@ -130,7 +133,8 @@ lodown_cpsasec <-
 
 				} else {
 					
-					if( catalog[ i , 'year' ] >= 2016 ) sas_ris <- cpsasec_dd_parser( paste0( "http://thedataweb.rm.census.gov/pub/cps/march/Asec" , catalog[ i , 'year' ] , "_Data_Dict_Full.txt" ) )
+					if( catalog[ i , 'year' ] >= 2017 ) sas_ris <- cpsasec_dd_parser( paste0( "http://thedataweb.rm.census.gov/pub/cps/march/08ASEC" , catalog[ i , 'year' ] , "_Data_Dict_Full.txt" ) )
+					if( catalog[ i , 'year' ] == 2016 ) sas_ris <- cpsasec_dd_parser( paste0( "http://thedataweb.rm.census.gov/pub/cps/march/Asec2016_Data_Dict_Full.txt" ) )
 					if( catalog[ i , 'year' ] == 2015 ) sas_ris <- cpsasec_dd_parser( "http://thedataweb.rm.census.gov/pub/cps/march/asec2015early_pubuse.dd.txt" )
 					if( catalog[ i , 'year' ] == 2014.38 ) sas_ris <- cpsasec_dd_parser( "http://thedataweb.rm.census.gov/pub/cps/march/asec2014R_pubuse.dd.txt" )
 					if( catalog[ i , 'year' ] == 2014.58 ) sas_ris <- cpsasec_dd_parser( "http://thedataweb.rm.census.gov/pub/cps/march/asec2014early_pubuse.dd.txt" )
@@ -346,7 +350,7 @@ lodown_cpsasec <-
 			# tack on _outtyp_ variables
 			if( catalog[ i , 'year' ] > 2013 ){
 				
-				stopifnot( catalog[ i , 'year' ] %in% c( 2016 , 2015 , 2014.58 , 2014.38 , 2014 ) )
+				stopifnot( catalog[ i , 'year' ] %in% c( 2017 , 2016 , 2015 , 2014.58 , 2014.38 , 2014 ) )
 				
 				tf <- tempfile()
 				
@@ -424,6 +428,26 @@ lodown_cpsasec <-
 					ac <- data.frame( readr::read_fwf( tf , readr::fwf_widths( c( 5 , 2 , 1 ) ) , col_types = 'nnn' ) )
 
 					cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/pubuse_esioffer_2016.sas7bdat" , tf , mode = 'wb' , filesize_fun = 'httr' )
+					
+					offer <- data.frame( haven::read_sas( tf ) )
+				
+				}
+				
+				if ( catalog[ i , 'year' ] %in% 2017 ){
+				
+					ote <- "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2017/cps-redesign/asec17_outtyp_extract.dat"
+				
+					cachaca( ote , tf , mode = 'wb' , filesize_fun = 'httr' )
+					
+					ot <- data.frame( readr::read_fwf( tf , readr::fwf_widths( c( 5 , 2 , 2 , 1 ) ) , col_types = 'nnnn' ) )
+					
+					ace <- "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2017/cps-redesign/asec17_currcov_extract.dat"
+				
+					cachaca( ace , tf , mode = 'wb' , filesize_fun = 'httr' )
+					
+					ac <- data.frame( readr::read_fwf( tf , readr::fwf_widths( c( 5 , 2 , 1 ) ) , col_types = 'nnn' ) )
+
+					cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2017/cps-redesign/pubuse_esioffer_2017.sas7bdat" , tf , mode = 'wb' , filesize_fun = 'httr' )
 					
 					offer <- data.frame( haven::read_sas( tf ) )
 				
@@ -547,7 +571,7 @@ lodown_cpsasec <-
 			
 			overlapping.spm.fields <- c( "gestfips" , "fpovcut" , "ftotval" , "marsupwt" )
 			
-			if( catalog[ i , 'year' ] %in% c( 2010:2016 , 2014.38 , 2014.58 ) ){
+			if( catalog[ i , 'year' ] %in% c( 2010:2017 , 2014.38 , 2014.58 ) ){
 
 				sp.url <- 
 					paste0( 
