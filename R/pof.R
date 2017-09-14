@@ -120,7 +120,7 @@ lodown_pof <-
 
 			# read the whole thing into memory
 			leitura_con <- file( leitura , encoding = 'windows-1252' )
-			
+
 			z <- readLines( leitura_con )
 
 			# remove all those goofy tab characters (which will screw up SAScii)
@@ -131,6 +131,9 @@ lodown_pof <-
 
 			# remove goofy @;
 			z <- gsub( "@;" , "" , z )
+
+			# remove goofy "/;";
+			z <- gsub( "/;" , "/" , z )
 
 			# remove lines containing solely `input`
 			z <- z[ !( tolower( z ) == 'input' ) ]
@@ -237,7 +240,7 @@ lodown_pof <-
 				cur.beginline <- which( tolower( dfn ) == tolower( data.files.to.import ) )
 
 				curfile_con <- file( curfile , encoding = 'windows-1252' )
-				
+
 				# import the data file into R
 				x <-
 					read_SAScii(
