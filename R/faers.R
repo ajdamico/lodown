@@ -72,7 +72,7 @@ get_catalog_faers <-
 						year = ascii.years ,
 						quarter = ascii.quarter ,
 						fl = f.l ,
-						full_url =  paste0( if( f.l == 'legacy' ) "https://wayback.archive-it.org/7993/20170404211700/" , "https://www.fda.gov" , unlist( ascii.links ) ) ,
+						full_url =  paste0( if( f.l == 'legacy' ) "https://wayback.archive-it.org/7993/20170404211700/" else "https://www.fda.gov" , unlist( ascii.links ) ) ,
 						output_folder = paste0( output_dir , "/" , ascii.years , " q" , ascii.quarter ) ,
 						stringsAsFactors = FALSE
 					)
