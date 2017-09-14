@@ -6,7 +6,7 @@ get_catalog_faers <-
 		tf <- tempfile()
 	
 		# specify the homepage of the legacy fda quarterly data sets
-		legacy.url <- "https://www.fda.gov/Drugs/GuidanceComplianceRegulatoryInformation/Surveillance/AdverseDrugEffects/ucm083765.htm"
+		legacy.url <- "https://wayback.archive-it.org/7993/20170404211700/https:/www.fda.gov/Drugs/GuidanceComplianceRegulatoryInformation/Surveillance/AdverseDrugEffects/ucm083765.htm"
 
 		# specify the homepage of the faers quarterly data sets
 		faers.url <- "https://www.fda.gov/Drugs/GuidanceComplianceRegulatoryInformation/Surveillance/AdverseDrugEffects/ucm082193.htm"
