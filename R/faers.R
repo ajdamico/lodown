@@ -14,7 +14,7 @@ get_catalog_faers <-
 		# loop through two text strings: `faers` and `legacy`
 		for ( f.l in c( "faers" , "legacy" ) ){
 
-			cachaca( get( paste0( f.l , ".url" ) ) , tf , mode = 'wb' )
+			download.file( get( paste0( f.l , ".url" ) ) , tf , mode = 'wb' )
 		
 			# for both, download the contents of the homepages
 			doc <- XML::htmlParse( tf )
