@@ -94,7 +94,7 @@ lodown_faers <-
 		for ( i in seq_len( nrow( catalog ) ) ){
 		
 			# download the file
-			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' , filesize_fun = 'unzip_verify' )
+			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' , filesize_fun = 'httr' )
 
 			unzipped_files <- unzip_warn_fail( tf , exdir = paste0( catalog[ i , "output_folder" ] , "/unzips" ) )
 
