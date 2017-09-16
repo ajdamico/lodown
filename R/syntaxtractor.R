@@ -49,7 +49,7 @@ syntaxtractor <-
 		
 		} else {
 			
-			this_rmd <- grep( paste0( "-" , ifelse( data_name == 'acs2' , 'acs' , data_name ) , "\\.Rmd$" ) , list.files( "C:/Users/anthonyd/Documents/GitHub/asdfreebook/" , full.names = TRUE ) , value = TRUE )
+			this_rmd <- grep( paste0( "-" , ifelse( data_name == 'acs2' , 'acs' , data_name ) , "\\.Rmd$" ) , list.files( "C:/Users/anthonyd/Documents/GitHub/asdfree/" , full.names = TRUE ) , value = TRUE )
 			
 			rmd_page <- readLines( this_rmd )
 		
