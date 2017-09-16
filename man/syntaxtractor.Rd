@@ -4,7 +4,7 @@
 \alias{syntaxtractor}
 \title{rmarkdown syntax extractor for sisyphean perpetual testing}
 \usage{
-syntaxtractor(data_name, repo = "ajdamico/asdfreebook", ref = "master",
+syntaxtractor(data_name, repo = "ajdamico/asdfree", ref = "master",
   replacements = NULL, setup_test = NULL, local_comp = FALSE)
 }
 \arguments{

@@ -36,7 +36,7 @@
 #'
 #' @export
 syntaxtractor <-
-	function( data_name , repo = "ajdamico/asdfreebook" , ref = "master" , replacements = NULL , setup_test = NULL , local_comp = FALSE ){
+	function( data_name , repo = "ajdamico/asdfree" , ref = "master" , replacements = NULL , setup_test = NULL , local_comp = FALSE ){
 	
 		if( !local_comp ){
 			repo_homepage <- readLines_retry( paste0( "https://github.com/" , repo , "/tree/" , ref , "/" ) )
