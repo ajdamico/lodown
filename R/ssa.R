@@ -71,7 +71,7 @@ lodown_ssa <-
 			file.copy( tf , paste0( catalog[ i , 'output_folder' ] , "/" , basename( catalog[ i , 'doc_url' ] ) ) )
 			
 			# download the file
-			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' , filesize_fun = 'httr' )
+			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' , filesize_fun = 'unzip_verify' )
 
 			unzipped_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) )
 
