@@ -66,7 +66,7 @@ lodown_ssa <-
 		for ( i in seq_len( nrow( catalog ) ) ){
 
 			# download the dictionary
-			cachaca( catalog[ i , "doc_url" ] , tf , mode = 'wb' , filesize_fun = 'httr' )
+			download.file( catalog[ i , "doc_url" ] , tf , mode = 'wb' )
 
 			file.copy( tf , paste0( catalog[ i , 'output_folder' ] , "/" , basename( catalog[ i , 'doc_url' ] ) ) )
 			
