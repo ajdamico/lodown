@@ -110,7 +110,8 @@ read_SAScii_monetdb <-
 		allow_zero_records = FALSE ,	# by default, expect more than zero records to be imported.
 		na_strings = ""	,				# by default, na strings are empty
 		unzip_fun = unzip_warn_fail ,
-		winslash_edit = "\\"
+		winslash_edit = "\\" ,
+		filesize_fun = 'rcurl'
 	) {
 		if( is.null( sas_ri ) & is.null( sas_stru ) ) stop( "either sas_ri= or sas_stru= must be specified" )
 		if( !is.null( sas_ri ) & !is.null( sas_stru ) ) stop( "either sas_ri= or sas_stru= must be specified, but not both" )
@@ -152,7 +153,7 @@ read_SAScii_monetdb <-
 		if( any( grepl( 'url' , attr( file( sas_ri ) , "class" ) ) ) ){
 		
 			# download it.
-			cachaca( sas_ri , tf_sri , mode = 'wb' )
+			download.file( sas_ri , tf_sri , mode = 'wb' )
 		
 		# otherwise, just copy it over.
 		} else tf_sri <- sas_ri
@@ -202,7 +203,7 @@ read_SAScii_monetdb <-
 	if ( zipped ){
 		
 		# download the CPS repwgts zipped file
-		cachaca( fn , tf , mode = "wb" )
+		cachaca( fn , tf , mode = "wb" , filesize_fun = filesize_fun )
 		
 		# unzip the file's contents and store the file name within the temporary directory
 		if( identical( unzip_warn_fail , unzip_fun ) ){
