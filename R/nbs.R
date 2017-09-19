@@ -42,7 +42,7 @@ lodown_nbs <-
 		for ( i in seq_len( nrow( catalog ) ) ){
 
 			# download the file
-			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' , filesize_fun = 'httr' )
+			download.file( catalog[ i , "full_url" ] , tf , mode = 'wb' )
 
 			x <- read.csv( tf , stringsAsFactors = FALSE )
 			
