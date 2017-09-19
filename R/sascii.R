@@ -2,7 +2,7 @@
 
 
 read_SAScii <-
-	function( dat_path , sas_path = NULL , beginline = 1 , lrecl = NULL , skip_decimal_division = NULL , zipped = FALSE , na_values = c( "NA" , "" , "." ) , sas_stru = NULL , sas_encoding = "windows-1252" , ... ){
+	function( dat_path , sas_path = NULL , beginline = 1 , lrecl = NULL , skip_decimal_division = NULL , zipped = FALSE , na_values = c( "NA" , "" , "." ) , sas_stru = NULL , sas_encoding = "windows-1252" , filesize_fun = 'rcurl' , ... ){
 
 		if( is.null( sas_path ) & is.null( sas_stru ) ) stop( "either sas_path= or sas_stru= must be specified" )
 		if( !is.null( sas_path ) & !is.null( sas_stru ) ) stop( "either sas_path= or sas_stru= must be specified, but not both" )
@@ -22,7 +22,7 @@ read_SAScii <-
 
 		if (zipped) {
 			tf <- tempfile()
-			cachaca( dat_path , tf , mode = "wb" )
+			cachaca( dat_path , tf , mode = "wb" , filesize_fun = filesize_fun )
 			dat_path <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) , overwrite = TRUE )
 			if( length( dat_path ) != 1 ) stop( "zipped file does not contain exactly one file" )
 		}
