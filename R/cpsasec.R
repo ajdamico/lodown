@@ -572,7 +572,7 @@ lodown_cpsasec <-
 			
 			overlapping.spm.fields <- c( "gestfips" , "fpovcut" , "ftotval" , "marsupwt" )
 			
-			if( catalog[ i , 'year' ] %in% c( 2010:2017 , 2014.38 , 2014.58 ) ){
+			if( catalog[ i , 'year' ] %in% c( 2010:2016 , 2014.38 , 2014.58 ) ){
 
 				if( catalog[ i , 'year' ] >= 2017 ){
 				
