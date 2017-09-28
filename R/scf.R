@@ -36,6 +36,12 @@ get_catalog_scf <-
 		catalog[ c( 'main_url' , 'extract_url' , 'rw_url' ) ] <- sapply( catalog[ c( 'main_url' , 'extract_url' , 'rw_url' ) ] , function( z ) paste0( "https://www.federalreserve.gov/econresdata/scf/files/" , z , '.zip' ) )
 		
 		catalog[ catalog$year == 2001 , 'rw_url' ] <- "https://www.federalreserve.gov/pubs/oss/oss2/2001/scf2001rw1s.zip"
+
+		catalog[ catalog$year == 2016 , 'main_url' ] <- "https://www.federalreserve.gov/econres/files/scf2016s.zip"
+
+		catalog[ catalog$year == 2016 , 'extract_url' ] <- "https://www.federalreserve.gov/econres/files/scfp2016s.zip"
+		
+		catalog[ catalog$year == 2016 , 'rw_url' ] <- "https://www.federalreserve.gov/econres/files/scf2016rw1s.zip"
 			
 		catalog
 
