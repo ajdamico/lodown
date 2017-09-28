@@ -1,5 +1,7 @@
 get_catalog_scf <-
 	function( data_name = "scf" , output_dir , ... ){
+
+		base_url <- "https://www.federalreserve.gov/econres/files/"
 	
 		latest_year <- 
 			max( 
@@ -25,7 +27,7 @@ get_catalog_scf <-
 				extract_url = 
 					c( 'scfp1989s' , 'scfp1992s' , 'scfp1995s' , 'scfp1998s' , 'scfp2001s' , 'scfp2004s' , 'scfp2007s' , 'rscfp2009panels' , paste0( "scfp" , seq( 2010 , latest_year , 3 ) , "s" ) ) ,
 				rw_url = 
-					c( 'scf89rw1s' , '1992_scf92rw1s' , '1995_scf95rw1s' , '1998_scf98rw1s' , 'scf2001rw1s' , '2004_scf2004rw1s' , '2007_scfrw1s' , 'scf2009prw1s' , paste0( "scf" , seq( 2010 , latest_year , 3 ) , "rw1s" ) ) ,
+					c( 'scf89rw1s' , 'scf92rw1s' , 'scf95rw1s' , 'scf98rw1s' , 'scf2001rw1s' , 'scf2004rw1s' , 'scf2007rw1s' , 'scf2009prw1s' , paste0( "scf" , seq( 2010 , latest_year , 3 ) , "rw1s" ) ) ,
 				stringsAsFactors = FALSE
 			)
 
@@ -33,15 +35,7 @@ get_catalog_scf <-
 			
 		catalog$rw_filename <- paste0( output_dir , "/scf " , catalog$year , ifelse( catalog$year == 2009 , " panel" , "" ) , " rw.rds" )
 		
-		catalog[ c( 'main_url' , 'extract_url' , 'rw_url' ) ] <- sapply( catalog[ c( 'main_url' , 'extract_url' , 'rw_url' ) ] , function( z ) paste0( "https://www.federalreserve.gov/econresdata/scf/files/" , z , '.zip' ) )
-		
-		catalog[ catalog$year == 2001 , 'rw_url' ] <- "https://www.federalreserve.gov/pubs/oss/oss2/2001/scf2001rw1s.zip"
-
-		catalog[ catalog$year == 2016 , 'main_url' ] <- "https://www.federalreserve.gov/econres/files/scf2016s.zip"
-
-		catalog[ catalog$year == 2016 , 'extract_url' ] <- "https://www.federalreserve.gov/econres/files/scfp2016s.zip"
-		
-		catalog[ catalog$year == 2016 , 'rw_url' ] <- "https://www.federalreserve.gov/econres/files/scf2016rw1s.zip"
+		catalog[ c( 'main_url' , 'extract_url' , 'rw_url' ) ] <- sapply( catalog[ c( 'main_url' , 'extract_url' , 'rw_url' ) ] , function(z) paste0(base_url , z , '.zip') )
 			
 		catalog
 
