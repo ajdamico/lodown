@@ -39,6 +39,9 @@ syntaxtractor <-
 	function( data_name , repo = "ajdamico/asdfree" , ref = "master" , replacements = NULL , setup_test = NULL , local_comp = FALSE ){
 	
 		if( !local_comp ){
+		
+			options( "monetdb.debug.query" = TRUE )
+		
 			repo_homepage <- readLines_retry( paste0( "https://github.com/" , repo , "/tree/" , ref , "/" ) )
 			
 			rmd_links <- gsub( "(.*)>(.*)\\.Rmd</a>(.*)" , "\\2" , grep( "Rmd" , repo_homepage , value = TRUE ) )
