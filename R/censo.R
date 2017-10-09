@@ -15,7 +15,7 @@ get_catalog_censo <-
 		all_files <- scan( text = all_files , what = "character", quiet = T )
 
 		# remove the two files you don't need to import
-		files_to_download_2010 <- all_files[ !( all_files %in% c( '1_Atualizacoes_20160311.txt' , 'Atualizacoes.txt' , 'Documentacao.zip' ) ) ]
+		files_to_download_2010 <- all_files[ !grepl( "documentacao|atualizacoes" , all_files , ignore.case = TRUE ) ]
 
 		catalog <-
 			rbind(
@@ -57,7 +57,7 @@ get_catalog_censo <-
 		all_files <- scan( text = all_files , what = "character", quiet = T )
 
 		# remove the two files you don't need to import
-		files_to_download_2000 <- all_files[ !( all_files %in% c( '1_Documentacao.zip' , '2_Atualizacoes.txt' , '1_Documentacao_velho.zip' , "2_Atualizacoes_20160309.txt" , "1_Documentacao_20160309.zip" ) ) ]
+		files_to_download_2000 <- all_files[ !grepl( "documentacao|atualizacoes" , all_files , ignore.case = TRUE ) ]
 
 		catalog <-
 			rbind(
