@@ -226,19 +226,30 @@ lodown_hmda <-
 				}
 				
 				
-				# construct the monetdb COPY INTO command
-				sql.copy <- 
-					paste0( 
-						"copy into " , 
-						catalog[ i , 'db_tablename' ] , 
-						" from '" , 
-						normalizePath( unzipped_files ) , 
-						delim.line
-					)
+				if( catalog[ i , 'db_tablename' ] == "hmda_inst_2016" ){
+				
+					this_table <- read.table( unzipped_files , sep = '\t' , head = FALSE , comment.char = '' , quote = '' , fill = TRUE )
+					names( this_table ) <- DBI::dbListFields( db , catalog[ i , 'db_tablename' ] )
+					DBI::dbRemoveTable( db , catalog[ i , 'db_tablename' ] )
+					DBI::dbWriteTable( db , catalog[ i , 'db_tablename' ] , this_table )
+				
+				} else {
 					
-				# actually execute the COPY INTO command
-				DBI::dbSendQuery( db , sql.copy )
-			
+					# construct the monetdb COPY INTO command
+					sql.copy <- 
+						paste0( 
+							"copy into " , 
+							catalog[ i , 'db_tablename' ] , 
+							" from '" , 
+							normalizePath( unzipped_files ) , 
+							delim.line
+						)
+						
+					# actually execute the COPY INTO command
+					DBI::dbSendQuery( db , sql.copy )
+				
+				}
+				
 				# conversion of numeric columns incorrectly stored as character strings #
 			
 				# initiate a character vector containing all columns that should be numeric types
