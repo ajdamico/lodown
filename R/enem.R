@@ -110,7 +110,7 @@ lodown_enem <-
 
 				for( this_file in csvfile ){
 
-					tablename <- tolower( gsub( "\\.(.*)" , "" , basename( this_file ) ) )
+					tablename <- gsub( "^dados_" , "" , tolower( gsub( "\\.(.*)" , "" , basename( this_file ) ) ) )
 
 					soc <- grepl( "," , readLines( this_file , 1 ) )
 
