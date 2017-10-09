@@ -22,9 +22,8 @@ get_catalog_censo_escolar <-
         stringsAsFactors = FALSE
       )
 
-    # drop wrong 2009 file
-    catalog <- catalog[ !( catalog$full_url %in% "ftp://ftp.inep.gov.br/microdados/micro_censo_escolar2009.zip" ) , ]
-
+	catalog <- catalog[ !grepl( "arquivos_antigos" , catalog$full_url , ignore.case = TRUE ) , ]
+	
     # sort by year
     catalog[ order( catalog$year ) , ]
 
