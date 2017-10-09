@@ -152,7 +152,7 @@ lodown_saeb <-
 				tnwy <- paste0( gsub( "\\.csv$" , "" , tolower( basename( this.csv ) ) ) , "_" , catalog[ i , 'year' ] )
 
 				# specify the chunk size to read in
-				chunk_size <- 250000
+				chunk_size <- 500000
 
 				# create a file connection to the current csv
 				input <- file( this.csv , "r")
