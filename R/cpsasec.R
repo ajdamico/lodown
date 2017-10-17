@@ -48,9 +48,9 @@ lodown_cpsasec <-
 				
 				tf1 <- tempfile() ; tf2 <- tempfile() ; tf3 <- tempfile()
 			
-				cachaca( "https://www.census.gov/housing/extract_files/data%20extracts/cpsasec14/hhld.sas7bdat" , tf1 , mode = 'wb' , filesize_fun = 'httr' )
-				cachaca( "https://www.census.gov/housing/extract_files/data%20extracts/cpsasec14/family.sas7bdat" , tf2 , mode = 'wb' , filesize_fun = 'httr' )
-				cachaca( "https://www.census.gov/housing/extract_files/data%20extracts/cpsasec14/person.sas7bdat" , tf3 , mode = 'wb' , filesize_fun = 'httr' )
+				cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/income-poverty/time-series/data-extracts/hhld.sas7bdat" , tf1 , mode = 'wb' , filesize_fun = 'httr' )
+				cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/income-poverty/time-series/data-extracts/family.sas7bdat" , tf2 , mode = 'wb' , filesize_fun = 'httr' )
+				cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/income-poverty/time-series/data-extracts/person.sas7bdat" , tf3 , mode = 'wb' , filesize_fun = 'httr' )
 
 				
 				fmly <- data.frame( haven::read_sas( tf2 ) )
