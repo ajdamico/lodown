@@ -21,7 +21,11 @@ get_catalog_enem <-
 		# skip 2009 and 2010 until
 		# https://github.com/ajdamico/asdfree/issues/265
 		catalog <- subset( catalog , !( year %in% 2009:2010 ) )
-			
+		
+		# figure out and fix 2012
+		# https://github.com/ajdamico/asdfree/issues/296
+		catalog <- subset( catalog , !( year %in% 2012 ) )
+		
 		catalog
 
 	}
