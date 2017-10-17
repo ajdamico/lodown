@@ -23,6 +23,10 @@ get_catalog_censo_escolar <-
       )
 
 	catalog <- catalog[ !grepl( "arquivos_antigos" , catalog$full_url , ignore.case = TRUE ) , ]
+
+	# skip 2009 until this has been fixed..
+	# https://github.com/ajdamico/asdfree/issues/294
+	catalog <- subset( catalog , year != 2009 )
 	
     # sort by year
     catalog[ order( catalog$year ) , ]
