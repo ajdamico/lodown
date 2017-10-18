@@ -595,6 +595,8 @@ lodown <-
 			error = 
 				function( e ){ 
 			
+					print( sessionInfo() )
+			
 					if( grepl( 'cannot allocate vector of size' , e ) ) message( memory_note ) else 
 					if( grepl( 'parameter must be specified' , e ) ) message( parameter_note ) else
 					if( grepl( 'to install' , e ) ) message( installation_note ) else {
