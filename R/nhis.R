@@ -253,6 +253,34 @@ lodown_nhis <-
 				
 				catalog[ i , 'case_count' ] <- nrow( x )
 				
+				
+				if( catalog[ i , 'year' ] == 2016 & ( catalog[ i , 'type' ] %in% c( 'househld' , 'familyxx' , 'samadult' , 'samchild' , 'personsx' ) ) ) {
+					
+					if( catalog[ i , 'type' ] == 'househld' ) csv_file <- "household_revwts_csv.zip"
+					if( catalog[ i , 'type' ] == 'familyxx' ) csv_file <- "family_revwts_csv.zip"
+					if( catalog[ i , 'type' ] == 'samadult' ) csv_file <- "samadult_revwts_csv.zip"
+					if( catalog[ i , 'type' ] == 'samchild' ) csv_file <- "samchild_revwts_csv.zip"
+					if( catalog[ i , 'type' ] == 'personsx' ) csv_file <- "person_revwts_csv.zip"
+					
+					cachaca( paste0( "ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/NHIS/2016/RWCSV/" , csv_file ) , tf , mode = 'wb' , filesize_fun = 'httr' )
+
+					unzipped_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) )
+					
+					revised_weights <- readr::read_csv( unzipped_files )
+					
+					names( revised_weights ) <- tolower( names( revised_weights ) )
+					
+					fields_to_remove <- names( revised_weights )[ !( names( revised_weights ) %in% c( 'hhx' , 'fmx' , 'fpx' ) ) ]
+					
+					x <- x[ !( names( x ) %in% fields_to_remove ) ]
+					
+					x <- merge( x , revised_weights )
+					
+					stopifnot( nrow( x ) == catalog[ i , 'case_count' ] )
+				
+				}
+				
+				
 				saveRDS( x , file = catalog[ i , 'output_filename' ] )
 
 			}
