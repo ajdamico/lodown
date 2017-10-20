@@ -22,6 +22,10 @@ get_catalog_censo_escolar <-
         stringsAsFactors = FALSE
       )
 
+
+    # remove old files
+    catalog <- catalog[ !grepl( "arquivos_antigos" , catalog$full_url , ignore.case = TRUE ) , ]
+
     # remove wrong files
     catalog <- catalog[ !grepl( "micro_censo_escolar2009" , catalog$full_url , ignore.case = TRUE ) , ]
 
