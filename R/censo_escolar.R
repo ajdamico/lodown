@@ -15,19 +15,16 @@ get_catalog_censo_escolar <-
 
     catalog <-
       data.frame(
-        year = censo_escolar_years ,
+        year = as.numeric( censo_escolar_years ) ,
         dbfolder = paste0( output_dir , "/MonetDB" ) ,
         output_folder = paste0( output_dir , "/" , censo_escolar_years ) ,
         full_url = these_links ,
         stringsAsFactors = FALSE
       )
 
-	catalog <- catalog[ !grepl( "arquivos_antigos" , catalog$full_url , ignore.case = TRUE ) , ]
+    # remove wrong files
+    catalog <- catalog[ !grepl( "micro_censo_escolar2009" , catalog$full_url , ignore.case = TRUE ) , ]
 
-	# skip 2009 until this has been fixed..
-	# https://github.com/ajdamico/asdfree/issues/294
-	catalog <- subset( catalog , year != 2009 )
-	
     # sort by year
     catalog[ order( catalog$year ) , ]
 
@@ -45,7 +42,7 @@ lodown_censo_escolar <-
       db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog[ i , 'dbfolder' ] )
 
       # download the file
-      cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' , method = ifelse( .Platform$OS.type == "unix" , "wget" , "auto" ) , quiet = TRUE )
+      cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' , method = ifelse( .Platform$OS.type == "unix" , "wget" , "auto" ) , quiet = FALSE )
       unzipped_files <- custom_extract( tf , ext_dir = catalog[ i , "output_folder" ] )
 
       if( .Platform$OS.type != 'windows' ){
