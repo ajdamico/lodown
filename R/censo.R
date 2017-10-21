@@ -103,7 +103,16 @@ lodown_censo <-
 			cachaca( catalog[ i , 'full_url' ] , tf , mode = 'wb' )
 
 			unzipped_files <- unzip_warn_fail( tf , exdir = tempdir() )
-
+			
+			# some zipped files contained zipped subfiles
+			for( this_zip in grep( "\\.zip$" , unzipped_files , ignore.case = TRUE , value = TRUE ) ){
+			
+				unzipped_files <- unzipped_files[ unzipped_files != this_zip ]
+				
+				unzipped_files <- c( unzipped_files , unzip_warn_fail( this_zip , exdir = tempdir() ) )
+				
+			}
+			
 			dom_file <- unzipped_files[ grep( 'DOM' , unzipped_files , useBytes = TRUE , ignore.case = TRUE ) ]
 			pes_file <- unzipped_files[ grep( 'PES' , unzipped_files , useBytes = TRUE , ignore.case = TRUE ) ]
 			fam_file <- unzipped_files[ grep( 'FAM' , toupper( unzipped_files ) , useBytes = TRUE , ignore.case = TRUE ) ]
