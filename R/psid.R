@@ -43,6 +43,10 @@ get_catalog_psid <-
 
 		catalog$output_folder <- paste0( output_dir , "/" , gsub( ":|,|\\(|\\)" , "" , tolower( catalog$type ) ) , "/" )
 
+		# file currently missing from umich
+		# https://github.com/ajdamico/asdfree/issues/302
+		catalog <- subset( catalog , table_name != 'Risk Tolerance' )
+		
 		catalog
 
 	}
