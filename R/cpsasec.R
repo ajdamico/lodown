@@ -490,10 +490,10 @@ lodown_cpsasec <-
 				CPS.replicate.weight.file.location <- 
 					ifelse(
 						catalog[ i , 'year' ] == 2014.38 ,
-						"http://thedataweb.rm.census.gov/pub/cps/march/CPS_ASEC_ASCII_REPWGT_2014_3x8_run5.zip" ,
+						"https://www2.census.gov/programs-surveys/demo/datasets/income-poverty/time-series/weights/cps-asec-ascii-repwgt-2014-redes.dat" ,
 						ifelse(
 							catalog[ i , 'year' ] == 2014 ,
-							"https://www.census.gov/housing/extract_files/weights/CPS_ASEC_ASCII_REPWGT_2014_FULLSAMPLE.DAT" ,
+							"https://www2.census.gov/programs-surveys/demo/datasets/income-poverty/time-series/weights/cps-asec-ascii-repwgt-2014-fullsample.dat" ,
 							paste0( 
 								"http://thedataweb.rm.census.gov/pub/cps/march/CPS_ASEC_ASCII_REPWGT_" , 
 								substr( catalog[ i , 'year' ] , 1 , 4 ) , 
