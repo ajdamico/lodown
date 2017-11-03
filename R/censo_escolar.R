@@ -1,13 +1,10 @@
 get_catalog_censo_escolar <-
   function( data_name = "censo_escolar" , output_dir , ... ){
 
-    inep_portal <- "ftp://ftp.inep.gov.br/microdados/"
+    inep_portal <- "http://portal.inep.gov.br/web/guest/microdados"
 
-    if ( .Platform$OS.type == "windows"  ) {
-      w <- recursive_ftp_scrape( inep_portal )
-    } else {
-      w <- gsub( ".* " , inep_portal , readLines( inep_portal ) )
-    }
+    inep_html <- xml2::read_html(inep_portal)
+    w <- rvest::html_attr( rvest::html_nodes( inep_html , "a" ) , "href" )
 
     these_links <- grep( "censo_escolar(.*)zip$" , w , value = TRUE , ignore.case = TRUE )
 
@@ -22,12 +19,6 @@ get_catalog_censo_escolar <-
         stringsAsFactors = FALSE
       )
 
-
-    # remove old files
-    catalog <- catalog[ !grepl( "arquivos_antigos" , catalog$full_url , ignore.case = TRUE ) , ]
-
-    # remove wrong files
-    catalog <- catalog[ !grepl( "micro_censo_escolar2009" , catalog$full_url , ignore.case = TRUE ) , ]
 
     # sort by year
     catalog[ order( catalog$year ) , ]
@@ -46,7 +37,7 @@ lodown_censo_escolar <-
       db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog[ i , 'dbfolder' ] )
 
       # download the file
-      cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' , method = ifelse( .Platform$OS.type == "unix" , "wget" , "auto" ) , quiet = FALSE )
+      cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' , method = ifelse( .Platform$OS.type == "unix" , "wget" , "auto" ) , quiet = TRUE )
       unzipped_files <- custom_extract( tf , ext_dir = catalog[ i , "output_folder" ] )
 
       if( .Platform$OS.type != 'windows' ){
