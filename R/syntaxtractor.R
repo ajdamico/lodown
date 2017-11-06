@@ -46,13 +46,13 @@ syntaxtractor <-
 			
 			rmd_links <- gsub( "(.*)>(.*)\\.Rmd</a>(.*)" , "\\2" , grep( "Rmd" , repo_homepage , value = TRUE ) )
 			
-			this_rmd <- grep( paste0( "-" , ifelse( data_name == 'acs2' , 'acs' , data_name ) , "$" ) , rmd_links , value = TRUE )
+			this_rmd <- grep( paste0( "-" , ifelse( data_name %in% c( 'acs2' , 'acs3' , 'acs4' ) , 'acs' , data_name ) , "$" ) , rmd_links , value = TRUE )
 		
 			rmd_page <- readLines_retry( paste0( "https://raw.githubusercontent.com/" , repo , "/" , ref , "/" , this_rmd , ".Rmd" ) )
 		
 		} else {
 			
-			this_rmd <- grep( paste0( "-" , ifelse( data_name == 'acs2' , 'acs' , data_name ) , "\\.Rmd$" ) , list.files( "C:/Users/anthonyd/Documents/GitHub/asdfree/" , full.names = TRUE ) , value = TRUE )
+			this_rmd <- grep( paste0( "-" , ifelse( data_name %in% c( 'acs2' , 'acs3' , 'acs4' ) , 'acs' , data_name ) , "\\.Rmd$" ) , list.files( "C:/Users/anthonyd/Documents/GitHub/asdfree/" , full.names = TRUE ) , value = TRUE )
 			
 			rmd_page <- readLines( this_rmd )
 		
@@ -113,7 +113,7 @@ syntaxtractor <-
 				
 				if( length( lodown_command_line ) > 0 ){
 				
-					rmd_page[ lodown_command_line ] <- paste0( "stopifnot( nrow( " , ifelse( data_name == 'acs2' , 'acs' , data_name ) , "_cat ) > 0 )" )
+					rmd_page[ lodown_command_line ] <- paste0( "stopifnot( nrow( " , ifelse( data_name %in% c( 'acs2' , 'acs3' , 'acs4' ) , 'acs' , data_name ) , "_cat ) > 0 )" )
 					
 					# following two lines might include usernames/passwords
 					if( grepl( "your_" , rmd_page[ lodown_command_line + 1 ] ) ) rmd_page[ lodown_command_line + 1 ] <- ""
