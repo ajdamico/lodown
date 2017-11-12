@@ -20,6 +20,8 @@ get_catalog_enade <-
 				stringsAsFactors = FALSE
 			)
 
+		catalog <- subset( catalog , full_url != 'ftp://ftp.inep.gov.br/microdados/Enade_Microdados//microdados_enade_versao_27092017.zip' )
+			
 		catalog
 
 	}
