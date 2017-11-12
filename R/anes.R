@@ -43,7 +43,7 @@ get_catalog_anes <-
 
 		catalog$output_filename <- paste0( output_dir , "/" , catalog$directory , "/" , gsub( "(dta|sav)(.*)zip" , "" , basename( catalog$full_url ) ) , ".rds" )
 		
-		catalog <- subset( catalog , full_url != 'http://www.electionstudies.org/studypages/data/userprepared_1992TS_dta.zip' )
+		catalog <- subset( catalog , !( full_url %in% c( 'http://www.electionstudies.org/studypages/data/userprepared_1992TS_dta.zip' , 'http://www.electionstudies.org/studypages/data/1962post/anes1962TSdta.zip' ) ) )
 		
 		catalog
 
