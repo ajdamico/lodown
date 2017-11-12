@@ -7,8 +7,8 @@ get_catalog_pof <-
 
 		ay <- rev( gsub( "(.*) (.*)" , "\\2" , ftp_listing ) )
 
-		# hardcoded removal of 1995-1996
-		ay <- ay[ !( ay %in% c( "" , "Pesquisa_de_Orcamentos_Familiares_1995_1996" , "Pesquisa_de_Orcamentos_Familiares_1997_1998" ) ) ]
+		# hardcoded removal of microdata before 2003
+		ay <- ay[ !( ay %in% c( "" , "Pesquisa_de_Orcamentos_Familiares_1987_1988" , "Pesquisa_de_Orcamentos_Familiares_1995_1996" , "Pesquisa_de_Orcamentos_Familiares_1997_1998" ) ) ]
 
 		second_year <- gsub( "(.*)_([0-9]+)" , "\\2" , ay )
 
