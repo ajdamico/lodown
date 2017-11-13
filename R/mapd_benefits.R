@@ -85,6 +85,15 @@ lodown_mapd_benefits <-
 
 			}
 			
+			# copy over excel files (data dictionaries)
+			file.copy( 
+				grep( "\\.xls" , unzipped_files , value = TRUE ) , 
+				file.path(
+					catalog[ i , 'output_folder' ] ,
+					basename( grep( "\\.xls" , unzipped_files , value = TRUE ) )
+				)
+			)
+			
 			file.remove( unzipped_files )
 
 			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'output_folder' ] , "'\r\n\n" ) )
