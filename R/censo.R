@@ -440,11 +440,11 @@ lodown_censo <-
 				)
 
 			}
-
+			# sampling design with weighting areas as strata and houlseholds as pus's
 			bootw <-
 				survey::bootweights(
-					DBI::dbGetQuery( db , paste0( "SELECT " , unique_designs[ i , 'fpc1' ] , " FROM c" , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , ifelse( unique_designs[ i , 'type' ] == 'pes' , "" , paste0( "_" , unique_designs[ i , 'type' ] ) ) ) )[ , 1 ] ,
-					DBI::dbGetQuery( db , paste0( "SELECT " , unique_designs[ i , 'fpc4' ] , " FROM c" , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , ifelse( unique_designs[ i , 'type' ] == 'pes' , "" , paste0( "_" , unique_designs[ i , 'type' ] ) ) ) )[ , 1 ] ,
+					strata = DBI::dbGetQuery( db , paste0( "SELECT " , unique_designs[ i , 'fpc1' ] , " FROM c" , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , ifelse( unique_designs[ i , 'type' ] == 'pes' , "" , paste0( "_" , unique_designs[ i , 'type' ] ) ) ) )[ , 1 ] ,
+					psu = DBI::dbGetQuery( db , paste0( "SELECT " , unique_designs[ i , 'fpc4' ] , " FROM c" , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , ifelse( unique_designs[ i , 'type' ] == 'pes' , "" , paste0( "_" , unique_designs[ i , 'type' ] ) ) ) )[ , 1 ] ,
 					replicates = 80 ,
 					fpc = DBI::dbGetQuery( db , paste0( "SELECT " , unique_designs[ i , 'type' ] , "_fpc FROM c" , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , ifelse( unique_designs[ i , 'type' ] == 'pes' , "" , paste0( "_" , unique_designs[ i , 'type' ] ) ) ) )[ , 1 ]
 				)
@@ -453,6 +453,7 @@ lodown_censo <-
 				survey::svrepdesign(
 					weight = as.formula( paste0( "~" , unique_designs[ i , 'type' ] , "_wgt" ) ) ,
 					repweights = bootw$repweights ,
+					type = "bootstrap",
 					combined.weights = FALSE ,
 					scale = bootw$scale ,
 					rscales = bootw$rscales ,
