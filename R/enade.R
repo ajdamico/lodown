@@ -34,8 +34,7 @@ lodown_enade <-
 		
 		for ( i in seq_len( nrow( catalog ) ) ){
 
-			# download the file
-			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
+			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' , attempts = 10 )
 
 			archive::archive_extract( tf , dir = normalizePath( catalog[ i , "output_folder" ] ) )
 
