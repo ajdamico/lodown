@@ -62,9 +62,9 @@ lodown_pnadc <-
 		
 		cachaca( doc_path , tf , mode = 'wb' )
 
-		sasfiles <- grep( "\\.sas$" , unzip_warn_fail( tf , exdir = tempdir() ) , value = TRUE , ignore.case = TRUE )
+		sasfile <- grep( "\\.sas$" , unzip_warn_fail( tf , exdir = tempdir() ) , value = TRUE , ignore.case = TRUE )
 			
-		if( length( sasfiles ) != 1 ) stop( 'only expecting one sas file within the documentation' )
+		if( length( sasfile ) != 1 ) stop( 'only expecting one sas file within the documentation' )
 
 		for ( i in seq_len( nrow( catalog ) ) ){
 
