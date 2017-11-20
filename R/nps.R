@@ -52,11 +52,6 @@ get_catalog_nps <-
 				stringsAsFactors = FALSE
 			)
 
-		
-		# 2016 links do not work
-		# https://github.com/ajdamico/asdfree/issues/303
-		catalog <- subset( catalog , year != 2016 )
-			
 		catalog
 
 	}
