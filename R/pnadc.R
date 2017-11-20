@@ -64,6 +64,8 @@ lodown_pnadc <-
 
 		sasfiles <- grep( "\\.sas$" , unzip_warn_fail( tf , exdir = tempdir() ) , value = TRUE , ignore.case = TRUE )
 			
+		if( length( sasfiles ) != 1 ) stop( 'only expecting one sas file within the documentation' )
+
 		for ( i in seq_len( nrow( catalog ) ) ){
 
 			# download the file
@@ -71,27 +73,9 @@ lodown_pnadc <-
 
 			unzipped_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) )
 
-				
-			# if the year is 2012-2014 or 2015Q1-Q3, use the first sas import file..
-			if( catalog[ i , "year" ] < 2015 | ( catalog[ i , "year" ] < 2016 & catalog[ i , "quarter" ] != '04' ) ) {
-			
-				sasfile <- grep( "1Tri_2012 a 3Tri_2015" , sasfiles , value = TRUE ) 
-			
-			# if 2015Q4 or 2016Q1, use the second
-			} else if( ( catalog[ i , "year" ] == 2015 & catalog[ i , "quarter" ] == '04') | ( catalog[ i , "year" ] == 2016 & catalog[ i , "quarter" ] == '01') ) {
-				
-				sasfile <- grep( "4Tri_2015 a 1Tri_2016" , sasfiles , value = TRUE )
-				
-			# if 2016Q2, use the third
-			} else {
-			
-				sasfile <- grep( "2Tri_2016", sasfiles , value = TRUE)
-			
-			}	
-
 			txt_file <- grep( "\\.txt$" , unzipped_files , value = TRUE )
 
-			if( length( txt_file ) > 1 ) stop( 'only expecting one txt file within each zip' )
+			if( length( txt_file ) != 1 ) stop( 'only expecting one txt file within each zip' )
 				
 			# ..and read that text file directly into an R data.frame
 			# using the sas importation script downloaded before this big fat loop
