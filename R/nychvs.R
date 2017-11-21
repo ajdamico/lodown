@@ -11,11 +11,11 @@ get_catalog_nychvs <-
 			# the last two digits of the current year
 			subyear <- substr( year , 3 , 4 )
 			
-			# '08' and `2008` if the year is 2008 or before --
-			# because those files are stored in the 2008 directory
+			# '05' and `2005` if the year is 2002 --
+			# because those files are stored in the 2005 directory
 			# of the census bureau's website
-			latesubyear <- ifelse( year <= 2008 , '08' , subyear )
-			lateyear <- ifelse( year <= 2008 , 2008 , year )
+			latesubyear <- ifelse( year == 2002 , '05' , subyear )
+			lateyear <- ifelse( year == 2002 , 2005 , year )
 
 			# they started naming things differently in 2011
 			if( year >= 2011 ) {
