@@ -164,6 +164,9 @@ nychvs_sas_cleanup <-
 
 		# read the script into memory
 		y <- readLines( z )
+
+		# fix typo in 2014 sas program
+		y <- gsub( "@514            uf39a           $7." , "@514            uf39a           $1." , y , fixed = TRUE )
 		
 		# also, while we're removing stuff we don't like, throw out `TAB` characters
 		z <- gsub( "\t" , " " , SAScii::SAS.uncomment( SAScii::SAS.uncomment( y , "/*" , "*/" ) , "/*" , "*/" ) )
