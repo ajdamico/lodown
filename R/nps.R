@@ -4,7 +4,7 @@ get_catalog_nps <-
 		tf <- tempfile()
 	
 		# set the agidnet page containing all of the available microdata files
-		main.file.page <- "http://www.agid.acl.gov/DataFiles/NPS/"
+		main.file.page <- "https://agid.acl.gov/DataFiles/NPS/"
 
 		# download the contents of that page to an object
 		z <- httr::GET( main.file.page )
@@ -42,7 +42,7 @@ get_catalog_nps <-
 		
 		file_prefix <- c( "Caregiver_" , "Collected_Caregiver_" , "Family_Caregiver_" , "Home_Meals_" , "Cong_Meals_" , "Homemaker_" , "InfoAssistance_" , "Transportation_" , "Case_Management_" )
 		
-		full_url = paste0( "http://www.agid.acl.gov/DataFiles/Documents/NPS/" , folder_prefix[ service_ids ] , years , "/" , file_prefix[ service_ids ] , years , "_csv.zip" )
+		full_url = paste0( "https://agid.acl.gov/DataFiles/Documents/NPS/" , folder_prefix[ service_ids ] , years , "/" , file_prefix[ service_ids ] , years , "_csv.zip" )
 		
 		catalog <-
 			data.frame(
