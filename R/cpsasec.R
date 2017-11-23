@@ -32,6 +32,8 @@ get_catalog_cpsasec <-
 lodown_cpsasec <-
 	function( data_name = "cpsasec" , catalog , ... ){
 
+		on.exit( print( catalog ) )
+
 		tf <- tempfile()
 
 		for ( i in seq_len( nrow( catalog ) ) ){
@@ -639,6 +641,8 @@ lodown_cpsasec <-
 
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

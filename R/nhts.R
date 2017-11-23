@@ -38,8 +38,8 @@ get_catalog_nhts <-
 lodown_nhts <-
 	function( data_name = "nhts" , catalog , ... ){
 
-		
-	
+		on.exit( print( catalog ) )
+
 		tf <- tempfile()
 
 		for ( i in seq_len( nrow( catalog ) ) ){
@@ -454,6 +454,8 @@ lodown_nhts <-
 
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

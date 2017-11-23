@@ -62,8 +62,9 @@ get_catalog_cpsbasic <-
 lodown_cpsbasic <-
 	function( data_name = "cpsbasic" , catalog , ... ){
 
-		tf <- tempfile()
+		on.exit( print( catalog ) )
 
+		tf <- tempfile()
 
 		for ( i in seq_len( nrow( catalog ) ) ){
 
@@ -90,6 +91,8 @@ lodown_cpsbasic <-
 
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

@@ -65,6 +65,8 @@ get_catalog_uspums <-
 lodown_uspums <-
 	function( data_name = "uspums" , catalog , ... ){
 
+		on.exit( print( catalog ) )
+
 		if ( !requireNamespace( "readxl" , quietly = TRUE ) ) stop( "readxl needed for this function to work. to install it, type `install.packages( 'readxl' )`" , call. = FALSE )
 		
 		if ( !requireNamespace( "descr" , quietly = TRUE ) ) stop( "descr needed for this function to work. to install it, type `install.packages( 'descr' )`" , call. = FALSE )
@@ -312,6 +314,8 @@ lodown_uspums <-
 			cat( paste0( data_name , " survey design entry " , i , " of " , nrow( unique_designs ) , " stored at '" , unique_designs[ i , 'design' ] , "'\r\n\n" ) )
 			
 		}
+		
+		on.exit()
 		
 		catalog
 

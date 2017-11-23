@@ -109,6 +109,8 @@ get_catalog_nychvs <-
 lodown_nychvs <-
 	function( data_name = "nychvs" , catalog , ... ){
 
+		on.exit( print( catalog ) )
+
 		tf <- tempfile()
 
 		for ( i in seq_len( nrow( catalog ) ) ){
@@ -148,6 +150,8 @@ lodown_nychvs <-
 
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

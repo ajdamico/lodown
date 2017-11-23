@@ -54,10 +54,10 @@ get_catalog_pnad <-
 lodown_pnad <-
 	function( data_name = "pnad" , catalog , ... ){
 
+		on.exit( print( catalog ) )
+
 		tf <- tempfile()
 
-		
-				
 		# download and import the tables containing missing codes
 		household.nr <- read.csv( system.file("extdata", "pnad/household_nr.csv", package = "lodown") , colClasses = 'character' )
 
@@ -245,6 +245,8 @@ lodown_pnad <-
 
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

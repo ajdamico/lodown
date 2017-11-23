@@ -202,6 +202,8 @@ get_catalog_nhis <-
 lodown_nhis <-
 	function( data_name = "nhis" , catalog , ... ){
 
+		on.exit( print( catalog ) )
+
 		tf <- tempfile()
 	
 		for ( i in seq_len( nrow( catalog ) ) ){
@@ -264,6 +266,8 @@ lodown_nhis <-
 
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

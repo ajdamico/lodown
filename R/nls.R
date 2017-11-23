@@ -31,6 +31,8 @@ get_catalog_nls <-
 lodown_nls <-
 	function( data_name = "nls" , catalog , ... ){
 
+		on.exit( print( catalog ) )
+
 		tf <- tempfile()
 
 		for ( i in seq_len( nrow( catalog ) ) ){
@@ -114,6 +116,8 @@ lodown_nls <-
 
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

@@ -42,6 +42,8 @@ get_catalog_chis <-
 lodown_chis <-
 	function( data_name = "chis" , catalog , ... ){
 
+		on.exit( print( catalog ) )
+
 		if( !( 'your_username' %in% names(list(...)) ) ) stop( "`your_username` parameter must be specified.  create an account at http://healthpolicy.ucla.edu/pages/login.aspx" )
 		
 		your_username <- list(...)[["your_username"]]
@@ -93,6 +95,8 @@ lodown_chis <-
 
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

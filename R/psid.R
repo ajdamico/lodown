@@ -55,6 +55,8 @@ get_catalog_psid <-
 lodown_psid <-
 	function( data_name = "psid" , catalog , ... ){
 
+		on.exit( print( catalog ) )
+
 		tf <- tempfile()
 
 		if( !( 'your_email' %in% names(list(...)) ) ) stop( "`your_email` parameter must be specified.  create an account at https://simba.isr.umich.edu/U/ca.aspx" )
@@ -189,6 +191,8 @@ lodown_psid <-
 
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

@@ -36,8 +36,9 @@ get_catalog_nbs <-
 lodown_nbs <-
 	function( data_name = "nbs" , catalog , ... ){
 
-		tf <- tempfile()
+		on.exit( print( catalog ) )
 
+		tf <- tempfile()
 
 		for ( i in seq_len( nrow( catalog ) ) ){
 
@@ -67,6 +68,8 @@ lodown_nbs <-
 
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

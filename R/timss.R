@@ -19,8 +19,9 @@ get_catalog_timss <-
 lodown_timss <-
 	function( data_name = "timss" , catalog , ... ){
 
-		tf <- tempfile()
+		on.exit( print( catalog ) )
 
+		tf <- tempfile()
 
 		for ( i in seq_len( nrow( catalog ) ) ){
 
@@ -354,6 +355,8 @@ lodown_timss <-
 
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

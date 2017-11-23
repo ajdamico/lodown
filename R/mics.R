@@ -34,6 +34,8 @@ get_catalog_mics <-
 lodown_mics <-
 	function( data_name = "mics" , catalog , ... ){
 
+		on.exit( print( catalog ) )
+
 		if ( !requireNamespace( "jpeg" , quietly = TRUE ) ) stop( "jpeg needed for this function to work. to install it, type `install.packages( 'jpeg' )`" , call. = FALSE )
 
 		if( !( 'your_email' %in% names(list(...)) ) ) stop( "`your_email` parameter must be specified.  create an account at http://mics.unicef.org/visitors/sign-up" )
@@ -81,6 +83,8 @@ lodown_mics <-
 
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

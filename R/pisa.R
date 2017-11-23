@@ -107,6 +107,8 @@ get_catalog_pisa <-
 lodown_pisa <-
 	function( data_name = "pisa" , catalog , ... ){
 
+		on.exit( print( catalog ) )
+
 		if ( !requireNamespace( "mitools" , quietly = TRUE ) ) stop( "mitools needed for this function to work. to install it, type `install.packages( 'mitools' )`" , call. = FALSE )
 				
 		tf <- tempfile()
@@ -536,6 +538,8 @@ lodown_pisa <-
 
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

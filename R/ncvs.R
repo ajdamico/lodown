@@ -24,6 +24,8 @@ get_catalog_ncvs <-
 lodown_ncvs <-
 	function( data_name = "ncvs" , catalog , ... ){
 
+		on.exit( print( catalog ) )
+
 		lodown_icpsr( data_name = data_name , catalog , ... )
 		
 		for( i in seq_len( nrow( catalog ) ) ){
@@ -66,6 +68,8 @@ lodown_ncvs <-
 			
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

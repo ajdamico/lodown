@@ -30,6 +30,8 @@ get_catalog_enade <-
 lodown_enade <-
 	function( data_name = "enade" , catalog , ... ){
 
+		on.exit( print( catalog ) )
+
 		tf <- tempfile()
 		
 		for ( i in seq_len( nrow( catalog ) ) ){
@@ -89,6 +91,8 @@ lodown_enade <-
 
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

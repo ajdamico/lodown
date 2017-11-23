@@ -17,6 +17,8 @@ get_catalog_sbo <-
 lodown_sbo <-
 	function( data_name = "sbo" , catalog , ... ){
 	
+		on.exit( print( catalog ) )
+
 		if ( !requireNamespace( "mitools" , quietly = TRUE ) ) stop( "mitools needed for this function to work. to install it, type `install.packages( 'mitools' )`" , call. = FALSE )
 
 		if( nrow( catalog ) != 1 ) stop( "sbo catalog must be exactly one record" )
@@ -80,6 +82,8 @@ lodown_sbo <-
 
 		cat( paste0( data_name , " catalog entry " , 1 , " of " , nrow( catalog ) , " stored at '" , catalog$output_filename , "'\r\n\n" ) )
 
+		on.exit()
+		
 		catalog
 
 	}

@@ -53,6 +53,8 @@ get_catalog_anes <-
 lodown_anes <-
 	function( data_name = "anes" , catalog , ... ){
 
+		on.exit( print( catalog ) )
+
 		tf <- tempfile()
 
 		if( !( 'your_email' %in% names(list(...)) ) ) stop( "`your_email` parameter must be specified.  create an account at http://www.electionstudies.org/studypages/download/registration_form.php" )
@@ -112,6 +114,8 @@ lodown_anes <-
 
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

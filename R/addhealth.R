@@ -18,7 +18,9 @@ get_catalog_addhealth <-
 
 lodown_addhealth <-
 	function( data_name = "addhealth" , catalog , ... ){
-	
+
+		on.exit( print( catalog ) )
+
 		catalog <- lodown_icpsr( data_name = data_name , catalog , ... )
 
 				
@@ -122,6 +124,8 @@ lodown_addhealth <-
 			gc()
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

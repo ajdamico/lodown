@@ -50,8 +50,9 @@ get_catalog_bsapuf <-
 lodown_bsapuf <-
 	function( data_name = "bsapuf" , catalog , ... ){
 
-		tf <- tempfile()
+		on.exit( print( catalog ) )
 
+		tf <- tempfile()
 
 		for ( i in seq_len( nrow( catalog ) ) ){
 
@@ -93,6 +94,8 @@ lodown_bsapuf <-
 
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

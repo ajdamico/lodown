@@ -64,6 +64,8 @@ get_catalog_acs <-
 lodown_acs <-
 	function( data_name = "acs" , catalog , ... ){
 
+		on.exit( print( catalog ) )
+
 		tf <- tempfile()
 
 		for ( i in seq_len( nrow( catalog ) ) ){
@@ -413,7 +415,8 @@ lodown_acs <-
 
 		}
 		
-		
+		on.exit()
+				
 		catalog
 
 	}

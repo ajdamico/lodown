@@ -40,6 +40,8 @@ get_catalog_yrbss <-
 lodown_yrbss <-
 	function( data_name = "yrbss" , catalog , ... ){
 
+		on.exit( print( catalog ) )
+
 		tf_fn <- tempfile()
 		tf_sas <- tempfile()
 
@@ -158,6 +160,8 @@ lodown_yrbss <-
 		# delete the temporary files
 		file.remove( tf_fn , tf_sas )
 
+		on.exit()
+		
 		catalog
 
 	}

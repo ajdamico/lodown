@@ -88,8 +88,9 @@ get_catalog_meps <-
 lodown_meps <-
 	function( data_name = "meps" , catalog , ... ){
 
-		tf <- tempfile()
+		on.exit( print( catalog ) )
 
+		tf <- tempfile()
 
 		for ( i in seq_len( nrow( catalog ) ) ){
 			
@@ -123,6 +124,8 @@ lodown_meps <-
 
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

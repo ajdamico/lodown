@@ -49,6 +49,8 @@ get_catalog_sc_penetration <-
 lodown_sc_penetration <-
 	function( data_name = "sc_penetration" , catalog , ... ){
 
+		on.exit( print( catalog ) )
+
 		tf <- tempfile()
 
 		unique_savefiles <- unique( catalog$output_filename )
@@ -104,6 +106,8 @@ lodown_sc_penetration <-
 
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

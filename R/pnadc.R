@@ -52,6 +52,8 @@ get_catalog_pnadc <-
 
 lodown_pnadc <-
 	function( data_name = "pnadc" , catalog , ... ){
+		
+		on.exit( print( catalog ) )
 
 		tf <- tempfile()
 
@@ -98,6 +100,8 @@ lodown_pnadc <-
 
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

@@ -30,6 +30,8 @@ get_catalog_pof <-
 lodown_pof <-
 	function( data_name = "nppes" , catalog , ... ){
 
+		on.exit( print( catalog ) )
+
 		if ( !requireNamespace( "readxl" , quietly = TRUE ) ) stop( "readxl needed for this function to work. to install it, type `install.packages( 'readxl' )`" , call. = FALSE )
 
 		tf <- tempfile() ; tf2 <- tempfile()
@@ -278,6 +280,8 @@ lodown_pof <-
 
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

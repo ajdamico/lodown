@@ -115,6 +115,8 @@ get_catalog_geofabrik <-
 lodown_geofabrik <-
 	function( data_name = "geofabrik" , catalog , ... ){
 
+		on.exit( print( catalog ) )
+
 		for ( i in seq_len( nrow( catalog ) ) ){
 
 			# download the file
@@ -144,6 +146,8 @@ lodown_geofabrik <-
 
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

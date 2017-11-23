@@ -136,6 +136,8 @@ get_catalog_ahs <-
 lodown_ahs <-
 	function( data_name = "ahs" , catalog , ... ){
 
+		on.exit( print( catalog ) )
+	
 		for ( i in seq_len( nrow( catalog ) ) ){
 				
 			tf <- tempfile()
@@ -447,6 +449,8 @@ lodown_ahs <-
 			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'output_folder' ] , "'\r\n\n" ) )
 
 		}
+	
+		on.exit()
 
 		catalog
 

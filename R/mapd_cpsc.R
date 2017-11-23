@@ -41,6 +41,8 @@ get_catalog_mapd_cpsc <-
 lodown_mapd_cpsc <-
   function( data_name = "mapd_cpsc" , catalog , ... ){
 
+	on.exit( print( catalog ) )
+
     tf <- tempfile()
 
 
@@ -105,6 +107,8 @@ lodown_mapd_cpsc <-
 
     }
 
+	on.exit()
+	
     catalog
 
   }

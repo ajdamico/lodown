@@ -17,8 +17,9 @@ get_catalog_pirls <-
 lodown_pirls <-
 	function( data_name = "pirls" , catalog , ... ){
 
-		tf <- tempfile()
+		on.exit( print( catalog ) )
 
+		tf <- tempfile()
 
 		for ( i in seq_len( nrow( catalog ) ) ){
 
@@ -148,6 +149,8 @@ lodown_pirls <-
 
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

@@ -88,8 +88,9 @@ get_catalog_faers <-
 lodown_faers <-
 	function( data_name = "faers" , catalog , ... ){
 
-		tf <- tempfile()
+		on.exit( print( catalog ) )
 
+		tf <- tempfile()
 
 		for ( i in seq_len( nrow( catalog ) ) ){
 		
@@ -200,6 +201,8 @@ lodown_faers <-
 
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

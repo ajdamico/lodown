@@ -25,6 +25,8 @@ get_catalog_seer <-
 lodown_seer <-
 	function( data_name = "seer" , catalog , ... ){
 
+		on.exit( print( catalog ) )
+
 		if( nrow( catalog ) != 1 ) stop( "seer catalog must be exactly one record" )
 	
 		tf <- tempfile()
@@ -158,6 +160,8 @@ lodown_seer <-
 
 		# delete the temporary files
 		suppressWarnings( file.remove( tf , unzipped_files ) )
+
+		on.exit()
 
 		catalog
 

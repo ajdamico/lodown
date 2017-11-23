@@ -80,6 +80,8 @@ get_catalog_pme <-
 lodown_pme <-
 	function( data_name = "pme" , catalog , ... ){
 
+		on.exit( print( catalog ) )
+
 		tf <- tempfile()
 
 		cachaca( "ftp://ftp.ibge.gov.br/Trabalho_e_Rendimento/Pesquisa_Mensal_de_Emprego/Microdados/documentacao/Documentacao.zip" , tf )
@@ -114,6 +116,8 @@ lodown_pme <-
 
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

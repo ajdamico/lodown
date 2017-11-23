@@ -97,6 +97,8 @@ get_catalog_hmda <-
 lodown_hmda <-
 	function( data_name = "hmda" , catalog , ... ){
 
+		on.exit( print( catalog ) )
+
 		tf <- tempfile()
 		
 		ins_sas <- system.file("extdata", "hmda/ins_str.csv", package = "lodown")
@@ -504,9 +506,8 @@ lodown_hmda <-
 			
 			
 		}
-			
-			
-			
+
+		on.exit()
 		
 		catalog
 

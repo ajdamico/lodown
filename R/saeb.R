@@ -26,6 +26,8 @@ get_catalog_saeb <-
 lodown_saeb <-
 	function( data_name = "saeb" , catalog , ... ){
 
+		on.exit( print( catalog ) )
+
 		tf <- tempfile()
 
 		for ( i in seq_len( nrow( catalog ) ) ){
@@ -218,6 +220,8 @@ lodown_saeb <-
 
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

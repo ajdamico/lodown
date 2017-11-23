@@ -25,6 +25,8 @@ get_catalog_nppes <-
 
 lodown_nppes <-
 	function( data_name = "nppes" , catalog , ... ){
+
+		on.exit( print( catalog ) )
 	
 		if( nrow( catalog ) != 1 ) stop( "nppes catalog must be exactly one record" )
 		
@@ -154,6 +156,7 @@ lodown_nppes <-
 
 		file.remove( unzipped_files , tf , tf2 )
 		
+		on.exit()
 		
 		catalog
 

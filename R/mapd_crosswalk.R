@@ -41,8 +41,9 @@ get_catalog_mapd_crosswalk <-
 lodown_mapd_crosswalk <-
   function( data_name = "mapd_crosswalk" , catalog , ... ){
 
-    tf <- tempfile()
+	on.exit( print( catalog ) )
 
+    tf <- tempfile()
 
     for ( i in seq_len( nrow( catalog ) ) ){
 
@@ -80,6 +81,8 @@ lodown_mapd_crosswalk <-
 
     }
 
+	on.exit()
+	
     catalog
 
   }

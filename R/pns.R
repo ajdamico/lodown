@@ -42,6 +42,8 @@ get_catalog_pns <-
 lodown_pns <-
 	function( data_name = "pns" , catalog , ... ){
 
+		on.exit( print( catalog ) )
+
 		tf <- tempfile()
 		
 		if( .Platform$OS.type != 'windows' ) {
@@ -211,6 +213,8 @@ lodown_pns <-
 
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

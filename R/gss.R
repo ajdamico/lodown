@@ -32,6 +32,8 @@ get_catalog_gss <-
 lodown_gss <-
 	function( data_name = "gss" , catalog , ... ){
 
+		on.exit( print( catalog ) )
+
 		tf <- tempfile()
 
 		for ( i in seq_len( nrow( catalog ) ) ){
@@ -61,6 +63,8 @@ lodown_gss <-
 
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

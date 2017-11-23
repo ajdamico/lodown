@@ -51,6 +51,8 @@ get_catalog_brfss <-
 lodown_brfss <-
 	function( data_name = "brfss" , catalog , ... ){
 
+		on.exit( print( catalog ) )
+
 		tf <- tempfile() ; impfile <- tempfile() ; sasfile <- tempfile() ; csvfile <- tempfile()
 
 		
@@ -128,6 +130,8 @@ lodown_brfss <-
 
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

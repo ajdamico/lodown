@@ -51,6 +51,8 @@ get_catalog_ipums <-
 lodown_ipums <-
 	function( data_name = "ipums" , catalog , ... ){
 
+		on.exit( print( catalog ) )
+
 		if( !( 'project' %in% names(list(...)) ) || !( list(...)[["project"]] %in% c( "usa" , "cps" , "international" ) ) ) stop( "`project` parameter must be specified.  choices are 'usa' , 'cps' , 'international'" )
 
 		if( !( 'your_email' %in% names(list(...)) ) ) stop( "`your_email` parameter must be specified.  create an account at https://www.ipums.org/" )
@@ -186,6 +188,8 @@ lodown_ipums <-
 		}
 		
 		httr::GET( paste0( "https://" , project , ".ipums.org/" , project , "-action/users/logout" ) , httr::set_cookies( .cookies = this_cookie ) )
+
+		on.exit()
 		
 		catalog
 

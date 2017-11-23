@@ -18,6 +18,8 @@
 # lodown_template <-
 	# function( data_name = "template" , catalog , ... ){
 
+		# on.exit( print( catalog ) )
+
 		# if ( !requireNamespace( "template" , quietly = TRUE ) ) stop( "template needed for this function to work. to install it, type `install.packages( 'template' )`" , call. = FALSE )
 
 		# tf <- tempfile()
@@ -50,6 +52,8 @@
 
 		# }
 
+		# on.exit()
+		
 		# catalog
 
 	# }

@@ -53,6 +53,8 @@ get_catalog_nhanes <-
 lodown_nhanes <-
 	function( data_name = "nhanes" , catalog , ... ){
 
+		on.exit( print( catalog ) )
+
 		tf <- tempfile()
 
 		for ( i in seq_len( nrow( catalog ) ) ){
@@ -88,6 +90,8 @@ lodown_nhanes <-
 
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

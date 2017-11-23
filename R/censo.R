@@ -93,6 +93,8 @@ get_catalog_censo <-
 lodown_censo <-
 	function( data_name = "censo" , catalog , ... ){
 
+		on.exit( print( catalog ) )
+
 		tf <- tempfile()
 
 		for ( i in seq_len( nrow( catalog ) ) ){
@@ -471,6 +473,8 @@ lodown_censo <-
 
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

@@ -16,6 +16,8 @@ get_catalog_mlces <-
 lodown_mlces <-
 	function( data_name = "mlces" , catalog , ... ){
 
+		on.exit( print( catalog ) )
+
 		tf <- tempfile()
 
 		for ( i in seq_len( nrow( catalog ) ) ){
@@ -42,6 +44,8 @@ lodown_mlces <-
 
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

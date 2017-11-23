@@ -25,6 +25,8 @@ get_catalog_ces <-
 lodown_ces <-
 	function( data_name = "ces" , catalog , ... ){
 
+		on.exit( print( catalog ) )
+
 		all_thresholds <- census_thresholds()
 	
 		tf <- tempfile()
@@ -111,6 +113,8 @@ lodown_ces <-
 
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

@@ -60,8 +60,9 @@ get_catalog_nps <-
 lodown_nps <-
 	function( data_name = "nps" , catalog , ... ){
 
-		tf <- tempfile()
+		on.exit( print( catalog ) )
 
+		tf <- tempfile()
 
 		for ( i in seq_len( nrow( catalog ) ) ){
 
@@ -93,6 +94,8 @@ lodown_nps <-
 
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

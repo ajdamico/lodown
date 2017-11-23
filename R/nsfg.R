@@ -80,8 +80,9 @@ get_catalog_nsfg <-
 lodown_nsfg <-
 	function( data_name = "nsfg" , catalog , ... ){
 
-		tf <- tempfile() ; tf2 <- tempfile()
+		on.exit( print( catalog ) )
 
+		tf <- tempfile() ; tf2 <- tempfile()
 
 		for ( i in seq_len( nrow( catalog ) ) ){
 
@@ -281,6 +282,8 @@ lodown_nsfg <-
 
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

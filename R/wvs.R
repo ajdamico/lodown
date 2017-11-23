@@ -108,6 +108,8 @@ get_catalog_wvs <-
 lodown_wvs <-
 	function( data_name = "wvs" , catalog , ... ){
 
+		on.exit( print( catalog ) )
+
 		my_cookie <- wvs_valid_cookie()
 		
 		tf <- tempfile()
@@ -202,6 +204,8 @@ lodown_wvs <-
 			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'output_folder' ] , "'\r\n\n" ) )
 
 		}
+
+		on.exit()
 		
 		catalog
 

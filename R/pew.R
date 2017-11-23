@@ -136,6 +136,8 @@ get_catalog_pew <-
 lodown_pew <-
 	function( data_name = "pew" , catalog , ... ){
 
+		on.exit( print( catalog ) )
+
 		tf <- tempfile()
 		
 		for ( i in seq_len( nrow( catalog ) ) ){
@@ -190,6 +192,8 @@ lodown_pew <-
 
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

@@ -124,6 +124,8 @@ get_catalog_dhs <-
 lodown_dhs <-
 	function( data_name = "dhs" , catalog , ... ){
 
+		on.exit( print( catalog ) )
+
 		if( !( 'your_email' %in% names(list(...)) ) ) stop( "`your_email` parameter must be specified.  create an account at https://dhsprogram.com/data/new-user-registration.cfm" )
 		
 		your_email <- list(...)[["your_email"]]
@@ -222,6 +224,8 @@ lodown_dhs <-
 
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

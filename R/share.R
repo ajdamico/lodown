@@ -40,6 +40,8 @@ get_catalog_share <-
 lodown_share <-
 	function( data_name = "share" , catalog , ... ){
 
+		on.exit( print( catalog ) )
+
 		tf <- tempfile()
 
 		if( !( 'your_username' %in% names(list(...)) ) ) stop( "`your_username` parameter must be specified.  create an account at http://www.share-project.org/t3/share/fileadmin/pdf_documentation/SHARE_Data_Statement.pdf" )
@@ -79,6 +81,8 @@ lodown_share <-
 			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'output_folder' ] , "'\r\n\n" ) )
 
 		}
+
+		on.exit()
 
 		catalog
 

@@ -29,6 +29,8 @@ get_catalog_pls <-
 lodown_pls <-
 	function( data_name = "pls" , catalog , ... ){
 
+		on.exit( print( catalog ) )
+
 		tf <- tempfile()
 
 		for ( i in seq_len( nrow( catalog ) ) ){
@@ -74,6 +76,8 @@ lodown_pls <-
 
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

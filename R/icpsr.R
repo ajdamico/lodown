@@ -14,6 +14,8 @@
 lodown_icpsr <-
   function( data_name , catalog , ... ){
 
+		on.exit( print( catalog ) )
+
 		if( !( 'your_email' %in% names(list(...)) ) ) stop( "`your_email` parameter must be specified.  create an account at https://www.icpsr.umich.edu/cgi-bin/newacct" )
 
 		if( !( 'your_password' %in% names(list(...)) ) ) stop( "`your_password` parameter must be specified.  create an account at https://www.icpsr.umich.edu/cgi-bin/newacct" )
@@ -77,6 +79,8 @@ lodown_icpsr <-
 
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

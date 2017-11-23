@@ -68,6 +68,8 @@ get_catalog_atus <-
 lodown_atus <-
 	function( data_name = "atus" , catalog , ... ){
 
+		on.exit( print( catalog ) )
+
 		tf <- tempfile()
 
 		for ( i in seq_len( nrow( catalog ) ) ){
@@ -105,6 +107,8 @@ lodown_atus <-
 
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

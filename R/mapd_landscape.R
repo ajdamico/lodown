@@ -84,6 +84,8 @@ get_catalog_mapd_landscape <-
 lodown_mapd_landscape <-
 	function( data_name = "mapd_landscape" , catalog , ... ){
 
+		on.exit( print( catalog ) )
+
 		tf <- tempfile()
 
 		for ( i in seq_len( nrow( catalog ) ) ){
@@ -144,6 +146,8 @@ lodown_mapd_landscape <-
 			
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

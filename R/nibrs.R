@@ -24,6 +24,8 @@ get_catalog_nibrs <-
 lodown_nibrs <-
 	function( data_name = "nibrs" , catalog , ... ){
 
+		on.exit( print( catalog ) )
+
 		lodown_icpsr( data_name = data_name , catalog , ... )
 
 		tf <- tempfile()
@@ -232,6 +234,8 @@ lodown_nibrs <-
 
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

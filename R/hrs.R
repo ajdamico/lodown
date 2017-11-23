@@ -119,6 +119,8 @@ get_catalog_hrs <-
 lodown_hrs <-
 	function( data_name = "hrs" , catalog , ... ){
 
+		on.exit( print( catalog ) )
+
 		tf <- tempfile()
 
 		if( !( 'your_username' %in% names(list(...)) ) ) stop( "`your_username` parameter must be specified.  create an account at https://ssl.isr.umich.edu/hrs/reg_pub2.php" )
@@ -267,6 +269,8 @@ lodown_hrs <-
 			
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

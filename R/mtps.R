@@ -53,7 +53,9 @@ get_catalog_mtps <-
 lodown_mtps <-
   function( data_name = "mtps" , catalog , ... ){
 
-    tf <- tempfile()
+	on.exit( print( catalog ) )
+
+	tf <- tempfile()
 
     for ( i in seq_len( nrow( catalog ) ) ){
 
@@ -184,6 +186,8 @@ lodown_mtps <-
 
     }
 
+	on.exit()
+	
     catalog
 
   }

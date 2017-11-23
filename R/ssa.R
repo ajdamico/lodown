@@ -61,6 +61,8 @@ get_catalog_ssa <-
 lodown_ssa <-
 	function( data_name = "ssa" , catalog , ... ){
 
+		on.exit( print( catalog ) )
+
 		tf <- tempfile()
 
 		for ( i in seq_len( nrow( catalog ) ) ){
@@ -95,6 +97,8 @@ lodown_ssa <-
 
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

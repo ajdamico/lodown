@@ -14,6 +14,8 @@ get_catalog_nsduh <-
 
 lodown_nsduh <-
 	function( data_name = "nsduh" , catalog , ... ){
+
+		on.exit( print( catalog ) )
 	
 		lodown_icpsr( data_name = data_name , catalog , ... )
 
@@ -35,6 +37,8 @@ lodown_nsduh <-
 			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , catalog[ i , 'output_filename' ] , "'\r\n\n" ) )
 		
 		}
+
+		on.exit()
 		
 		catalog
 

@@ -57,8 +57,9 @@ get_catalog_nsch <-
 lodown_nsch <-
 	function( data_name = "nsch" , catalog , ... ){
 
-		tf <- tempfile()
+		on.exit( print( catalog ) )
 
+		tf <- tempfile()
 
 		for ( i in seq_len( nrow( catalog ) ) ){
 
@@ -138,6 +139,8 @@ lodown_nsch <-
 		# delete the temporary file
 		file.remove( tf )
 
+		on.exit()
+		
 		catalog
 
 	}

@@ -45,6 +45,8 @@ get_catalog_scf <-
 lodown_scf <-
 	function( data_name = "scf" , catalog , ... ){
 
+		on.exit( print( catalog ) )
+
 		tf <- tempfile()
 
 		for ( i in seq_len( nrow( catalog ) ) ){
@@ -180,6 +182,8 @@ lodown_scf <-
 		# delete the temporary files
 		file.remove( tf )
 
+		on.exit()
+		
 		catalog
 
 	}

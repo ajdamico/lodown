@@ -85,6 +85,8 @@ get_catalog_nis <-
 lodown_nis <-
   function( data_name = "nis" , catalog , ... ){
 
+	on.exit( print( catalog ) )
+
 	tf <- tempfile()
 
 	for ( i in seq_len( nrow( catalog ) ) ){
@@ -190,6 +192,8 @@ lodown_nis <-
 
     }
 
+	on.exit()
+	
     catalog
 
   }

@@ -34,6 +34,8 @@ get_catalog_enem <-
 lodown_enem <-
 	function( data_name = "enem" , catalog , ... ){
 
+		on.exit( print( catalog ) )
+
 		if ( !requireNamespace( "readxl" , quietly = TRUE ) ) stop( "readxl needed for this function to work. to install it, type `install.packages( 'readxl' )`" , call. = FALSE )
 
 		tf <- tempfile() ; tf2 <- tempfile()
@@ -218,6 +220,8 @@ lodown_enem <-
 
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

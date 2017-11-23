@@ -41,6 +41,8 @@ get_catalog_mapd_benefits <-
 lodown_mapd_benefits <-
 	function( data_name = "mapd_benefits" , catalog , ... ){
 
+		on.exit( print( catalog ) )
+
 		tf <- tempfile()
 
 		for ( i in seq_len( nrow( catalog ) ) ){
@@ -100,6 +102,7 @@ lodown_mapd_benefits <-
 
 		}
 
+		on.exit()
 
 		catalog
 

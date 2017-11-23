@@ -105,6 +105,8 @@ get_catalog_sipp <-
 lodown_sipp <-
 	function( data_name = "sipp" , catalog , ... ){
 
+		on.exit( print( catalog ) )
+
 		tf <- tempfile()
 
 		for( i in seq_len( nrow( catalog ) ) ){
@@ -724,6 +726,8 @@ lodown_sipp <-
 
 		}
 
+		on.exit()
+		
 		catalog
 
 	}

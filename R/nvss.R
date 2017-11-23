@@ -37,6 +37,8 @@ get_catalog_nvss <-
 lodown_nvss <-
 	function( data_name = "nvss" , catalog , ... ){
 
+		on.exit( print( catalog ) )
+
 		# create winrar extraction directories
 		unique_directories <- unique( paste0( catalog$output_folder , "/winrar" ) )
 
@@ -693,6 +695,8 @@ lodown_nvss <-
 
 		}
 
+		on.exit()
+		
 		catalog
 
 	}
