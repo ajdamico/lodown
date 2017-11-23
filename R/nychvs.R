@@ -11,12 +11,6 @@ get_catalog_nychvs <-
 			# the last two digits of the current year
 			subyear <- substr( year , 3 , 4 )
 			
-			# '05' and `2005` if the year is 2002 --
-			# because those files are stored in the 2005 directory
-			# of the census bureau's website
-			latesubyear <- ifelse( year == 2002 , '05' , subyear )
-			lateyear <- ifelse( year == 2002 , 2005 , year )
-
 			# they started naming things differently in 2011
 			if( year >= 2011 ) {
 				filetypes <- c( 'occ' , 'vac' , 'pers' ) 
@@ -24,9 +18,7 @@ get_catalog_nychvs <-
 				filetypes <- c( 'occ' , 'vac' , 'per' , 'ni' )
 			}
 			
-			web <- ifelse( year > 2005 , '_web' , '' )
-			
-			prefix <- ifelse( year > 2008 , paste0( "/uf_" , latesubyear ) , paste0( "/lng" , latesubyear ) )
+			prefix <- ifelse( year > 2008 , paste0( "/uf_" , subyear ) , "/lng08" )
 			
 			# loop through each available filetype
 			for ( filetype in filetypes ){
@@ -35,16 +27,18 @@ get_catalog_nychvs <-
 
 				census_url <-
 					paste0( 
-						"https://www.census.gov/housing/nychvs/data/" , 
-						lateyear , 
+						"https://www2.census.gov/programs-surveys/nychvs/datasets/" , 
+						year , 
+						"/microdata" ,
 						prefix , 
 						"_" , 
 						filetype , 
-						ifelse( year > 2008 , '' , subyear ) , 
+						ifelse( year < 2011 , subyear , '' ) , 
 						ifelse( 
-							year == 2011 & filetype %in% c( 'occ' , 'pers' ) , 
+							year < 2014 &
+							filetype %in% c( 'occ' , 'pers' , 'per' ) , 
 							'_rev' , 
-							web 
+							'_web' 
 						) , 
 						ifelse( year == 2014 & filetype != 'vac' , "_b" , "" ) ,
 						ifelse( 
@@ -76,7 +70,7 @@ get_catalog_nychvs <-
 						beginline <- 413
 					} else stop( "this filetype hasn't been implemented yet." )
 					
-					sas_script <- paste0( "https://www.census.gov/housing/nychvs/data/" , year , "/sas_import_program.txt" )
+					sas_script <- paste0( "https://www2.census.gov/programs-surveys/nychvs/datasets/" , year , "/microdata/sas_import_program.txt" )
 					
 				}
 
