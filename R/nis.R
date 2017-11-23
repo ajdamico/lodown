@@ -1,12 +1,12 @@
 get_catalog_nis <-
   function( data_name = "nis" , output_dir , ... ){
-	
+
 	combined_paths <- NULL
-  
+
 	for( nis_ftp_site in
-		c( 
+		c(
 			"ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/nis/" ,
-			"ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/nis/NHFS/" 
+			"ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/nis/NHFS/"
 		) ) {
 
 		nis_ftp_contents <- RCurl::getURL( nis_ftp_site , dirlistonly = TRUE )
@@ -16,7 +16,7 @@ get_catalog_nis <-
 		combined_paths <- c( combined_paths , nis_ftp_paths )
 
 	}
-	
+
 	for( nis_ftp_site in
 		c(
 			"https://ftp.cdc.gov/pub/Vaccines_NIS/" ,
@@ -25,12 +25,12 @@ get_catalog_nis <-
 
 		nis_ftp_contents <- RCurl::getURL( nis_ftp_site , dirlistonly = TRUE )
 
-		possible_filenames <- grep( "\\.dat$" , strsplit( nis_ftp_contents , '>|<' )[[1]] , value = TRUE , ignore.case = TRUE )
-		
+		possible_filenames <- grep( "\\.dat$|\\.R$" , strsplit( nis_ftp_contents , '>|<' )[[1]] , value = TRUE , ignore.case = TRUE )
+
 		nis_ftp_paths <- paste0( nis_ftp_site , possible_filenames )
 
 		combined_paths <- c( combined_paths , nis_ftp_paths )
-		
+
 	}
 
 	dat_files <- grep( "\\.dat$|dat\\.zip$" , combined_paths , value = TRUE , ignore.case = TRUE )
@@ -58,14 +58,14 @@ get_catalog_nis <-
 	# determine related R scripts
 	r_scripts <- as.character( sapply( paste0( ifelse( catalog$directory == 'flu' , 'nhfs' , ifelse( catalog$directory == 'teen' , 'teen' , 'nis' ) ) , "puf" , ifelse( catalog$directory != 'flu' , substr( catalog$year , 3 , 4 ), "" ) , "\\.r" ) , grep , combined_paths , ignore.case = TRUE , value = TRUE ) )
 
-	catalog$r_script <- 
-		ifelse( catalog$year > 2014 , 
+	catalog$r_script <-
+		ifelse( catalog$year == 2015 ,
 			paste0( "https://www.cdc.gov/vaccines/imz-managers/nis/downloads/nis-" ,
 				ifelse( catalog$directory == 'teen' , "teen-" , "" ) ,
 				"puf" ,
 				substr( catalog$year , 3 , 4 ) ,
 				".r" ) ,
-		ifelse( r_scripts == 'character(0)' , NA , 
+		ifelse( r_scripts == 'character(0)' , NA ,
 			r_scripts ) )
 
 	# determine related sas scripts
@@ -139,24 +139,24 @@ lodown_nis <-
 
 			# save the r script back to the local disk
 			writeLines( script.r , tf )
-			
+
 			# run the now-reduced r script
 			source( tf )
-			
+
 			options( encoding = before_encoding )
 
 			# create a character string containing the name of the nis puf data.frame object
-			nis.df <- 
-				paste0( 
-					'NIS' , 
-					if( catalog[ i , 'directory' ] == 'teen' ) 'TEEN' , 
-					'PUF' , 
-					substr( catalog[ i , 'year' ] , 3 , 4 ) 
+			nis.df <-
+				paste0(
+					'NIS' ,
+					if( catalog[ i , 'directory' ] == 'teen' ) 'TEEN' ,
+					'PUF' ,
+					substr( catalog[ i , 'year' ] , 3 , 4 )
 				)
 
 			# copy the data.frame produced by the r script over to the object `x`
 			if( catalog[ i , 'directory' ] == 'flu' ) x <- get( "NHFSPUF" ) else x <- get( nis.df )
-			
+
 			rm( list = nis.df )
 
 		} else {
@@ -170,17 +170,17 @@ lodown_nis <-
 			writeLines( script.sub , tf )
 
 			x <- read_SAScii( paste0( tempdir() , "/" , basename( unzipped_file ) ) , tf )
-			
+
 		}
 
       # convert all column names to lowercase
       names( x ) <- tolower( names( x ) )
-	  
+
 	  # add a column of ones
 	  x$one <- 1
 
 	  catalog[ i , 'case_count' ] <- nrow( x )
-	  
+
       saveRDS( x , file = catalog[ i , 'output_filename' ] )
 
       # delete the temporary files
