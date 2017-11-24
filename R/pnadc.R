@@ -62,7 +62,7 @@ lodown_pnadc <-
 
 		doc_path <- paste0( doc_ftp , gsub( "(.*) (.*)" , "\\2" , grep( "Dicionario_e_input" , readLines( textConnection( RCurl::getURL( doc_ftp ) ) ) , value = TRUE ) ) )
 		
-		cachaca( doc_path , tf , mode = 'wb' )
+		cachaca( doc_path , tf , mode = 'wb' , attempts = 10 )
 
 		sasfile <- grep( "\\.sas$" , unzip_warn_fail( tf , exdir = tempdir() ) , value = TRUE , ignore.case = TRUE )
 			
@@ -71,7 +71,7 @@ lodown_pnadc <-
 		for ( i in seq_len( nrow( catalog ) ) ){
 
 			# download the file
-			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
+			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' , attempts = 10 )
 
 			unzipped_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) )
 
