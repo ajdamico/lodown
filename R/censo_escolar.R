@@ -140,6 +140,9 @@ lodown_censo_escolar <-
             codebook <- codebook[ codebook$`Nome da Variavel` %in% columns.in.datafile , ]
             codebook <- codebook[ match( columns.in.datafile , codebook$`Nome da Variavel` ) , ]
 
+            # force type
+            codebook [ codebook$`Nome da Variavel` %in% "id_didatica_metodologia" , "Tipo" ] <- "character"
+
             if ( this_table_type == "matricula" ) {
 
               suppressMessages(
@@ -241,7 +244,7 @@ lodown_censo_escolar <-
     }
 
 	on.exit()
-	
+
     catalog
 
   }
