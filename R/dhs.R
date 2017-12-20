@@ -180,6 +180,9 @@ lodown_dhs <-
 				
 			}
 			
+			# remove files with the same names
+			unzipped_files <- unzipped_files[ !duplicated( tolower( unzipped_files ) ) ]
+			
 			# figure out the correct location for the rds
 			rds_name <- gsub( "\\.zip" , ".rds" , catalog[ i , 'output_filename' ] , ignore.case = TRUE )
 			
