@@ -171,6 +171,15 @@ lodown_dhs <-
 			# unzip the contents of the zipped file
 			unzipped_files <- unzip_warn_fail( catalog[ i , 'output_filename' ] , exdir = catalog[ i , 'output_folder' ] )
 
+			# some zipped files contained zipped subfiles
+			for( this_zip in grep( "\\.zip$" , unzipped_files , ignore.case = TRUE , value = TRUE ) ){
+			
+				unzipped_files <- unzipped_files[ unzipped_files != this_zip ]
+				
+				unzipped_files <- c( unzipped_files , unzip_warn_fail( this_zip , exdir = catalog[ i , 'output_folder' ] ) )
+				
+			}
+			
 			# figure out the correct location for the rds
 			rds_name <- gsub( "\\.zip" , ".rds" , catalog[ i , 'output_filename' ] , ignore.case = TRUE )
 			
