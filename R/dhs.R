@@ -166,13 +166,13 @@ lodown_dhs <-
 			cachaca( catalog[ i , 'full_url' ] , destfile = catalog[ i , 'output_filename' ] , FUN = httr::GET , filesize_fun = 'unzip_verify' , httr::write_disk( catalog[ i , 'output_filename' ] , overwrite = TRUE ) , httr::progress() )
 			
 			# make sure the file-specific folder exists
-			# dir.create( gsub( "\\.zip" , "" , zfn ) , showWarnings = FALSE )
+			# dir.create( gsub( "\\.zip" , "" , zfn , ignore.case = TRUE ) , showWarnings = FALSE )
 			
 			# unzip the contents of the zipped file
 			unzipped_files <- unzip_warn_fail( catalog[ i , 'output_filename' ] , exdir = catalog[ i , 'output_folder' ] )
 
 			# figure out the correct location for the rds
-			rds_name <- gsub( "\\.zip" , ".rds" , catalog[ i , 'output_filename' ] )
+			rds_name <- gsub( "\\.zip" , ".rds" , catalog[ i , 'output_filename' ] , ignore.case = TRUE )
 			
 			# and now, if there's a stata file, import it!
 			if ( any( st <- grepl( "\\.dta$" , tolower( unzipped_files ) ) ) ){
