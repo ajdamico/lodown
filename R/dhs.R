@@ -182,7 +182,8 @@ lodown_dhs <-
 			  catalog <- rbind( catalog , rep( catalog[ i , ], sum( st ) - 1 ) )
 
 			  # and changing the output_filename in the new rows
-			  catalog$output_filename[ ( nrow( catalog ) - sum( st ) + 2 ) : nrow( catalog ) ] <- unzipped_files[ unzipped_files != catalog[ i , 'output_filename' ] ]
+			  catalog$output_filename[ ( nrow( catalog ) - sum( st ) + 2 ) : nrow( catalog ) ] <-  unzipped_files[ !grepl( catalog[ i , 'output_filename' ], unzipped_files, ignore.case = TRUE ) ]
+
 
 			} else {
 			  # figure out the correct location for the single rds file
@@ -245,8 +246,9 @@ lodown_dhs <-
 			# delete the temporary files
 			suppressWarnings( file.remove( unzipped_files ) )
 
-			cat( paste0( "\n\n" , data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , catalog[ i , 'output_filename' ] , "'\r\n\n" ) )
-
+			for ( j in 1 : sum( st ) ){
+			  cat( paste0( "\n\n" , data_name , " catalog entry " , c(i,( nrow( catalog ) - sum( st ) + 2 ) : nrow( catalog )) [j] , " of " , nrow( catalog ) , " stored at '" , catalog[ c(i,( nrow( catalog ) - sum( st ) + 2 ) : nrow( catalog )) [j]  , 'output_filename' ] , "'\r\n\n" ) )
+			}
 		}
 
 		on.exit()
