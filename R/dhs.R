@@ -221,7 +221,7 @@ lodown_dhs <-
 
 			# if a file has not been saved as an rds yet,
 			# look for an spss file as well.  this way, stata always takes priority.
-			if ( !file.exists( rds_name ) ){
+			if (!any( !file.exists( rds_name ) ) ){
 
 				# if there's any spss file, import it!
 				if ( any( st <- grepl( "\\.sav$" , tolower( unzipped_files ) ) ) ){
@@ -229,16 +229,18 @@ lodown_dhs <-
 					# remove any prior `x` tables ; clear up RAM
 					suppressWarnings( rm( x ) )
 
-					# load the current stata file into working memory
-					x <- data.frame( haven::read_spss( unzipped_files[ which( st ) ] ) )
+				  for ( j in 1 : sum( st ) ){
+				    # load the current spss file into working memory
+				    x <- data.frame( haven::read_spss( unzipped_files[ st ] [ j ] ) )
 
-					# convert all column names to lowercase
-					names( x ) <- tolower( names( x ) )
+				    # convert all column names to lowercase
+				    names( x ) <- tolower( names( x ) )
 
-					catalog[ i , 'case_count' ] <- nrow( x )
+				    catalog[ catalog$output_filename ==  unzipped_files[ st ] [ j ], 'case_count' ] <- nrow( x )
 
-					# save the file on the local disk, within the appropriate country-survey filepath
-					saveRDS( x , file = rds_name ) ; rm( x ) ; gc()
+				    # save the file on the local disk, within the appropriate country-survey filepath
+				    saveRDS( x , file = rds_name[ j ] ) ; rm( x ) ; gc()
+				  }
 
 				}
 			}
