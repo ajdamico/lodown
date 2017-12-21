@@ -250,7 +250,7 @@ lodown_dhs <-
 			# delete the temporary files
 			suppressWarnings( file.remove( unzipped_files ) )
 
-			for ( j in 1 : sum( st ) ){
+			for ( j in 1 : sum( stz ) ){
 			  cat( paste0( "\n\n" , data_name , " catalog entry " , c(i,( nrow( catalog ) - sum( stz ) + 2 ) : nrow( catalog )) [j] , " of " , nrow( catalog ) , " stored at '" , catalog[ c(i,( nrow( catalog ) - sum( stz ) + 2 ) : nrow( catalog )) [j]  , 'output_filename' ] , "'\r\n\n" ) )
 			}
 		}
