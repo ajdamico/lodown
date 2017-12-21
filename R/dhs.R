@@ -173,16 +173,16 @@ lodown_dhs <-
 
 			# some zipped files contained zipped subfiles
 
-			if( any( st <- grepl( "\\.zip$" , unzipped_files , ignore.case = TRUE ) ) ){
+			if( any( stz <- grepl( "\\.zip$" , unzipped_files , ignore.case = TRUE ) ) ){
 
 			  # this means multiple .rds files
 			  rds_name <- gsub( "\\.zip" , ".rds" , grep( "\\.zip$" , unzipped_files , ignore.case = TRUE, value = TRUE) , ignore.case = TRUE)
 
 			  # and adding new rows to the catalog
-			  catalog <- rbind( catalog , rep( catalog[ i , ], sum( st ) - 1 ) )
+			  catalog <- rbind( catalog , rep( catalog[ i , ], sum( stz ) - 1 ) )
 
 			  # and changing the output_filename in the new rows
-			  catalog$output_filename[ ( nrow( catalog ) - sum( st ) + 2 ) : nrow( catalog ) ] <-  unzipped_files[ !grepl( catalog[ i , 'output_filename' ], unzipped_files, ignore.case = TRUE ) ]
+			  catalog$output_filename[ ( nrow( catalog ) - sum( stz ) + 2 ) : nrow( catalog ) ] <-  unzipped_files[ !grepl( catalog[ i , 'output_filename' ], unzipped_files, ignore.case = TRUE ) ]
 
 
 			} else {
@@ -212,7 +212,8 @@ lodown_dhs <-
 				# convert all column names to lowercase
 				names( x ) <- tolower( names( x ) )
 
-				catalog[ catalog$output_filename ==  unzipped_files[ st ] [ j ], 'case_count' ] <- nrow( x )
+				# note nrows of extracted dataset
+				catalog[ catalog$output_filename ==  gsub("\\FL.DTA", "DT.zip", unzipped_files[st][j]), 'case_count' ] <- nrow( x )
 
 				# save the file on the local disk, within the appropriate country-survey filepath
 				saveRDS( x , file = rds_name[ j ] ) ; rm( x ) ; gc()
@@ -236,7 +237,8 @@ lodown_dhs <-
 				    # convert all column names to lowercase
 				    names( x ) <- tolower( names( x ) )
 
-				    catalog[ catalog$output_filename ==  unzipped_files[ st ] [ j ], 'case_count' ] <- nrow( x )
+				    # note nrows of extracted dataset
+				    catalog[ catalog$output_filename ==  gsub("\\FL.DTA", "DT.zip", unzipped_files[st][j]), 'case_count' ]
 
 				    # save the file on the local disk, within the appropriate country-survey filepath
 				    saveRDS( x , file = rds_name[ j ] ) ; rm( x ) ; gc()
@@ -249,7 +251,7 @@ lodown_dhs <-
 			suppressWarnings( file.remove( unzipped_files ) )
 
 			for ( j in 1 : sum( st ) ){
-			  cat( paste0( "\n\n" , data_name , " catalog entry " , c(i,( nrow( catalog ) - sum( st ) + 2 ) : nrow( catalog )) [j] , " of " , nrow( catalog ) , " stored at '" , catalog[ c(i,( nrow( catalog ) - sum( st ) + 2 ) : nrow( catalog )) [j]  , 'output_filename' ] , "'\r\n\n" ) )
+			  cat( paste0( "\n\n" , data_name , " catalog entry " , c(i,( nrow( catalog ) - sum( stz ) + 2 ) : nrow( catalog )) [j] , " of " , nrow( catalog ) , " stored at '" , catalog[ c(i,( nrow( catalog ) - sum( stz ) + 2 ) : nrow( catalog )) [j]  , 'output_filename' ] , "'\r\n\n" ) )
 			}
 		}
 
