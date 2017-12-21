@@ -213,7 +213,7 @@ lodown_dhs <-
 				names( x ) <- tolower( names( x ) )
 
 				# note nrows of extracted dataset
-				catalog[ catalog$output_filename ==  gsub("\\FL.DTA", "DT.zip", unzipped_files[st][j]), 'case_count' ] <- nrow( x )
+				catalog[ grepl( gsub( "\\FL.DTA" , "DT.zip" , unzipped_files[st][j]), catalog$output_filename, ignore.case = TRUE ), 'case_count' ] <- nrow(x)
 
 				# save the file on the local disk, within the appropriate country-survey filepath
 				saveRDS( x , file = rds_name[ j ] ) ; rm( x ) ; gc()
@@ -238,7 +238,7 @@ lodown_dhs <-
 				    names( x ) <- tolower( names( x ) )
 
 				    # note nrows of extracted dataset
-				    catalog[ catalog$output_filename ==  gsub("\\FL.DTA", "DT.zip", unzipped_files[st][j]), 'case_count' ]
+				    catalog[ grepl( gsub( "\\FL.SAV" , "DT.zip" , unzipped_files[st][j]), catalog$output_filename, ignore.case = TRUE ), 'case_count' ] <- nrow(x)
 
 				    # save the file on the local disk, within the appropriate country-survey filepath
 				    saveRDS( x , file = rds_name[ j ] ) ; rm( x ) ; gc()
@@ -250,8 +250,8 @@ lodown_dhs <-
 			# delete the temporary files
 			suppressWarnings( file.remove( unzipped_files ) )
 
-			for ( j in 1 : max(1, sum( stz )) ){
-			  cat( paste0( "\n\n" , data_name , " catalog entry " , c(i,( nrow( catalog ) - sum( stz ) + 2 ) : nrow( catalog )) [j] , " of " , nrow( catalog ) , " stored at '" , catalog[ c(i,( nrow( catalog ) - sum( stz ) + 2 ) : nrow( catalog )) [j]  , 'output_filename' ] , "'\r\n\n" ) )
+			for ( j in 1 : max( 1, sum( stz ) ) ) {
+			  cat( paste0( "\n\n" , data_name , " catalog entry " , c( i , ( nrow( catalog ) - sum( stz ) + 2 ) : nrow( catalog ) ) [ j ] , " of " , nrow( catalog ) , " stored at '" , catalog[ c( i , ( nrow( catalog ) - sum( stz ) + 2 ) : nrow( catalog ) ) [ j ]  , 'output_filename' ] , "'\r\n\n" ) )
 			}
 		}
 
