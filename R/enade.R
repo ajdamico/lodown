@@ -1,13 +1,11 @@
 get_catalog_enade <-
 	function( data_name = "enade" , output_dir , ... ){
 
-		dat_dir <- "ftp://ftp.inep.gov.br/microdados/Enade_Microdados/"
+		inep_portal <- "http://portal.inep.gov.br/microdados"
 
-		dat_ftp <- readLines( textConnection( RCurl::getURL( dat_dir ) ) )
-
-		all_files <- gsub( "(.*) (.*)" , "\\2" , dat_ftp )
+		w <- rvest::html_attr( rvest::html_nodes( xml2::read_html( inep_portal ) , "a" ) , "href" )
 		
-		these_links <- file.path( dat_dir , all_files[ grep( "enade(.*)zip$|enade(.*)rar$" , basename( all_files ) , ignore.case = TRUE ) ] )
+		these_links <- w[ grep( "enade(.*)zip$|enade(.*)rar$" , basename( w ) , ignore.case = TRUE ) ]
 
 		enade_years <- substr( gsub( "[^0-9]" , "" , these_links ) , 1 , 4 )
 
@@ -19,11 +17,7 @@ get_catalog_enade <-
 				output_folder = paste0( output_dir , "/" , enade_years , "/" ) ,
 				stringsAsFactors = FALSE
 			)
-
-		catalog <- subset( catalog , !( full_url %in% c( 'ftp://ftp.inep.gov.br/microdados/Enade_Microdados//microdados_enade_2016.zip' , 'ftp://ftp.inep.gov.br/microdados/Enade_Microdados//microdados_enade_versao_27092017.zip' ) ) )
-		
-		catalog <- catalog[ order( catalog[ , 'year' ] ) , ]
-		
+			
 		catalog
 
 	}
