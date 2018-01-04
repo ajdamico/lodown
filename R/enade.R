@@ -69,6 +69,8 @@ lodown_enade <-
 			# remove duplicated basenames
 			csvfile <- csvfile[ !duplicated( basename( csvfile ) ) ]
 			
+			if( length( csvfile ) == 0 ) csvfile <- grep( "microdados_enade_" , z , value = TRUE , ignore.case = TRUE )
+			
 			stopifnot( length( csvfile ) == 1 )
 
 			tablename <- tolower( gsub( "\\.(.*)" , "" , basename( csvfile ) ) )
