@@ -36,7 +36,7 @@
 #'
 #' @export
 syntaxtractor <-
-	function( data_name , repo = "ajdamico/asdfree" , ref = "master" , replacements = NULL , setup_test = NULL , local_comp = FALSE ){
+	function( data_name , repo = "ajdamico/asdfree" , ref = "master" , replacements = NULL , setup_test = NULL ){
 
 		this_rmd <- grep( paste0( "-" , ifelse( data_name %in% c( 'acs2' , 'acs3' , 'acs4' ) , 'acs' , data_name ) , "\\.Rmd$" ) , list.files( "C:/Users/anthonyd/Documents/GitHub/asdfree/" , full.names = TRUE ) , value = TRUE )
 		
