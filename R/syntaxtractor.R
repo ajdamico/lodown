@@ -1,5 +1,5 @@
 
-#' rmarkdown syntax extractor for sisyphean perpetual testing
+#' rmarkdown syntax extractor
 #'
 #' parses asdfree textbook for runnable code.  probably not useful for anything else.
 #'
@@ -36,9 +36,9 @@
 #'
 #' @export
 syntaxtractor <-
-	function( data_name , repo = "ajdamico/asdfree" , ref = "master" , replacements = NULL , setup_test = NULL ){
+	function( data_name , repo = "ajdamico/asdfree" , ref = "master" , replacements = NULL , setup_rmd = TRUE , sample_setup_breaks = NULL , broken_sample_test_condition = NULL ){
 
-		this_rmd <- grep( paste0( "-" , ifelse( data_name %in% c( 'acs2' , 'acs3' , 'acs4' ) , 'acs' , data_name ) , "\\.Rmd$" ) , list.files( "C:/Users/anthonyd/Documents/GitHub/asdfree/" , full.names = TRUE ) , value = TRUE )
+		this_rmd <- grep( paste0( "-" , data_name , "\\.Rmd$" ) , list.files( "C:/Users/anthonyd/Documents/GitHub/asdfree/" , full.names = TRUE ) , value = TRUE )
 		
 		rmd_page <- readLines( this_rmd )
 	
@@ -48,11 +48,6 @@ syntaxtractor <-
 		
 		rmd_page <- rmd_page[ lines_to_eval ]
 		
-		# if there's a `dbdir` line, use it for corruption sniffing
-		dbdir_line <- grep( "dbdir" , rmd_page , value = TRUE )
-		
-		if( !is.null( setup_test ) ){
-		
 			# find the second `library(lodown)` line
 			second_library_lodown_line <- grep( "^library\\(lodown\\)$" , rmd_page )[ 2 ]
 			
@@ -60,44 +55,46 @@ syntaxtractor <-
 			if( is.na( second_library_lodown_line ) ){
 				second_library_lodown_line <- 3
 			}
+		
+			setup_rmd_page <- rmd_page[ seq_along( rmd_page ) < second_library_lodown_line ]
 			
-			if( setup_test == "setup" ){
-				
-				rmd_page <- rmd_page[ seq_along( rmd_page ) < second_library_lodown_line ]
-					
-			} else if( setup_test == "test" ) {
+			test_rmd_page <- rmd_page[ seq_along( rmd_page ) >= second_library_lodown_line ]
 			
-				rmd_page <- rmd_page[ seq_along( rmd_page ) >= second_library_lodown_line ]
-				
-				lodown_command_line <- grep( "^lodown\\(" , rmd_page )
-				
-				if( length( lodown_command_line ) > 0 ){
-				
-					# following two lines might include usernames/passwords
-					if( grepl( "your_" , rmd_page[ lodown_command_line + 1 ] ) ) rmd_page[ lodown_command_line + 1 ] <- ""
-					if( grepl( "your_" , rmd_page[ lodown_command_line + 2 ] ) ) rmd_page[ lodown_command_line + 2 ] <- ""
-					if( grepl( "your_" , rmd_page[ lodown_command_line + 3 ] ) ) rmd_page[ lodown_command_line + 3 ] <- ""
-					
-				}
+			if( !is.null( sample_setup_breaks ) ){
 			
-			} else stop( "setup_test= must be 'setup' or 'test'" )
+				sample_break_block <-				
+					c(
+						"this_sample_break <- Sys.getenv( \"this_sample_break\" )" , 
+						paste0( "record_categories <- ceiling( seq( nrow( chapter_tag_cat ) ) / ceiling( nrow( chapter_tag_cat ) / " , sample_setup_breaks , " ) )" ,
+						"chapter_tag_cat <- chapter_tag_cat[ record_categories == this_sample_break , ]" ,
+						"lodown( \"chapter_tag\" , chapter_tag_cat )"
+					)
+
+				sample_break_block <- gsub( "chapter_tag" , data_name , sample_break_block )
+				
+				setup_rmd_page[ grep( '^lodown\\(' , setup_rmd_page ) ] <- NULL
+
+				setup_rmd_page <- c( setup_rmd_page , sample_break_block )
+			}
+			
+			if( !is.null( broken_sample_test_condition ) ) test_rmd_page <- c( paste0( "if( " , broken_sample_test_condition , " ){" ) , test_rmd_page , "}" )
+			
+			
+			rmd_page <- c( setup_rmd_page , test_rmd_page )
+			
+			lodown_command_line <- grep( "^lodown\\(" , rmd_page )
+			
+			if( length( lodown_command_line ) > 0 ){
+			
+				# following two lines might include usernames/passwords
+				if( grepl( "your_" , rmd_page[ lodown_command_line + 1 ] ) ) rmd_page[ lodown_command_line + 1 ] <- ""
+				if( grepl( "your_" , rmd_page[ lodown_command_line + 2 ] ) ) rmd_page[ lodown_command_line + 2 ] <- ""
+				if( grepl( "your_" , rmd_page[ lodown_command_line + 3 ] ) ) rmd_page[ lodown_command_line + 3 ] <- ""
+				
+			}
 		
 		}
 		
-		if( length( dbdir_line ) > 0 ){
-				
-			cs_query <- "select tables.name, columns.name, location from tables inner join columns on tables.id=columns.table_id left join storage on tables.name=storage.table and columns.name=storage.column where location is null and tables.name not in ('tables', 'columns', 'users', 'querylog_catalog', 'querylog_calls', 'querylog_history', 'tracelog', 'sessions', 'optimizers', 'environment', 'queue', 'rejects', 'storage', 'storagemodel', 'tablestoragemodel')"
-			
-			cs_lines <-
-				paste(
-					dbdir_line[1] ,
-					'\nwarnings()\nlibrary(DBI)\ndb <- dbConnect( MonetDBLite::MonetDBLite() , dbdir )\ncs <- dbGetQuery( db , "' , cs_query , '" )\nprint(cs)\nstopifnot(nrow(cs) == 0)\ndbDisconnect( db , shutdown = TRUE )'
-				)
-				
-			rmd_page <- c( rmd_page , cs_lines )
-				
-		
-		}
 		
 		temp_script <- tempfile()
 
