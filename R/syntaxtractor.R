@@ -63,32 +63,8 @@ syntaxtractor <-
 			
 			if( setup_test == "setup" ){
 				
-				if( data_name == 'acs' ){
-				
-					rmd_page <-
-						"library(lodown)\nacs_cat <- get_catalog( \"acs\" , , output_dir = file.path( path.expand( \"~\" ) , \"ACS\" ) )\nlodown( \"acs\" , subset( acs_cat , ( time_period == '1-Year' & year == 2011 ) | year <= 2008 ) )"
+				rmd_page <- rmd_page[ seq_along( rmd_page ) < second_library_lodown_line ]
 					
-				} else if( data_name == 'acs2' ){
-				
-					rmd_page <-
-						"library(lodown)\nacs_cat <- get_catalog( \"acs\" , , output_dir = file.path( path.expand( \"~\" ) , \"ACS\" ) )\nlodown( \"acs\" , subset( acs_cat , year >= 2009 & year <= 2011 ) )"
-					
-				} else if( data_name == 'acs3' ){
-				
-					rmd_page <-
-						"library(lodown)\nacs_cat <- get_catalog( \"acs\" , , output_dir = file.path( path.expand( \"~\" ) , \"ACS\" ) )\nlodown( \"acs\" , subset( acs_cat , ( time_period == '1-Year' & year == 2011 ) | ( year >= 2012 & year <= 2014 ) ) )"
-					
-				} else if( data_name == 'acs4' ){
-				
-					rmd_page <-
-						"library(lodown)\nacs_cat <- get_catalog( \"acs\" , , output_dir = file.path( path.expand( \"~\" ) , \"ACS\" ) )\nlodown( \"acs\" , subset( acs_cat , ( time_period == '1-Year' & year == 2011 ) | ( year >= 2015 ) ) )"
-					
-				} else {
-					
-					rmd_page <- rmd_page[ seq_along( rmd_page ) < second_library_lodown_line ]
-					
-				}
-			
 			} else if( setup_test == "test" ) {
 			
 				rmd_page <- rmd_page[ seq_along( rmd_page ) >= second_library_lodown_line ]
@@ -97,8 +73,6 @@ syntaxtractor <-
 				
 				if( length( lodown_command_line ) > 0 ){
 				
-					rmd_page[ lodown_command_line ] <- paste0( "stopifnot( nrow( " , ifelse( data_name %in% c( 'acs2' , 'acs3' , 'acs4' ) , 'acs' , data_name ) , "_cat ) > 0 )" )
-					
 					# following two lines might include usernames/passwords
 					if( grepl( "your_" , rmd_page[ lodown_command_line + 1 ] ) ) rmd_page[ lodown_command_line + 1 ] <- ""
 					if( grepl( "your_" , rmd_page[ lodown_command_line + 2 ] ) ) rmd_page[ lodown_command_line + 2 ] <- ""
