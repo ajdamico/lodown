@@ -48,6 +48,8 @@ syntaxtractor <-
 		
 		rmd_page <- rmd_page[ lines_to_eval ]
 		
+		if( setup_rmd ){
+
 			# find the second `library(lodown)` line
 			second_library_lodown_line <- grep( "^library\\(lodown\\)$" , rmd_page )[ 2 ]
 			
@@ -57,43 +59,43 @@ syntaxtractor <-
 			}
 		
 			setup_rmd_page <- rmd_page[ seq_along( rmd_page ) < second_library_lodown_line ]
-			
-			test_rmd_page <- rmd_page[ seq_along( rmd_page ) >= second_library_lodown_line ]
-			
-			if( !is.null( sample_setup_breaks ) ){
-			
-				sample_break_block <-				
-					c(
-						"this_sample_break <- Sys.getenv( \"this_sample_break\" )" , 
-						paste0( "record_categories <- ceiling( seq( nrow( chapter_tag_cat ) ) / ceiling( nrow( chapter_tag_cat ) / " , sample_setup_breaks , " ) )" ,
-						"chapter_tag_cat <- chapter_tag_cat[ record_categories == this_sample_break , ]" ,
-						"lodown( \"chapter_tag\" , chapter_tag_cat )"
-					)
-
-				sample_break_block <- gsub( "chapter_tag" , data_name , sample_break_block )
-				
-				setup_rmd_page[ grep( '^lodown\\(' , setup_rmd_page ) ] <- NULL
-
-				setup_rmd_page <- c( setup_rmd_page , sample_break_block )
-			}
-			
-			if( !is.null( broken_sample_test_condition ) ) test_rmd_page <- c( paste0( "if( " , broken_sample_test_condition , " ){" ) , test_rmd_page , "}" )
-			
-			
-			rmd_page <- c( setup_rmd_page , test_rmd_page )
-			
-			lodown_command_line <- grep( "^lodown\\(" , rmd_page )
-			
-			if( length( lodown_command_line ) > 0 ){
-			
-				# following two lines might include usernames/passwords
-				if( grepl( "your_" , rmd_page[ lodown_command_line + 1 ] ) ) rmd_page[ lodown_command_line + 1 ] <- ""
-				if( grepl( "your_" , rmd_page[ lodown_command_line + 2 ] ) ) rmd_page[ lodown_command_line + 2 ] <- ""
-				if( grepl( "your_" , rmd_page[ lodown_command_line + 3 ] ) ) rmd_page[ lodown_command_line + 3 ] <- ""
-				
-			}
+		} else setup_rmd_page <- NULL
+	
+		test_rmd_page <- rmd_page[ seq_along( rmd_page ) >= second_library_lodown_line ]
 		
+		if( !is.null( sample_setup_breaks ) ){
+		
+			sample_break_block <-				
+				c(
+					"this_sample_break <- Sys.getenv( \"this_sample_break\" )" , 
+					paste0( "record_categories <- ceiling( seq( nrow( chapter_tag_cat ) ) / ceiling( nrow( chapter_tag_cat ) / " , sample_setup_breaks , " ) )" ,
+					"chapter_tag_cat <- chapter_tag_cat[ record_categories == this_sample_break , ]" ,
+					"lodown( \"chapter_tag\" , chapter_tag_cat )"
+				)
+
+			sample_break_block <- gsub( "chapter_tag" , data_name , sample_break_block )
+			
+			setup_rmd_page[ grep( '^lodown\\(' , setup_rmd_page ) ] <- NULL
+
+			setup_rmd_page <- c( setup_rmd_page , sample_break_block )
 		}
+		
+		if( !is.null( broken_sample_test_condition ) ) test_rmd_page <- c( paste0( "if( " , broken_sample_test_condition , " ){" ) , test_rmd_page , "}" )
+		
+		
+		rmd_page <- c( setup_rmd_page , test_rmd_page )
+		
+		lodown_command_line <- grep( "^lodown\\(" , rmd_page )
+		
+		if( length( lodown_command_line ) > 0 ){
+		
+			# following two lines might include usernames/passwords
+			if( grepl( "your_" , rmd_page[ lodown_command_line + 1 ] ) ) rmd_page[ lodown_command_line + 1 ] <- ""
+			if( grepl( "your_" , rmd_page[ lodown_command_line + 2 ] ) ) rmd_page[ lodown_command_line + 2 ] <- ""
+			if( grepl( "your_" , rmd_page[ lodown_command_line + 3 ] ) ) rmd_page[ lodown_command_line + 3 ] <- ""
+			
+		}
+	
 		
 		
 		temp_script <- tempfile()
