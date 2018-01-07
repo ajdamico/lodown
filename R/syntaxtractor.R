@@ -82,22 +82,8 @@ syntaxtractor <-
 		
 		if( !is.null( broken_sample_test_condition ) ) test_rmd_page <- c( paste0( "if( " , broken_sample_test_condition , " ){" ) , test_rmd_page , "}" )
 		
-		
 		rmd_page <- c( setup_rmd_page , test_rmd_page )
-		
-		lodown_command_line <- grep( "^lodown\\(" , rmd_page )
-		
-		if( length( lodown_command_line ) > 0 ){
-		
-			# following two lines might include usernames/passwords
-			if( grepl( "your_" , rmd_page[ lodown_command_line + 1 ] ) ) rmd_page[ lodown_command_line + 1 ] <- ""
-			if( grepl( "your_" , rmd_page[ lodown_command_line + 2 ] ) ) rmd_page[ lodown_command_line + 2 ] <- ""
-			if( grepl( "your_" , rmd_page[ lodown_command_line + 3 ] ) ) rmd_page[ lodown_command_line + 3 ] <- ""
-			
-		}
-	
-		
-		
+				
 		temp_script <- tempfile()
 
 		for ( this_replacement in replacements ) rmd_page <- gsub( this_replacement[ 1 ] , this_replacement[ 2 ] , rmd_page , fixed = TRUE )
