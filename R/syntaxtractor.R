@@ -47,18 +47,19 @@ syntaxtractor <-
 		lines_to_eval <- unlist( mapply( `:` , v[ seq( 1 , length( v ) - 1 , 2 ) ] + 1 , v[ seq( 2 , length( v ) + 1 , 2 ) ] - 1 ) )
 		
 		rmd_page <- rmd_page[ lines_to_eval ]
+	
+		# find the second `library(lodown)` line
+		second_library_lodown_line <- grep( "^library\\(lodown\\)$" , rmd_page )[ 2 ]
 		
+		# if that line does not exist, simply use the first two lines of code
+		if( is.na( second_library_lodown_line ) ){
+			second_library_lodown_line <- 3
+		}
+	
 		if( setup_rmd ){
 
-			# find the second `library(lodown)` line
-			second_library_lodown_line <- grep( "^library\\(lodown\\)$" , rmd_page )[ 2 ]
-			
-			# if that line does not exist, simply use the first two lines of code
-			if( is.na( second_library_lodown_line ) ){
-				second_library_lodown_line <- 3
-			}
-		
 			setup_rmd_page <- rmd_page[ seq_along( rmd_page ) < second_library_lodown_line ]
+			
 		} else setup_rmd_page <- NULL
 	
 		test_rmd_page <- rmd_page[ seq_along( rmd_page ) >= second_library_lodown_line ]
@@ -75,8 +76,6 @@ syntaxtractor <-
 
 			sample_break_block <- gsub( "chapter_tag" , data_name , sample_break_block )
 			
-			setup_rmd_page[ grep( '^lodown\\(' , setup_rmd_page ) ] <- NULL
-
 			setup_rmd_page <- c( setup_rmd_page , sample_break_block )
 		}
 		
