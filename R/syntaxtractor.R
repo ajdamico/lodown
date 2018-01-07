@@ -64,7 +64,7 @@ syntaxtractor <-
 	
 		test_rmd_page <- rmd_page[ seq_along( rmd_page ) >= second_library_lodown_line ]
 		
-		if( !is.null( sample_setup_breaks ) ){
+		if( !is.null( sample_setup_breaks ) & setup_rmd ){
 		
 			sample_break_block <-				
 				c(
