@@ -37,27 +37,11 @@
 #' @export
 syntaxtractor <-
 	function( data_name , repo = "ajdamico/asdfree" , ref = "master" , replacements = NULL , setup_test = NULL , local_comp = FALSE ){
+
+		this_rmd <- grep( paste0( "-" , ifelse( data_name %in% c( 'acs2' , 'acs3' , 'acs4' ) , 'acs' , data_name ) , "\\.Rmd$" ) , list.files( "C:/Users/anthonyd/Documents/GitHub/asdfree/" , full.names = TRUE ) , value = TRUE )
+		
+		rmd_page <- readLines( this_rmd )
 	
-		if( !local_comp ){
-		
-			options( "monetdb.debug.query" = TRUE )
-		
-			repo_homepage <- readLines_retry( paste0( "https://github.com/" , repo , "/tree/" , ref , "/" ) )
-			
-			rmd_links <- gsub( "(.*)>(.*)\\.Rmd</a>(.*)" , "\\2" , grep( "Rmd" , repo_homepage , value = TRUE ) )
-			
-			this_rmd <- grep( paste0( "-" , ifelse( data_name %in% c( 'acs2' , 'acs3' , 'acs4' ) , 'acs' , data_name ) , "$" ) , rmd_links , value = TRUE )
-		
-			rmd_page <- readLines_retry( paste0( "https://raw.githubusercontent.com/" , repo , "/" , ref , "/" , this_rmd , ".Rmd" ) )
-		
-		} else {
-			
-			this_rmd <- grep( paste0( "-" , ifelse( data_name %in% c( 'acs2' , 'acs3' , 'acs4' ) , 'acs' , data_name ) , "\\.Rmd$" ) , list.files( "C:/Users/anthonyd/Documents/GitHub/asdfree/" , full.names = TRUE ) , value = TRUE )
-			
-			rmd_page <- readLines( this_rmd )
-		
-		}
-		
 		v <- grep( "```" , rmd_page )
 		
 		lines_to_eval <- unlist( mapply( `:` , v[ seq( 1 , length( v ) - 1 , 2 ) ] + 1 , v[ seq( 2 , length( v ) + 1 , 2 ) ] - 1 ) )
