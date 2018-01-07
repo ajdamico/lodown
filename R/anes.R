@@ -73,7 +73,7 @@ lodown_anes <-
 			
 			unzipped_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) )
 
-			for( stata12 in grep( "stata12" , unzipped_files , value = TRUE , ignore.case = TRUE ) ){
+			for( stata12 in grep( "stata[0-9][0-9]" , unzipped_files , value = TRUE , ignore.case = TRUE ) ){
 				
 				file.remove( stata12 )
 				
