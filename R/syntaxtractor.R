@@ -68,7 +68,7 @@ syntaxtractor <-
 			sample_break_block <-				
 				c(
 					"this_sample_break <- Sys.getenv( \"this_sample_break\" )" , 
-					paste0( "record_categories <- ceiling( seq( nrow( chapter_tag_cat ) ) / ceiling( nrow( chapter_tag_cat ) / " , sample_setup_breaks , " ) )" ,
+					paste0( "record_categories <- ceiling( seq( nrow( chapter_tag_cat ) ) / ceiling( nrow( chapter_tag_cat ) / " , sample_setup_breaks , " ) )" ) ,
 					"chapter_tag_cat <- chapter_tag_cat[ record_categories == this_sample_break , ]" ,
 					"lodown( \"chapter_tag\" , chapter_tag_cat )"
 				)
