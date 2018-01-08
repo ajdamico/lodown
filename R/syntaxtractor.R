@@ -36,7 +36,7 @@
 #'
 #' @export
 syntaxtractor <-
-	function( data_name , repo = "ajdamico/asdfree" , ref = "master" , replacements = NULL , setup_rmd = TRUE , sample_setup_breaks = NULL , broken_sample_test_condition = NULL ){
+	function( data_name , repo = "ajdamico/asdfree" , ref = "master" , replacements = NULL , setup_rmd = TRUE , test_rmd = TRUE , sample_setup_breaks = NULL , broken_sample_test_condition = NULL ){
 
 		this_rmd <- grep( paste0( "-" , data_name , "\\.Rmd$" ) , list.files( "C:/Users/anthonyd/Documents/GitHub/asdfree/" , full.names = TRUE ) , value = TRUE )
 		
@@ -82,20 +82,22 @@ syntaxtractor <-
 		
 		if( !is.null( broken_sample_test_condition ) ) test_rmd_page <- c( paste0( "if( " , broken_sample_test_condition , " ){" ) , test_rmd_page , "}" )
 		
-		
-		lodown_command_line <- grep( "^lodown\\(" , test_rmd_page )
+		if( test_rmd ){
 
-		if( length( lodown_command_line ) > 0 ){
+			lodown_command_line <- grep( "^lodown\\(" , test_rmd_page )
 
-			test_rmd_page[ lodown_command_line ] <- ""
-			
-			# following few lines might include usernames/passwords
-			if( grepl( "your_" , test_rmd_page[ lodown_command_line + 1 ] ) ) test_rmd_page[ lodown_command_line + 1 ] <- ""
-			if( grepl( "your_" , test_rmd_page[ lodown_command_line + 2 ] ) ) test_rmd_page[ lodown_command_line + 2 ] <- ""
-			if( grepl( "your_" , test_rmd_page[ lodown_command_line + 3 ] ) ) test_rmd_page[ lodown_command_line + 3 ] <- ""
+			if( length( lodown_command_line ) > 0 ){
+
+				test_rmd_page[ lodown_command_line ] <- ""
+				
+				# following few lines might include usernames/passwords
+				if( grepl( "your_" , test_rmd_page[ lodown_command_line + 1 ] ) ) test_rmd_page[ lodown_command_line + 1 ] <- ""
+				if( grepl( "your_" , test_rmd_page[ lodown_command_line + 2 ] ) ) test_rmd_page[ lodown_command_line + 2 ] <- ""
+				if( grepl( "your_" , test_rmd_page[ lodown_command_line + 3 ] ) ) test_rmd_page[ lodown_command_line + 3 ] <- ""
+				
+			}
 			
 		}
-
 		
 		rmd_page <- c( setup_rmd_page , test_rmd_page )
 				
