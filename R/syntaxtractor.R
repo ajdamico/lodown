@@ -56,7 +56,7 @@ syntaxtractor <-
 			second_library_lodown_line <- 3
 		}
 	
-		if( setup_rmd ){
+		if( is.null( sample_setup_breaks ) & setup_rmd ){
 
 			setup_rmd_page <- rmd_page[ seq_along( rmd_page ) < second_library_lodown_line ]
 			
@@ -81,6 +81,21 @@ syntaxtractor <-
 		}
 		
 		if( !is.null( broken_sample_test_condition ) ) test_rmd_page <- c( paste0( "if( " , broken_sample_test_condition , " ){" ) , test_rmd_page , "}" )
+		
+		
+		lodown_command_line <- grep( "^lodown\\(" , test_rmd_page )
+
+		if( length( lodown_command_line ) > 0 ){
+
+			test_rmd_page[ lodown_command_line ] <- ""
+			
+			# following few lines might include usernames/passwords
+			if( grepl( "your_" , test_rmd_page[ lodown_command_line + 1 ] ) ) test_rmd_page[ lodown_command_line + 1 ] <- ""
+			if( grepl( "your_" , test_rmd_page[ lodown_command_line + 2 ] ) ) test_rmd_page[ lodown_command_line + 2 ] <- ""
+			if( grepl( "your_" , test_rmd_page[ lodown_command_line + 3 ] ) ) test_rmd_page[ lodown_command_line + 3 ] <- ""
+			
+		}
+
 		
 		rmd_page <- c( setup_rmd_page , test_rmd_page )
 				
