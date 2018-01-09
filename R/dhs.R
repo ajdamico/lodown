@@ -225,7 +225,7 @@ lodown_dhs <-
 						rds_name <- gsub( "\\.sav$" , ".rds" , this_sav , ignore.case = TRUE )
 					
 						# load the current stata file into working memory
-						x <- data.frame( haven::read_spss( this_sav )
+						x <- data.frame( haven::read_spss( this_sav ) )
 			
 						# convert all column names to lowercase
 						names( x ) <- tolower( names( x ) )
