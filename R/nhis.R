@@ -194,6 +194,8 @@ get_catalog_nhis <-
 			catalog <- rbind( catalog , inc_cat )
 		}
 		
+		catalog <- catalog[ order( catalog[ , 'year' ] ) , ]
+		
 		catalog
 
 	}
