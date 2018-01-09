@@ -14,7 +14,7 @@ get_catalog_nibrs <-
 		
 		catalog$unzip_folder <- gsub( "IncidentBased" , "Incident Based" , catalog$unzip_folder )
 
-		catalog$dbfolder <- paste0( output_dir , "/MonetDB" )
+		catalog$dbfile <- paste0( output_dir , "/SQLite.db" )
 
 		catalog
 
@@ -35,7 +35,7 @@ lodown_nibrs <-
 			unzipped_files <- list.files( catalog[ i , 'unzip_folder' ] , full.names = TRUE )
 
 			# open the connection to the monetdblite database
-			db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog[ i , 'dbfolder' ] )
+			db <- DBI::dbConnect( RSQLite::SQLite() , catalog[ i , 'dbfile' ] )
 
 			# determine the filenames that end with `sas`
 			sas.import <- unzipped_files[ grep( "sas$" , tolower( unzipped_files ) ) ]

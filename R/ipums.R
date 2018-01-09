@@ -39,7 +39,7 @@ get_catalog_ipums <-
 		
 		catalog$output_filename <- ifelse( is.na( catalog$full_url ) , NA , paste0( output_dir , '/' , catalog$db_tablename , '.rds' ) )
 		
-		catalog$dbfolder <- ifelse( is.na( catalog$full_url ) , NA , paste0( output_dir , "/MonetDB" ) )
+		catalog$dbfile <- ifelse( is.na( catalog$full_url ) , NA , paste0( output_dir , "/SQLite.db" ) )
 
 		httr::GET( paste0( "https://" , project , ".ipums.org/" , project , "-action/users/logout" ) , httr::set_cookies( .cookies = this_cookie ) )
 		
@@ -100,9 +100,6 @@ lodown_ipums <-
 				# determine the column names from the csv file
 				cn <- toupper( names( read.csv( csv_filename , nrow = 1 ) ) )
 
-				# for any column names that conflict with a monetdb reserved word, add an underscore
-				cn[ cn %in% getFromNamespace( "reserved_monetdb_keywords" , "MonetDBLite" ) ] <- paste0( cn[ cn %in% getFromNamespace( "reserved_monetdb_keywords" , "MonetDBLite" ) ] , "_" )
-
 				# force all column names to be lowercase, since MonetDB.R is now case-sensitive
 				cn <- tolower( cn )
 				
@@ -128,10 +125,10 @@ lodown_ipums <-
 				
 				}
 				
-				if( !is.na( catalog[ i , 'dbfolder' ] ) ){
+				if( !is.na( catalog[ i , 'dbfile' ] ) ){
 					
 					# open the connection to the monetdblite database
-					db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog[ i , 'dbfolder' ] )
+					db <- DBI::dbConnect( RSQLite::SQLite() , catalog[ i , 'dbfile' ] )
 							
 					# paste column names and column types together sequentially
 					colDecl <- paste( cn , colTypes )
@@ -176,7 +173,7 @@ lodown_ipums <-
 					
 					DBI::dbDisconnect( db , shutdown = TRUE )
 				
-					cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'dbfolder' ] , "'\r\n\n" ) )
+					cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'dbfile' ] , "'\r\n\n" ) )
 					
 				}
 				

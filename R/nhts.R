@@ -22,7 +22,7 @@ get_catalog_nhts <-
 				year = substr( csv_refs , 1 , 4 ) ,
 				full_url = paste0( "http://nhts.ornl.gov/" , csv_refs ) ,
 				file_info = csv_text ,
-				dbfolder = paste0( output_dir , "/MonetDB" ) ,
+				dbfile = paste0( output_dir , "/SQLite.db" ) ,
 				stringsAsFactors = FALSE
 			)
 
@@ -45,7 +45,7 @@ lodown_nhts <-
 		for ( i in seq_len( nrow( catalog ) ) ){
 
 			# open the connection to the monetdblite database
-			db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog[ i , 'dbfolder' ] )
+			db <- DBI::dbConnect( RSQLite::SQLite() , catalog[ i , 'dbfile' ] )
 
 			# download the file
 			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
@@ -63,8 +63,6 @@ lodown_nhts <-
 					x <- read.csv( this_csv , stringsAsFactors = FALSE )
 					
 					names( x ) <- tolower( names( x ) )
-					
-					for ( j in tolower( getFromNamespace( "reserved_monetdb_keywords" , "MonetDBLite" ) ) ) names( x ) <- gsub( j , paste0( j , "_" ) , names( x ) )
 					
 					DBI::dbWriteTable( db , db_tablename , x , header = TRUE , row.names = NULL , nrow.check = 250000 , lower.case.names = TRUE , newline = '\\r\\n' )
 						
@@ -98,8 +96,6 @@ lodown_nhts <-
 
 				names( x ) <- tolower( names( x ) )
 				
-				for ( j in tolower( getFromNamespace( "reserved_monetdb_keywords" , "MonetDBLite" ) ) ) names( x )[ names( x ) == j ] <- paste0( j , '_' )
-							
 				DBI::dbWriteTable( db , db_tablename , x , header = TRUE , row.names = FALSE )
 
 			}
@@ -146,10 +142,6 @@ lodown_nhts <-
 				# make the tablename the first three letters of the filename,
 				# remove any numbers, also any underscores
 				tablename <- tolower( paste0( gsub( "_" , "" , gsub( "[0-9]+" , "" , fn.before.dot ) , fixed = TRUE ) ,  catalog[ i , 'year' ] ) )
-				
-				# there are a couple of illegal names.  change them.
-				for ( j in tolower( getFromNamespace( "reserved_monetdb_keywords" , "MonetDBLite" ) ) ) txt.field <- gsub( j , paste0( j , "_" ) , txt.field )
-
 				
 				# import the actual text file into working memory
 				x <- 
@@ -291,8 +283,8 @@ lodown_nhts <-
 							type = 'JK1' ,
 							mse = TRUE ,
 							data = paste0( 'ldt_m_' , catalog[ i , 'year' ] ) , 			# use the person-ldt-merge data table
-							dbtype = "MonetDBLite" ,
-							dbname = catalog[ i , 'dbfolder' ]
+							dbtype = "SQLite" ,
+							dbname = catalog[ i , 'dbfile' ]
 						)
 
 					# workaround for a bug in survey::survey::svrepdesign.character
@@ -337,8 +329,8 @@ lodown_nhts <-
 						type = 'JK1' ,
 						mse = TRUE ,
 						data = paste0( 'day_m_' , catalog[ i , 'year' ] ) , 	# use the person-day-merge data table
-						dbtype = "MonetDBLite" ,
-						dbname = catalog[ i , 'dbfolder' ]
+						dbtype = "SQLite" ,
+						dbname = catalog[ i , 'dbfile' ]
 					)
 
 				# workaround for a bug in survey::survey::svrepdesign.character
@@ -379,8 +371,8 @@ lodown_nhts <-
 						type = 'JK1' ,
 						mse = TRUE ,
 						data = paste0( 'per_m_' , catalog[ i , 'year' ] ) , 	# use the person-merge data table
-						dbtype = "MonetDBLite" ,
-						dbname = catalog[ i , 'dbfolder' ]
+						dbtype = "SQLite" ,
+						dbname = catalog[ i , 'dbfile' ]
 					)
 
 				# workaround for a bug in survey::survey::svrepdesign.character
@@ -420,8 +412,8 @@ lodown_nhts <-
 						type = 'JK1' ,
 						mse = TRUE ,
 						data = paste0( 'hh_m_' , catalog[ i , 'year' ] ) , 	# use the household-merge data table
-						dbtype = "MonetDBLite" ,
-						dbname = catalog[ i , 'dbfolder' ]
+						dbtype = "SQLite" ,
+						dbname = catalog[ i , 'dbfile' ]
 					)
 
 					
@@ -450,7 +442,7 @@ lodown_nhts <-
 			# delete the temporary files
 			suppressWarnings( file.remove( tf , unzipped_files ) )
 
-			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'dbfolder' ] , "'\r\n\n" ) )
+			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'dbfile' ] , "'\r\n\n" ) )
 
 		}
 

@@ -25,7 +25,7 @@ get_catalog_nvss <-
 				data.frame( type = 'fetaldeath' , year = 2005:nvss_max_year( "/fetaldeathus/" , files ) , stringsAsFactors = FALSE ) 
 			)
 		
-		catalog$dbfolder <- paste0( output_dir , "/MonetDB" )
+		catalog$dbfile <- paste0( output_dir , "/SQLite.db" )
 		
 		catalog$output_folder <- output_dir
 		
@@ -70,7 +70,7 @@ lodown_nvss <-
 
 					
 			# open the connection to the monetdblite database
-			db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog[ i , 'dbfolder' ] )
+			db <- DBI::dbConnect( RSQLite::SQLite() , catalog[ i , 'dbfile' ] )
 
 			tables_before <- DBI::dbListTables( db )
 			

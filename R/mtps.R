@@ -42,7 +42,7 @@ get_catalog_mtps <-
                 ifelse( !is.na( catalog$subtype ) , paste0( catalog$subtype, "_" ) , "" ) ,
                 ifelse( catalog$type == "rais" , catalog$year , "" ) ) , NA )
 
-    catalog$dbfolder <- ifelse( is.na( catalog$db_tablename ) , NA , paste0( output_dir , "/MonetDB" ) )
+    catalog$dbfile <- ifelse( is.na( catalog$db_tablename ) , NA , paste0( output_dir , "/SQLite.db" ) )
 
     catalog
 
@@ -81,9 +81,6 @@ lodown_mtps <-
 
         # convert all column names to lowercase
         names( x ) <- tolower( names( x ) )
-
-        # add underscores after monetdb illegal names
-        for ( j in names( x )[ toupper( names( x ) ) %in% getFromNamespace( "reserved_monetdb_keywords" , "MonetDBLite" ) ] ) names( x )[ names( x ) == j ] <- paste0( j , "_" )
 
         # change dots for underscore
         names( x ) <- gsub( "\\." , "_" , names( x ) )
@@ -135,7 +132,7 @@ lodown_mtps <-
           correct_columns <- get( catalog[ i , 'db_tablename' ] )
 
           # open the connection to the monetdblite database
-          db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog[ i , 'dbfolder' ] )
+          db <- DBI::dbConnect( RSQLite::SQLite() , catalog[ i , 'dbfile' ] )
 
           # loop through all tables that match the current db_tablename
           for( this_file in catalog[ catalog$db_tablename %in% catalog[ i , 'db_tablename' ] , 'output_filename' ] ){

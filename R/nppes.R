@@ -14,7 +14,7 @@ get_catalog_nppes <-
 		data.frame(
 			full_url = fn ,
 			db_tablename = "npi" ,
-			dbfolder = paste0( output_dir , "/MonetDB" ) ,
+			dbfile = paste0( output_dir , "/SQLite.db" ) ,
 			stringsAsFactors = FALSE
 		)
 
@@ -45,7 +45,7 @@ lodown_nppes <-
 		csv.file <- unzipped_files[ grepl( 'csv' , unzipped_files ) & !grepl( 'FileHeader' , unzipped_files ) ]
 
 		# open the connection to the monetdblite database
-		db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog$dbfolder )
+		db <- DBI::dbConnect( RSQLite::SQLite() , catalog$dbfile )
 		# from now on, the 'db' object will be used for r to connect with the monetdb server
 
 

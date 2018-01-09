@@ -9,7 +9,7 @@ get_catalog_timss <-
 
 		catalog$output_folder <- paste0( output_dir , "/" , catalog$year , "/" )
 		
-		catalog$dbfolder <- paste0( output_dir , "/MonetDB" )
+		catalog$dbfile <- paste0( output_dir , "/SQLite.db" )
 		
 		catalog
 
@@ -26,7 +26,7 @@ lodown_timss <-
 		for ( i in seq_len( nrow( catalog ) ) ){
 
 			# open the connection to the monetdblite database
-			db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog[ i , 'dbfolder' ] )
+			db <- DBI::dbConnect( RSQLite::SQLite() , catalog[ i , 'dbfile' ] )
 
 			# # # # # # # # # # # #
 			# download all files  #
@@ -299,11 +299,11 @@ lodown_timss <-
 							survey::svrepdesign( 
 								weights = as.formula( paste( "~" , wgt ) )  , 
 								repweights = design_weights , 
-								data = mitools::imputationList( datasets = as.list( five_tablenames ) , dbtype = "MonetDBLite" ) , 
+								data = mitools::imputationList( datasets = as.list( five_tablenames ) , dbtype = "SQLite" ) , 
 								type = "other" ,
 								combined.weights = TRUE , 
-								dbtype = "MonetDBLite" ,
-								dbname = catalog[ i , 'dbfolder' ]
+								dbtype = "SQLite" ,
+								dbname = catalog[ i , 'dbfile' ]
 							)
 
 
@@ -326,8 +326,8 @@ lodown_timss <-
 								data = one_tablename , 
 								type = "other" ,
 								combined.weights = TRUE ,
-								dbtype = "MonetDBLite" ,
-								dbname = catalog[ i , 'dbfolder' ]
+								dbtype = "SQLite" ,
+								dbname = catalog[ i , 'dbfile' ]
 							)
 							
 						# workaround for a bug in survey::svrepdesign.character

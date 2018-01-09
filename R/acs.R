@@ -46,7 +46,7 @@ get_catalog_acs <-
 							time_period = available_periods[ i ] ,
 							base_folder = paste0( available_folders[ i ] , "/" ) ,
 							db_tablename = this_tablename ,
-							dbfolder = paste0( output_dir , "/MonetDB" ) ,
+							dbfile = paste0( output_dir , "/SQLite.db" ) ,
 							output_filename = paste0( output_dir , "/" , this_tablename , '.rds' ) ,
 							include_puerto_rico = TRUE ,
 							stringsAsFactors = FALSE
@@ -71,7 +71,7 @@ lodown_acs <-
 		for ( i in seq_len( nrow( catalog ) ) ){
 
 			# open the connection to the monetdblite database
-			db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog[ i , 'dbfolder' ] )
+			db <- DBI::dbConnect( RSQLite::SQLite() , catalog[ i , 'dbfile' ] )
 
 			for( j in c( "h" , "p" ) ){
 
@@ -391,8 +391,8 @@ lodown_acs <-
 					mse = TRUE ,
 					type = 'JK1' ,
 					data = catalog[ i , 'db_tablename' ]  ,
-					dbtype = "MonetDBLite" ,
-					dbname = catalog[ i , 'dbfolder' ]
+					dbtype = "SQLite" ,
+					dbname = catalog[ i , 'dbfile' ]
 				)
 				
 			# workaround for a bug in survey::svrepdesign.character

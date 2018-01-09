@@ -13,7 +13,7 @@ get_catalog_censo_escolar <-
     catalog <-
       data.frame(
         year = as.numeric( censo_escolar_years ) ,
-        dbfolder = paste0( output_dir , "/MonetDB" ) ,
+        dbfile = paste0( output_dir , "/SQLite.db" ) ,
         output_folder = paste0( output_dir , "/" , censo_escolar_years ) ,
         full_url = these_links ,
         stringsAsFactors = FALSE
@@ -36,7 +36,7 @@ lodown_censo_escolar <-
     for ( i in seq_len( nrow( catalog ) ) ){
 
       # open the connection to the monetdblite database
-      db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog[ i , 'dbfolder' ] )
+      db <- DBI::dbConnect( RSQLite::SQLite() , catalog[ i , 'dbfile' ] )
 
       # download the file
       cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' , method = ifelse( .Platform$OS.type == "unix" , "wget" , "auto" ) , quiet = TRUE )
@@ -96,9 +96,6 @@ lodown_censo_escolar <-
 
           # convert column names to lowercase
           names( x ) <- tolower( names( x ) )
-
-          # do not use monetdb reserved words
-          for ( k in names( x )[ toupper( names( x ) ) %in% getFromNamespace( "reserved_monetdb_keywords" , "MonetDBLite" ) ] ) names( x )[ names( x ) == k ] <- paste0( k , "_" )
 
           DBI::dbWriteTable( db , these_tables[ j , 'db_tablename' ] , x )
 
@@ -175,7 +172,7 @@ lodown_censo_escolar <-
                   ) , error = function(e) {
                     cat( "removing non-utf8 characters\r" )
                     cleaned_data_file <- remove_nonutf8_censo_escolar( this_data_file ) ;
-                    db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog[ i , 'dbfolder' ] )
+                    db <- DBI::dbConnect( RSQLite::SQLite() , catalog[ i , 'dbfile' ] )
                     DBI::dbWriteTable(
                       db,
                       ifelse( length( tabelas ) > 1 , tolower( gsub( "\\..*" , "" , basename( this_data_file ) ) ) , paste0( this_table_type , "_" , catalog[ i , "year" ] ) ),
@@ -194,7 +191,7 @@ lodown_censo_escolar <-
 
               if ( j == length( tabelas ) & length( tabelas ) > 1 ) {
 
-                db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog[ i , 'dbfolder' ] )
+                db <- DBI::dbConnect( RSQLite::SQLite() , catalog[ i , 'dbfile' ] )
 
                 field.names <- data.frame( tablename = NULL , field = NULL )
                 for ( tabela in tolower( gsub( "\\..*" , "" , basename( tabelas ) ) ) ) {
@@ -227,7 +224,7 @@ lodown_censo_escolar <-
 
         }
 
-        db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog[ i , 'dbfolder' ] )
+        db <- DBI::dbConnect( RSQLite::SQLite() , catalog[ i , 'dbfile' ] )
         catalog[ i , 'case_count' ] <- DBI::dbGetQuery( db , paste0( "SELECT COUNT(*) FROM matricula_" , catalog[ i , "year" ] ) )[ 1 , 1 ]
 
       }
@@ -239,7 +236,7 @@ lodown_censo_escolar <-
       # delete the temporary files?  or move some docs to a save folder?
       suppressWarnings( file.remove( tf ) )
 
-      cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'dbfolder' ] , "'\r\n\n" ) )
+      cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'dbfile' ] , "'\r\n\n" ) )
 
     }
 

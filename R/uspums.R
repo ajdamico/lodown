@@ -46,7 +46,7 @@ get_catalog_uspums <-
 			paste0( "https://www2.census.gov/census_1990/1990_PUMS_A/PUMSAX" , catalog[ catalog$year == 1990 & catalog$percent == 5 , 'state.abb' ] , ".zip" )
 		
 		
-		catalog$dbfolder <- paste0( output_dir , "/MonetDB" )
+		catalog$dbfile <- paste0( output_dir , "/SQLite.db" )
 		
 		catalog$design <- paste0( output_dir , '/pums_' , catalog$year , '_' , catalog$percent , '_m.rds' )
 		
@@ -262,12 +262,12 @@ lodown_uspums <-
 		}
 
 		
-		unique_designs <- unique( catalog[ , c( 'year' , 'design' , 'hh_structure' , 'person_structure' , 'merged_tablename' , 'household_tablename' , 'person_tablename' , 'dbfolder' ) ] )
+		unique_designs <- unique( catalog[ , c( 'year' , 'design' , 'hh_structure' , 'person_structure' , 'merged_tablename' , 'household_tablename' , 'person_tablename' , 'dbfile' ) ] )
 		
 		for( i in seq_len( nrow( unique_designs ) ) ){
 
 			# open the connection to the monetdblite database
-			db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , unique_designs[ i , 'dbfolder' ] )
+			db <- DBI::dbConnect( RSQLite::SQLite() , unique_designs[ i , 'dbfile' ] )
 
 		
 			these_files <- merge( catalog , unique_designs[ i , ] )[ , 'full_url' ]
@@ -641,7 +641,7 @@ pums.import.merge.design <-
 				weight = if( grepl( "1990" , merged.tn ) ) ~pwgt1 else ~pweight ,			# weight variable column
 				id = ~1 ,					# sampling unit column (defined in the character string above)
 				data = merged.tn ,			# table name within the monet database (defined in the character string above)
-				dbtype = "MonetDBLite" ,
+				dbtype = "SQLite" ,
 				dbname = DBI::dbGetInfo( db )$gdk_dbpath
 			)
 		# ..and return that at the end of the function.

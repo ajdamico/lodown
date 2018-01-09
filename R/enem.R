@@ -13,7 +13,7 @@ get_catalog_enem <-
 			data.frame(
 				year = enem_years ,
 				full_url = these_links ,
-				dbfolder = paste0( output_dir , "/MonetDB" ) ,
+				dbfile = paste0( output_dir , "/SQLite.db" ) ,
 				output_folder = paste0( output_dir , "/" , enem_years ) ,
 				stringsAsFactors = FALSE
 			)
@@ -43,7 +43,7 @@ lodown_enem <-
 		for ( i in seq_len( nrow( catalog ) ) ){
 
 			# open the connection to the monetdblite database
-			db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog[ i , 'dbfolder' ] )
+			db <- DBI::dbConnect( RSQLite::SQLite() , catalog[ i , 'dbfile' ] )
 
 			# download the file
 			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
@@ -216,7 +216,7 @@ lodown_enem <-
 			# delete the temporary files?  or move some docs to a save folder?
 			suppressWarnings( file.remove( tf ) )
 
-			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'dbfolder' ] , "'\r\n\n" ) )
+			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'dbfile' ] , "'\r\n\n" ) )
 
 		}
 

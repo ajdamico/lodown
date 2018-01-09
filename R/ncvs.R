@@ -14,7 +14,7 @@ get_catalog_ncvs <-
 	
 	catalog$unzip_folder <- gsub( "National Crime Victimization Survey( )?" , "" , catalog$unzip_folder )
 
-	catalog$dbfolder <- paste0( output_dir , "/MonetDB" )
+	catalog$dbfile <- paste0( output_dir , "/SQLite.db" )
 
 	catalog
 

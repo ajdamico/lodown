@@ -35,7 +35,7 @@ get_catalog_bsapuf <-
 			data.frame(
 				year = substr( basename( file_links ) , 1 , 4 ) ,
 				full_url = file_links ,
-				dbfolder = paste0( output_dir , "/MonetDB" ) ,
+				dbfile = paste0( output_dir , "/SQLite.db" ) ,
 				db_tablename = with_year ,
 				stringsAsFactors = FALSE
 			)
@@ -57,7 +57,7 @@ lodown_bsapuf <-
 		for ( i in seq_len( nrow( catalog ) ) ){
 
 			# open the connection to the monetdblite database
-			db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog[ i , 'dbfolder' ] )
+			db <- DBI::dbConnect( RSQLite::SQLite() , catalog[ i , 'dbfile' ] )
 
 			# download the file
 			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
@@ -90,7 +90,7 @@ lodown_bsapuf <-
 			# disconnect from the current monet database
 			DBI::dbDisconnect( db , shutdown = TRUE )
 
-			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'dbfolder' ] , "'\r\n\n" ) )
+			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'dbfile' ] , "'\r\n\n" ) )
 
 		}
 

@@ -24,7 +24,7 @@ get_catalog_censo <-
 					full_url = paste0( ftp_path_2010 , files_to_download_2010 ) ,
 					year = 2010 ,
 					db_table_prefix = tolower( gsub( ".zip" , "10" , files_to_download_2010 , ignore.case = TRUE ) ) ,
-					dbfolder = paste0( output_dir , "/MonetDB" ) ,
+					dbfile = paste0( output_dir , "/SQLite.db" ) ,
 					pes_design = paste0( output_dir , "/pes 2010 design.rds" ) ,
 					pes_sas = system.file("extdata", "censo/SASinputPes.txt", package = "lodown") ,
 					dom_design = paste0( output_dir , "/dom 2010 design.rds" ) ,
@@ -66,7 +66,7 @@ get_catalog_censo <-
 					full_url = paste0( ftp_path_2000 , files_to_download_2000 ) ,
 					year = 2000 ,
 					db_table_prefix = tolower( gsub( ".zip" , "00" , files_to_download_2000 , ignore.case = TRUE ) ) ,
-					dbfolder = paste0( output_dir , "/MonetDB" ) ,
+					dbfile = paste0( output_dir , "/SQLite.db" ) ,
 					pes_design = paste0( output_dir , "/pes 2000 design.rds" ) ,
 					pes_sas = system.file("extdata", "censo/LE_PESSOAS.sas", package = "lodown") ,
 					dom_design = paste0( output_dir , "/dom 2000 design.rds" ) ,
@@ -100,7 +100,7 @@ lodown_censo <-
 		for ( i in seq_len( nrow( catalog ) ) ){
 
 			# open the connection to the monetdblite database
-			db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog[ i , 'dbfolder' ] )
+			db <- DBI::dbConnect( RSQLite::SQLite() , catalog[ i , 'dbfile' ] )
 
 			cachaca( catalog[ i , 'full_url' ] , tf , mode = 'wb' )
 
@@ -173,18 +173,18 @@ lodown_censo <-
 			# remove extracted files and tf
 			file.remove( c( tf , unzipped_files , if( !is.na( catalog[ i , 'dom_ranc' ] ) ) dom_file , if( !is.na( catalog[ i , 'pes_ranc' ] ) ) pes_file , if( !is.na( catalog[ i , 'fam_ranc' ] ) ) fam_file ) )
 
-			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'dbfolder' ] , "'\r\n\n" ) )
+			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'dbfile' ] , "'\r\n\n" ) )
 
 		}
 
 		# create unique survey designs
-		dom_designs <- unique( catalog[ , c( "year" , "dbfolder" , "dom_design" , 'weight' , paste0( 'fpc' , 1:5 ) ) ] )
-		pes_designs <- unique( catalog[ , c( "year" , "dbfolder" , "pes_design" , 'weight' , paste0( 'fpc' , 1:5 ) ) ] )
-		fam_designs <- unique( catalog[ , c( "year" , "dbfolder" , "fam_design" , 'weight' , paste0( 'fpc' , 1:5 ) ) ] )
+		dom_designs <- unique( catalog[ , c( "year" , "dbfile" , "dom_design" , 'weight' , paste0( 'fpc' , 1:5 ) ) ] )
+		pes_designs <- unique( catalog[ , c( "year" , "dbfile" , "pes_design" , 'weight' , paste0( 'fpc' , 1:5 ) ) ] )
+		fam_designs <- unique( catalog[ , c( "year" , "dbfile" , "fam_design" , 'weight' , paste0( 'fpc' , 1:5 ) ) ] )
 
-		names( dom_designs ) <- c( "year" , 'dbfolder' , 'design' , 'weight' , paste0( 'fpc' , 1:5 ) )
-		names( pes_designs ) <- c( "year" , 'dbfolder' , 'design' , 'weight' , paste0( 'fpc' , 1:5 ) )
-		names( fam_designs ) <- c( "year" , 'dbfolder' , 'design' , 'weight' , paste0( 'fpc' , 1:5 ) )
+		names( dom_designs ) <- c( "year" , 'dbfile' , 'design' , 'weight' , paste0( 'fpc' , 1:5 ) )
+		names( pes_designs ) <- c( "year" , 'dbfile' , 'design' , 'weight' , paste0( 'fpc' , 1:5 ) )
+		names( fam_designs ) <- c( "year" , 'dbfile' , 'design' , 'weight' , paste0( 'fpc' , 1:5 ) )
 
 		dom_designs$type <- 'dom'
 		pes_designs$type <- 'pes'
@@ -200,11 +200,11 @@ lodown_censo <-
 		for( i in seq_len( nrow( unique_designs ) ) ){
 
 			# open the connection to the monetdblite database
-			db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , unique_designs[ i , 'dbfolder' ] )
+			db <- DBI::dbConnect( RSQLite::SQLite() , unique_designs[ i , 'dbfile' ] )
 
 			these_tables <-
 				paste0(
-					catalog[ catalog$dbfolder %in% unique_designs[ i , 'dbfolder' ] & catalog[ , paste0( unique_designs[ i , 'type' ] , "_design" ) ] %in% unique_designs[ i , 'design' ] , 'db_table_prefix' ] ,
+					catalog[ catalog$dbfile %in% unique_designs[ i , 'dbfile' ] & catalog[ , paste0( unique_designs[ i , 'type' ] , "_design" ) ] %in% unique_designs[ i , 'design' ] , 'db_table_prefix' ] ,
 					"_" ,
 					unique_designs[ i , 'type' ]
 				)
@@ -460,8 +460,8 @@ lodown_censo <-
 					scale = bootw$scale ,
 					rscales = bootw$rscales ,
 					data = paste0( 'c' , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , ifelse( unique_designs[ i , 'type' ] == 'pes' , "" , paste0( "_" , unique_designs[ i , 'type' ] ) ) ) ,
-					dbtype = "MonetDBLite" ,
-					dbname = unique_designs[ i , 'dbfolder' ]
+					dbtype = "SQLite" ,
+					dbname = unique_designs[ i , 'dbfile' ]
 				)
 
 			saveRDS( this_design , file = unique_designs[ i , 'design' ] )

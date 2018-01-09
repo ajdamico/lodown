@@ -12,7 +12,7 @@ get_catalog_saeb <-
 		catalog <-
 			data.frame(
 				year = saeb_years ,
-				dbfolder = paste0( output_dir , "/MonetDB" ) ,
+				dbfile = paste0( output_dir , "/SQLite.db" ) ,
 				output_folder = paste0( output_dir , "/" , saeb_years ) ,
 				full_url = these_links ,
 				stringsAsFactors = FALSE
@@ -33,7 +33,7 @@ lodown_saeb <-
 		for ( i in seq_len( nrow( catalog ) ) ){
 
 			# open the connection to the monetdblite database
-			db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog[ i , 'dbfolder' ] )
+			db <- DBI::dbConnect( RSQLite::SQLite() , catalog[ i , 'dbfile' ] )
 
 			tables_before <- DBI::dbListTables( db )
 			
@@ -136,9 +136,6 @@ lodown_saeb <-
 				# convert column names to lowercase
 				names( x ) <- tolower( names( x ) )
 				
-				# do not use monetdb reserved words
-				for ( j in names( x )[ toupper( names( x ) ) %in% getFromNamespace( "reserved_monetdb_keywords" , "MonetDBLite" ) ] ) names( x )[ names( x ) == j ] <- paste0( j , "_" )
-				
 				# store the `x` data.frame object in MonetDBLite database as well
 				DBI::dbWriteTable( db , tnwy , x )
 				
@@ -173,9 +170,6 @@ lodown_saeb <-
 				# convert column names to lowercase
 				names( headers ) <- tolower( names( headers ) )
 				
-				# do not use monetdb reserved words
-				for ( j in names( headers )[ toupper( names( headers ) ) %in% getFromNamespace( "reserved_monetdb_keywords" , "MonetDBLite" ) ] ) names( headers )[ names( headers ) == j ] <- paste0( j , "_" )
-
 				cc <- sapply( headers , class )
 
 				# initiate the current table
@@ -216,7 +210,7 @@ lodown_saeb <-
 			# delete the temporary files?  or move some docs to a save folder?
 			suppressWarnings( file.remove( tf ) )
 
-			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'dbfolder' ] , "'\r\n\n" ) )
+			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'dbfile' ] , "'\r\n\n" ) )
 
 		}
 

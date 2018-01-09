@@ -84,7 +84,7 @@ get_catalog_hmda <-
 			
 		catalog <- rbind( cat_hmda_lar , cat_pmic_lar , cat_hmda_inst , cat_pmic_inst , cat_hmda_reporter , cat_pmic_reporter , cat_hmda_msa , cat_pmic_msa )
 
-		catalog$dbfolder <- paste0( output_dir , "/MonetDB" )
+		catalog[ , 'dbfile' ] <- paste0( output_dir , "/SQLite.db" )
 		
 		catalog$db_tablename <- paste0( catalog$type , "_" , catalog$year )
 		
@@ -141,7 +141,7 @@ lodown_hmda <-
 		for ( i in seq_len( nrow( catalog ) ) ){
 
 			# open the connection to the monetdblite database
-			db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog[ i , 'dbfolder' ] )
+			db <- DBI::dbConnect( RSQLite::SQLite() , catalog[ i , 'dbfile' ] )
 
 			# download the file
 			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
@@ -309,7 +309,7 @@ lodown_hmda <-
 		for( i in seq_along( unique_merge_tables ) ){
 			
 			# open the connection to the monetdblite database
-			db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , unique( catalog[ which( catalog$merge_table == unique_merge_tables[ i ] ) , 'dbfolder' ] ) )
+			db <- DBI::dbConnect( RSQLite::SQLite() , unique( catalog[ which( catalog$merge_table == unique_merge_tables[ i ] ) , 'dbfile' ] ) )
 
 			ins.tablename <- catalog[ substr( catalog$type , 6 , 8 ) == 'ins' & catalog$merge_table == unique_merge_tables[ i ] , 'db_tablename' ]
 			lar.tablename <- catalog[ substr( catalog$type , 6 , 8 ) == 'lar' & catalog$merge_table == unique_merge_tables[ i ] , 'db_tablename' ]
