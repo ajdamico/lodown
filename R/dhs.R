@@ -103,7 +103,7 @@ get_catalog_dhs <-
 							year = substr( gsub( "[^0-9]" , "" , this.title ) , 1 , 4 ) ,
 							proj_id = project.number ,
 							Apr_Ctry_list_id = this.number ,
-							output_filename = paste0( output_dir , "/" , this.name , "/" , this.title , "/" , gsub( "(.*)Filename=(.*)\\.(ZIP|zip)(.*)" , "\\2.zip" , file.url ) ) ,
+							output_folder = paste0( output_dir , "/" , this.name , "/" , this.title , "/" ) ) ,
 							full_url = paste0( "https://dhsprogram.com" , file.url ) ,
 							stringsAsFactors = FALSE
 						)		
@@ -114,8 +114,6 @@ get_catalog_dhs <-
 			}
 		}
 
-		catalog$output_folder <- gsub( "\\.zip" , "" , catalog$output_filename , ignore.case = TRUE )
-		
 		unique( catalog )
 
 	}
@@ -142,6 +140,8 @@ lodown_dhs <-
 
 		project.number <- values$proj_id
 		
+		tf <- tempfile()
+		
 		# re-access the download-datasets page
 		z <- httr::POST( "https://dhsprogram.com/data/dataset_admin/download-datasets.cfm" , body = list( proj_id = project.number ) )
 
@@ -163,13 +163,13 @@ lodown_dhs <-
 		
 			# download the actual microdata file directly to disk
 			# don't read it into memory.  save it as `tf` immediately (RAM-free)
-			cachaca( catalog[ i , 'full_url' ] , destfile = catalog[ i , 'output_filename' ] , FUN = httr::GET , filesize_fun = 'unzip_verify' , httr::write_disk( catalog[ i , 'output_filename' ] , overwrite = TRUE ) , httr::progress() )
+			cachaca( catalog[ i , 'full_url' ] , destfile = tf , FUN = httr::GET , filesize_fun = 'unzip_verify' , httr::write_disk( tf , overwrite = TRUE ) , httr::progress() )
 			
 			# make sure the file-specific folder exists
 			# dir.create( gsub( "\\.zip" , "" , zfn , ignore.case = TRUE ) , showWarnings = FALSE )
 			
 			# unzip the contents of the zipped file
-			unzipped_files <- unzip_warn_fail( catalog[ i , 'output_filename' ] , exdir = catalog[ i , 'output_folder' ] )
+			unzipped_files <- unzip_warn_fail( tf , exdir = catalog[ i , 'output_folder' ] )
 
 			# some zipped files contained zipped subfiles
 			for( this_zip in grep( "\\.zip$" , unzipped_files , ignore.case = TRUE , value = TRUE ) ){
@@ -183,26 +183,30 @@ lodown_dhs <-
 			# remove files with the same names
 			unzipped_files <- unzipped_files[ !duplicated( tolower( unzipped_files ) ) ]
 			
-			# figure out the correct location for the rds
-			rds_name <- gsub( "\\.zip" , ".rds" , catalog[ i , 'output_filename' ] , ignore.case = TRUE )
-			
 			# and now, if there's a stata file, import it!
 			if ( any( st <- grepl( "\\.dta$" , tolower( unzipped_files ) ) ) ){
 				
-				# remove any prior `x` tables ; clear up RAM
-				suppressWarnings( rm( x ) )
+				for( this_dta in unzipped_files[ which( st ) ] ){
+					
+					# remove any prior `x` tables ; clear up RAM
+					suppressWarnings( rm( x ) )
+					
+					# figure out the correct location for the rds
+					rds_name <- gsub( "\\.dta$" , ".rds" , this_dta , ignore.case = TRUE )
 				
-				# load the current stata file into working memory
-				x <- data.frame( haven::read_dta( unzipped_files[ which( st ) ] ) )
-			
-				# convert all column names to lowercase
-				names( x ) <- tolower( names( x ) )
+					# load the current stata file into working memory
+					x <- data.frame( haven::read_dta( unzipped_files[ which( st ) ] ) )
+				
+					# convert all column names to lowercase
+					names( x ) <- tolower( names( x ) )
 
-				catalog[ i , 'case_count' ] <- nrow( x )
-				
-				# save the file on the local disk, within the appropriate country-survey filepath
-				saveRDS( x , file = rds_name ) ; rm( x ) ; gc()
-				
+					catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , nrow( x ) , na.rm = TRUE )
+					
+					# save the file on the local disk, within the appropriate country-survey filepath
+					saveRDS( x , file = rds_name ) ; rm( x ) ; gc()
+					
+				}
+					
 			}
 
 			# if a file has not been saved as an rds yet,
@@ -212,27 +216,33 @@ lodown_dhs <-
 				# if there's any spss file, import it!
 				if ( any( st <- grepl( "\\.sav$" , tolower( unzipped_files ) ) ) ){
 					
-					# remove any prior `x` tables ; clear up RAM
-					suppressWarnings( rm( x ) )
+					for( this_sav in unzipped_files[ which( st ) ] ){
 					
-					# load the current stata file into working memory
-					x <- data.frame( haven::read_spss( unzipped_files[ which( st ) ] ) )
-		
-					# convert all column names to lowercase
-					names( x ) <- tolower( names( x ) )
+						# remove any prior `x` tables ; clear up RAM
+						suppressWarnings( rm( x ) )
+							
+						# figure out the correct location for the rds
+						rds_name <- gsub( "\\.sav$" , ".rds" , this_sav , ignore.case = TRUE )
 					
-					catalog[ i , 'case_count' ] <- nrow( x )
+						# load the current stata file into working memory
+						x <- data.frame( haven::read_spss( unzipped_files[ which( st ) ] ) )
+			
+						# convert all column names to lowercase
+						names( x ) <- tolower( names( x ) )
+						
+						catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , nrow( x ) , na.rm = TRUE )
 
-					# save the file on the local disk, within the appropriate country-survey filepath
-					saveRDS( x , file = rds_name ) ; rm( x ) ; gc()
-					
+						# save the file on the local disk, within the appropriate country-survey filepath
+						saveRDS( x , file = rds_name ) ; rm( x ) ; gc()
+						
+					}
 				}
 			}
 		
 			# delete the temporary files
 			suppressWarnings( file.remove( unzipped_files ) )
 
-			cat( paste0( "\n\n" , data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , catalog[ i , 'output_filename' ] , "'\r\n\n" ) )
+			cat( paste0( "\n\n" , data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'output_folder' ] , "'\r\n\n" ) )
 
 		}
 
