@@ -24,6 +24,8 @@ get_catalog_cpsasec <-
 		# overwrite 2014.58 with three-eights
 		catalog$output_filename <- gsub( "\\.58" , "_5x8" , catalog$output_filename )
 
+		catalog <- catalog[ order( catalog[ , 'year' ] ) , ]
+		
 		catalog
 
 	}
