@@ -166,17 +166,17 @@ lodown_dhs <-
 			cachaca( catalog[ i , 'full_url' ] , destfile = tf , FUN = httr::GET , filesize_fun = 'unzip_verify' , httr::write_disk( tf , overwrite = TRUE ) , httr::progress() )
 			
 			# make sure the file-specific folder exists
-			dir.create( catalog[ i , 'output_folder' ] , showWarnings = FALSE )
+			dir.create( np_dirname( catalog[ i , 'output_folder' ] ) , showWarnings = FALSE )
 			
 			# unzip the contents of the zipped file
-			unzipped_files <- unzip_warn_fail( tf , exdir = catalog[ i , 'output_folder' ] )
+			unzipped_files <- unzip_warn_fail( tf , exdir = np_dirname( catalog[ i , 'output_folder' ] ) )
 
 			# some zipped files contained zipped subfiles
 			for( this_zip in grep( "\\.zip$" , unzipped_files , ignore.case = TRUE , value = TRUE ) ){
 			
 				unzipped_files <- unzipped_files[ unzipped_files != this_zip ]
 				
-				unzipped_files <- c( unzipped_files , unzip_warn_fail( this_zip , exdir = catalog[ i , 'output_folder' ] ) )
+				unzipped_files <- c( unzipped_files , unzip_warn_fail( this_zip , exdir = np_dirname( catalog[ i , 'output_folder' ] ) ) )
 				
 			}
 			
