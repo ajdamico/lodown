@@ -211,7 +211,7 @@ lodown_dhs <-
 
 			# if a file has not been saved as an rds yet,
 			# look for an spss file as well.  this way, stata always takes priority.
-			if ( !file.exists( rds_name ) ){
+			if ( !exists( 'rds_name' ) || !file.exists( rds_name ) ){
 			
 				# if there's any spss file, import it!
 				if ( any( st <- grepl( "\\.sav$" , tolower( unzipped_files ) ) ) ){
