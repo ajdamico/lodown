@@ -103,7 +103,7 @@ get_catalog_dhs <-
 							year = substr( gsub( "[^0-9]" , "" , this.title ) , 1 , 4 ) ,
 							proj_id = project.number ,
 							Apr_Ctry_list_id = this.number ,
-							output_folder = paste0( output_dir , "/" , this.name , "/" , this.title , "/" ) ) ,
+							output_folder = paste0( output_dir , "/" , this.name , "/" , this.title , "/" ) ,
 							full_url = paste0( "https://dhsprogram.com" , file.url ) ,
 							stringsAsFactors = FALSE
 						)		
