@@ -45,6 +45,8 @@ get_catalog_nhanes <-
 
 		catalog$output_filename <- paste0( output_dir , "/" , catalog$years , "/" , tolower( gsub( "\\.xpt" , ".rds" , basename( catalog$full_url ) , ignore.case = TRUE ) ) )
 		
+		catalog <- catalog[ order( catalog[ , 'years' ] ) , ]
+		
 		catalog
 
 	}
