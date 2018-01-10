@@ -217,7 +217,7 @@ lodown_censo <-
 					unique_designs[ i , 'type' ] ,
 					'_pre_fpc as (SELECT * FROM ' ,
 					paste0( these_tables , collapse = ') UNION ALL (SELECT * FROM ' ) ,
-					') WITH DATA'
+					')'
 				)
 
 			DBI::dbSendQuery( db , this_stack )
@@ -237,7 +237,7 @@ lodown_censo <-
 					unique_designs[ i , 'type' ] ,
 					'_pre_fpc group by ' ,
 					unique_designs[ i , 'fpc1' ] ,
-					') WITH DATA' )
+					')' )
 
 			DBI::dbSendQuery( db , this_create )
 
@@ -259,7 +259,7 @@ lodown_censo <-
 						unique_designs[ i , 'fpc3' ] ,
 						' , ' ,
 						unique_designs[ i , 'fpc4' ] ,
-						' ) WITH DATA' )
+						' )' )
 
 				DBI::dbSendQuery( db , count_create )
 
@@ -285,7 +285,7 @@ lodown_censo <-
 						unique_designs[ i , 'fpc4' ] ,
 						' = b1.' ,
 						unique_designs[ i , 'fpc4' ] ,
-						' ) WITH DATA'
+						' )'
 					)
 
 				DBI::dbSendQuery( db , dom_fpc_merge )
@@ -312,7 +312,7 @@ lodown_censo <-
 						unique_designs[ i , 'fpc1' ] ,
 						' = b.' ,
 						unique_designs[ i , 'fpc1' ] ,
-						') WITH DATA'
+						')'
 					)
 
 				DBI::dbSendQuery( db , final_merge )
@@ -367,7 +367,7 @@ lodown_censo <-
 					paste0(
 						'create table c' , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , '_dom_fam as (SELECT a.* , b.' ,
 						paste( b_fields , collapse = ', b.' ) ,
-						' from c' , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , '_dom as a inner join c' , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , '_fam as b ON a.' , unique_designs[ i , 'fpc3' ] , ' = b.' , unique_designs[ i , 'fpc3' ] , ' AND a.' , unique_designs[ i , 'fpc4' ] , ' = b.' , unique_designs[ i , 'fpc4' ] , ') WITH DATA'
+						' from c' , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , '_dom as a inner join c' , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , '_fam as b ON a.' , unique_designs[ i , 'fpc3' ] , ' = b.' , unique_designs[ i , 'fpc3' ] , ' AND a.' , unique_designs[ i , 'fpc4' ] , ' = b.' , unique_designs[ i , 'fpc4' ] , ')'
 					)
 
 				DBI::dbSendQuery( db , semifinal_merge )
@@ -384,7 +384,7 @@ lodown_censo <-
 						paste0(
 							'create table c' , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , ' as (SELECT a.* , b.' ,
 							paste( b_fields , collapse = ', b.' ) ,
-							' from c' , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , '_dom_fam as a inner join c' , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , '_pes as b ON a.' , unique_designs[ i , 'fpc3' ] , ' = b.' , unique_designs[ i , 'fpc3' ] , ' AND a.' , unique_designs[ i , 'fpc4' ] , ' = b.' , unique_designs[ i , 'fpc4' ] , ' AND a.' , unique_designs[ i , 'fpc5' ] , ' = b.' , unique_designs[ i , 'fpc5' ] , ' ) WITH DATA'
+							' from c' , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , '_dom_fam as a inner join c' , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , '_pes as b ON a.' , unique_designs[ i , 'fpc3' ] , ' = b.' , unique_designs[ i , 'fpc3' ] , ' AND a.' , unique_designs[ i , 'fpc4' ] , ' = b.' , unique_designs[ i , 'fpc4' ] , ' AND a.' , unique_designs[ i , 'fpc5' ] , ' = b.' , unique_designs[ i , 'fpc5' ] , ' )'
 						)
 
 				} else {
@@ -396,7 +396,7 @@ lodown_censo <-
 						paste0(
 							'create table c' , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , ' as (SELECT a.* , b.' ,
 							paste( b_fields , collapse = ', b.' ) ,
-							' from c' , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , '_dom as a inner join c' , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , '_pes as b ON a.' , unique_designs[ i , 'fpc3' ] , ' = b.' , unique_designs[ i , 'fpc3' ] , ' AND a.' , unique_designs[ i , 'fpc4' ] , ' = b.' , unique_designs[ i , 'fpc4' ] , ' ) WITH DATA'
+							' from c' , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , '_dom as a inner join c' , substr( unique_designs[ i , 'year' ] , 3 , 4 ) , '_pes as b ON a.' , unique_designs[ i , 'fpc3' ] , ' = b.' , unique_designs[ i , 'fpc3' ] , ' AND a.' , unique_designs[ i , 'fpc4' ] , ' = b.' , unique_designs[ i , 'fpc4' ] , ' )'
 						)
 
 

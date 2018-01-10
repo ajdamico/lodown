@@ -355,7 +355,7 @@ lodown_hmda <-
 					lar.tablename ,
 					"AS a INNER JOIN" ,
 					ins.tablename ,
-					"AS b ON a.respondentid = b.respondentid AND a.agencycode = b.agencycode WITH DATA"
+					"AS b ON a.respondentid = b.respondentid AND a.agencycode = b.agencycode"
 				)
 			
 			# with your sql string built, execute the command

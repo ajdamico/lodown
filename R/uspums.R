@@ -614,7 +614,7 @@ pums.import.merge.design <-
 				hh.tn ,
 				"as a inner join" , 
 				person.tn , 
-				"as b on a.fileno = b.fileno AND a.serialno = b.serialno WITH DATA" 
+				"as b on a.fileno = b.fileno AND a.serialno = b.serialno" 
 			)
 		
 		# create a new merged table (named according to the input parameter `merged.tn`

@@ -269,7 +269,7 @@ lodown_nhts <-
 							'ldtwt' ,
 							'_' ,
 							catalog[ i , 'year' ] ,
-							' as b on a.houseid = b.houseid AND CAST( a.personid AS INTEGER ) = CAST( b.personid AS INTEGER ) WITH DATA' 
+							' as b on a.houseid = b.houseid AND CAST( a.personid AS INTEGER ) = CAST( b.personid AS INTEGER )' 
 						)
 					)
 					# table `ldt_m_YYYY` now available for analysis!
@@ -313,7 +313,7 @@ lodown_nhts <-
 						wt.table ,
 						'_' ,
 						catalog[ i , 'year' ] ,
-						' as b on a.houseid = b.houseid AND CAST( a.personid AS INTEGER ) = CAST( b.personid AS INTEGER ) WITH DATA' 
+						' as b on a.houseid = b.houseid AND CAST( a.personid AS INTEGER ) = CAST( b.personid AS INTEGER )' 
 					)
 				)
 				# table `day_m_YYYY` now available for analysis!
@@ -355,7 +355,7 @@ lodown_nhts <-
 						wt.table ,
 						'_' ,
 						catalog[ i , 'year' ] ,
-						' as b on a.houseid = b.houseid AND CAST( a.personid AS INTEGER ) = CAST( b.personid AS INTEGER ) WITH DATA' 
+						' as b on a.houseid = b.houseid AND CAST( a.personid AS INTEGER ) = CAST( b.personid AS INTEGER )' 
 					)
 				)
 				# table `per_m_YYYY` now available for analysis!
@@ -395,7 +395,7 @@ lodown_nhts <-
 						catalog[ i , 'year' ] ,
 						' as a inner join hhwt_' ,
 						catalog[ i , 'year' ] ,
-						' as b on a.houseid = b.houseid WITH DATA' 
+						' as b on a.houseid = b.houseid' 
 					)
 				)
 				# table `hh_m_YYYY` now available for analysis!
@@ -521,7 +521,7 @@ nhts_sql_process <-
 				 
 				pre ,
 				
-				' WITH DATA'
+				''
 			)
 
 		# actually execute the create table command

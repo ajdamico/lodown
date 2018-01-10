@@ -208,7 +208,7 @@ lodown_censo_escolar <-
 
                 create.stacked <- paste0( "CREATE TABLE " , paste0( this_table_type , "_" , catalog[ i , "year" ] ) , " AS ( " ,
                                           paste0( std.string , collapse = " ) UNION ALL ( " ) ,
-                                          " ) WITH DATA" )
+                                          " )" )
 
                 DBI::dbSendQuery( db , create.stacked )
 

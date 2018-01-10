@@ -337,7 +337,7 @@ lodown_acs <-
 					", " ,
 					paste( pfields , collapse = ", " ) ,
 					" from h as a inner join p as b " ,
-					"on a.serialno = b.serialno with data" 
+					"on a.serialno = b.serialno" 
 				)
 			
 			# create the merged `headers` structure files to make the check.factors=
