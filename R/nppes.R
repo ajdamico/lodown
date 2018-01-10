@@ -149,11 +149,6 @@ lodown_nppes <-
 		# end of import #
 		# # # # # # # # #
 
-
-		# disconnect from the current monet database
-		DBI::dbDisconnect( db , shutdown = TRUE )
-
-
 		file.remove( unzipped_files , tf , tf2 )
 		
 		on.exit()

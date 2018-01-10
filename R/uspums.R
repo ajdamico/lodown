@@ -308,9 +308,6 @@ lodown_uspums <-
 			
 			catalog[ catalog$design == unique_designs[ i , 'design' ] , 'case_count' ] <- nrow( this_design )
 			
-			# disconnect from the current monet database
-			DBI::dbDisconnect( db , shutdown = TRUE )
-
 			cat( paste0( data_name , " survey design entry " , i , " of " , nrow( unique_designs ) , " stored at '" , unique_designs[ i , 'design' ] , "'\r\n\n" ) )
 			
 		}

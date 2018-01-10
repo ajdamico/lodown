@@ -716,9 +716,6 @@ lodown_sipp <-
 			
 			stopifnot( catalog[ i , 'case_count' ] > 0 )
 
-			# disconnect from the current monet database
-			DBI::dbDisconnect( db , shutdown = TRUE )
-
 			# delete the temporary files
 			suppressWarnings( file.remove( tf ) )
 

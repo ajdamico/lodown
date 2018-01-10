@@ -436,9 +436,6 @@ lodown_nhts <-
 				
 			}
 						
-			# disconnect from the current monet database
-			DBI::dbDisconnect( db , shutdown = TRUE )
-			
 			# delete the temporary files
 			suppressWarnings( file.remove( tf , unzipped_files ) )
 

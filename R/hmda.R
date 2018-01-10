@@ -291,9 +291,6 @@ lodown_hmda <-
 			
 			stopifnot( catalog[ i , 'case_count' ] > 0 )
 
-			# disconnect from the current monet database
-			DBI::dbDisconnect( db , shutdown = TRUE )
-			
 			# delete the temporary files
 			suppressWarnings( file.remove( tf , unzipped_files , list.files( paste0( tempdir() , "/unzips" ) , full.names = TRUE ) ) )
 
@@ -500,9 +497,6 @@ lodown_hmda <-
 			# # # # # # # # # # # # # # # # # # # # # # # # #
 			# # finished with race and ethnicity recoding # #
 			# # # # # # # # # # # # # # # # # # # # # # # # #
-			
-			# disconnect from the current monet database
-			DBI::dbDisconnect( db , shutdown = TRUE )
 			
 			
 		}

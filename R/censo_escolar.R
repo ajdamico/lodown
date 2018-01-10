@@ -229,10 +229,6 @@ lodown_censo_escolar <-
 
       }
 
-
-      # disconnect from the current monet database
-      DBI::dbDisconnect( db , shutdown = TRUE )
-
       # delete the temporary files?  or move some docs to a save folder?
       suppressWarnings( file.remove( tf ) )
 

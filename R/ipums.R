@@ -171,8 +171,6 @@ lodown_ipums <-
 
 					catalog[ i , 'case_count' ] <- dbtable_lines
 					
-					DBI::dbDisconnect( db , shutdown = TRUE )
-				
 					cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'dbfile' ] , "'\r\n\n" ) )
 					
 				}

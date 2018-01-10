@@ -167,9 +167,6 @@ lodown_censo <-
 			# add the number of records to the catalog
 			catalog[ i , 'case_count' ] <- DBI::dbGetQuery( db , paste0( "SELECT COUNT(*) FROM " , catalog[ i , 'db_table_prefix' ] , '_pes' ) )[ 1 , 1 ]
 
-			# disconnect from the current monet database
-			DBI::dbDisconnect( db , shutdown = TRUE )
-
 			# remove extracted files and tf
 			file.remove( c( tf , unzipped_files , if( !is.na( catalog[ i , 'dom_ranc' ] ) ) dom_file , if( !is.na( catalog[ i , 'pes_ranc' ] ) ) pes_file , if( !is.na( catalog[ i , 'fam_ranc' ] ) ) fam_file ) )
 
@@ -465,9 +462,6 @@ lodown_censo <-
 				)
 
 			saveRDS( this_design , file = unique_designs[ i , 'design' ] )
-
-			# disconnect from the current monet database
-			DBI::dbDisconnect( db , shutdown = TRUE )
 
 			cat( paste0( data_name , " survey design entry " , i , " of " , nrow( unique_designs ) , " stored at '" , unique_designs[ i , 'design' ] , "'\r\n\n" ) )
 

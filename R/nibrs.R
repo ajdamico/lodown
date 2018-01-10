@@ -224,9 +224,6 @@ lodown_nibrs <-
 
 			catalog[ i , 'case_count' ] <- DBI::dbGetQuery( db , paste0( "SELECT COUNT(*) FROM " , catalog[ i , 'db_tablename' ] ) )[ 1 , 1 ]
 			
-			# disconnect from the current monet database
-			DBI::dbDisconnect( db , shutdown = TRUE )
-
 			# delete the temporary files
 			file.remove( tf , unzipped_files )
 

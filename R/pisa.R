@@ -528,9 +528,6 @@ lodown_pisa <-
 			
 			for( this_table in tables_after ) catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , DBI::dbGetQuery( db , paste0( "SELECT COUNT(*) FROM " , this_table ) )[ 1 , 1 ] , na.rm = TRUE )
 			
-			# disconnect from the current monet database
-			DBI::dbDisconnect( db , shutdown = TRUE )
-			
 			# delete the temporary files
 			suppressWarnings( file.remove( tf , if( exists( "unzipped_files" ) ) unzipped_files ) )
 
