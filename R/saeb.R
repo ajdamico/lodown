@@ -150,20 +150,14 @@ lodown_saeb <-
 				# remove the `.csv` to determine the name of the current table
 				tnwy <- paste0( gsub( "\\.csv$" , "" , tolower( basename( this.csv ) ) ) , "_" , catalog[ i , 'year' ] )
 
-				# specify the chunk size to read in
-				chunk_size <- 500000
-
-				# create a file connection to the current csv
-				input <- file( this.csv , "r")
-
-				# read in the first chunk
+				# read in the first chunk because `RSQLite:::dbWriteTable` does not have an na.strings= parameter
 				headers <- 
 					read.csv( 
-						input , 
+						tnwy , 
 						sep = if( catalog[ i , 'year' ] >= 2013 ) "," else ";" , 
 						dec = if( catalog[ i , 'year' ] >= 2013 ) "." else "," , 
 						na.strings = if( catalog[ i , 'year' ] >= 2013 ) "" else "." , 
-						nrows = chunk_size ,
+						nrows = 50000 ,
 						stringsAsFactors = FALSE
 					)
 				
@@ -173,40 +167,26 @@ lodown_saeb <-
 				cc <- sapply( headers , class )
 
 				# initiate the current table
-				DBI::dbWriteTable( db , tnwy , headers , overwrite = TRUE , row.names = FALSE )
-				
-				# so long as there are lines to read, add them to the current table
-				tryCatch({
-				   while (TRUE) {
-					   part <- 
-						read.csv(
-							input , 
-							header = FALSE ,
-							nrows = chunk_size , 
-							sep = if( catalog[ i , 'year' ] >= 2013 ) "," else ";" ,
-							dec = if( catalog[ i , 'year' ] >= 2013 ) "." else "," ,
-							na.strings = if( catalog[ i , 'year' ] >= 2013 ) "" else "." , 
-							colClasses = cc
-						)
-						
-						# coerce logical columns to character
-						part[ sapply( part , class ) == 'logical' ] <- sapply( part[ sapply( part , class ) == 'logical' ] , as.character )
-						
-					   DBI::dbWriteTable( db , tnwy , part , append = TRUE , row.names = FALSE )
-				   }
-				   
-				} , error = function(e) { if ( grepl( "no lines available" , conditionMessage( e ) ) ) TRUE else stop( conditionMessage( e ) ) }
+				DBI::dbWriteTable( 
+					db , 
+					tnwy , 
+					this.csv , 
+					overwrite = TRUE , 
+					append = FALSE ,
+					header = FALSE ,
+					row.names = names( headers ) , 
+					skip = 1 ,
+					colClasses = cc , 
+					sep = if( catalog[ i , 'year' ] >= 2013 ) "," else ";" ,
+					dec = if( catalog[ i , 'year' ] >= 2013 ) "." else ","
 				)
-					
+								
 			}
 			
 			tables_after <- setdiff( tables_before , DBI::dbListTables( db ) )
 			
 			for( this_table in tables_after ) catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , DBI::dbGetQuery( db , paste0( "SELECT COUNT(*) FROM " , this_table ) )[ 1 , 1 ] , na.rm = TRUE )
 			
-			# disconnect from the current monet database
-			DBI::dbDisconnect( db , shutdown = TRUE )
-
 			# delete the temporary files?  or move some docs to a save folder?
 			suppressWarnings( file.remove( tf ) )
 
