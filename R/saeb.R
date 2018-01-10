@@ -167,7 +167,7 @@ lodown_saeb <-
 				cc <- sapply( headers , class )
 
 				
-				DBI::dbWriteTable( db , tnwy , headers[ FALSE , , drop = FALSE , overwrite = TRUE , append = FALSE )
+				DBI::dbWriteTable( db , tnwy , headers[ FALSE , , drop = FALSE ] , overwrite = TRUE , append = FALSE )
 				
 				# initiate the current table
 				DBI::dbWriteTable( 
