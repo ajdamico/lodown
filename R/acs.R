@@ -82,14 +82,16 @@ lodown_acs <-
 
 				unzipped_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) )
 
-				wyoming_table <- haven::read_sas( unzipped_files[ grep( 'sas7bdat' , unzipped_files ) ] )
+				wyoming_table <- data.frame( haven::read_sas( unzipped_files[ grep( 'sas7bdat' , unzipped_files ) ] ) )
 				
-				# identify all factor/character columns
-				facchar <- tolower( names( wyoming_table )[ !( sapply( wyoming_table , class ) %in% c( 'numeric' , 'integer' ) ) ] )	
+				names( wyoming_table ) <- tolower( names( wyoming_table ) )
 				
-				# save it in `headers.h` or `headers.p`
-				if ( j == 'h' ) headers.h <- facchar else headers.p <- facchar
-								
+				headers <- names( wyoming_table )
+				
+				cc <- sapply( wyoming_table , class )
+
+				DBI::dbWriteTable( db , j , wyoming_table[ FALSE , , drop = FALSE ] , overwrite = TRUE , append = FALSE )
+				
 				rm( wyoming_table )
 
 				file_locations <- paste0( catalog[ i , 'base_folder' ] , "csv_" , j , c( "us.zip" , if( catalog[ i , 'include_puerto_rico' ] ) "pr.zip" ) )
@@ -112,190 +114,26 @@ lodown_acs <-
 				
 				}
 				
-				# initiate the table in the database using any of the csv files #
-				csvpath <- fn[ 1 ]
-			
-				# read in the first five hundred records of the csv file
-				headers <- read.csv( csvpath , nrows = 500 )
-
-				# figure out the column type (class) of each column
-				cl <- sapply( headers , class )
-				
-				# convert all column names to lowercase
-				names( headers ) <- tolower( names( headers ) )
-				
-				# the american community survey data only contains integers and character strings..
-				# so store integer columns as numbers and all others as characters
-				# note: this won't work on other data sets, since they might have columns with non-integers (decimals)
-				colTypes <- ifelse( cl == 'integer' , 'DOUBLE PRECISION' , 'STRING' )
-				
-				# create a character vector grouping each column name with each column type..
-				colDecl <- paste( names( headers ) , colTypes )
-
-				# ..and then construct an entire 'create table' sql command
-				sql <-
-					sprintf(
-						paste(
-							"CREATE TABLE" ,
-							j ,
-							"(%s)"
-						) ,
-						paste(
-							colDecl ,
-							collapse = ", "
-						)
+				for( this_csv in fn ){
+					
+					# initiate the current table
+					DBI::dbWriteTable( 
+						db , 
+						j , 
+						this_csv , 
+						overwrite = FALSE , 
+						append = TRUE ,
+						header = FALSE ,
+						skip = 1 ,
+						colClasses = cc
 					)
 				
-				# actually execute the 'create table' sql command
-				DBI::dbSendQuery( db , sql )
-
-				# end of initiating the table in the database #
-				
-				# loop through each csv file
-				for ( csvpath in fn ){
-									
-					# if the puerto rico file is out of order, read in the whole file and fix it.
-					if( grepl( "pr\\.csv$" , csvpath ) ){
-					
-						pr_header <- tolower( names( read.csv( csvpath , nrows = 1 ) ) )
-						
-						if( !all( pr_header %in% names( headers ) ) ) stop( "this puerto rico file does not have the same columns" )
-						
-						# otherwise, maybe they're just out of order
-						if( !all( names( headers ) == pr_header ) ){
-						
-							# read in the whole (pretty small) file
-							pr_csv <- read.csv( csvpath , stringsAsFactors = FALSE )
-							
-							# lowercase and add an underscore to the `type` column
-							names( pr_csv ) <- tolower( names( pr_csv ) )
-							
-							# sort the `data.frame` object to match the ordering in the monetdb table
-							pr_csv <- pr_csv[ DBI::dbListFields( db , j ) ]
-							
-							# save the `data.frame` to the disk, now that the columns are correctly ordered
-							write.csv( pr_csv , csvpath , row.names = FALSE , na = '' )
-							
-							# remove the object and clear up ram
-							rm( pr_csv ) ; gc()
-							
-						}
-						
-					}
-					
-					# now try to copy the current csv file into the database
-					first.attempt <-
-						try( {
-							DBI::dbSendQuery( 
-								db , 
-								paste0( 
-									"copy offset 2 into " , 
-									j , 
-									" from '" , 
-									normalizePath( csvpath ) , 
-									"' using delimiters ',','\\n','\"'  NULL AS ''" 
-								) 
-							) 
-						} , silent = TRUE )
-					
-					# if the first.attempt did not work..
-					if ( class( first.attempt ) == 'try-error' ){
-
-
-						# get rid of any comma-space-comma values.
-						incon <- file( csvpath , "r") 
-						tf_out <- tempfile()
-						outcon <- file( tf_out , "w") 
-						while( length( line <- readLines( incon , 1 ) ) > 0 ){
-							# remove all whitespace
-							line <-  gsub( ", ," , ",," , gsub( ",( +)," , ",," , line ) )
-							writeLines( line , outcon )
-						}
-						
-						close( outcon )
-						close( incon , add = TRUE )
-		
-						# and run the exact same command again.
-						second.attempt <-
-							try( {
-								DBI::dbSendQuery( 
-									db , 
-									paste0( 
-										"copy offset 2 into " , 
-										j , 
-										" from '" , 
-										normalizePath( tf_out ) , 
-										"' using delimiters ',','\\n','\"'  NULL AS ''" 
-									) 
-								) 
-							} , silent = TRUE )
-							
-					} else {
-					
-						# if the first attempt worked,
-						# the second attempt should also not be a `try-error`
-						second.attempt <- NULL
-						
-					}
-					
-					# some of the acs files have multiple values that should be treated as NULL, (like acs2010_3yr_p)
-					# so if the above copy-into attempts fail twice,
-					# scan through the entire file and remove every instance of "N.A."
-					# then re-run the copy-into line.
-					
-					# if the first attempt doesn't work..
-					if ( class( second.attempt ) == 'try-error' ){
-						
-						# create a temporary output file
-						fpo <- tempfile()
-
-						# create a read-only file connection from the original file
-						fpx <- file( normalizePath( tf_out ) , 'r' )
-						# create a write-only file connection to the temporary file
-						fpt <- file( fpo , 'w' )
-
-						# loop through every line in the original file..
-						while ( length( line <- readLines( fpx , 1 ) ) > 0 ){
-						
-							# replace 'N.A.' with nothings..
-							line <- gsub( "N.A." , "" , line , fixed = TRUE )
-							
-							# and write the result to the temporary file connection
-							writeLines( line , fpt )
-						}
-						
-						# close the temporary file connection
-						close( fpt )
-						
-						# re-run the copy into command..
-						DBI::dbSendQuery( 
-								db , 
-								paste0( 
-									"copy offset 2 into " , 
-									j , 
-									" from '" , 
-									fpo , 						# only this time, use the temporary file as the source file
-									"' using delimiters ',','\\n','\"'  NULL AS ''" 
-								) 
-						) 
-						
-						# delete the temporary files from the disk
-						file.remove( fpo )
-						file.remove( tf_out )
-					}
-
-					
-					# erase the first.attempt object (which stored the result of the original copy-into line)
-					first.attempt <- NULL
-					
-					
-					
-					# these files require lots of temporary disk space,
-					# so delete them once they're part of the database
-					suppressWarnings( file.remove( csvpath ) )
-						
 				}
-
+				
+				# these files require lots of temporary disk space,
+				# so delete them once they're part of the database
+				suppressWarnings( file.remove( fn ) )
+				
 			}
 				
 			############################################

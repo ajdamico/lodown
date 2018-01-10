@@ -166,15 +166,17 @@ lodown_saeb <-
 				
 				cc <- sapply( headers , class )
 
+				
+				DBI::dbWriteTable( db , tnwy , headers[ FALSE , , drop = FALSE , overwrite = TRUE , append = FALSE )
+				
 				# initiate the current table
 				DBI::dbWriteTable( 
 					db , 
 					tnwy , 
 					this.csv , 
-					overwrite = TRUE , 
-					append = FALSE ,
+					overwrite = FALSE , 
+					append = TRUE ,
 					header = FALSE ,
-					row.names = names( headers ) , 
 					skip = 1 ,
 					colClasses = cc , 
 					sep = if( catalog[ i , 'year' ] >= 2013 ) "," else ";" ,
