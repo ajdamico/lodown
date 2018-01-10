@@ -88,6 +88,8 @@ lodown_acs <-
 				
 				headers <- names( wyoming_table )
 				
+				if( j == 'h' ) headers.h <- headers else headers.p <- headers
+				
 				cc <- sapply( wyoming_table , class )
 
 				DBI::dbWriteTable( db , j , wyoming_table[ FALSE , , drop = FALSE ] , overwrite = TRUE , append = FALSE )
