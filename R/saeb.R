@@ -153,7 +153,7 @@ lodown_saeb <-
 				# read in the first chunk because `RSQLite:::dbWriteTable` does not have an na.strings= parameter
 				headers <- 
 					read.csv( 
-						tnwy , 
+						this.csv , 
 						sep = if( catalog[ i , 'year' ] >= 2013 ) "," else ";" , 
 						dec = if( catalog[ i , 'year' ] >= 2013 ) "." else "," , 
 						na.strings = if( catalog[ i , 'year' ] >= 2013 ) "" else "." , 
