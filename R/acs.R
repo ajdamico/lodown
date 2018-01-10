@@ -47,7 +47,6 @@ get_catalog_acs <-
 							base_folder = paste0( available_folders[ i ] , "/" ) ,
 							db_tablename = this_tablename ,
 							dbfile = paste0( output_dir , "/SQLite.db" ) ,
-							output_filename = paste0( output_dir , "/" , this_tablename , '.rds' ) ,
 							include_puerto_rico = TRUE ,
 							stringsAsFactors = FALSE
 						)
@@ -204,39 +203,9 @@ lodown_acs <-
 				
 			}
 			
-			
-			# create a svrep complex sample design object
-			# using the merged (household+person) table
-			
-			acs_design <-
-				survey::svrepdesign(
-					weight = ~pwgtp ,
-					repweights = 'pwgtp[0-9]+' ,
-					scale = 4 / 80 ,
-					rscales = rep( 1 , 80 ) ,
-					mse = TRUE ,
-					type = 'JK1' ,
-					data = catalog[ i , 'db_tablename' ]  ,
-					dbtype = "SQLite" ,
-					dbname = catalog[ i , 'dbfile' ]
-				)
-				
-			# workaround for a bug in survey::svrepdesign.character
-			acs_design$mse <- TRUE
-
-			# save both complex sample survey designs
-			# into a single r data file (.rds) that can now be
-			# analyzed quicker than anything else.
-			saveRDS( acs_design , file = catalog[ i , 'output_filename' ] )
-
 			# add the number of records to the catalog
-			catalog[ i , 'case_count' ] <- nrow( acs_design )
+			catalog[ i , 'case_count' ] <- DBI::dbGetQuery( db , paste0( "select count(*) as count from " , catalog[ i , 'db_tablename' ] ) )
 			
-			close( acs_design )
-
-			# disconnect from the current monet database
-			DBI::dbDisconnect( db , shutdown = TRUE )
-
 			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'db_tablename' ] , "'\r\n\n" ) )
 
 		}
