@@ -32,7 +32,7 @@ lodown_nppes <-
 		
 		tf <- tempfile() ; tf2 <- tempfile()
 
-		cachaca( catalog$full_url , tf , mode = 'wb', filesize_fun = 'httr' )
+		cachaca( catalog$full_url , tf , mode = 'wb', filesize_fun = 'unzip_verify' )
 
 		archive::archive_extract( tf , dir = tempdir() )
 
