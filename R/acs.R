@@ -124,17 +124,6 @@ lodown_acs <-
 				# convert all column names to lowercase
 				names( headers ) <- tolower( names( headers ) )
 				
-				# if one of the column names is the word 'type'
-				# change it to 'type_' -- monetdb doesn't like columns called 'type'
-				if ( 'type' %in% tolower( names( headers ) ) ){
-					
-					cat( "note: column name 'type' unacceptable in monetdb.  changing to 'type_'\r\n\n" )
-					
-					names( headers )[ names( headers ) == 'type' ] <- 'type_'
-					
-					headers.h[ headers.h == 'type' ] <- 'type_'
-				}
-
 				# the american community survey data only contains integers and character strings..
 				# so store integer columns as numbers and all others as characters
 				# note: this won't work on other data sets, since they might have columns with non-integers (decimals)
@@ -170,8 +159,6 @@ lodown_acs <-
 					
 						pr_header <- tolower( names( read.csv( csvpath , nrows = 1 ) ) )
 						
-						pr_header[ pr_header == 'type' ] <- 'type_'
-						
 						if( !all( pr_header %in% names( headers ) ) ) stop( "this puerto rico file does not have the same columns" )
 						
 						# otherwise, maybe they're just out of order
@@ -182,7 +169,6 @@ lodown_acs <-
 							
 							# lowercase and add an underscore to the `type` column
 							names( pr_csv ) <- tolower( names( pr_csv ) )
-							names( pr_csv )[ names( pr_csv ) == 'type' ] <- 'type_'
 							
 							# sort the `data.frame` object to match the ordering in the monetdb table
 							pr_csv <- pr_csv[ DBI::dbListFields( db , j ) ]
