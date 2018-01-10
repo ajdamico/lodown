@@ -192,7 +192,7 @@ lodown_dhs <-
 					suppressWarnings( rm( x ) )
 					
 					# figure out the correct location for the rds
-					rds_name <- gsub( "\\.dta$" , ".rds" , this_dta , ignore.case = TRUE )
+					rds_name <- file.path( catalog[ i , 'output_folder' ] , gsub( "\\.dta$" , ".rds" , basename( this_dta ) , ignore.case = TRUE ) )
 				
 					# load the current stata file into working memory
 					x <- data.frame( haven::read_dta( this_dta ) )
@@ -222,8 +222,8 @@ lodown_dhs <-
 						suppressWarnings( rm( x ) )
 							
 						# figure out the correct location for the rds
-						rds_name <- gsub( "\\.sav$" , ".rds" , this_sav , ignore.case = TRUE )
-					
+						rds_name <- file.path( catalog[ i , 'output_folder' ] , gsub( "\\.sav$" , ".rds" , basename( this_sav ) , ignore.case = TRUE ) )
+
 						# load the current stata file into working memory
 						x <- data.frame( haven::read_spss( this_sav ) )
 			
