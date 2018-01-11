@@ -195,7 +195,9 @@ lodown_dhs <-
 					rds_name <- file.path( catalog[ i , 'output_folder' ] , gsub( "\\.dta$" , ".rds" , basename( this_dta ) , ignore.case = TRUE ) )
 				
 					# load the current stata file into working memory
-					x <- data.frame( haven::read_dta( this_dta ) )
+					attempt_one <- try( x <- data.frame( haven::read_dta( this_dta ) ) , silent = TRUE )
+					
+					if( class( attempt_one ) == 'try-error' ) x <- foreign::read.dta( this_dta )
 				
 					# convert all column names to lowercase
 					names( x ) <- tolower( names( x ) )
