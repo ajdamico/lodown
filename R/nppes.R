@@ -126,23 +126,19 @@ lodown_nppes <-
 		# the original csv.file
 		stopifnot( R.utils::countLines( tf2 ) == R.utils::countLines( csv.file ) )
 
-		# build a sql COPY INTO command
-		# that will import the newly-created `tf2`
-		# into the monet database
-		sql.update <- 
-			paste0( 
-				"copy " , 
-				num.lines , 
-				" offset 2 records into " ,
-				catalog$db_tablename , 
-				" from '" , 
-				normalizePath( tf2 ) , 
-				"' using delimiters ',','\\n','\"' NULL as ''" 
-			)
+		
+							
+		# initiate the current table
+		DBI::dbWriteTable( 
+			db , 
+			catalog$db_tablename , 
+			normalizePath( tf2 ) , 
+			header = FALSE ,
+			append = TRUE ,
+			skip = 1
+		)
 
-		# execute the COPY INTO command
-		DBI::dbSendQuery( db , sql.update )
-
+		
 		catalog$case_count <- DBI::dbGetQuery( db , paste0( "SELECT COUNT(*) FROM " , catalog$db_tablename ) )
 		
 		# # # # # # # # #
