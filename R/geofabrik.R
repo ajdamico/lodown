@@ -120,7 +120,7 @@ lodown_geofabrik <-
 		for ( i in seq_len( nrow( catalog ) ) ){
 
 			# download the file
-			cachaca( catalog[ i , "full_url" ] , catalog[ i , 'output_filename' ] , mode = 'wb' , filesize_fun = 'httr' )
+			cachaca( catalog[ i , "full_url" ] , catalog[ i , 'output_filename' ] , mode = 'wb' )
 
 			if( grepl( "bz2$" , catalog[ i , 'output_filename' ] ) ) {
 			

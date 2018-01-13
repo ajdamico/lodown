@@ -57,7 +57,7 @@ lodown_share <-
 		for ( i in seq_len( nrow( catalog ) ) ){
 
 			# download the file
-			this_file <- cachaca( catalog[ i , "full_url" ] , FUN = httr::GET , filesize_fun = 'httr' )
+			this_file <- cachaca( catalog[ i , "full_url" ] , FUN = httr::GET )
 
 			writeBin( httr::content( this_file , "raw" ) , tf )
 			

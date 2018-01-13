@@ -64,7 +64,7 @@ lodown_sc_penetration <-
 			for ( i in seq_len( nrow( these_entries ) ) ){
 
 				# download the file
-				cachaca( these_entries[ i , "full_url" ] , tf , mode = 'wb' , filesize_fun = 'httr' )
+				cachaca( these_entries[ i , "full_url" ] , tf , mode = 'wb' )
 
 
 				# extract the contents of the zipped file

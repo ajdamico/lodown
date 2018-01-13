@@ -105,7 +105,7 @@ download_to_filename <- function(url, dlfile, curl=RCurl::getCurlHandle(), ...) 
 #' @param FUN defaults to \code{download.file} but \code{downloader::download}, \code{httr::GET}, \code{RCurl::getBinaryURL} also work
 #' @param attempts number of times to retry a broken download
 #' @param sleepsec length of \code{Sys.sleep()} between broken downloads
-#' @param filesize_fun use \code{RCurl::getURL} or \code{httr::HEAD} to determine file size.  use "unzip_verify" to verify the download by attempting to unzip the file without issue
+#' @param filesize_fun use \code{httr::HEAD} or \code{RCurl::getURL} to determine file size.  use "unzip_verify" to verify the download by attempting to unzip the file without issue
 #' @param savecache whether to actually cache the downloaded files in the temporary directories.  setting this option to FALSE eliminates the purpose of cachaca(), but sometimes it's necessary to disable for a single call, or globally.
 #'
 #' @return just pass on whatever FUN returns
@@ -149,8 +149,7 @@ cachaca <-
 		sleepsec = 60 ,
 
 		# which filesize function should be used
-		# c( 'rcurl' , 'httr' )
-		filesize_fun = 'rcurl' ,
+		filesize_fun = 'httr' ,
 		
 		# whether to actually cache the downloaded files
 		# setting this option to FALSE eliminates the purpose of cachaca()
@@ -195,13 +194,13 @@ cachaca <-
 		if( is.null( destfile ) ){
 			cat( paste0( "saving from URL\r\n'" , this_url , "'\r\nto loaded object within R session\r\n\n" ) )
 		} else {
-			cat( paste0( "Downloading from URL\r\n'" , this_url , "'\r\nto file\r\n'" , destfile , "'\r\n\n" ) )
+			cat( paste0( "downloading from URL\r\n'" , this_url , "'\r\nto file\r\n'" , destfile , "'\r\n\n" ) )
 		}
 
-		
-		if( filesize_fun == 'rcurl' ) this_filesize <- rcurl_filesize( this_url , attempts , sleepsec )
 
 		if( filesize_fun == 'httr' ) this_filesize <- httr_filesize( this_url , attempts , sleepsec )
+		
+		if( filesize_fun == 'rcurl' ) this_filesize <- rcurl_filesize( this_url , attempts , sleepsec )
 
 		if( filesize_fun != 'unzip_verify' && this_filesize == 0 ) stop( "remote server lists file size as zero" )
 

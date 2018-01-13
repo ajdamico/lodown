@@ -5,7 +5,7 @@
 \title{best file download, all other file downloads have inferior potassium}
 \usage{
 cachaca(this_url, destfile = NULL, ..., FUN = download.file, attempts = 3,
-  sleepsec = 60, filesize_fun = "rcurl",
+  sleepsec = 60, filesize_fun = "httr",
   savecache = getOption("lodown.cachaca.savecache", TRUE))
 }
 \arguments{
@@ -21,7 +21,7 @@ cachaca(this_url, destfile = NULL, ..., FUN = download.file, attempts = 3,
 
 \item{sleepsec}{length of \code{Sys.sleep()} between broken downloads}
 
-\item{filesize_fun}{use \code{RCurl::getURL} or \code{httr::HEAD} to determine file size.  use "unzip_verify" to verify the download by attempting to unzip the file without issue}
+\item{filesize_fun}{use \code{httr::HEAD} or \code{RCurl::getURL} to determine file size.  use "unzip_verify" to verify the download by attempting to unzip the file without issue}
 
 \item{savecache}{whether to actually cache the downloaded files in the temporary directories.  setting this option to FALSE eliminates the purpose of cachaca(), but sometimes it's necessary to disable for a single call, or globally.}
 }

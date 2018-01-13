@@ -162,7 +162,7 @@ lodown_ess <-
     for ( i in seq_len( nrow( catalog ) ) ){
 
 		# download the file
-		current.file <- cachaca( catalog[ i , 'full_url' ] , FUN = httr::GET , filesize_fun = 'httr' )
+		current.file <- cachaca( catalog[ i , 'full_url' ] , FUN = httr::GET )
 
 		writeBin( httr::content( current.file ) , tf )
 

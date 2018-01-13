@@ -77,7 +77,7 @@ lodown_acs <-
 				# download the wyoming structure file
 				wyoming_unix <- paste0( catalog[ i , 'base_folder' ] , "unix_" , j , "wy.zip" )
 				
-				cachaca( wyoming_unix , tf , mode = 'wb' , filesize_fun = "httr" )
+				cachaca( wyoming_unix , tf , mode = 'wb' )
 
 				unzipped_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) )
 
@@ -101,7 +101,7 @@ lodown_acs <-
 				
 				for ( this_download in file_locations ){
 					
-					cachaca( this_download , tf , mode = 'wb' , filesize_fun = "httr" )
+					cachaca( this_download , tf , mode = 'wb' )
 								
 					archive::archive_extract( tf , dir = tempdir() )
 

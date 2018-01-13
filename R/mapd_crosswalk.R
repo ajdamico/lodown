@@ -48,7 +48,7 @@ lodown_mapd_crosswalk <-
     for ( i in seq_len( nrow( catalog ) ) ){
 
 		# download the file
-		cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' , filesize_fun = 'httr' )
+		cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
 
 
 		# extract the contents of the zipped file

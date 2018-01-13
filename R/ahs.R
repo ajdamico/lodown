@@ -146,7 +146,7 @@ lodown_ahs <-
 			data.loaded <- NULL
 			
 			# download the exact file to the local disk
-			cachaca( catalog[ i , 'full_url' ] , tf , mode = 'wb' , filesize_fun = 'httr' )
+			cachaca( catalog[ i , 'full_url' ] , tf , mode = 'wb' )
 			
 			# import files from largest to smallest
 			tf <- tf[ rev( order( file.info(tf)$size ) ) ]
