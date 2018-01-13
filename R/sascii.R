@@ -2,7 +2,7 @@
 
 
 read_SAScii <-
-	function( dat_path , sas_path = NULL , beginline = 1 , lrecl = NULL , skip_decimal_division = NULL , zipped = FALSE , na_values = c( "NA" , "" , "." ) , sas_stru = NULL , sas_encoding = "windows-1252" , filesize_fun = 'rcurl' , ... ){
+	function( dat_path , sas_path = NULL , beginline = 1 , lrecl = NULL , skip_decimal_division = NULL , zipped = FALSE , na_values = c( "NA" , "" , "." ) , sas_stru = NULL , sas_encoding = "windows-1252" , filesize_fun = 'httr' , ... ){
 
 		if( is.null( sas_path ) & is.null( sas_stru ) ) stop( "either sas_path= or sas_stru= must be specified" )
 		if( !is.null( sas_path ) & !is.null( sas_stru ) ) stop( "either sas_path= or sas_stru= must be specified, but not both" )
@@ -111,7 +111,7 @@ read_SAScii_monetdb <-
 		na_strings = ""	,				# by default, na strings are empty
 		unzip_fun = unzip_warn_fail ,
 		winslash_edit = "\\" ,
-		filesize_fun = 'rcurl'
+		filesize_fun = 'httr'
 	) {
 		if( is.null( sas_ri ) & is.null( sas_stru ) ) stop( "either sas_ri= or sas_stru= must be specified" )
 		if( !is.null( sas_ri ) & !is.null( sas_stru ) ) stop( "either sas_ri= or sas_stru= must be specified, but not both" )

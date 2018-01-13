@@ -152,8 +152,7 @@ lodown_sipp <-
 						zipped = TRUE ,
 						tl = TRUE ,
 						tablename = catalog[ i , 'db_tablename' ] ,
-						connection = db ,
-						filesize_fun = 'httr'
+						connection = db 
 					)
 					
 				}
@@ -170,8 +169,7 @@ lodown_sipp <-
 						zipped = TRUE ,
 						tl = TRUE ,
 						tablename = catalog[ i , 'db_tablename' ] ,
-						connection = db ,
-						filesize_fun = 'httr'
+						connection = db 
 					)
 						
 				}
@@ -186,8 +184,7 @@ lodown_sipp <-
 						zipped = TRUE ,
 						tl = TRUE ,
 						tablename = catalog[ i , 'db_tablename' ] ,
-						connection = db ,
-						filesize_fun = 'httr'
+						connection = db 
 					)
 
 				}
@@ -208,8 +205,7 @@ lodown_sipp <-
 						zipped = TRUE ,
 						tl = TRUE ,
 						tablename = catalog[ i , 'db_tablename' ] ,
-						connection = db ,
-						filesize_fun = 'httr'
+						connection = db 
 					)
 					
 				}
@@ -225,8 +221,7 @@ lodown_sipp <-
 						zipped = TRUE ,
 						tl = TRUE ,
 						tablename = catalog[ i , 'db_tablename' ] ,
-						connection = db ,
-						filesize_fun = 'httr'
+						connection = db 
 					)
 					
 				}
@@ -270,8 +265,7 @@ lodown_sipp <-
 						tl = TRUE ,
 						tablename = catalog[ i , 'db_tablename' ] ,
 						connection = db ,
-						try_best_effort = TRUE ,
-						filesize_fun = 'httr'
+						try_best_effort = TRUE 
 					)
 					
 				}
@@ -287,8 +281,7 @@ lodown_sipp <-
 						zipped = TRUE ,
 						tl = TRUE ,
 						tablename = catalog[ i , 'db_tablename' ] ,
-						connection = db ,
-						filesize_fun = 'httr'
+						connection = db 
 					)
 					
 				}
@@ -330,8 +323,7 @@ lodown_sipp <-
 						zipped = TRUE ,
 						tl = TRUE ,
 						tablename = catalog[ i , 'db_tablename' ] ,
-						connection = db ,
-						filesize_fun = 'httr'
+						connection = db 
 					)
 					
 				}
@@ -347,8 +339,7 @@ lodown_sipp <-
 						zipped = TRUE ,
 						tl = TRUE ,
 						tablename = catalog[ i , 'db_tablename' ] ,
-						connection = db ,
-						filesize_fun = 'httr'
+						connection = db 
 					)
 					
 				}
@@ -364,8 +355,7 @@ lodown_sipp <-
 						zipped = TRUE ,
 						tl = TRUE ,
 						tablename = catalog[ i , 'db_tablename' ] ,
-						connection = db ,
-						filesize_fun = 'httr'
+						connection = db 
 					)
 
 				}
@@ -381,8 +371,7 @@ lodown_sipp <-
 						zipped = TRUE ,
 						tl = TRUE ,
 						tablename = catalog[ i , 'db_tablename' ] ,
-						connection = db ,
-						filesize_fun = 'httr'
+						connection = db 
 					)
 
 				}
@@ -398,8 +387,7 @@ lodown_sipp <-
 						zipped = TRUE ,
 						tl = TRUE ,
 						tablename = catalog[ i , 'db_tablename' ] ,
-						connection = db ,
-						filesize_fun = 'httr'
+						connection = db 
 					)
 					
 				}
@@ -427,8 +415,7 @@ lodown_sipp <-
 						zipped = TRUE ,
 						tl = TRUE ,
 						tablename = catalog[ i , 'db_tablename' ] ,
-						connection = db ,
-						filesize_fun = 'httr'
+						connection = db 
 					)
 				}
 					
@@ -443,8 +430,7 @@ lodown_sipp <-
 						zipped = TRUE ,
 						tl = TRUE ,
 						tablename = catalog[ i , 'db_tablename' ] ,
-						connection = db ,
-						filesize_fun = 'httr'
+						connection = db 
 					)
 					
 				}
@@ -460,8 +446,7 @@ lodown_sipp <-
 						zipped = TRUE ,
 						tl = TRUE ,
 						tablename = catalog[ i , 'db_tablename' ] ,
-						connection = db ,
-						filesize_fun = 'httr'
+						connection = db 
 					)
 					
 				}
@@ -477,8 +462,7 @@ lodown_sipp <-
 						zipped = TRUE ,
 						tl = TRUE ,
 						tablename = catalog[ i , 'db_tablename' ] ,
-						connection = db ,
-						filesize_fun = 'httr'
+						connection = db 
 					)
 					
 				}
@@ -495,8 +479,7 @@ lodown_sipp <-
 						zipped = TRUE ,
 						tl = TRUE ,
 						tablename = catalog[ i , 'db_tablename' ] ,
-						connection = db ,
-						filesize_fun = 'httr'
+						connection = db 
 					)
 
 					
@@ -527,8 +510,7 @@ lodown_sipp <-
 						zipped = TRUE ,
 						tl = TRUE ,
 						tablename = catalog[ i , 'db_tablename' ] ,
-						connection = db ,
-						filesize_fun = 'httr'
+						connection = db 
 					)
 
 					aoa6.fields <- DBI::dbListFields( db , catalog[ i , 'db_tablename' ] )
@@ -560,8 +542,7 @@ lodown_sipp <-
 						zipped = TRUE ,
 						tl = TRUE ,
 						tablename = catalog[ i , 'db_tablename' ] ,
-						connection = db ,
-						filesize_fun = 'httr' ,
+						connection = db  ,
 						try_best_effort = ( catalog[ i , 'full_url' ] == "http://thedataweb.rm.census.gov/pub/sipp/2004/lrw04_cy3.zip" )
 					)
 					
@@ -590,8 +571,7 @@ lodown_sipp <-
 						zipped = TRUE ,
 						tl = TRUE ,
 						tablename = catalog[ i , 'db_tablename' ] ,
-						connection = db ,
-						filesize_fun = 'httr'
+						connection = db 
 					)
 					
 				}
@@ -608,8 +588,7 @@ lodown_sipp <-
 						zipped = TRUE ,
 						tl = TRUE ,
 						tablename = catalog[ i , 'db_tablename' ] ,
-						connection = db ,
-						filesize_fun = 'httr'
+						connection = db 
 					)
 					
 				}
@@ -626,8 +605,7 @@ lodown_sipp <-
 						zipped = TRUE ,
 						tl = TRUE ,
 						tablename = catalog[ i , 'db_tablename' ] ,
-						connection = db ,
-						filesize_fun = 'httr'
+						connection = db 
 					)
 					
 				}
@@ -643,8 +621,7 @@ lodown_sipp <-
 						zipped = TRUE ,
 						tl = TRUE ,
 						tablename = catalog[ i , 'db_tablename' ] ,
-						connection = db ,
-						filesize_fun = 'httr'
+						connection = db 
 					)
 					
 				}
@@ -660,8 +637,7 @@ lodown_sipp <-
 						zipped = TRUE ,
 						tl = TRUE ,
 						tablename = catalog[ i , 'db_tablename' ] ,
-						connection = db ,
-						filesize_fun = 'httr'
+						connection = db 
 					)
 					
 				}
@@ -686,8 +662,7 @@ lodown_sipp <-
 						na_strings = "." ,
 						tablename = catalog[ i , 'db_tablename' ] ,
 						unzip_fun = unarchive_nicely ,
-						connection = db ,
-						filesize_fun = 'httr'
+						connection = db 
 					)
 					
 				}
@@ -704,8 +679,7 @@ lodown_sipp <-
 						tl = TRUE ,
 						tablename = catalog[ i , 'db_tablename' ] ,
 						unzip_fun = unarchive_nicely ,
-						connection = db ,
-						filesize_fun = 'httr'
+						connection = db 
 					)
 					
 				}
