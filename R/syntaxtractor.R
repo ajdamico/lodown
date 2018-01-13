@@ -106,11 +106,7 @@ syntaxtractor <-
 
 		for ( this_replacement in replacements ) rmd_page <- gsub( this_replacement[ 1 ] , this_replacement[ 2 ] , rmd_page , fixed = TRUE )
 
-		rmd_page <- c( 'options("lodown.cachaca.savecache"=FALSE)' , '' , rmd_page )
-		
-		writeLines( rmd_page , temp_script )
-
-		temp_script
+		rmd_page
 	}
 
 
