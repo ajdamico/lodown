@@ -134,7 +134,7 @@ lodown_seer <-
 			# by removing the downloaded zipped file's folderpath
 			# and substituting `txt` with `rds`
 			# and converting the file location to lowercase
-			sfl <- gsub( "(.*)_TEXTDATA/" , catalog$output_folder , gsub( "\\.txt$" , ".rds" , fp , ignore.case = TRUE ) )
+			sfl <- gsub( "(.*)_TEXTDATA/" , normalizePath( catalog$output_folder , winslash = '/' ) , gsub( "\\.txt$" , ".rds" , fp , ignore.case = TRUE ) )
 				
 			# convert all column names to lowercase
 			# in the current data.frame object `x`
