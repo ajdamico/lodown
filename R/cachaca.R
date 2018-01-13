@@ -105,7 +105,8 @@ download_to_filename <- function(url, dlfile, curl=RCurl::getCurlHandle(), ...) 
 #' @param FUN defaults to \code{download.file} but \code{downloader::download}, \code{httr::GET}, \code{RCurl::getBinaryURL} also work
 #' @param attempts number of times to retry a broken download
 #' @param sleepsec length of \code{Sys.sleep()} between broken downloads
-#' @param filesize_fun use \code{RCurl::getURL} or \code{httr::HEAD} to determine file size.  use "unzip_verify" to verify the download by unzipping it without a warning instead
+#' @param filesize_fun use \code{RCurl::getURL} or \code{httr::HEAD} to determine file size.  use "unzip_verify" to verify the download by attempting to unzip the file without issue
+#' @param savecache whether to actually cache the downloaded files in the temporary directories.  setting this option to FALSE eliminates the purpose of cachaca(), but sometimes it's necessary to disable for a single call, or globally.
 #'
 #' @return just pass on whatever FUN returns
 #'
@@ -149,7 +150,12 @@ cachaca <-
 
 		# which filesize function should be used
 		# c( 'rcurl' , 'httr' )
-		filesize_fun = 'rcurl'
+		filesize_fun = 'rcurl' ,
+		
+		# whether to actually cache the downloaded files
+		# setting this option to FALSE eliminates the purpose of cachaca()
+		# but sometimes it's necessary to disable for a single call, or globally
+		savecache = getOption( "lodown.cachaca.savecache" , TRUE )
 
 	) {
 
@@ -302,7 +308,7 @@ cachaca <-
 		if ( exists( 'success' ) ){
 
 			# only save to the cachefile if the savecache options is TRUE (the default)
-			if( getOption( "lodown.cachaca.savecache" , TRUE ) ){
+			if( savecache ){
 			
 				if( is.null( destfile ) ){
 

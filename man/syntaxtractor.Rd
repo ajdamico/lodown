@@ -2,10 +2,11 @@
 % Please edit documentation in R/syntaxtractor.R
 \name{syntaxtractor}
 \alias{syntaxtractor}
-\title{rmarkdown syntax extractor for sisyphean perpetual testing}
+\title{rmarkdown syntax extractor}
 \usage{
 syntaxtractor(data_name, repo = "ajdamico/asdfree", ref = "master",
-  replacements = NULL, setup_test = NULL, local_comp = FALSE)
+  replacements = NULL, setup_rmd = TRUE, test_rmd = TRUE,
+  sample_setup_breaks = NULL, broken_sample_test_condition = NULL)
 }
 \arguments{
 \item{data_name}{a character vector with a microdata abbreviation}
