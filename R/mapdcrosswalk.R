@@ -1,5 +1,5 @@
-get_catalog_mapd_crosswalk <-
-  function( data_name = "mapd_crosswalk" , output_dir , ... ){
+get_catalog_mapdcrosswalk <-
+  function( data_name = "mapdcrosswalk" , output_dir , ... ){
 
 	cpsc_url <- "https://www.cms.gov/Research-Statistics-Data-and-Systems/Statistics-Trends-and-Reports/MCRAdvPartDEnrolData/Plan-Crosswalks.html"
 
@@ -38,8 +38,8 @@ get_catalog_mapd_crosswalk <-
   }
 
 
-lodown_mapd_crosswalk <-
-  function( data_name = "mapd_crosswalk" , catalog , ... ){
+lodown_mapdcrosswalk <-
+  function( data_name = "mapdcrosswalk" , catalog , ... ){
 
 	on.exit( print( catalog ) )
 

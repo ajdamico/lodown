@@ -1,5 +1,5 @@
-get_catalog_mapd_landscape <-
-	function( data_name = "mapd_landscape" , output_dir , ... ){
+get_catalog_mapdlandscape <-
+	function( data_name = "mapdlandscape" , output_dir , ... ){
 
 		landscape_url <- "https://www.cms.gov/Medicare/Prescription-Drug-Coverage/PrescriptionDrugCovGenIn/index.html?redirect=/PrescriptionDrugCovGenIn/"
 
@@ -81,8 +81,8 @@ get_catalog_mapd_landscape <-
 	}
 
 
-lodown_mapd_landscape <-
-	function( data_name = "mapd_landscape" , catalog , ... ){
+lodown_mapdlandscape <-
+	function( data_name = "mapdlandscape" , catalog , ... ){
 
 		on.exit( print( catalog ) )
 

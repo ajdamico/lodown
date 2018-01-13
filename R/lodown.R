@@ -89,11 +89,11 @@ NULL
 #'
 #' # Censo Escolar
 #' # download all available microdata
-#' lodown( "censo_escolar" , output_dir = file.path( path.expand( "~" ) , "CENSO_ESCOLAR" ) )
+#' lodown( "censoescolar" , output_dir = file.path( path.expand( "~" ) , "CENSOESCOLAR" ) )
 #' # download only the 2013 files
-#' censo_escolar_cat <- get_catalog( "censo_escolar" , 
-#' 		output_dir = file.path( path.expand( "~" ) , "CENSO_ESCOLAR" ) )
-#' lodown( "censo_escolar" , censo_escolar_cat[ censo_escolar$year == 2013 , ] )
+#' censoescolar_cat <- get_catalog( "censoescolar" , 
+#' 		output_dir = file.path( path.expand( "~" ) , "CENSOESCOLAR" ) )
+#' lodown( "censoescolar" , censoescolar_cat[ censoescolar$year == 2013 , ] )
 #'
 #' # Consumer Expenditure Survey
 #' # download all available microdata
@@ -222,38 +222,38 @@ NULL
 #'
 #' # Medicare Advantage/Part D - Plan Benefits Data
 #' # download all available microdata
-#' lodown( "mapd_benefits" , output_dir = file.path( path.expand( "~" ) , "MAPD_BENEFITS" ) )
+#' lodown( "mapdbenefits" , output_dir = file.path( path.expand( "~" ) , "MAPDBENEFITS" ) )
 #' # download only the 2016 files
-#' mapd_benefits_cat <- get_catalog( "mapd_benefits" , output_dir = file.path( path.expand( "~" ) , "MAPD_BENEFITS" ) )
-#' lodown( "mapd_benefits" , subset( mapd_benefits_cat , year == 2016 ) )
+#' mapdbenefits_cat <- get_catalog( "mapdbenefits" , output_dir = file.path( path.expand( "~" ) , "MAPDBENEFITS" ) )
+#' lodown( "mapdbenefits" , subset( mapdbenefits_cat , year == 2016 ) )
 #'
 #' # Medicare Advantage/Part D - Contract Plan State County
 #' # download all available microdata
-#' lodown( "mapd_cpsc" , output_dir = file.path( path.expand( "~" ) , "MAPD_CPSC" ) )
+#' lodown( "mapdcpsc" , output_dir = file.path( path.expand( "~" ) , "MAPDCPSC" ) )
 #' # download only the 2016 files
-#' mapd_cpsc_cat <- get_catalog( "mapd_cpsc" , output_dir = file.path( path.expand( "~" ) , "MAPD_CPSC" ) )
-#' lodown( "mapd_cpsc" , mapd_cpsc_cat[ grepl( "2016" , mapd_cpsc_cat$year_month ) , ] )
+#' mapdcpsc_cat <- get_catalog( "mapdcpsc" , output_dir = file.path( path.expand( "~" ) , "MAPDCPSC" ) )
+#' lodown( "mapdcpsc" , mapdcpsc_cat[ grepl( "2016" , mapdcpsc_cat$year_month ) , ] )
 #'
 #' # Medicare Advantage/Part D - Crosswalk
 #' # download all available microdata
-#' lodown( "mapd_crosswalk" , output_dir = file.path( path.expand( "~" ) , "MAPD_CROSSWALK" ) )
+#' lodown( "mapdcrosswalk" , output_dir = file.path( path.expand( "~" ) , "MAPDCROSSWALK" ) )
 #' # download only the 2016 file
-#' mapd_crosswalk_cat <- get_catalog( "mapd_crosswalk" , output_dir = file.path( path.expand( "~" ) , "MAPD_CROSSWALK" ) )
-#' lodown( "mapd_crosswalk" , mapd_crosswalk_cat[ grepl( "2016" , mapd_crosswalk_cat$year ) , ] )
+#' mapdcrosswalk_cat <- get_catalog( "mapdcrosswalk" , output_dir = file.path( path.expand( "~" ) , "MAPDCROSSWALK" ) )
+#' lodown( "mapdcrosswalk" , mapdcrosswalk_cat[ grepl( "2016" , mapdcrosswalk_cat$year ) , ] )
 #'
 #' # Medicare Advantage/Part D - Landscape Files
 #' # download all available microdata
-#' lodown( "mapd_landscape" , output_dir = file.path( path.expand( "~" ) , "MAPD_LANDSCAPE" ) )
+#' lodown( "mapdlandscape" , output_dir = file.path( path.expand( "~" ) , "MAPDLANDSCAPE" ) )
 #' # download only the 2016 files
-#' mapd_landscape_cat <- get_catalog( "mapd_landscape" , output_dir = file.path( path.expand( "~" ) , "MAPD_LANDSCAPE" ) )
-#' lodown( "mapd_landscape" , mapd_landscape_cat[ grepl( "2016" , mapd_landscape_cat$year ) , ] )
+#' mapdlandscape_cat <- get_catalog( "mapdlandscape" , output_dir = file.path( path.expand( "~" ) , "MAPDLANDSCAPE" ) )
+#' lodown( "mapdlandscape" , mapdlandscape_cat[ grepl( "2016" , mapdlandscape_cat$year ) , ] )
 #'
 #' # Medicare Advantage/Prescription Drug Plan State/County Penetration Files
 #' # download all available microdata
-#' lodown( "sc_penetration" , output_dir = file.path( path.expand( "~" ) , "SC_PENETRATION" ) )
+#' lodown( "scpenetration" , output_dir = file.path( path.expand( "~" ) , "SCPENETRATION" ) )
 #' # download only the 2016 files
-#' sc_penetration_cat <- get_catalog( "sc_penetration" , output_dir = file.path( path.expand( "~" ) , "SC_PENETRATION" ) )
-#' lodown( "sc_penetration" , sc_penetration_cat[ grepl( "2016" , sc_penetration_cat$year_month ) , ] )
+#' scpenetration_cat <- get_catalog( "scpenetration" , output_dir = file.path( path.expand( "~" ) , "SCPENETRATION" ) )
+#' lodown( "scpenetration" , scpenetration_cat[ grepl( "2016" , scpenetration_cat$year_month ) , ] )
 #'
 #' # Multiple Indicator Cluster Surveys
 #' # download all available microdata

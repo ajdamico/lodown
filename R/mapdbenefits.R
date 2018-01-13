@@ -1,5 +1,5 @@
-get_catalog_mapd_benefits <-
-  function( data_name = "mapd_benefits" , output_dir , ... ){
+get_catalog_mapdbenefits <-
+  function( data_name = "mapdbenefits" , output_dir , ... ){
 
 	cpsc_url <- "https://www.cms.gov/Research-Statistics-Data-and-Systems/Statistics-Trends-and-Reports/MCRAdvPartDEnrolData/Benefits-Data.html"
 
@@ -38,8 +38,8 @@ get_catalog_mapd_benefits <-
   }
 
 
-lodown_mapd_benefits <-
-	function( data_name = "mapd_benefits" , catalog , ... ){
+lodown_mapdbenefits <-
+	function( data_name = "mapdbenefits" , catalog , ... ){
 
 		on.exit( print( catalog ) )
 

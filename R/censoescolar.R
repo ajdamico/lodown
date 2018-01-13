@@ -1,20 +1,20 @@
-get_catalog_censo_escolar <-
-  function( data_name = "censo_escolar" , output_dir , ... ){
+get_catalog_censoescolar <-
+  function( data_name = "censoescolar" , output_dir , ... ){
 
     inep_portal <- "http://portal.inep.gov.br/web/guest/microdados"
 
     inep_html <- xml2::read_html(inep_portal)
     w <- rvest::html_attr( rvest::html_nodes( inep_html , "a" ) , "href" )
 
-    these_links <- grep( "censo_escolar(.*)zip$" , w , value = TRUE , ignore.case = TRUE )
+    these_links <- grep( "censoescolar(.*)zip$" , w , value = TRUE , ignore.case = TRUE )
 
-    censo_escolar_years <- substr( gsub( "[^0-9]" , "" , these_links ) , 1 , 4 )
+    censoescolar_years <- substr( gsub( "[^0-9]" , "" , these_links ) , 1 , 4 )
 
     catalog <-
       data.frame(
-        year = as.numeric( censo_escolar_years ) ,
+        year = as.numeric( censoescolar_years ) ,
         dbfile = paste0( output_dir , "/SQLite.db" ) ,
-        output_folder = paste0( output_dir , "/" , censo_escolar_years ) ,
+        output_folder = paste0( output_dir , "/" , censoescolar_years ) ,
         full_url = these_links ,
         stringsAsFactors = FALSE
       )
@@ -26,8 +26,8 @@ get_catalog_censo_escolar <-
   }
 
 
-lodown_censo_escolar <-
-  function( data_name = "censo_escolar" , catalog , ... ){
+lodown_censoescolar <-
+  function( data_name = "censoescolar" , catalog , ... ){
 
 	on.exit( print( catalog ) )
 
@@ -171,7 +171,7 @@ lodown_censo_escolar <-
                     colClasses = ifelse( grepl( "num" , codebook$Tipo , ignore.case = TRUE ) , "numeric" , "character" )
                   ) , error = function(e) {
                     cat( "removing non-utf8 characters\r" )
-                    cleaned_data_file <- remove_nonutf8_censo_escolar( this_data_file ) ;
+                    cleaned_data_file <- remove_nonutf8_censoescolar( this_data_file ) ;
                     db <- DBI::dbConnect( RSQLite::SQLite() , catalog[ i , 'dbfile' ] )
                     DBI::dbWriteTable(
                       db,
@@ -244,7 +244,7 @@ lodown_censo_escolar <-
 
 
 
-remove_nonutf8_censo_escolar <-
+remove_nonutf8_censoescolar <-
   function( infile ){
 
     tf_a <- tempfile()

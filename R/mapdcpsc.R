@@ -1,5 +1,5 @@
-get_catalog_mapd_cpsc <-
-  function( data_name = "mapd_cpsc" , output_dir , ... ){
+get_catalog_mapdcpsc <-
+  function( data_name = "mapdcpsc" , output_dir , ... ){
 
 	cpsc_url <- "https://www.cms.gov/Research-Statistics-Data-and-Systems/Statistics-Trends-and-Reports/MCRAdvPartDEnrolData/Monthly-Enrollment-by-Contract-Plan-State-County.html"
 
@@ -38,8 +38,8 @@ get_catalog_mapd_cpsc <-
   }
 
 
-lodown_mapd_cpsc <-
-  function( data_name = "mapd_cpsc" , catalog , ... ){
+lodown_mapdcpsc <-
+  function( data_name = "mapdcpsc" , catalog , ... ){
 
 	on.exit( print( catalog ) )
 

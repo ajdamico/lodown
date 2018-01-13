@@ -1,5 +1,5 @@
-get_catalog_sc_penetration <-
-	function( data_name = "sc_penetration" , output_dir , ... ){
+get_catalog_scpenetration <-
+	function( data_name = "scpenetration" , output_dir , ... ){
 
 		catalog <- NULL
 	
@@ -46,8 +46,8 @@ get_catalog_sc_penetration <-
 	}
 
 
-lodown_sc_penetration <-
-	function( data_name = "sc_penetration" , catalog , ... ){
+lodown_scpenetration <-
+	function( data_name = "scpenetration" , catalog , ... ){
 
 		on.exit( print( catalog ) )
 
