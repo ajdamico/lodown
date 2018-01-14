@@ -6,7 +6,7 @@ get_catalog_censoescolar <-
     inep_html <- xml2::read_html(inep_portal)
     w <- rvest::html_attr( rvest::html_nodes( inep_html , "a" ) , "href" )
 
-    these_links <- grep( "censoescolar(.*)zip$" , w , value = TRUE , ignore.case = TRUE )
+    these_links <- grep( "censo_escolar(.*)zip$" , w , value = TRUE , ignore.case = TRUE )
 
     censoescolar_years <- substr( gsub( "[^0-9]" , "" , these_links ) , 1 , 4 )
 
