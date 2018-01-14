@@ -97,7 +97,7 @@ get_catalog_hmda <-
 lodown_hmda <-
 	function( data_name = "hmda" , catalog , path_to_7za = '7za' , ... ){
 
-		if( ( .Platform$OS.type != 'windows' ) && ( system( paste0('"', path_to_7za , '" -h' ) , show.output.on.console = FALSE ) != 0 ) ) stop( "you need to install 7-zip.  if you already have it, include a path_to_7za='/directory/7za' parameter" )
+		if( ( .Platform$OS.type != 'windows' ) && ( system( paste0('"', path_to_7za , '" -h' ) ) != 0 ) ) stop( "you need to install 7-zip.  if you already have it, include a path_to_7za='/directory/7za' parameter" )
 		
 		on.exit( print( catalog ) )
 

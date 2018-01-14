@@ -30,7 +30,7 @@ lodown_nppes <-
 	
 		if( nrow( catalog ) != 1 ) stop( "nppes catalog must be exactly one record" )
 		
-		if( ( .Platform$OS.type != 'windows' ) && ( system( paste0('"', path_to_7za , '" -h' ) , show.output.on.console = FALSE ) != 0 ) ) stop( "you need to install 7-zip.  if you already have it, include a path_to_7za='/directory/7za' parameter" )
+		if( ( .Platform$OS.type != 'windows' ) && ( system( paste0('"', path_to_7za , '" -h' ) ) != 0 ) ) stop( "you need to install 7-zip.  if you already have it, include a path_to_7za='/directory/7za' parameter" )
  		
 		tf <- tempfile() ; tf2 <- tempfile()
 
