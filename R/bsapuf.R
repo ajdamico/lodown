@@ -75,7 +75,22 @@ lodown_bsapuf <-
 				writeLines( these_lines , unzipped_files )
 			}
 			
-			DBI::dbWriteTable( db , catalog[ i , 'db_tablename' ] , unzipped_files , lower.case.names = TRUE , append = TRUE , nrow.check = 250000 )
+			if( !( catalog[ i , 'db_tablename' ] %in% DBI::dbListTables( db ) ) ){
+			
+				headers <- 
+					read.csv( 
+						unzipped_files[1] , 
+						nrows = 100000 ,
+						stringsAsFactors = FALSE
+					)
+				
+				names( headers ) <- tolower( names( headers ) )
+				
+				DBI::dbWriteTable( db , catalog[ i , 'db_tablename' ] , headers[ FALSE , , drop = FALSE ] )
+			}
+
+			
+			DBI::dbWriteTable( db , catalog[ i , 'db_tablename' ] , unzipped_files , append = TRUE )
 
 			# if this is the final catalog entry for the unique db_tablename, store the case counts
 			if( i == max( which( catalog$db_tablename == catalog[ i , 'db_tablename' ] ) ) ){
