@@ -95,8 +95,10 @@ get_catalog_hmda <-
 
 
 lodown_hmda <-
-	function( data_name = "hmda" , catalog , ... ){
+	function( data_name = "hmda" , catalog , path_to_7za = '7za' , ... ){
 
+		if( ( .Platform$OS.type != 'windows' ) && ( system( paste0('"', path_to_7za , '" -h' ) , show.output.on.console = FALSE ) != 0 ) ) stop( "you need to install 7-zip.  if you already have it, include a path_to_7za='/directory/7za' parameter" )
+		
 		on.exit( print( catalog ) )
 
 		tf <- tempfile()
@@ -145,15 +147,26 @@ lodown_hmda <-
 
 			# download the file
 			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
-		
-			files_before <- list.files( paste0( tempdir() , "/unzips" ) , full.names = TRUE )
+	
+			if ( .Platform$OS.type == 'windows' ){
 
-			archive::archive_extract( tf , dir = paste0( tempdir() , "/unzips" ) )
+				unzipped_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) , overwrite = TRUE )
 
-			unzipped_files <- list.files( paste0( tempdir() , "/unzips" ) , full.names = TRUE )
+			} else {
+			
+				files_before <- list.files( paste0( tempdir() , "/unzips" ) , full.names = TRUE )
 
-			unzipped_files <- unzipped_files[ !( unzipped_files %in% files_before ) ]
+				# build the string to send to the terminal on non-windows systems
+				dos_command <- paste0( '"' , path_to_7za , '" x ' , tf , ' -aoa -o"' , paste0( tempdir() , "/unzips" ) , '"' )
+
+				system( dos_command )
+
+				unzipped_files <- list.files( paste0( tempdir() , "/unzips" ) , full.names = TRUE )
+
+				unzipped_files <- unzipped_files[ !( unzipped_files %in% files_before ) ]
 				
+			}
+	
 			
 			if( length( unzipped_files ) != 1 ) stop( "always expecting a single import file" )
 
