@@ -189,7 +189,7 @@ lodown_dhs <-
 				for( this_dta in unzipped_files[ which( st ) ] ){
 					
 					# remove any prior `x` tables ; clear up RAM
-					suppressWarnings( rm( x ) ; gc() )
+					suppressWarnings( rm( x ) )
 					
 					# figure out the correct location for the rds
 					rds_name <- file.path( catalog[ i , 'output_folder' ] , gsub( "\\.dta$" , ".rds" , basename( this_dta ) , ignore.case = TRUE ) )
@@ -221,7 +221,7 @@ lodown_dhs <-
 					for( this_sav in unzipped_files[ which( st ) ] ){
 					
 						# remove any prior `x` tables ; clear up RAM
-						suppressWarnings( rm( x ) ; gc() )
+						suppressWarnings( rm( x ) )
 							
 						# figure out the correct location for the rds
 						rds_name <- file.path( catalog[ i , 'output_folder' ] , gsub( "\\.sav$" , ".rds" , basename( this_sav ) , ignore.case = TRUE ) )
