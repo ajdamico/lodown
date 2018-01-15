@@ -301,7 +301,7 @@ lodown_ahs <-
 						names( x ) <- tolower( names( x ) )
 											
 						# save the newly-renamed object as an `.rds` file on the local disk
-						saveRDS( x , file = this.filename ) ; rm( x ) ; gc(, compress = FALSE )
+						saveRDS( x , file = this.filename , compress = FALSE ) ; rm( x ) ; gc()
 									
 						# confirm that this data file has been loaded.
 						data.loaded <- TRUE
