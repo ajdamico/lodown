@@ -293,7 +293,7 @@ dhs_authenticate <-
 		y <- readLines( tf , warn = FALSE )
 
 		# figure out the project number
-		project.line <- unique( y[ grep( paste0( "option value(.*)" , your_project ) , y ) ] )
+		project.line <- unique( y[ grepl( "option value" , y ) & grepl( your_project , y , fixed = TRUE ) ] )
 
 		# confirm only one project
 		stopifnot( length( project.line ) == 1 ) 
