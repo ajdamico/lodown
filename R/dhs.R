@@ -197,7 +197,7 @@ lodown_dhs <-
 					# load the current stata file into working memory
 					attempt_one <- try( x <- data.frame( haven::read_dta( this_dta ) ) , silent = TRUE )
 					
-					if( class( attempt_one ) == 'try-error' ) x <- foreign::read.dta( this_dta )
+					if( class( attempt_one ) == 'try-error' ) x <- foreign::read.dta( this_dta , convert.factors = FALSE )
 				
 					# convert all column names to lowercase
 					names( x ) <- tolower( names( x ) )
