@@ -461,7 +461,7 @@ lodown_censo <-
 					dbname = unique_designs[ i , 'dbfile' ]
 				)
 
-			saveRDS( this_design , file = unique_designs[ i , 'design' ] )
+			saveRDS( this_design , file = unique_designs[ i , 'design' ] , compress = FALSE )
 
 			cat( paste0( data_name , " survey design entry " , i , " of " , nrow( unique_designs ) , " stored at '" , unique_designs[ i , 'design' ] , "'\r\n\n" ) )
 

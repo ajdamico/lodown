@@ -40,7 +40,7 @@
 			# # convert all column names to lowercase
 			# names( x ) <- tolower( names( x ) )
 
-			# saveRDS( x , file = catalog[ i , 'output_filename' ] )
+			# saveRDS( x , file = catalog[ i , 'output_filename' ] , compress = FALSE )
 
 			# if there are multiple files per catalog entry, use `max( catalog[ i , 'case_count' ] , nrow( x ) , na.rm = TRUE )` instead
 			# catalog[ i , 'case_count' ] <- nrow( x )

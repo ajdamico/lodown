@@ -273,7 +273,7 @@ lodown_nsfg <-
 			catalog[ i , 'case_count' ] <- nrow( x )
 			
 			# save this data.frame object to the local disk
-			saveRDS( x , file = catalog[ i , "output_filename" ] )
+			saveRDS( x , file = catalog[ i , "output_filename" ] , compress = FALSE )
 			
 			# delete the temporary files
 			suppressWarnings( file.remove( tf ) )

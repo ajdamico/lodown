@@ -184,7 +184,7 @@ lodown_wvs <-
 					rfn <- paste0( catalog[ i , 'output_folder' ] , "/" , gsub( tools::file_ext( this_fn ) , "rds" , this_fn ) )
 					
 					# store the data.frame object on the local disk
-					saveRDS( x , file = rfn )
+					saveRDS( x , file = rfn , compress = FALSE )
 
 					catalog[ i , 'case_count' ] <- nrow( x )
 					

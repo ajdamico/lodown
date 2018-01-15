@@ -153,7 +153,7 @@ lodown_psid <-
 				
 				save_name <- paste0( catalog[ i , 'output_folder' ] , "/" , gsub( ":|,|\\(|\\)" , "" , tolower( catalog[ i , 'table_name' ] ) ) , if( length( dat_files ) > 1 ) tolower( paste0( " " , sas_name ) ) , ".rds" )
 				
-				saveRDS( x , file = save_name )
+				saveRDS( x , file = save_name , compress = FALSE )
 				
 			}
 			
@@ -177,7 +177,7 @@ lodown_psid <-
 
 					save_name <- paste0( catalog[ i , 'output_folder' ] , "/" , gsub( ":|,|\\(|\\)" , "" , tolower( catalog[ i , 'table_name' ] ) ) , if( length( sas7bdat_files ) > 1 ) tolower( paste0( " " , sas_name ) ) , ".rds" )
 					
-					saveRDS( x , file = save_name )
+					saveRDS( x , file = save_name , compress = FALSE )
 					
 				}
 				

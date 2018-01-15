@@ -138,7 +138,7 @@ lodown_mapdlandscape <-
 			
 			out$year <- catalog[ i , 'year' ]
 			
-			saveRDS( out , file = catalog[ i , 'output_filename' ] )
+			saveRDS( out , file = catalog[ i , 'output_filename' ] , compress = FALSE )
 
 			file.remove( unzipped_files )
 			

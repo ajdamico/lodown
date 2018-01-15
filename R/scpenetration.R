@@ -100,7 +100,7 @@ lodown_scpenetration <-
 
 			}
 			
-			saveRDS( this_result , file = this_savefile )
+			saveRDS( this_result , file = this_savefile , compress = FALSE )
 
 			cat( paste0( data_name , " catalog entry " , which( this_savefile == unique_savefiles ) , " of " , length( unique_savefiles ) , " stored at '" , this_savefile , "'\r\n\n" ) )
 

@@ -168,8 +168,8 @@ lodown_scf <-
 			rw <- rw[ order( rw$yy1 ) , ]
 
 			# save the five implicates and the replicate weights file
-			saveRDS( list( imp1 , imp2 , imp3 , imp4 , imp5 ) , file = catalog[ i , 'output_filename' ] )
-			saveRDS( rw , file = catalog[ i , 'rw_filename' ] )
+			saveRDS( list( imp1 , imp2 , imp3 , imp4 , imp5 ) , file = catalog[ i , 'output_filename' ] , compress = FALSE )
+			saveRDS( rw , file = catalog[ i , 'rw_filename' ] , compress = FALSE )
 
 			catalog[ i , 'case_count' ] <- nrow( imp1 )
 

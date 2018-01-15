@@ -83,7 +83,7 @@ lodown_nps <-
 			# add a column of all ones
 			x$one <- 1
 			
-			saveRDS( x , file = catalog[ i , 'output_filename' ] )
+			saveRDS( x , file = catalog[ i , 'output_filename' ] , compress = FALSE )
 
 			catalog[ i , 'case_count' ] <- nrow( x )
 			

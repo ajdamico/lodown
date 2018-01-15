@@ -140,7 +140,7 @@ lodown_saeb <-
 				DBI::dbWriteTable( db , tnwy , x )
 				
 				# save the current table in the year-specific folder on the local drive
-				saveRDS( x , file = paste0( catalog[ i , 'output_folder' ] , "/" , table.name , ".rds" ) )
+				saveRDS( x , file = paste0( catalog[ i , 'output_folder' ] , "/" , table.name , ".rds" ) , compress = FALSE )
 
 			}
 

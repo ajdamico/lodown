@@ -135,7 +135,7 @@ lodown_nychvs <-
 
 			catalog[ i , 'case_count' ] <- nrow( x )
 			
-			saveRDS( x , file = catalog[ i , 'output_filename' ] )
+			saveRDS( x , file = catalog[ i , 'output_filename' ] , compress = FALSE )
 
 			# delete the temporary files
 			suppressWarnings( file.remove( tf ) )

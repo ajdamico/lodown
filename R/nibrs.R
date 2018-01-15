@@ -178,7 +178,7 @@ lodown_nibrs <-
 					}
 					
 					# save the r data.frame object to the local disk as an `.rds`
-					saveRDS( x , file = gsub( "txt$" , "rds" , data.file ) )
+					saveRDS( x , file = gsub( "txt$" , "rds" , data.file ) , compress = FALSE )
 				
 					# remove the object from working memory
 					rm( x )
@@ -214,7 +214,7 @@ lodown_nibrs <-
 					x <- DBI::dbReadTable( db , catalog[ i , 'db_tablename' ] )
 				
 					# save the r data.frame object to the local disk as an `.rds`
-					saveRDS( x , file = gsub( "txt$" , "rds" , data.file ) )
+					saveRDS( x , file = gsub( "txt$" , "rds" , data.file ) , compress = FALSE )
 				
 				}
 				

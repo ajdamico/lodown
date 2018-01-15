@@ -49,7 +49,7 @@ lodown_nls <-
 				strpsu <- read.csv( unzipped_files[ grep( '\\.csv' , unzipped_files ) ] )
 				
 				# store the complex sample variables on the local disk
-				saveRDS( strpsu , file = paste0( catalog[ i , 'output_folder' ] , "/strpsu.rds" ) )
+				saveRDS( strpsu , file = paste0( catalog[ i , 'output_folder' ] , "/strpsu.rds" ) , compress = FALSE )
 				
 				# delete the temporary files
 				suppressWarnings( file.remove( tf , unzipped_files ) )
@@ -108,7 +108,7 @@ lodown_nls <-
 			
 			names( new_data ) <- tolower( names( new_data ) )
 			
-			saveRDS( new_data , file = paste0( catalog[ i , 'output_folder' ] , "/main.rds" ) )
+			saveRDS( new_data , file = paste0( catalog[ i , 'output_folder' ] , "/main.rds" ) , compress = FALSE )
 			
 			rm( new_data ) ; gc()
 		

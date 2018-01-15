@@ -169,7 +169,7 @@ lodown_hrs <-
 
 						catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , nrow( x ) , na.rm = TRUE )
 						
-						saveRDS( x , file = paste0( catalog[ i , 'output_folder' ] , "/" , tolower( gsub( "\\.dta" , ".rds" , basename( this_stata ) , ignore.case = TRUE ) ) ) )
+						saveRDS( x , file = paste0( catalog[ i , 'output_folder' ] , "/" , tolower( gsub( "\\.dta" , ".rds" , basename( this_stata ) , ignore.case = TRUE ) ) ) , compress = FALSE )
 						
 						rm( x ) ; gc()
 						
@@ -245,7 +245,7 @@ lodown_hrs <-
 
 						catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , nrow( x ) )
 
-						saveRDS( x , file = paste0( catalog[ i , 'output_folder' ] , "/" , tolower( gsub( "\\.da" , ".rds" , basename( this_dat ) , ignore.case = TRUE ) ) ) )
+						saveRDS( x , file = paste0( catalog[ i , 'output_folder' ] , "/" , tolower( gsub( "\\.da" , ".rds" , basename( this_dat ) , ignore.case = TRUE ) ) ) , compress = FALSE )
 
 						rm( x ) ; gc()
 						

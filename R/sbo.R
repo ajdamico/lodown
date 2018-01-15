@@ -75,7 +75,7 @@ lodown_sbo <-
 		sbo_svy <- list( coef = sbo_coef , var = sbo_var )
 		class( sbo_svy ) <- 'sbosvyimputationList'
 		
-		saveRDS( sbo_svy , file = catalog$output_filename ) ; rm( sbo_svy ) ; gc()
+		saveRDS( sbo_svy , file = catalog$output_filename , compress = FALSE ) ; rm( sbo_svy ) ; gc()
 		
 		# delete the temporary files
 		suppressWarnings( file.remove( tf , unzipped_files ) )

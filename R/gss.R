@@ -54,7 +54,7 @@ lodown_gss <-
 
 			catalog[ i , 'case_count' ] <- nrow( x )
 			
-			saveRDS( x , file = catalog[ i , 'output_filename' ] ) ; rm( x ) ; gc()
+			saveRDS( x , file = catalog[ i , 'output_filename' ] , compress = FALSE ) ; rm( x ) ; gc()
 
 			# delete the temporary files
 			suppressWarnings( file.remove( tf , unzipped_files ) )

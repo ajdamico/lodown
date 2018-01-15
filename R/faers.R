@@ -188,7 +188,7 @@ lodown_faers <-
 				names( x )[ names( x ) == 'lot_num' ] <- 'lot_nbr'
 				
 				# save the data.frame object to the rds filename on the local disk
-				saveRDS( x , file = rds.filename )
+				saveRDS( x , file = rds.filename , compress = FALSE )
 				
 				catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , nrow( x ) , na.rm = TRUE )
 				

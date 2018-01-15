@@ -82,7 +82,7 @@ lodown_cpsbasic <-
 
 			catalog[ i , 'case_count' ] <- nrow( x )
 			
-			saveRDS( x , file = catalog[ i , 'output_filename' ] ) ; rm( x ) ; gc()
+			saveRDS( x , file = catalog[ i , 'output_filename' ] ) ; rm( x ) ; gc(, compress = FALSE )
 
 			# delete the temporary files
 			suppressWarnings( file.remove( tf , unzipped_files ) )

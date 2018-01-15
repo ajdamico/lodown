@@ -118,7 +118,7 @@ lodown_brfss <-
 			
 			x$one <- 1
 			
-			saveRDS( x , file = catalog[ i , 'output_filename' ] )
+			saveRDS( x , file = catalog[ i , 'output_filename' ] , compress = FALSE )
 
 			# add the number of records to the catalog
 			catalog[ i , 'case_count' ] <- nrow( x )

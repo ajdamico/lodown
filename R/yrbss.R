@@ -151,7 +151,7 @@ lodown_yrbss <-
 			catalog[ i , 'case_count' ] <- nrow( x )
 			
 			# save the current `x` data.frame to the local disk
-			saveRDS( x , file = catalog[ i , "output_filename" ] )
+			saveRDS( x , file = catalog[ i , "output_filename" ] , compress = FALSE )
 
 			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , catalog[ i , 'output_filename' ] , "'\r\n\n" ) )
 

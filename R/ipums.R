@@ -117,7 +117,7 @@ lodown_ipums <-
 							) 
 						)
 					
-					saveRDS( x , file = catalog[ i , 'output_filename' ] )
+					saveRDS( x , file = catalog[ i , 'output_filename' ] , compress = FALSE )
 				
 					catalog[ i , 'case_count' ] <- nrow( x )
 				

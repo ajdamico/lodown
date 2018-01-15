@@ -93,7 +93,7 @@ lodown_addhealth <-
 					cat( paste( "did not merge" , this_rda , " -- copying to working directory" , "\r                                  " ) )
 					
 					# just save the data.frame object into the main output folder
-					saveRDS( x , file = gsub( "/individual tables" , "" , gsub( "\\.rda" , ".rds" , this_rda ) ) )
+					saveRDS( x , file = gsub( "/individual tables" , "" , gsub( "\\.rda" , ".rds" , this_rda ) ) , compress = FALSE )
 				}
 				
 				# remove the current data.frame from working memory
@@ -113,7 +113,7 @@ lodown_addhealth <-
 			
 			# once you've merged as many files as you can,
 			# save the final `cons` object to the local disk
-			saveRDS( cons , file = consolidated_filename )
+			saveRDS( cons , file = consolidated_filename , compress = FALSE )
 			
 			cat( paste0( data_name , " consolidated file stored at '" , consolidated_filename , "'\r                                  " ) )
 

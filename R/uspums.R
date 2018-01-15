@@ -304,7 +304,7 @@ lodown_uspums <-
 				)
 
 			# save the monetdb-backed complex sample survey design object to the local disk		
-			saveRDS( this_design , file = unique_designs[ i , 'design' ] )
+			saveRDS( this_design , file = unique_designs[ i , 'design' ] , compress = FALSE )
 			
 			catalog[ catalog$design == unique_designs[ i , 'design' ] , 'case_count' ] <- nrow( this_design )
 			

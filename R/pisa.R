@@ -990,7 +990,7 @@ pisa_construct.pisa.survey.designs <-
 		this_design$mse <- TRUE
 		
 		# save all of the database design objects as r data files
-		saveRDS( this_design , file = save_name )
+		saveRDS( this_design , file = save_name , compress = FALSE )
 
 		save_name
 	}

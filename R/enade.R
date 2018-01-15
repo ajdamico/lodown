@@ -78,7 +78,7 @@ lodown_enade <-
 			
 			stopifnot( R.utils::countLines( csvfile ) == nrow( x ) + 1 )
 
-			saveRDS( x , catalog[ i , 'output_filename' ] )
+			saveRDS( x , catalog[ i , 'output_filename' ] , compress = FALSE )
 			
 			catalog[ i , 'case_count' ] <- nrow( x )
 		

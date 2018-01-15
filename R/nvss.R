@@ -674,8 +674,8 @@ lodown_nvss <-
 				names( ps ) <- tolower( names( ps ) )
 
 				# save both data.frame objects to an R data file
-				saveRDS( us , file = paste0( catalog[ i , 'output_folder' ] , "/fetal death " , catalog[ i , 'year' ] , " us.rds" ) )
-				saveRDS( ps , file = paste0( catalog[ i , 'output_folder' ] , "/fetal death " , catalog[ i , 'year' ] , " ps.rds" ) )
+				saveRDS( us , file = paste0( catalog[ i , 'output_folder' ] , "/fetal death " , catalog[ i , 'year' ] , " us.rds" ) , compress = FALSE )
+				saveRDS( ps , file = paste0( catalog[ i , 'output_folder' ] , "/fetal death " , catalog[ i , 'year' ] , " ps.rds" ) , compress = FALSE )
 
 				catalog[ i , 'case_count' ] <- nrow( us ) + nrow( ps )
 				

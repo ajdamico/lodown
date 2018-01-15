@@ -143,7 +143,7 @@ lodown_timss <-
 					names( y ) <- tolower( names( y ) )
 					
 					# save that single all-country stack-a-mole
-					saveRDS( y , file = paste0( catalog[ i , 'output_folder' ] , '/' , p , '.rds' ) )
+					saveRDS( y , file = paste0( catalog[ i , 'output_folder' ] , '/' , p , '.rds' ) , compress = FALSE )
 					
 				}
 				
@@ -210,7 +210,7 @@ lodown_timss <-
 							if( 'jkindic' %in% names( y ) & !( 'jkrep' %in% names( y ) ) ) names( y ) <- gsub( 'jkindic' , 'jkrep' , names( y ) )
 							
 							# save that single all-country stack-a-mole
-							saveRDS( y , file = paste0( catalog[ i , 'output_folder' ] , '/' , p , s , '.rds' ) )
+							saveRDS( y , file = paste0( catalog[ i , 'output_folder' ] , '/' , p , s , '.rds' ) , compress = FALSE )
 					
 						}
 					}
@@ -337,9 +337,9 @@ lodown_timss <-
 
 					catalog[ i , 'case_count' ] <- nrow( design )
 					
-					saveRDS( design , file = paste0( catalog[ i , 'output_folder' ] , '/' , gsub( "(.*)\\.(.*)" , "\\1" , basename( rdss ) ) , '_design.rds' ) )
+					saveRDS( design , file = paste0( catalog[ i , 'output_folder' ] , '/' , gsub( "(.*)\\.(.*)" , "\\1" , basename( rdss ) ) , '_design.rds' ) , compress = FALSE )
 					
-					saveRDS( design_weights , file = paste0( catalog[ i , 'output_folder' ] , '/' , gsub( "(.*)\\.(.*)" , "\\1" , basename( rdss ) ) , '_weights.rds' ) )
+					saveRDS( design_weights , file = paste0( catalog[ i , 'output_folder' ] , '/' , gsub( "(.*)\\.(.*)" , "\\1" , basename( rdss ) ) , '_weights.rds' ) , compress = FALSE )
 					
 				}
 				

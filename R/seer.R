@@ -113,7 +113,7 @@ lodown_seer <-
 			catalog$case_count <- max( catalog$case_count , nrow( x ) , na.rm = TRUE )
 			
 			# save the data.frame to the save-file-location
-			saveRDS( x , file = sfl )
+			saveRDS( x , file = sfl , compress = FALSE )
 
 			cat( paste0( data_name , " individual file " , which( fp == ind_file_matches ) , " of " , length( ind_file_matches ) , " stored at '" , sfl , "'\r\n\n" ) )
 
@@ -148,7 +148,7 @@ lodown_seer <-
 			catalog$case_count <- max( catalog$case_count , nrow( x ) , na.rm = TRUE )
 			
 			# save the data.frame to the save-file-location
-			saveRDS( x , file = sfl )
+			saveRDS( x , file = sfl , compress = FALSE )
 
 			cat( paste0( data_name , " population file " , which( fp == pop_file_matches ) , " of " , length( pop_file_matches ) , " stored at '" , sfl , "'\r\n\n" ) )
 

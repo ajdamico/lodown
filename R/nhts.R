@@ -424,13 +424,13 @@ lodown_nhts <-
 				# done.  phew.  save all the objects to the current working directory
 				if ( catalog[ i , 'year' ] == 2001 ){
 
-					saveRDS( nhts.ldt.design , file = paste0( catalog[ i , "output_folder" ] , "/ldt design.rds" ) )
+					saveRDS( nhts.ldt.design , file = paste0( catalog[ i , "output_folder" ] , "/ldt design.rds" ) , compress = FALSE )
 					
 				}
 				
-				saveRDS( nhts.per.design , file = paste0( catalog[ i , "output_folder" ] , "/per design.rds" ) )
-				saveRDS( nhts.day.design , file = paste0( catalog[ i , "output_folder" ] , "/day design.rds" ) )
-				saveRDS( nhts.hh.design , file = paste0( catalog[ i , "output_folder" ] , "/hh design.rds" ) )
+				saveRDS( nhts.per.design , file = paste0( catalog[ i , "output_folder" ] , "/per design.rds" ) , compress = FALSE )
+				saveRDS( nhts.day.design , file = paste0( catalog[ i , "output_folder" ] , "/day design.rds" ) , compress = FALSE )
+				saveRDS( nhts.hh.design , file = paste0( catalog[ i , "output_folder" ] , "/hh design.rds" ) , compress = FALSE )
 				
 				catalog[ catalog[ i , 'output_folder' ] == catalog$output_directory , 'case_count' ] <- nrow( nhts.per.design )
 				

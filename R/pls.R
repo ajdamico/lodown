@@ -65,7 +65,7 @@ lodown_pls <-
 				catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , nrow( x ) , na.rm = TRUE )
 					
 				# save this table to a year x tablename path in the current working directory
-				saveRDS( x , file = paste0( catalog[ i , 'output_folder' ] , "/" , this.tablename , ".rds" ) )
+				saveRDS( x , file = paste0( catalog[ i , 'output_folder' ] , "/" , this.tablename , ".rds" ) , compress = FALSE )
 
 			}
 

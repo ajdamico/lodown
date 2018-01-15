@@ -301,7 +301,7 @@ lodown_ahs <-
 						names( x ) <- tolower( names( x ) )
 											
 						# save the newly-renamed object as an `.rds` file on the local disk
-						saveRDS( x , file = this.filename ) ; rm( x ) ; gc()
+						saveRDS( x , file = this.filename ) ; rm( x ) ; gc(, compress = FALSE )
 									
 						# confirm that this data file has been loaded.
 						data.loaded <- TRUE
@@ -433,7 +433,7 @@ lodown_ahs <-
 					)
 					
 				# save the merged file to the local disk as well	
-				saveRDS( x , file = merge.fp )
+				saveRDS( x , file = merge.fp , compress = FALSE )
 								
 				# add the number of records to the catalog
 				catalog[ i , 'case_count' ] <- nrow( x )

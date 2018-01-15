@@ -205,7 +205,7 @@ lodown_dhs <-
 					catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , nrow( x ) , na.rm = TRUE )
 					
 					# save the file on the local disk, within the appropriate country-survey filepath
-					saveRDS( x , file = rds_name ) ; rm( x ) ; gc()
+					saveRDS( x , file = rds_name , compress = FALSE ) ; rm( x ) ; gc()
 					
 				}
 					
@@ -235,7 +235,7 @@ lodown_dhs <-
 						catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , nrow( x ) , na.rm = TRUE )
 
 						# save the file on the local disk, within the appropriate country-survey filepath
-						saveRDS( x , file = rds_name ) ; rm( x ) ; gc()
+						saveRDS( x , file = rds_name , compress = FALSE ) ; rm( x ) ; gc()
 						
 					}
 				}
