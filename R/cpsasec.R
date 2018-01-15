@@ -634,7 +634,7 @@ lodown_cpsasec <-
 			
 			names( x ) <- tolower( names( x ) )
 			
-			saveRDS( x , file = catalog[ i , 'output_filename' ] ) ; rm( x ) ; gc(, compress = FALSE )
+			saveRDS( x , file = catalog[ i , 'output_filename' ] , compress = FALSE ) ; rm( x ) ; gc()
 			
 			# delete the temporary files
 			suppressWarnings( file.remove( tf ) )
