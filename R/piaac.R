@@ -120,9 +120,9 @@ lodown_piaac <-
 			catalog[ i , 'case_count' ] <- nrow( this_design )
 				
 			# save both objects as `.rds` files
-			saveRDS( x , file = catalog[ i , 'output_filename' ] , compress = FALSE )
+			saveRDS( x , file = catalog[ i , 'output_filename' ] )
 			
-			saveRDS( this_design , file = catalog[ i , 'design_filename' ] , compress = FALSE )
+			saveRDS( this_design , file = catalog[ i , 'design_filename' ] )
 
 			# delete the temporary files
 			suppressWarnings( file.remove( tf ) )
