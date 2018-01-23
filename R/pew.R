@@ -122,8 +122,6 @@ get_catalog_pew <-
 					'http://assets.pewresearch.org/wp-content/uploads/sites/14/old-datasets/November-2010--Paid-Content-(Omnibus).zip' ,
 					'http://assets.pewresearch.org/wp-content/uploads/sites/5/datasets/June16%20public.zip' ,
 					
-					# https://github.com/tidyverse/haven/issues/304
-					'http://assets.pewresearch.org/wp-content/uploads/sites/2/2009/09/Pew-GAP-Fall-2009-BW-survey-for-website.zip' ,
 					'http://assets.pewresearch.org/wp-content/uploads/sites/2/2017/07/20111442/Pew-GAP-Spring-2007-survey-for-website.zip' ,
 					'http://assets.pewresearch.org/wp-content/uploads/sites/2/2009/06/Pew-GAP-Spring-2009-survey-for-website.zip'
 				) ) , ]
@@ -172,7 +170,11 @@ lodown_pew <-
 				
 				for( this_sav in sav_files ){
 
-					x <- data.frame( haven::read_spss( this_sav ) )
+					if( catalog[ i , 'full_url' ] == 'http://assets.pewresearch.org/wp-content/uploads/sites/2/2009/09/Pew-GAP-Fall-2009-BW-survey-for-website.zip' ){
+						x <- data.frame( haven::read_spss( this_sav , encoding = "WINDOWS-1250" ) )
+					} else {
+						x <- data.frame( haven::read_spss( this_sav ) )
+					}
 
 					# convert all column names to lowercase
 					names( x ) <- tolower( names( x ) )
