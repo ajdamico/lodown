@@ -112,7 +112,7 @@ lodown_nppes <-
 
 		# loop through every line in the input connection,
 		# 50,000 lines at a time
-		while( length( z <- readLines( incon , n = 500000 ) ) > 0 ){
+		while( length( z <- readLines( incon , n = 1000000 ) ) > 0 ){
 
 			# replace all double-backslahses with nothing
 			z <- gsub( "\\\\" , "" , z )
@@ -141,13 +141,7 @@ lodown_nppes <-
 		close( incon )
 		close( outcon )
 
-		# confirm that the new temporary file
-		# contains the same number of records as
-		# the original csv.file
-		stopifnot( R.utils::countLines( tf2 ) == R.utils::countLines( csv.file ) )
-
 		
-							
 		# initiate the current table
 		DBI::dbWriteTable( 
 			db , 
@@ -162,6 +156,8 @@ lodown_nppes <-
 
 		
 		catalog$case_count <- DBI::dbGetQuery( db , paste0( "SELECT COUNT(*) FROM " , catalog$db_tablename ) )
+		
+		stopifnot( R.utils::countLines( csv.file ) == ( catalog$case_count + 1 ) )
 		
 		# # # # # # # # #
 		# end of import #
