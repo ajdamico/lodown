@@ -117,6 +117,9 @@ lodown_nppes <-
 			# replace all double-backslahses with nothing
 			z <- gsub( "\\\\" , "" , z )
 			
+			# replace all vertical bars with nothing
+			z <- gsub( "\\|" , "" , z )
+			
 			# replace front and end of line quotes with nothing
 			z <- gsub( '^\\"|\\"$' , '' , z )
 			
