@@ -156,7 +156,8 @@ lodown_nppes <-
 			header = FALSE ,
 			append = TRUE ,
 			skip = 1 ,
-			sep = "|"
+			sep = "|" ,
+			eol = '\r\n'
 		)
 
 		
