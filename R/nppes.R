@@ -100,7 +100,7 @@ lodown_nppes <-
 		# ..to initiate this table in the monet database
 		sql.create <- sprintf( paste( "CREATE TABLE" , catalog$db_tablename , "(%s)" ) , paste( colDecl , collapse = ", " ) )
 
-		# run the actual MonetDB table creation command
+		# run the actual table creation command
 		DBI::dbSendQuery( db , sql.create )
 
 
@@ -114,8 +114,14 @@ lodown_nppes <-
 		# 50,000 lines at a time
 		while( length( z <- readLines( incon , n = 50000 ) ) > 0 ){
 
-			# replace all double-backslahses with nothing..
+			# replace all double-backslahses with nothing
 			z <- gsub( "\\\\" , "" , z )
+			
+			# replace front and end of line quotes with nothing
+			z <- gsub( '^\\"|\\"$' , '' , z )
+			
+			# replace middle quotes with a different delimiter
+			z <- gsub( '","' , '|' , z )
 			
 			# ..and write the resultant lines
 			# to the output file connection
@@ -146,7 +152,8 @@ lodown_nppes <-
 			normalizePath( tf2 ) , 
 			header = FALSE ,
 			append = TRUE ,
-			skip = 1
+			skip = 1 ,
+			sep = "|"
 		)
 
 		
