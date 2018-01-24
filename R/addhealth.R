@@ -1,7 +1,7 @@
 get_catalog_addhealth <-
 	function( data_name = "addhealth" , output_dir , ... ){
 
-	catalog <- get_catalog_icpsr( study_numbers = "21600" , bundle_preference = "rdata" )
+	catalog <- get_catalog_icpsr( study_numbers = "21600" , bundle_preference = "rdata" , archive = "DSDR" )
 	
 	catalog$wave <- tolower( stringr::str_trim( gsub( "[[:punct:]]" , "" , sapply( strsplit( catalog$dataset_name , ":" ) , "[[" , 1 ) ) ) )
 	

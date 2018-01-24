@@ -28,48 +28,32 @@ lodown_icpsr <-
 
 		for ( i in seq_len( nrow( catalog ) ) ){
 
-			# initiate a curl handle so the remote server knows it's you.
-			curl = RCurl::getCurlHandle()
+			login <- "https://www.icpsr.umich.edu/rpxlogin"
+			terms <- "https://www.icpsr.umich.edu/cgi-bin/terms"
+			download <- "https://www.icpsr.umich.edu/cgi-bin/bob/zipcart2"
 
-			# set a cookie file on the local disk
-			RCurl::curlSetOpt(
-				cookiejar = 'cookies.txt' ,
-				followlocation = TRUE ,
-				autoreferer = TRUE ,
-				curl = curl
-			)
-
-			# list out the filepath on the server of the file-to-download
-			dp <- catalog[ i , 'full_url' ]
-
-			# post your username and password to the umich server
-			login.page <-
-				RCurl::postForm(
-					"https://www.icpsr.umich.edu/rpxlogin" ,
-					email = your_email ,
-					password = your_password ,
-					path = catalog[ i , 'archive' ] ,
-					request_uri = dp ,
-					app_seq = "" ,
-					style = "POST" ,
-					curl = curl
+			values <- 
+				list(
+					agree = "yes", 
+					path = catalog[ i , 'archive' ] , 
+					study = catalog[ i , 'study_number' ] , 
+					ds = catalog[ i , 'ds' ] , 
+					noautoguest="", 
+					request_uri=catalog[ i , 'full_url' ],
+					bundle = catalog[ i , 'bundle' ], 
+					dups = "yes",
+					email=your_email,
+					password=your_password
 				)
 
-			# consent to terms of use page
-			terms.of.use.page <-
-				RCurl::postForm(
-					"http://www.icpsr.umich.edu/cgi-bin/terms" ,
-					agree = 'yes' ,
-					path = catalog[ i , 'archive' ] ,
-					study = gsub( "(.*)study=([0-9]+)&(.*)" , "\\2" , catalog[ i , 'full_url' ] ) ,
-					bundle = catalog[ i , 'bundle' ] ,
-					dups = "yes" ,
-					style = "POST" ,
-					curl = curl
-				)
+			# Accept the terms on the form, 
+			# generating the appropriate cookies
+			httr::POST(login, body = values)
+			httr::POST(terms, body = values)
 
-			cachaca( dp , tf , FUN = download_to_filename, curl=curl, filesize_fun = 'unzip_verify' )
-
+			
+			cachaca( download , destfile = tf , FUN = httr::GET , filesize_fun = 'unzip_verify' , httr::write_disk( tf , overwrite = TRUE ) , httr::progress() , query = values )
+			
 			unzip_warn_fail( tf , exdir =  gsub( "/$" , "" , catalog[ i , "unzip_folder" ] ) , junkpaths = TRUE )
 
 			# delete the temporary files
@@ -95,7 +79,7 @@ get_catalog_icpsr <-
 
 		if( is.null( study_numbers ) ){
 
-			series_page <- paste0( "http://www.icpsr.umich.edu/icpsrweb/ICPSR/series/" , series_number , "/studies?archive=" , archive , "&sortBy=7" )
+			series_page <- paste0( "http://www.icpsr.umich.edu/icpsrweb/" , archive , "/series/" , series_number , "/studies?archive=" , archive , "&sortBy=7" )
 
 			series_xml <- xml2::read_html( series_page )
 
@@ -107,7 +91,7 @@ get_catalog_icpsr <-
 
 		for( study_number in study_numbers ){
 		
-			study_page <- paste0( "http://www.icpsr.umich.edu/icpsrweb/ICPSR/" , if( !is.null( series_number ) ) paste0( "series/" , series_number ) , "/studies/" , study_number , "?archive=" , archive , "&sortBy=7" )
+			study_page <- paste0( "http://www.icpsr.umich.edu/icpsrweb/" , archive , "/" , if( !is.null( series_number ) ) paste0( "series/" , series_number ) , "/studies/" , study_number , "?archive=" , archive , "&sortBy=7" )
 
 			study_xml <- xml2::read_html( study_page )
 
@@ -175,6 +159,8 @@ get_catalog_icpsr <-
 
 				if( !is.null( series_results ) ) series_results[ in_study_not_results ] <- NA
 
+				this_study$study_number <- study_number
+				
 				series_results <- rbind( series_results , this_study )
 
 			}
