@@ -1,6 +1,8 @@
 get_catalog_acs <-
 	function( data_name = "acs" , output_dir , include_puerto_rico = TRUE , ... ){
 
+		if ( !requireNamespace( "archive" , quietly = TRUE ) ) stop( "archive needed for this function to work. to install it, type `devtools::install_github( 'jimhester/archive' )`" , call. = FALSE )
+
 		catalog <- NULL
 	
 		pums_ftp <- "https://www2.census.gov/programs-surveys/acs/data/pums/"

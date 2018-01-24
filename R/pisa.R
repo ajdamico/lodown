@@ -1,6 +1,8 @@
 get_catalog_pisa <-
 	function( data_name = "pisa" , output_dir , ... ){
 
+		if ( !requireNamespace( "archive" , quietly = TRUE ) ) stop( "archive needed for this function to work. to install it, type `devtools::install_github( 'jimhester/archive' )`" , call. = FALSE )
+
 	
 		http.pre <- "https://www.oecd.org/pisa/pisaproducts/"
 

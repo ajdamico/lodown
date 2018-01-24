@@ -1,6 +1,8 @@
 get_catalog_pof <-
 	function( data_name = "pof" , output_dir , ... ){
 
+		if ( !requireNamespace( "archive" , quietly = TRUE ) ) stop( "archive needed for this function to work. to install it, type `devtools::install_github( 'jimhester/archive' )`" , call. = FALSE )
+
 		pof_ftp <- "ftp://ftp.ibge.gov.br/Orcamentos_Familiares/"
 
 		ftp_listing <- readLines( textConnection( RCurl::getURL( pof_ftp ) ) )

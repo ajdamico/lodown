@@ -1,6 +1,8 @@
 get_catalog_enade <-
 	function( data_name = "enade" , output_dir , ... ){
 
+		if ( !requireNamespace( "archive" , quietly = TRUE ) ) stop( "archive needed for this function to work. to install it, type `devtools::install_github( 'jimhester/archive' )`" , call. = FALSE )
+
 		inep_portal <- "http://portal.inep.gov.br/microdados"
 
 		w <- rvest::html_attr( rvest::html_nodes( xml2::read_html( inep_portal ) , "a" ) , "href" )

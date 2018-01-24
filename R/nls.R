@@ -1,6 +1,8 @@
 get_catalog_nls <-
 	function( data_name = "nls" , output_dir , ... ){
 
+		if ( !requireNamespace( "archive" , quietly = TRUE ) ) stop( "archive needed for this function to work. to install it, type `devtools::install_github( 'jimhester/archive' )`" , call. = FALSE )
+
 		catalog <- NULL
 		
 		data_page <- "https://www.nlsinfo.org/accessing-data-cohorts"

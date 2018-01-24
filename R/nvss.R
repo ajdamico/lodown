@@ -1,6 +1,8 @@
 get_catalog_nvss <-
 	function( data_name = "nvss" , output_dir , ... ){
 
+		if ( !requireNamespace( "archive" , quietly = TRUE ) ) stop( "archive needed for this function to work. to install it, type `devtools::install_github( 'jimhester/archive' )`" , call. = FALSE )
+
 		catalog <- NULL
 			
 		# create a character string containing the cdc's vital statistics website

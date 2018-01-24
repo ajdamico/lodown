@@ -1,6 +1,8 @@
 get_catalog_censoescolar <-
   function( data_name = "censoescolar" , output_dir , ... ){
 
+	if ( !requireNamespace( "archive" , quietly = TRUE ) ) stop( "archive needed for this function to work. to install it, type `devtools::install_github( 'jimhester/archive' )`" , call. = FALSE )
+
     inep_portal <- "http://portal.inep.gov.br/web/guest/microdados"
 
     inep_html <- xml2::read_html(inep_portal)

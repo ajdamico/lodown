@@ -7,8 +7,8 @@ Maintainer: Anthony Joseph Damico <ajdamico@gmail.com>
 Description: the lodown package enforces a reproducible starting point for your analysis of public data.  this software downloads large files so use with caution on a metered (pay per gigabyte) internet connection.
 URL: http://asdfree.com/
 BugReports: https://github.com/ajdamico/asdfree/issues
-Imports: survey, SAScii, RCurl, digest, readr, httr, Hmisc, XML, foreign, stringr, rvest, haven, xml2, DBI, RSQLite, R.utils, archive
-Suggests: memisc, readxl, reshape2, jsonlite, purrr, descr, mitools, jpeg, read.dbc
+Imports: survey, SAScii, RCurl, digest, readr, httr, Hmisc, XML, foreign, stringr, rvest, haven, xml2, DBI, RSQLite, R.utils
+Suggests: memisc, readxl, reshape2, jsonlite, purrr, descr, mitools, jpeg, read.dbc, archive
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
