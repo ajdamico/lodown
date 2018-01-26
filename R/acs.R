@@ -4,7 +4,11 @@ get_catalog_acs <-
 		if ( !requireNamespace( "archive" , quietly = TRUE ) ) stop( "archive needed for this function to work. to install it, type `devtools::install_github( 'jimhester/archive' )`" , call. = FALSE )
 
 		catalog <- NULL
-	
+		
+		h_basenames <- paste0( "csv_h" , tolower( c( state.abb , "PR" ) ) , ".zip" )
+		
+		p_basenames <- paste0( "csv_p" , tolower( c( state.abb , "PR" ) ) , ".zip" )
+		
 		pums_ftp <- "https://www2.census.gov/programs-surveys/acs/data/pums/"
 	
 		ftp_listing <- rvest::html_table( xml2::read_html( pums_ftp ) )[[1]][ , "Name" ]
@@ -46,10 +50,11 @@ get_catalog_acs <-
 						data.frame(
 							year = this_year ,
 							time_period = available_periods[ i ] ,
-							base_folder = paste0( available_folders[ i ] , "/" ) ,
-							db_tablename = this_tablename ,
-							dbfile = paste0( output_dir , "/SQLite.db" ) ,
-							include_puerto_rico = TRUE ,
+							stateab = tolower( c( state.abb , "PR" ) ) ,
+							h_full_url = paste0( available_folders[ i ] , "/" , h_basenames ) ,
+							p_full_url = paste0( available_folders[ i ] , "/" , p_basenames ) ,
+							merged_tablename = paste0( output_dir , "/" , this_year , "/" , available_periods[ i ] , "/merged.rds" ) ,
+							output_folder = paste0( output_dir , "/" , this_year , "/" , available_periods[ i ] , "/" ) ,
 							stringsAsFactors = FALSE
 						)
 					)
@@ -71,13 +76,10 @@ lodown_acs <-
 
 		for ( i in seq_len( nrow( catalog ) ) ){
 
-			# open the connection to the database
-			db <- DBI::dbConnect( RSQLite::SQLite() , catalog[ i , 'dbfile' ] )
-
 			for( j in c( "h" , "p" ) ){
 
 				# download the wyoming structure file
-				wyoming_unix <- paste0( catalog[ i , 'base_folder' ] , "unix_" , j , "wy.zip" )
+				wyoming_unix <- paste0( dirname( catalog[ i , 'h_full_url' ] ) , "/unix_" , j , "wy.zip" )
 				
 				cachaca( wyoming_unix , tf , mode = 'wb' )
 
@@ -87,130 +89,95 @@ lodown_acs <-
 				
 				names( wyoming_table ) <- tolower( names( wyoming_table ) )
 				
-				headers <- names( wyoming_table )
-				
-				if( j == 'h' ) headers.h <- headers else headers.p <- headers
-				
-				cc <- sapply( wyoming_table , class )
+				cc <- ifelse( unlist( sapply( wyoming_table , class ) ) == 'numeric' , 'n' , 'c' )
 
-				DBI::dbWriteTable( db , j , wyoming_table[ FALSE , , drop = FALSE ] , overwrite = TRUE , append = FALSE )
+				cachaca( catalog[ i , if( j == 'h' ) 'h_full_url' else 'p_full_url' ] , tf , mode = 'wb' )
 				
-				rm( wyoming_table )
+				archive::archive_extract( tf , dir = paste0( tempdir() , "/unzips" ) )
 
-				file_locations <- paste0( catalog[ i , 'base_folder' ] , "csv_" , j , c( "us.zip" , if( catalog[ i , 'include_puerto_rico' ] ) "pr.zip" ) )
+				tfn <- list.files( paste0( tempdir() , "/unzips" ) , full.names = TRUE )
 
-				fn <- tfn <- NULL
+				# limit the files to read in to ones containing csvs
+				fn <- grep( '\\.csv$' , tfn , value = TRUE )
+
+				stopifnot( length( fn ) == 1 )
 				
-				for ( this_download in file_locations ){
-					
-					cachaca( this_download , tf , mode = 'wb' )
-								
-					archive::archive_extract( tf , dir = tempdir() )
-
-					tfn <- list.files( tempdir() , full.names = TRUE )
-
-					# limit the files to read in to ones containing csvs
-					tfn <- grep( '\\.csv$' , tfn , value = TRUE )
-
-					# store the final csv files
-					fn <- unique( c( fn , tfn ) )
+				if( j == 'h' ) h_names <- tolower( names( wyoming_table ) )
 				
-				}
-				
-				for( this_csv in fn ){
-					
-					# initiate the current table
-					DBI::dbWriteTable( 
-						db , 
-						j , 
-						this_csv , 
-						overwrite = FALSE , 
-						append = TRUE ,
-						header = FALSE ,
-						skip = 1 ,
-						colClasses = cc
+				x <-
+					data.frame( 
+						readr::read_csv( 
+							fn , 
+							col_names = tolower( names( wyoming_table ) ) , 
+							col_types = paste0( cc , collapse = "" ) ,
+							skip = 1
+						) 
 					)
+					
+				# remove overlapping field names, except rt and serialno
+				if( j == 'p' ) x <- x[ c( 'rt' , 'serialno' , names( x )[ !( names( x ) %in% h_names ) ] ) ]
+					
+				x$one <- 1
 				
+				
+					
+				# special exception for the 2009 3-year file..  too many missings in the weights.
+				if( catalog[ i , 'year' ] <= 2009 & catalog[ i , 'time_period' ] %in% c( '3-Year' , '5-Year' ) ){
+				
+					# identify all weight columns
+					wgt_cols <- grep( "wgt" , names( x ) , value = TRUE )
+					
+					# replace missings with zeroes
+					x[ wgt_cols ][ is.na( x[ wgt_cols ] ) ] <- 0
+					
 				}
+					
+				saveRDS( x , file = paste0( catalog[ i , 'output_folder' ] , "/" , j , catalog[ i , 'stateab' ] , '.rds' ) , compress = FALSE ) ; 
+				
+				# add the number of records to the catalog
+				if( j == 'p' ) catalog[ i , 'case_count' ] <- nrow( x )
+				
+				rm( x ) ; gc()
 				
 				# these files require lots of temporary disk space,
 				# so delete them once they're part of the database
-				suppressWarnings( file.remove( fn ) )
+				suppressWarnings( file.remove( tfn ) )
 				
 			}
-				
-			############################################
-			# create a merged (household+person) table #
-			
-			# figure out the fields to keep
-			
-			# pull all fields from the person..
-			pfields <- names( DBI::dbGetQuery( db , paste0( "select * from p limit 1") ) )
-			# ..and household tables
-			hfields <- names( DBI::dbGetQuery( db , paste0( "select * from h limit 1") ) )
-			
-			# then throw fields out of the person file that match fields in the household table
-			pfields <- pfields[ !( pfields %in% hfields ) ]
-			# and also throw out the 'rt' field from the household table
-			hfields <- hfields[ hfields != 'rt' ]
-			
-			# construct a massive join statement		
-			i.j <-
-				paste0(
-					"create table " ,					# create table statement
-					catalog[ i , 'db_tablename' ] , " as select " ,				# select from statement
-					"'M' as rt, " ,
-					paste( paste0( 'a.' , hfields ) , collapse = ", " ) ,
-					", " ,
-					paste( pfields , collapse = ", " ) ,
-					" from h as a inner join p as b " ,
-					"on a.serialno = b.serialno" 
-				)
-			
-			# create the merged `headers` structure files to make the check.factors=
-			# component of the sqlrepsurvey() functions below run much much faster.
-			headers.m <- unique( c( headers.h , headers.p ) )
-			
-			# create the merged table
-			DBI::dbSendQuery( db , i.j )
-			
-			# add columns named 'one' to each table..
-			DBI::dbSendQuery( db , paste0( 'alter table ' , catalog[ i , 'db_tablename' ] , ' add column one int' ) )
 
-			# ..and fill them all with the number 1.
-			DBI::dbSendQuery( db , paste0( 'UPDATE ' , catalog[ i , 'db_tablename' ] , ' SET one = 1' ) )
+			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'output_folder' ] , "'\r\n\n" ) )
 			
-			# confirm that the merged file has the same number of records as the person file
-			stopifnot( 
-				DBI::dbGetQuery( db , paste0( "select count(*) as count from p" ) ) == 
-				DBI::dbGetQuery( db , paste0( "select count(*) as count from " , catalog[ i , 'db_tablename' ] ) )
-			)
-			
-			DBI::dbRemoveTable( db , 'h' )
-			DBI::dbRemoveTable( db , 'p' )
-
-			# special exception for the 2009 3-year file..  too many missings in the weights.
-			if( catalog[ i , 'year' ] <= 2009 & catalog[ i , 'time_period' ] %in% c( '3-Year' , '5-Year' ) ){
-			
-				# identify all weight columns
-				wgt_cols <- grep( "wgt" , DBI::dbListFields( db , catalog[ i , 'db_tablename' ] ) , value = TRUE )
-				
-				# loop through all weight columns
-				for ( this_column in wgt_cols ){
-				
-					# set missing values to zeroes
-					DBI::dbSendQuery( db , paste( "UPDATE" , catalog[ i , 'db_tablename' ] , "SET" , this_column , "=0 WHERE" , this_column , "IS NULL" ) )
-				
-				}
-				
-			}
-			
-			# add the number of records to the catalog
-			catalog[ i , 'case_count' ] <- DBI::dbGetQuery( db , paste0( "select count(*) as count from " , catalog[ i , 'db_tablename' ] ) )
-			
-			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'db_tablename' ] , "'\r\n\n" ) )
-
 		}
+		
+		
+		# loop through all merged table names
+		merged_tables <- unique( catalog[ , c( 'year' , 'time_period' , 'output_folder' , 'merged_tablename' ) ] )
+		
+		for( i in seq_len( nrow( merged_tables ) ) ){
+		
+			records_to_stack_and_merge <-
+				catalog[ catalog$merged_tablename == merged_tables[ i , 'merged_tablename' ] , ]
+				
+			h_stacks <- paste0( records_to_stack_and_merge$output_folder , "/h" , records_to_stack_and_merge$stateab , '.rds' )
+			p_stacks <- paste0( records_to_stack_and_merge$output_folder , "/p" , records_to_stack_and_merge$stateab , '.rds' )
+			
+			h_table <- NULL
+			for( this_h in h_stacks ) h_table <- rbind( h_table , readRDS( this_h ) )
+			p_table <- NULL
+			for( this_p in p_stacks ) p_table <- rbind( p_table , readRDS( this_p ) )
+			
+			h_table$rt <- p_table$rt <- NULL
+			
+			x <- merge( h_table , p_table )
+			
+			x$rt <- "M"
+			
+			stopifnot( nrow( x ) == nrow( p_table ) )
+		
+			saveRDS( x , file = merged_tables[ i , 'merged_tablename' ] , compress = FALSE )
+		
+		}
+
 		
 		on.exit()
 				
