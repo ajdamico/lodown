@@ -13,8 +13,7 @@ get_catalog_nppes <-
 	catalog <-
 		data.frame(
 			full_url = fn ,
-			db_tablename = "npi" ,
-			dbfile = paste0( output_dir , "/SQLite.db" ) ,
+			output_filename = paste0( output_dir , "/nppes.csv" ) ,
 			stringsAsFactors = FALSE
 		)
 
@@ -50,81 +49,11 @@ lodown_nppes <-
 
 		}
 
-		# ..and identify the appropriate 
-		# comma separated value (csv) file
-		# within the `.zip` file
 		csv.file <- unzipped_files[ grepl( 'csv' , unzipped_files ) & !grepl( 'FileHeader' , unzipped_files ) ]
 
-		# open the connection to the monetdblite database
-		db <- DBI::dbConnect( RSQLite::SQLite() , catalog$dbfile )
-		# from now on, the 'db' object will be used for r to connect with the monetdb server
-
-		# grab column names
-		col.check <- read.csv( csv.file , nrow = 10 )
-
-		# determine the field names
-		fields <- names( col.check )
-
-		# convert the field names to lowercase
-		fields <- tolower( fields )
-
-		# remove all `.` characters from field names
-		fields <- gsub( "." , "_" , fields , fixed = TRUE )
-
-		# fields containing the word `code`
-		# and none of country, state, gender, taxonomy, or postal
-		# should be numeric types.
-		# all others should be character types.
-		colTypes <- 
-			ifelse( 
-				grepl( "code" , fields ) & !grepl( "country|state|gender|taxonomy|postal" , fields ) , 
-				'DOUBLE PRECISION' , 
-				'STRING' 
-			)
-			
-		cc <- ifelse( colTypes == 'STRING' , 'character' , 'numeric' )
-
-		# build a sql string..
-		colDecl <- paste( fields , colTypes )
-
-		# ..to initiate this table in the database
-		sql.create <- sprintf( paste( "CREATE TABLE" , catalog$db_tablename , "(%s)" ) , paste( colDecl , collapse = ", " ) )
-
-		# run the actual table creation command
-		DBI::dbSendQuery( db , sql.create )
-
-
-		# create a read-only input connection..
-		incon <- file( csv.file , "r" )
-
-		# read in the header_line to skip it in the file connection
-		header_line <- readLines( incon , n = 1 )
+		file.copy( csv.file , catalog$output_filename )
 		
-		# loop through every line in the input connection
-		while( length( z <- read.table( incon , nrow = 250000 , sep = "," , comment.char = "" , col.names = fields , colClasses = "character" , quote = "\"'" ) ) > 0 ){
-		
-			# initiate the current table
-			DBI::dbWriteTable( 
-				db , 
-				catalog$db_tablename , 
-				z , 
-				header = FALSE ,
-				append = TRUE
-			)
-
-		}
-
-		# shut down the file connection
-		close( incon )
-		
-		
-		catalog$case_count <- DBI::dbGetQuery( db , paste0( "SELECT COUNT(*) FROM " , catalog$db_tablename ) )
-		
-		stopifnot( R.utils::countLines( csv.file ) == ( catalog$case_count + 1 ) )
-		
-		# # # # # # # # #
-		# end of import #
-		# # # # # # # # #
+		catalog$case_count <- R.utils::countLines( csv.file ) - 1
 
 		file.remove( unzipped_files , tf )
 		
