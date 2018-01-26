@@ -5,9 +5,9 @@ get_catalog_acs <-
 
 		catalog <- NULL
 		
-		h_basenames <- paste0( "csv_h" , tolower( c( state.abb , "PR" ) ) , ".zip" )
+		h_basenames <- paste0( "csv_h" , tolower( c( state.abb , "DC" , "PR" ) ) , ".zip" )
 		
-		p_basenames <- paste0( "csv_p" , tolower( c( state.abb , "PR" ) ) , ".zip" )
+		p_basenames <- paste0( "csv_p" , tolower( c( state.abb , "DC" , "PR" ) ) , ".zip" )
 		
 		pums_ftp <- "https://www2.census.gov/programs-surveys/acs/data/pums/"
 	
@@ -50,7 +50,7 @@ get_catalog_acs <-
 						data.frame(
 							year = this_year ,
 							time_period = available_periods[ i ] ,
-							stateab = tolower( c( state.abb , "PR" ) ) ,
+							stateab = tolower( c( state.abb , "DC" , "PR" ) ) ,
 							h_full_url = paste0( available_folders[ i ] , "/" , h_basenames ) ,
 							p_full_url = paste0( available_folders[ i ] , "/" , p_basenames ) ,
 							merged_tablename = paste0( output_dir , "/" , this_year , "/" , available_periods[ i ] , "/merged.rds" ) ,
