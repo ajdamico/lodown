@@ -71,7 +71,7 @@ lodown_acs <-
 
 		for ( i in seq_len( nrow( catalog ) ) ){
 
-			# open the connection to the monetdblite database
+			# open the connection to the database
 			db <- DBI::dbConnect( RSQLite::SQLite() , catalog[ i , 'dbfile' ] )
 
 			for( j in c( "h" , "p" ) ){
