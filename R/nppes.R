@@ -32,8 +32,8 @@ lodown_nppes <-
 		
 		if( ( .Platform$OS.type != 'windows' ) && ( system( paste0('"', path_to_7za , '" -h' ) ) != 0 ) ) stop( "you need to install 7-zip.  if you already have it, include a path_to_7za='/directory/7za' parameter" )
  		
-		tf <- tempfile() ; tf2 <- tempfile()
-
+		tf <- tempfile()
+		
 		cachaca( catalog$full_url , tf , mode = 'wb', filesize_fun = 'unzip_verify' )
 		
 		# extract the file, platform-specific
@@ -59,17 +59,6 @@ lodown_nppes <-
 		db <- DBI::dbConnect( RSQLite::SQLite() , catalog$dbfile )
 		# from now on, the 'db' object will be used for r to connect with the monetdb server
 
-
-		# note: slow. slow. slow. #
-		# the following commands take a while. #
-		# run them all together overnight if possible. #
-		# you'll never have to do this again.  hooray! #
-
-
-		# determine the number of lines
-		# that need to be imported into MonetDB
-		num.lines <- R.utils::countLines( csv.file )
-
 		# read the first thousand records
 		# of the csv.file into R
 		col.check <- read.csv( csv.file , nrow = 1000 )
@@ -93,6 +82,8 @@ lodown_nppes <-
 				'DOUBLE PRECISION' , 
 				'STRING' 
 			)
+			
+		cc <- ifelse( colTypes == 'STRING' , 'character' , 'numeric' )
 
 		# build a sql string..
 		colDecl <- paste( fields , colTypes )
@@ -107,53 +98,27 @@ lodown_nppes <-
 		# create a read-only input connection..
 		incon <- file( csv.file , "r" )
 
-		# ..and a write-only output connection
-		outcon <- file( tf2 , "w" )
-
+		# read in the header_line to skip it in the file connection
+		header_line <- readLines( incon , n = 1 )
+		
 		# loop through every line in the input connection,
 		# 50,000 lines at a time
-		while( length( z <- readLines( incon , n = 50000 ) ) > 0 ){
+		while( length( z <- read.csv( incon , nrow = 50000 , comment.char = "" , header = FALSE , stringsAsFactors = FALSE , col.names = fields ) ) > 0 ){
+		
+			# initiate the current table
+			DBI::dbWriteTable( 
+				db , 
+				catalog$db_tablename , 
+				z , 
+				header = FALSE ,
+				append = TRUE
+			)
 
-			# replace all double-backslahses with nothing
-			z <- gsub( "\\\\" , "" , z )
-			
-			# replace all vertical bars with nothing
-			z <- gsub( "\\|" , "" , z )
-			
-			# replace front and end of line quotes with nothing
-			z <- gsub( '^\\"|\\"$' , '' , z )
-			
-			# replace middle quotes with a different delimiter
-			z <- gsub( '","' , '|' , z )
-			
-			# ..and write the resultant lines
-			# to the output file connection
-			writeLines( z , outcon )
-
-			# remove the `z` object
-			rm( z )
-			
-			# clear up RAM
-			gc()
 		}
 
-		# shut down both file connections
+		# shut down the file connection
 		close( incon )
-		close( outcon )
-
 		
-		# initiate the current table
-		DBI::dbWriteTable( 
-			db , 
-			catalog$db_tablename , 
-			normalizePath( tf2 ) , 
-			header = FALSE ,
-			append = TRUE ,
-			skip = 1 ,
-			sep = "|" ,
-			eol = '\r\n'
-		)
-
 		
 		catalog$case_count <- DBI::dbGetQuery( db , paste0( "SELECT COUNT(*) FROM " , catalog$db_tablename ) )
 		
@@ -163,7 +128,7 @@ lodown_nppes <-
 		# end of import #
 		# # # # # # # # #
 
-		file.remove( unzipped_files , tf , tf2 )
+		file.remove( unzipped_files , tf )
 		
 		on.exit()
 		
