@@ -59,9 +59,8 @@ lodown_nppes <-
 		db <- DBI::dbConnect( RSQLite::SQLite() , catalog$dbfile )
 		# from now on, the 'db' object will be used for r to connect with the monetdb server
 
-		# read the first thousand records
-		# of the csv.file into R
-		col.check <- read.csv( csv.file , nrow = 1000 )
+		# grab column names
+		col.check <- read.csv( csv.file , nrow = 10 )
 
 		# determine the field names
 		fields <- names( col.check )
@@ -88,7 +87,7 @@ lodown_nppes <-
 		# build a sql string..
 		colDecl <- paste( fields , colTypes )
 
-		# ..to initiate this table in the monet database
+		# ..to initiate this table in the database
 		sql.create <- sprintf( paste( "CREATE TABLE" , catalog$db_tablename , "(%s)" ) , paste( colDecl , collapse = ", " ) )
 
 		# run the actual table creation command
@@ -101,9 +100,8 @@ lodown_nppes <-
 		# read in the header_line to skip it in the file connection
 		header_line <- readLines( incon , n = 1 )
 		
-		# loop through every line in the input connection,
-		# 50,000 lines at a time
-		while( length( z <- read.csv( incon , nrow = 50000 , comment.char = "" , header = FALSE , stringsAsFactors = FALSE , col.names = fields ) ) > 0 ){
+		# loop through every line in the input connection
+		while( length( z <- read.table( incon , nrow = 250000 , sep = "," , comment.char = "" , col.names = fields , colClasses = "character" , quote = "\"'" ) ) > 0 ){
 		
 			# initiate the current table
 			DBI::dbWriteTable( 
