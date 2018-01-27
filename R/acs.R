@@ -175,7 +175,7 @@ lodown_acs <-
 			m_stacks <- paste0( records_to_stack_and_merge$output_folder , "/m" , records_to_stack_and_merge$stateab , '.rds' )
 			
 			m_table <- NULL
-			for( this_m in m_stacks ) m_table <- rbind( m_table , readRDS( this_h ) )
+			for( this_m in m_stacks ) m_table <- rbind( m_table , readRDS( this_m ) )
 			
 			rm( m_table ) ; gc()
 		
