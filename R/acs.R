@@ -53,7 +53,7 @@ get_catalog_acs <-
 							stateab = tolower( c( state.abb , "DC" , "PR" ) ) ,
 							h_full_url = paste0( available_folders[ i ] , "/" , h_basenames ) ,
 							p_full_url = paste0( available_folders[ i ] , "/" , p_basenames ) ,
-							merged_tablename = paste0( output_dir , "/" , this_year , "/" , available_periods[ i ] , "/merged.rds" ) ,
+							merged_tablename = paste0( output_dir , "/acs" , this_year , "_" , substr( available_periods[ i ] , 1 , 1 ) , "yr.rds" ) ,
 							output_folder = paste0( output_dir , "/" , this_year , "/" , available_periods[ i ] , "/" ) ,
 							stringsAsFactors = FALSE
 						)
@@ -135,7 +135,10 @@ lodown_acs <-
 				saveRDS( x , file = paste0( catalog[ i , 'output_folder' ] , "/" , j , catalog[ i , 'stateab' ] , '.rds' ) , compress = FALSE ) ; 
 				
 				# add the number of records to the catalog
-				if( j == 'p' ) catalog[ i , 'case_count' ] <- nrow( x )
+				if( j == 'p' ){
+					p_table <- x
+					catalog[ i , 'case_count' ] <- nrow( x )
+				} else h_table <- x
 				
 				rm( x ) ; gc()
 				
@@ -145,6 +148,17 @@ lodown_acs <-
 				
 			}
 
+			h_table$rt <- p_table$rt <- NULL
+			
+			x <- merge( h_table , p_table ) ; rm( h_table , p_table ) ; gc()
+
+			x$rt <- "M"
+			
+			
+			saveRDS( x , file = paste0( catalog[ i , 'output_folder' ] , "/m" , catalog[ i , 'stateab' ] , '.rds' ) , compress = FALSE ) ; 
+			
+			stopifnot( nrow( x ) == catalog[ i , 'case_count' ] )
+			
 			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'output_folder' ] , "'\r\n\n" ) )
 			
 		}
@@ -158,22 +172,12 @@ lodown_acs <-
 			records_to_stack_and_merge <-
 				catalog[ catalog$merged_tablename == merged_tables[ i , 'merged_tablename' ] , ]
 				
-			h_stacks <- paste0( records_to_stack_and_merge$output_folder , "/h" , records_to_stack_and_merge$stateab , '.rds' )
-			p_stacks <- paste0( records_to_stack_and_merge$output_folder , "/p" , records_to_stack_and_merge$stateab , '.rds' )
+			m_stacks <- paste0( records_to_stack_and_merge$output_folder , "/m" , records_to_stack_and_merge$stateab , '.rds' )
 			
-			h_table <- NULL
-			for( this_h in h_stacks ) h_table <- rbind( h_table , readRDS( this_h ) )
-			p_table <- NULL
-			for( this_p in p_stacks ) p_table <- rbind( p_table , readRDS( this_p ) )
+			m_table <- NULL
+			for( this_m in m_stacks ) m_table <- rbind( m_table , readRDS( this_h ) )
 			
-			h_table$rt <- p_table$rt <- NULL
-			
-			x <- merge( h_table , p_table )
-			x$rt <- "M"
-			
-			stopifnot( nrow( x ) == nrow( p_table ) )
-			
-			rm( h_table , p_table ) ; gc()
+			rm( m_table ) ; gc()
 		
 			saveRDS( x , file = merged_tables[ i , 'merged_tablename' ] , compress = FALSE ) ; rm( x ) ; gc()
 		
