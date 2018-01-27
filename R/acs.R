@@ -168,11 +168,12 @@ lodown_acs <-
 			
 			h_table$rt <- p_table$rt <- NULL
 			
-			x <- merge( h_table , p_table ) ; rm( h_table , p_table ) ; gc()
-			
+			x <- merge( h_table , p_table )
 			x$rt <- "M"
 			
 			stopifnot( nrow( x ) == nrow( p_table ) )
+			
+			rm( h_table , p_table ) ; gc()
 		
 			saveRDS( x , file = merged_tables[ i , 'merged_tablename' ] , compress = FALSE ) ; rm( x ) ; gc()
 		
