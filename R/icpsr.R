@@ -183,7 +183,7 @@ icpsr_stata <-
 		x <- data.frame( haven::read_dta( path_to_stata ) )
 
 		# path to the supplemental recodes file
-		path_to_supp <- grep( "\\Supplemental_syntax\\.do$" , list.files( catalog_entry[ , 'unzip_folder' ] , full.names = TRUE ) , value = TRUE )
+		path_to_supp <- grep( "upplemental( |_|-)syntax\\.do$" , list.files( catalog_entry[ , 'unzip_folder' ] , full.names = TRUE ) , value = TRUE )
 
 		# read the supplemental recodes lines into R
 		commented.supp.syntax <- readLines( path_to_supp )

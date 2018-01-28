@@ -56,7 +56,7 @@ get_catalog_nsduh <-
 						"http://samhda.s3-us-gov-west-1.amazonaws.com/s3fs-public/field-uploads-protected/studies/NHSDA-1994/NHSDA-1994-datasets/NHSDA-1994-DS0002/NHSDA-1994-DS0002-bundles-with-study-info/NHSDA-1994-DS0002-bndl-data-stata.zip"
 						),
 					output_filename = paste0( output_dir , "/1994 " , c( "part a" , "part b" ) , ".rds" ) ,
-					unzip_folder = paste0( output_dir , "/1994/" ) ,
+					unzip_folder = paste0( output_dir , "/1994 " , c( "a" , "b" ) , "/" ) ,
 					stringsAsFactors = FALSE
 				)
 			)
