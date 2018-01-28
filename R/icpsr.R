@@ -192,7 +192,7 @@ icpsr_stata <-
 		uncommented.supp.syntax <- SAScii::SAS.uncomment( commented.supp.syntax , "/*" , "*/" )
 
 		# remove blank lines
-		supp.syntax <- uncommented.supp.syntax[ uncommented.supp.syntax != "" ]
+		supp.syntax <- stringr::str_trim( uncommented.supp.syntax[ uncommented.supp.syntax != "" ] )
 
 		# confirm all remaining recode lines contain the word 'replace'
 		# right now, the supplemental recodes are relatively straightforward.
