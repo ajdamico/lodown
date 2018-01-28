@@ -61,7 +61,7 @@ get_catalog_nsduh <-
 				)
 			)
 	
-		catalog
+		catalog[ order( catalog$year ) , ]
 
 }
 

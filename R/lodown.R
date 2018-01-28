@@ -363,12 +363,10 @@ NULL
 #'
 #' # National Survey on Drug Use and Health
 #' # download all available microdata
-#' lodown( "nsduh" , output_dir = file.path( path.expand( "~" ) , "NSDUH" ) , 
-#' 		your_email = "email@address.com" , your_password = "password" )
+#' lodown( "nsduh" , output_dir = file.path( path.expand( "~" ) , "NSDUH" ) )
 #' # download only the 2013 files
 #' nsduh_cat <- get_catalog( "nsduh" , output_dir = file.path( path.expand( "~" ) , "NSDUH" ) )
-#' lodown( "nsduh" , nsduh_cat[ nsduh_cat$temporalCoverage == 2013 , ] ,
-#' 		your_email = "email@address.com" , your_password = "password" )
+#' lodown( "nsduh" , nsduh_cat[ nsduh_cat$year == 2013 , ] )
 #'
 #' # National Vital Statistics System
 #' # download all available microdata
