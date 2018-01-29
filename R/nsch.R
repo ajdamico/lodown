@@ -170,12 +170,13 @@ lodown_nsch <-
 				stopifnot( nrow( x ) == nrow( y ) )
 				
 				# save the data.frame as `imp1` - `imp5`
-				assign( paste0( 'imp' , impnum ) , y ) ; rm( y ) ; gc()
-				
+				assign( paste0( 'imp' , impnum ) , y )
 			}
 
 			catalog[ i , 'case_count' ] <- nrow( y )
 			
+			rm( y ) ; gc()
+				
 			# save implicates 1 - 5 to the local working directory for faster loading later
 			saveRDS( 
 				mget( paste0( "imp" , seq( num_imps ) ) ) , 
