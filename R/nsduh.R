@@ -92,7 +92,7 @@ lodown_nsduh <-
 			
 			catalog[ i , 'case_count' ] <- nrow( x )
 			
-			saveRDS( x , file = catalog[ i , 'output_filename' ] , compress = FALSE )
+			saveRDS( x , file = catalog[ i , 'output_filename' ] , compress = FALSE ) ; rm( x ) ; gc()
 			
 			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , catalog[ i , 'output_filename' ] , "'\r\n\n" ) )
 		

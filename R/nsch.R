@@ -170,7 +170,7 @@ lodown_nsch <-
 				stopifnot( nrow( x ) == nrow( y ) )
 				
 				# save the data.frame as `imp1` - `imp5`
-				assign( paste0( 'imp' , impnum ) , y )
+				assign( paste0( 'imp' , impnum ) , y ) ; rm( y ) ; gc()
 				
 			}
 
@@ -181,7 +181,7 @@ lodown_nsch <-
 				mget( paste0( "imp" , seq( num_imps ) ) ) , 
 				file = paste0( catalog[ i , 'output_folder' ] , "/" , catalog[ i , 'year' ] , ' ' , if( catalog[ i , 'virgin_islands' ] ) 'vi' else 'main' , '.rds' ) , 
 				compress = FALSE 
-			)
+			) ; rm( list = paste0( 'imp' , seq( num_imps ) ) ) ; rm( x ) ; gc()
 
 			if( !is.na( catalog[ i , 'screener_url' ] ) ){
 				
@@ -207,7 +207,7 @@ lodown_nsch <-
 
 				saveRDS( x , file = paste0( catalog[ i , 'output_folder' ] , '/' , catalog[ i , 'year' ] , ' screener.rds' ) , compress = FALSE )
 			
-			}
+			} ; rm( x ) ; gc()
 			
 			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'output_folder' ] , "'\r\n\n" ) )
 
