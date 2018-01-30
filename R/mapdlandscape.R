@@ -27,14 +27,22 @@ get_catalog_mapdlandscape <-
 		
 		early_lsc <- subset( these_zips , data_name == "2007-2012 PDP, MA, and SNP Landscape Files" )
 		
-		early_lsc$year <- NULL
+		early_partd <- subset( these_zips , data_name == "2006-2012 Plan and Premium Information for Medicare Plans Offering Part D" )
 		
-		these_zips <- subset( these_zips , !( data_name %in% "2007-2012 PDP, MA, and SNP Landscape Files" ) )
+		early_lsc$year <- early_partd$year <- NULL
+		
+		these_zips <- 
+			subset( 
+				these_zips , 
+				!( data_name %in% "2007-2012 PDP, MA, and SNP Landscape Files" ) &
+				!( data_name %in% "2006-2012 Plan and Premium Information for Medicare Plans Offering Part D" ) 
+			)
 
 		these_zips <-
 			rbind( 
 				these_zips , 
-				merge( expand.grid( year = 2007:2012 ) , early_lsc )
+				merge( expand.grid( year = 2007:2012 ) , early_lsc ) ,
+				merge( expand.grid( year = 2006:2012 ) , early_partd )
 			)
 		
 		ma_landscape_zips <- 
@@ -57,12 +65,18 @@ get_catalog_mapdlandscape <-
 		
 		mmp_landscape_zips$type <- "MMP"
 		
+		part_d_landscape_zips <- 
+			subset( these_zips , grepl( "Medicare Plans Offering Part D" , data_name ) )
+		
+		part_d_landscape_zips$type <- "PartD"
+		
 		this_catalog <-
 			rbind(
 				ma_landscape_zips ,
 				pdp_landscape_zips ,
 				snp_landscape_zips ,
-				mmp_landscape_zips
+				mmp_landscape_zips ,
+				part_d_landscape_zips
 			)
 			
 		this_catalog$output_filename <-
@@ -76,6 +90,8 @@ get_catalog_mapdlandscape <-
 			)
 		
 		this_catalog <- subset( this_catalog , !( type == 'SNP' & year == 2007 ) & !( type == 'MMP' & year == 2013 ) )
+		
+		stopifnot( nrow( this_catalog ) == nrow( unique( this_catalog[ c( 'type' , 'year' ) ] ) ) )
 		
 		this_catalog[ order( this_catalog$year ) , ]
 	}
@@ -95,6 +111,13 @@ lodown_mapdlandscape <-
 
 			unzipped_files <- unzip_warn_fail( tf , exdir = np_dirname( catalog[ i , 'output_filename' ] ) )
 
+			# the 2013, 2014, and 2015 files have tmi
+			if( catalog[ i , 'type' ] == 'PartD' & catalog[ i , 'year' ] %in% 2013:2015 ){
+				files_to_keep <- unzipped_files[ grep( 'Premium' , basename( unzipped_files ) ) ]
+				file.remove( unzipped_files[ !( unzipped_files %in% files_to_keep ) ] )
+				unzipped_files <- unzipped_files[ ( unzipped_files %in% files_to_keep ) ]
+			}
+			
 			second_round <- grep( "\\.zip$" , unzipped_files , ignore.case = TRUE , value = TRUE )
 			
 			for( this_zip in second_round ) unzipped_files <- c( unzipped_files , unzip_warn_fail( this_zip , exdir = np_dirname( catalog[ i , 'output_filename' ] ) ) )
@@ -106,7 +129,13 @@ lodown_mapdlandscape <-
 			for( this_zip in third_round ) unzipped_files <- c( unzipped_files , unzip_warn_fail( this_zip , exdir = np_dirname( catalog[ i , 'output_filename' ] ) ) )
 			
 			# find relevant csv files
-			these_csv_files <- unzipped_files[ grep( paste0( catalog[ i , 'year' ] , "(.*)" ,  catalog[ i , 'type' ] , "(.*)\\.(csv|CSV)" ) , basename( unzipped_files ) ) ]
+			if( catalog[ i , 'type' ] == 'PartD' ){
+				folder_with_plan_report <- unique( dirname( grep( paste0( catalog[ i , 'year' ] , " Plan Report" ) , unzipped_files , value = TRUE ) ) )
+				stopifnot( length( folder_with_plan_report ) == 1 )
+				these_csv_files <- unzipped_files[ ( dirname( unzipped_files ) == folder_with_plan_report ) & grepl( "\\.(csv|CSV)$" , unzipped_files ) & !grepl( "ImportantNotes" , unzipped_files , ignore.case = TRUE ) ]
+			} else {
+				these_csv_files <- unzipped_files[ grep( paste0( catalog[ i , 'year' ] , "(.*)" ,  catalog[ i , 'type' ] , "(.*)\\.(csv|CSV)" ) , basename( unzipped_files ) ) ]
+			}
 			
 			out <- NULL
 			
@@ -138,7 +167,9 @@ lodown_mapdlandscape <-
 			
 			out$year <- catalog[ i , 'year' ]
 			
-			saveRDS( out , file = catalog[ i , 'output_filename' ] , compress = FALSE )
+			catalog[ i , 'case_count' ] <- nrow( out )
+			
+			saveRDS( out , file = catalog[ i , 'output_filename' ] )
 
 			file.remove( unzipped_files )
 			
