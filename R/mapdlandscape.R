@@ -101,6 +101,8 @@ lodown_mapdlandscape <-
 	function( data_name = "mapdlandscape" , catalog , ... ){
 
 		on.exit( print( catalog ) )
+		
+		if ( !requireNamespace( "readxl" , quietly = TRUE ) ) stop( "readxl needed for this function to work. to install it, type `install.packages( 'readxl' )`" , call. = FALSE )
 
 		tf <- tempfile()
 
@@ -120,13 +122,13 @@ lodown_mapdlandscape <-
 			
 			second_round <- grep( "\\.zip$" , unzipped_files , ignore.case = TRUE , value = TRUE )
 			
-			for( this_zip in second_round ) unzipped_files <- c( unzipped_files , unzip_warn_fail( this_zip , exdir = np_dirname( catalog[ i , 'output_filename' ] ) ) )
+			for( this_zip in second_round ) unzipped_files <- c( unzipped_files , unzip_warn_fail( this_zip , exdir = file.path( np_dirname( catalog[ i , 'output_filename' ] ) , gsub( "\\.(.*)" , "" , basename( this_zip ) ) ) ) )
 			
 			third_round <- grep( "\\.zip$" , unzipped_files , ignore.case = TRUE , value = TRUE )
 			
 			third_round <- setdiff( third_round , second_round )
 			
-			for( this_zip in third_round ) unzipped_files <- c( unzipped_files , unzip_warn_fail( this_zip , exdir = np_dirname( catalog[ i , 'output_filename' ] ) ) )
+			for( this_zip in third_round ) unzipped_files <- c( unzipped_files , unzip_warn_fail( this_zip , exdir = file.path( np_dirname( catalog[ i , 'output_filename' ] ) , gsub( "\\.(.*)" , "" , basename( this_zip ) ) ) ) )
 			
 			# find relevant csv files
 			if( catalog[ i , 'type' ] == 'PartD' ){
@@ -145,7 +147,17 @@ lodown_mapdlandscape <-
 
 				which_state_county <- min( which( first_twenty_lines[ , 1 ] == 'State') )
 				
-				csv_df <- read.csv( this_csv , skip = which_state_county )
+				# hardcode a mistaken file in the 2015 part d plan & premium information
+				if( basename( this_csv ) == "508_NebraskatoWyoming 03182015.csv" ){
+				
+					csv_df <- data.frame( readxl::read_excel( grep( "03182015\\.xls" , unzipped_files , value = TRUE ) , sheet = 2 , skip = 3 ) )
+					csv_df[ is.na( csv_df ) ] <- ""
+					
+				} else {
+				
+					csv_df <- read.csv( this_csv , skip = which_state_county , stringsAsFactors = FALSE )
+				
+				}
 				
 				csv_df <- csv_df[ , !grepl( "^X" , names( csv_df ) ) ]
 				
