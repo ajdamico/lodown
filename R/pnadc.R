@@ -9,7 +9,7 @@ get_catalog_pnadc <-
 		year.listing <- readLines( textConnection( RCurl::getURL( year.ftp ) ) )
 
 		# extract all years
-		year.lines <- gsub( "(.*)([0-9][0-9][0-9][0-9])" , "\\2" , year.listing )
+		year.lines <- gsub( "(.*)([0-9][0-9][0-9][0-9])(</A>)?" , "\\2" , year.listing )
 		
 		suppressWarnings( year.lines <- year.lines[ !is.na( as.numeric( year.lines ) ) ] )
 
