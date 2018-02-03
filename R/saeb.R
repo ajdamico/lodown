@@ -12,7 +12,6 @@ get_catalog_saeb <-
 		catalog <-
 			data.frame(
 				year = saeb_years ,
-				dbfile = paste0( output_dir , "/SQLite.db" ) ,
 				output_folder = paste0( output_dir , "/" , saeb_years ) ,
 				full_url = these_links ,
 				stringsAsFactors = FALSE
@@ -31,11 +30,6 @@ lodown_saeb <-
 		tf <- tempfile()
 
 		for ( i in seq_len( nrow( catalog ) ) ){
-
-			# open the connection to the monetdblite database
-			db <- DBI::dbConnect( RSQLite::SQLite() , catalog[ i , 'dbfile' ] )
-
-			tables_before <- DBI::dbListTables( db )
 			
 			# download the file
 			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
@@ -136,63 +130,21 @@ lodown_saeb <-
 				# convert column names to lowercase
 				names( x ) <- tolower( names( x ) )
 				
-				# store the `x` data.frame object in MonetDBLite database as well
-				DBI::dbWriteTable( db , tnwy , x )
-				
 				# save the current table in the year-specific folder on the local drive
-				saveRDS( x , file = paste0( catalog[ i , 'output_folder' ] , "/" , table.name , ".rds" ) , compress = FALSE )
+				saveRDS( x , file = paste0( catalog[ i , 'output_folder' ] , "/" , table.name , ".rds" ) )
+				
+				catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , nrow( x ) , na.rm = TRUE )
 
 			}
 
-			# loop through each available csv (also data) file..
-			for ( this.csv in csv.files ){
+			# loop through each available csv (also data) file for the case count
+			for ( this.csv in csv.files ) catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , R.utils::countLines( this.csv ) - 1 , na.rm = TRUE )
 			
-				# remove the `.csv` to determine the name of the current table
-				tnwy <- paste0( gsub( "\\.csv$" , "" , tolower( basename( this.csv ) ) ) , "_" , catalog[ i , 'year' ] )
-
-				# read in the first chunk because `RSQLite:::dbWriteTable` does not have an na.strings= parameter
-				headers <- 
-					read.csv( 
-						this.csv , 
-						sep = if( catalog[ i , 'year' ] >= 2013 ) "," else ";" , 
-						dec = if( catalog[ i , 'year' ] >= 2013 ) "." else "," , 
-						na.strings = if( catalog[ i , 'year' ] >= 2013 ) "" else "." , 
-						nrows = 50000 ,
-						stringsAsFactors = FALSE
-					)
-				
-				# convert column names to lowercase
-				names( headers ) <- tolower( names( headers ) )
-				
-				cc <- sapply( headers , class )
-
-				
-				DBI::dbWriteTable( db , tnwy , headers[ FALSE , , drop = FALSE ] , overwrite = TRUE , append = FALSE )
-				
-				# initiate the current table
-				DBI::dbWriteTable( 
-					db , 
-					tnwy , 
-					this.csv , 
-					overwrite = FALSE , 
-					append = TRUE ,
-					header = FALSE ,
-					skip = 1 ,
-					colClasses = cc , 
-					sep = if( catalog[ i , 'year' ] >= 2013 ) "," else ";" ,
-					dec = if( catalog[ i , 'year' ] >= 2013 ) "." else ","
-				)
-								
-			}
-			
-			tables_after <- setdiff( DBI::dbListTables( db ) , tables_before )
-			
-			for( this_table in tables_after ) catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , DBI::dbGetQuery( db , paste0( "SELECT COUNT(*) FROM " , this_table ) )[ 1 , 1 ] , na.rm = TRUE )
-			
+						
 			# delete the temporary files?  or move some docs to a save folder?
 			suppressWarnings( file.remove( tf ) )
 
-			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'dbfile' ] , "'\r\n\n" ) )
+			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'output_folder' ] , "'\r\n\n" ) )
 
 		}
 
