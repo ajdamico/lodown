@@ -40,7 +40,7 @@ get_catalog_censo <-
 
 
 		# designate the location of the 2000 general sample microdata files
-		ftp_path_2000 <-	"ftp://ftp.ibge.gov.br/Censos/Censo_Demografico_2000/Microdados/"
+		ftp_path_2000 <- "ftp://ftp.ibge.gov.br/Censos/Censo_Demografico_2000/Microdados/"
 
 		# fetch all available files in the ftp site's directory
 		all_files <- RCurl::getURL( ftp_path_2000 , dirlistonly = TRUE )
@@ -74,7 +74,7 @@ get_catalog_censo <-
 				)
 			)
 
-		catalog
+		catalog[ order( catalog$year , catalog$state ) , ]
 
 	}
 
@@ -104,6 +104,23 @@ lodown_censo <-
 			pes_file <- unzipped_files[ grep( 'PES' , unzipped_files , useBytes = TRUE , ignore.case = TRUE ) ]
 			fam_file <- unzipped_files[ grep( 'FAM' , toupper( unzipped_files ) , useBytes = TRUE , ignore.case = TRUE ) ]
 
+			# the 2000 rn state file contains multiple files..  stack them manually
+			if( catalog[ i , 'year' ] == 2000 & catalog[ i , 'state' ] == 'rn00' ){
+			
+				these_lines <- unlist( lapply( dom_file , readLines ) )
+				dom_file <- dom_file[ 1 ]
+				writeLines( these_lines , dom_file ) ; rm( these_lines ) ; gc()
+				
+				these_lines <- unlist( lapply( fam_file , readLines ) )
+				fam_file <- fam_file[ 1 ]
+				writeLines( these_lines , fam_file ) ; rm( these_lines ) ; gc()
+				
+				these_lines <- unlist( lapply( pes_file , readLines ) )
+				pes_file <- pes_file[ 1 ]
+				writeLines( these_lines , pes_file ) ; rm( these_lines ) ; gc()
+				
+			}
+			
 			stopifnot( length( dom_file ) < 2 )
 			stopifnot( length( pes_file ) < 2 )
 			stopifnot( length( fam_file ) < 2 )
