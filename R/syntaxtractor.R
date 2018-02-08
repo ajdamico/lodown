@@ -85,7 +85,7 @@ syntaxtractor <-
 		
 		if( test_rmd ){
 
-			lodown_command_line <- grep( "^lodown\\(" , test_rmd_page )
+			lodown_command_line <- grep( paste0( "^" , data_name , "_cat <\\- lodown\\(" ) , test_rmd_page )
 
 			if( length( lodown_command_line ) > 0 ){
 
