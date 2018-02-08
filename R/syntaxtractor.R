@@ -73,7 +73,7 @@ syntaxtractor <-
 					"chapter_tag_cat <- get_catalog( \"chapter_tag\" , output_dir = file.path( getwd() ) )" ,
 					paste0( "record_categories <- ceiling( seq( nrow( chapter_tag_cat ) ) / ceiling( nrow( chapter_tag_cat ) / " , sample_setup_breaks , " ) )" ) ,
 					"chapter_tag_cat <- chapter_tag_cat[ record_categories == this_sample_break , ]" ,
-					"lodown( \"chapter_tag\" , chapter_tag_cat )"
+					"chapter_tag_cat <- lodown( \"chapter_tag\" , chapter_tag_cat )"
 				)
 
 			sample_break_block <- gsub( "chapter_tag" , data_name , sample_break_block )
@@ -89,7 +89,8 @@ syntaxtractor <-
 
 			if( length( lodown_command_line ) > 0 ){
 
-				test_rmd_page[ lodown_command_line ] <- ""
+				# skip the second `get_catalog` for broken samples, since sometimes `chapter_tag_cat <- lodown(...)` stores needed file information
+				if( !is.null( broken_sample_test_condition ) ) test_rmd_page[ seq( 2 , lodown_command_line ) ] <- "" else test_rmd_page[ lodown_command_line ] <- ""
 				
 				# following few lines might include usernames/passwords
 				if( grepl( "your_" , test_rmd_page[ lodown_command_line + 1 ] ) ) test_rmd_page[ lodown_command_line + 1 ] <- ""
