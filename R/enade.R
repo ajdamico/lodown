@@ -72,7 +72,7 @@ lodown_enade <-
 			tablename <- tolower( gsub( "\\.(.*)" , "" , basename( csvfile ) ) )
 
 			# are separators ; or , ?
-			more_semicolons_than_commas <- length( gregexpr( ";" , x )[[1]] ) > length( gregexpr( "," , x )[[1]] )
+			more_semicolons_than_commas <- length( gregexpr( ";" , readLines( csvfile , n = 2 )[2] )[[1]] ) > length( gregexpr( "," , readLines( csvfile , n = 2 )[2] )[[1]] )
 			
 			# are decimals , or . ?
 			dots_in_row <- grepl( "\\." , readLines( csvfile , n = 2 )[2] )
