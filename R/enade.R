@@ -71,10 +71,13 @@ lodown_enade <-
 
 			tablename <- tolower( gsub( "\\.(.*)" , "" , basename( csvfile ) ) )
 
+			# are separators ; or , ?
+			more_semicolons_than_commas <- length( gregexpr( ";" , x )[[1]] ) > length( gregexpr( "," , x )[[1]] )
+			
 			# are decimals , or . ?
 			dots_in_row <- grepl( "\\." , readLines( csvfile , n = 2 )[2] )
 
-			x <- data.frame( readr::read_delim( csvfile , ';' , locale = readr::locale( decimal_mark = if( dots_in_row ) "." else "," ) ) )
+			x <- data.frame( readr::read_delim( csvfile , if( more_semicolons_than_commas ) ';' else "," , locale = readr::locale( decimal_mark = if( dots_in_row ) "." else "," ) ) )
 
 			names( x ) <- tolower( names( x ) )
 			
