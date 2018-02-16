@@ -1,8 +1,6 @@
 get_catalog_nls <-
 	function( data_name = "nls" , output_dir , ... ){
 
-		if ( !requireNamespace( "archive" , quietly = TRUE ) ) stop( "archive needed for this function to work. to install it, type `devtools::install_github( 'jimhester/archive' )`" , call. = FALSE )
-
 		catalog <- NULL
 		
 		data_page <- "https://www.nlsinfo.org/accessing-data-cohorts"
@@ -218,23 +216,4 @@ nls_get_weights <-
 		# return the data.frame containing the weights
 		y
 	}
-
-# view which points-in-time are available for a particular study
-# nls_get_selections( "nlsy97" )
-
-# download weights for respondents in 1997
-# w <- lodown:::nls_get_weights( "nlsy97" , 'YES' , 'SURV1997' )
-# save those weights into an data.frame object called `w`
-
-# download weights for respondents who were in any of the 1997, 2002, or 2007 surveys
-# w <- lodown:::nls_get_weights( "nlsy97" , 'YES' , c( 'SURV1997' , 'SURV2002' , 'SURV2007' ) )
-# save those weights into an data.frame object called `w`
-
-# download weights for respondents who were in all of the 1997, 2002, and 2007 surveys
-# w <- lodown:::nls_get_weights( "nlsy97" , 'NO' , c( 'SURV1997' , 'SURV2002' , 'SURV2007' ) )
-# save those weights into an data.frame object called `w`
-
-# download weights for respondents who are in all available surveys
-# w <- lodown:::nls_get_weights( "nlsy97" , "NO" , lodown:::nls_get_selections( "nlsy97" ) )
-# save those weights into an data.frame object called `w`
 
