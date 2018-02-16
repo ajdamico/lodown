@@ -97,7 +97,15 @@ lodown_nls <-
 			script_lines <-
 				gsub(
 					"sep=' '" ,
-					"sep=' ',colClasses = 'numeric'" ,
+					"delim=' ',colClasses = 'numeric')" ,
+					script_lines ,
+					fixed = TRUE
+				)
+			
+			script_lines <-
+				gsub(
+					"read.table" ,
+					"data.frame( readr::read_delim" ,
 					script_lines ,
 					fixed = TRUE
 				)
