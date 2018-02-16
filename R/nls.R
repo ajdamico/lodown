@@ -31,10 +31,12 @@ get_catalog_nls <-
 
 
 lodown_nls <-
-	function( data_name = "nls" , catalog , ... ){
+	function( data_name = "nls" , catalog , path_to_7za = '7za' , ... ){
 
 		on.exit( print( catalog ) )
 
+		if( ( .Platform$OS.type != 'windows' ) && ( system( paste0('"', path_to_7za , '" -h' ) ) != 0 ) ) stop( "you need to install 7-zip.  if you already have it, include a path_to_7za='/directory/7za' parameter" )
+ 		
 		tf <- tempfile()
 
 		for ( i in seq_len( nrow( catalog ) ) ){
@@ -60,8 +62,19 @@ lodown_nls <-
 
 			cachaca( catalog[ i , 'full_url' ] , tf , mode = 'wb' )
 			
-			unzip( tf , exdir = file.path( catalog[ i , 'output_folder' ] , 'unzips' ) )
+			# extract the file, platform-specific
+			if ( .Platform$OS.type == 'windows' ){
 
+				unzip_warn_fail( tf , exdir = file.path( catalog[ i , 'output_folder' ] , 'unzips' ) )
+
+			} else {
+
+				# build the string to send to the terminal on non-windows systems
+				dos.command <- paste0( '"' , path_to_7za , '" x ' , tf , ' -o"' , file.path( catalog[ i , 'output_folder' ] , 'unzips' ) , '"' )
+				system( dos.command )
+
+			}
+			
 			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'output_folder' ] , "'\r\n\n" ) )
 
 		}
