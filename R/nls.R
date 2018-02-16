@@ -74,7 +74,7 @@ lodown_nls <-
 
 			}
 			
-			this_dat_file <- grep( "\\.dat$" , unzipped_files , ignore.case = TRUE )
+			this_dat_file <- grep( "\\.dat$" , unzipped_files , ignore.case = TRUE , value = TRUE )
 			
 			catalog[ i , 'case_count' ] <- R.utils::countLines( this_dat_file )
 			
