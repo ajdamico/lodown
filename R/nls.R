@@ -48,7 +48,7 @@ lodown_nls <-
 				# unzip to the local disk
 				unzipped_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , '/unzips' ) )
 
-				strpsu <- read.csv( unzipped_files[ grep( '\\.csv' , unzipped_files ) ] )
+				strpsu <- read.csv( unzipped_files[ grep( '\\.csv' , unzipped_files ) ] , stringsAsFactors = FALSE )
 				
 				# store the complex sample variables on the local disk
 				saveRDS( strpsu , file = paste0( catalog[ i , 'output_folder' ] , "/strpsu.rds" ) , compress = FALSE )
@@ -63,15 +63,20 @@ lodown_nls <-
 			# extract the file, platform-specific
 			if ( .Platform$OS.type == 'windows' ){
 
-				unzip_warn_fail( tf , exdir = file.path( catalog[ i , 'output_folder' ] , 'unzips' ) )
+				unzipped_files <- unzip_warn_fail( tf , exdir = file.path( catalog[ i , 'output_folder' ] , 'unzips' ) )
 
 			} else {
 
 				# build the string to send to the terminal on non-windows systems
 				dos.command <- paste0( '"' , path_to_7za , '" x ' , tf , ' -o"' , file.path( catalog[ i , 'output_folder' ] , 'unzips' ) , '"' )
 				system( dos.command )
+				unzipped_files <- list.files( catalog[ i , 'output_folder' ] , full.names = TRUE , recursive = TRUE )
 
 			}
+			
+			this_dat_file <- grep( "\\.dat$" , unzipped_files , ignore.case = TRUE )
+			
+			catalog[ i , 'case_count' ] <- R.utils::countLines( this_dat_file )
 			
 			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'output_folder' ] , "'\r\n\n" ) )
 
