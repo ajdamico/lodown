@@ -89,7 +89,7 @@ lodown_nls <-
 			script_lines <-
 				gsub(
 					"sep=' '" ,
-					"delim=' ',colClasses = 'numeric')" ,
+					"delim=' ', col_types = 'n' )" ,
 					script_lines ,
 					fixed = TRUE
 				)
