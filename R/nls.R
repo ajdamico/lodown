@@ -60,60 +60,8 @@ lodown_nls <-
 
 			cachaca( catalog[ i , 'full_url' ] , tf , mode = 'wb' )
 			
-			unzipped_files <- 
-				unzip( tf , exdir = file.path( catalog[ i , 'output_folder' ] , 'unzips' ) )
+			unzip( tf , exdir = file.path( catalog[ i , 'output_folder' ] , 'unzips' ) )
 
-				
-			r_load_script <- grep( "\\.R$" , unzipped_files , value = TRUE )
-			
-			dat_file <- grep( "\\.dat$" , unzipped_files , value = TRUE )
-			
-			script_lines <- readLines( r_load_script )
-			
-			script_lines <- 
-				gsub( 
-					basename( dat_file ) , 
-					normalizePath( dat_file , winslash = '/' ) , 
-					script_lines , 
-					fixed = TRUE 
-				)
-			
-			script_lines <- 
-				gsub( 
-					"#new_data <- qnames(new_data)" , 
-					"new_data <- qnames(new_data)" , 
-					script_lines , 
-					fixed = TRUE 
-				)
-				
-			script_lines <-
-				gsub(
-					"sep=' '" ,
-					"delim=' ' )" ,
-					script_lines ,
-					fixed = TRUE
-				)
-			
-			script_lines <-
-				gsub(
-					"read.table" ,
-					"data.frame( readr::read_delim" ,
-					script_lines ,
-					fixed = TRUE
-				)
-			
-			writeLines( script_lines , r_load_script ) ; rm( script_lines ) ; gc()
-			
-			source( r_load_script , echo = TRUE ) ; gc()
-			
-			new_data <- get( "new_data" )
-			
-			names( new_data ) <- tolower( names( new_data ) )
-			
-			saveRDS( new_data , file = paste0( catalog[ i , 'output_folder' ] , "/main.rds" ) , compress = FALSE )
-			
-			rm( new_data ) ; gc()
-		
 			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'output_folder' ] , "'\r\n\n" ) )
 
 		}
