@@ -60,17 +60,9 @@ lodown_nls <-
 
 			cachaca( catalog[ i , 'full_url' ] , tf , mode = 'wb' )
 			
-			archive::archive_extract( 
-				tf , 
-				dir = file.path( catalog[ i , 'output_folder' ] , 'unzips' ) 
-			)
-
 			unzipped_files <- 
-				list.files( 
-					file.path( catalog[ i , 'output_folder' ] , 'unzips' ) ,
-					full.names = TRUE ,
-					recursive = TRUE
-				)
+				unzip( tf , exdir = file.path( catalog[ i , 'output_folder' ] , 'unzips' ) )
+
 				
 			r_load_script <- grep( "\\.R$" , unzipped_files , value = TRUE )
 			
