@@ -111,6 +111,11 @@ get_catalog_pew <-
 			catalog[ 
 				!( catalog$full_url %in% 
 					c( 
+					
+					# https://github.com/tidyverse/haven/issues/342
+					"https://assets.pewresearch.org/wp-content/uploads/sites/5/datasets/Sept07.zip" ,
+					
+					
 					"http://assets.pewresearch.org/wp-content/uploads/sites/11/2015/12/Religion-in-Latin-America-Dataset.zip" , 
 					"http://www.people-press.org/files/datasets/Jan%2030-Feb%202%202014%20omnibus.zip" , 
 					"http://www.pewforum.org/datasets/a-portrait-of-jewish-americans/?submitted" ,
