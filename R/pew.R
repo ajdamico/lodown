@@ -55,19 +55,19 @@ get_catalog_pew <-
 
 					these_data_link_refs <- rvest::html_attr( rvest::html_nodes( these_data_page , "a" ) , "href" )
 
-					these_data_link_title <- rvest::html_attr( rvest::html_nodes( these_data_page , "a" ) , "title" )
+					these_data_link_title <- rvest::html_attr( rvest::html_nodes( these_data_page , "div" ) , "dataset-title" )
 					
 					these_data_link_text <- rvest::html_text( rvest::html_nodes( these_data_page , "a" ) )
 					
 					these_data_link_text <- these_data_link_text[ !is.na( these_data_link_link ) ]
 					
-					these_data_link_title <- these_data_link_title[ !is.na( these_data_link_link ) ]
+					these_data_link_title <- these_data_link_title[ !is.na( these_data_link_title ) ]
 					
 					these_data_link_refs <- these_data_link_refs[ !is.na( these_data_link_link ) ]
 					
 					these_data_link_link <- these_data_link_link[ !is.na( these_data_link_link ) ]
 					
-					
+					stopifnot( length( these_data_link_title ) == length( these_data_link_link ) )
 					
 					if( length( these_data_link_refs ) > 0 ){
 						
@@ -121,7 +121,7 @@ get_catalog_pew <-
 					'http://www.people-press.org/files/datasets/Aug16.zip' ,
 					'http://assets.pewresearch.org/wp-content/uploads/sites/14/old-datasets/November-2010--Paid-Content-(Omnibus).zip' ,
 					'http://assets.pewresearch.org/wp-content/uploads/sites/5/datasets/June16%20public.zip' ,
-					
+					# 'http://assets.pewresearch.org/wp-content/uploads/sites/5/2018/02/05142948/Apr17-public.zip' ,
 					'http://assets.pewresearch.org/wp-content/uploads/sites/2/2017/07/20111442/Pew-GAP-Spring-2007-survey-for-website.zip' ,
 					'http://assets.pewresearch.org/wp-content/uploads/sites/2/2009/06/Pew-GAP-Spring-2009-survey-for-website.zip'
 				) ) , ]
@@ -144,7 +144,7 @@ lodown_pew <-
 			
 			if( grepl( "\\.zip$" , catalog[ i , 'full_url' ] , ignore.case = TRUE ) ){
 				
-				unzipped_files <- unzip_warn_fail( tf , exdir = catalog[ i , "output_folder" ] , junkpaths = TRUE )
+				unzipped_files <- unzip( tf , exdir = catalog[ i , "output_folder" ] , junkpaths = TRUE )
 
 				macosx <- grep( "\\._" , unzipped_files , value = TRUE )
 				
