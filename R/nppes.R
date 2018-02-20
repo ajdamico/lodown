@@ -49,7 +49,7 @@ lodown_nppes <-
 
 		}
 
-		csv.file <- unzipped_files[ grepl( '\\.csv$' , unzipped_files , ignore.case = TRUE ) & !grepl( 'FileHeader' , unzipped_files , ignore.case = TRUE ) ]
+		csv.file <- unzipped_files[ grepl( '\\.csv$' , basename( unzipped_files ) , ignore.case = TRUE ) & !grepl( 'FileHeader' , basename( unzipped_files ) , ignore.case = TRUE ) ]
 
 		file.copy( csv.file , catalog$output_filename )
 		
