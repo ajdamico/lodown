@@ -30,6 +30,9 @@ get_catalog_pew <-
 
 			year_link_text <- to_link_text[ grep( "^[0-9][0-9][0-9][0-9]$" , to_link_text ) ]
 
+			# each topic should have something
+			# stopifnot( length( year_link_text ) > 0 )
+			
 			for( year_num in seq_along( year_link_text ) ){
 
 				# figure out pages #
@@ -115,6 +118,7 @@ get_catalog_pew <-
 					# https://github.com/tidyverse/haven/issues/342
 					"https://assets.pewresearch.org/wp-content/uploads/sites/5/datasets/Sept07.zip" ,
 					"http://assets.pewresearch.org/wp-content/uploads/sites/5/datasets/Iraq2003-2.zip" ,
+					"http://assets.pewresearch.org/wp-content/uploads/sites/5/datasets/Oct01NII.zip" ,
 					
 					"http://assets.pewresearch.org/wp-content/uploads/sites/11/2015/12/Religion-in-Latin-America-Dataset.zip" , 
 					"http://www.people-press.org/files/datasets/Jan%2030-Feb%202%202014%20omnibus.zip" , 
