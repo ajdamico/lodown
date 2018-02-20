@@ -158,7 +158,8 @@ cachaca <-
 
 	) {
 
-
+		if( !( filesize_fun %in% c( 'httr' , 'rcurl' , 'unzip_verify' ) ) ) stop( "filesize_fun= must be 'httr', 'rcurl', or 'unzip_verify'" )
+	
 		# if the cached file exists, assume it's good.
 		urlhash <- digest::digest(this_url)
 
