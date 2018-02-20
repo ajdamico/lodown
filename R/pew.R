@@ -89,7 +89,7 @@ get_catalog_pew <-
 						# this_catalog[ !grepl( "^[0-9][0-9][0-9][0-9]$" , this_catalog$year ) , 'year' ] <- NA
 						
 						# keep only datasets with dl-links for now..  this misses a few datasets
-						# this_catalog <- subset( this_catalog , these_data_link_link != '' )
+						this_catalog <- subset( this_catalog , these_data_link_link != '' )
 						
 						catalog <- rbind( catalog , this_catalog )
 						
@@ -132,7 +132,7 @@ get_catalog_pew <-
 					'http://www.people-press.org/files/datasets/Aug16.zip' ,
 					'http://assets.pewresearch.org/wp-content/uploads/sites/14/old-datasets/November-2010--Paid-Content-(Omnibus).zip' ,
 					'http://assets.pewresearch.org/wp-content/uploads/sites/5/datasets/June16%20public.zip' ,
-					# 'http://assets.pewresearch.org/wp-content/uploads/sites/5/2018/02/05142948/Apr17-public.zip' ,
+					
 					'http://assets.pewresearch.org/wp-content/uploads/sites/2/2017/07/20111442/Pew-GAP-Spring-2007-survey-for-website.zip' ,
 					'http://assets.pewresearch.org/wp-content/uploads/sites/2/2009/06/Pew-GAP-Spring-2009-survey-for-website.zip'
 				) ) , ]
