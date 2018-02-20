@@ -31,7 +31,7 @@ get_catalog_pew <-
 			year_link_text <- to_link_text[ grep( "^[0-9][0-9][0-9][0-9]$" , to_link_text ) ]
 
 			# each topic should have something
-			# stopifnot( length( year_link_text ) > 0 )
+			stopifnot( length( year_link_text ) > 0 )
 			
 			for( year_num in seq_along( year_link_text ) ){
 
@@ -95,7 +95,7 @@ get_catalog_pew <-
 						
 						cat( paste0( "loading " , data_name , " catalog from " , these_data_webpage , "\r\n\n" ) )
 					
-					}
+					} else stop()
 					
 				}
 
