@@ -88,14 +88,14 @@ get_catalog_pew <-
 						
 						# this_catalog[ !grepl( "^[0-9][0-9][0-9][0-9]$" , this_catalog$year ) , 'year' ] <- NA
 						
-						# keep only datasets with dl-links for now
+						# keep only datasets with dl-links for now..  this misses a few datasets
 						# this_catalog <- subset( this_catalog , these_data_link_link != '' )
 						
 						catalog <- rbind( catalog , this_catalog )
 						
 						cat( paste0( "loading " , data_name , " catalog from " , these_data_webpage , "\r\n\n" ) )
 					
-					} else stop()
+					}
 					
 				}
 
