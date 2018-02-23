@@ -46,9 +46,9 @@ lodown_icpsr <-
 
 			# Accept the terms on the form,
 			# generating the appropriate cookies
-			httr::POST(login, body = values)
 			httr::POST(terms, body = values)
-
+			httr::POST(login, body = values)
+			
 			cachaca(
 			    gsub( "(.*)\\?" , download_prefix , catalog[ i , 'full_url' ] ) ,
 			    destfile = tf ,
