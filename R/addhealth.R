@@ -3,13 +3,7 @@ get_catalog_addhealth <-
 
 	catalog <- get_catalog_icpsr( study_numbers = "21600" , bundle_preference = "rdata" , archive = "DSDR" )
 	
-	catalog$wave <- tolower( stringr::str_trim( gsub( "[[:punct:]]" , "" , sapply( strsplit( catalog$dataset_name , ":" ) , "[[" , 1 ) ) ) )
-	
-	catalog$data_title <- tolower( stringr::str_trim( gsub( "[[:punct:]]" , "" , sapply( strsplit( catalog$dataset_name , ":" ) , "[[" , 2 ) ) ) )
-	
-	catalog$unzip_folder <- paste0( output_dir , "/" , catalog$wave , "/" , catalog$data_title , "/" )
-	
-	catalog$output_folder <- paste0( output_dir , "/" , catalog$wave , "/" )
+	catalog$unzip_folder <- catalog$output_folder <- paste0( output_dir , "/" )
 
 	catalog
 
