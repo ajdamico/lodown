@@ -3,7 +3,19 @@ get_catalog_addhealth <-
 
 	catalog <- get_catalog_icpsr( study_numbers = "21600" , bundle_preference = "rdata" , archive = "DSDR" )
 	
-	catalog$unzip_folder <- catalog$output_folder <- paste0( output_dir , "/" )
+	catalog$unzip_folder <- paste0( output_dir , "/" , gsub( "[^[:alnum:][:space:]]" , "" , tolower( catalog$title ) ) , "/" )
+	
+	catalog$output_folder <- paste0( output_dir , "/" )
+	
+	catalog$wave <- 
+		ifelse( 
+			grepl( "^wave" , catalog$title , ignore.case = TRUE ) , 
+			gsub( "^wave ([a-z]+) (.*)" , "wave \\1" , 
+				gsub( "[^[:alnum:][:space:]]" , "" , tolower( catalog$title ) ) , 
+				ignore.case = TRUE 
+			) , 
+			NA 
+		)
 
 	catalog
 

@@ -37,8 +37,8 @@ lodown_icpsr <-
 					agree = "yes",
 					path = "ICPSR" ,
 					study = catalog[ i , 'study_number' ] ,
-					ds = "" ,
-					bundle = catalog[ i , 'bundle' ],
+					ds = catalog[ i , 'dsNo' ] ,
+					bundle = catalog[ i , 'bundle' ] ,
 					dups = "yes",
 					email=your_email,
 					password=your_password
@@ -49,8 +49,16 @@ lodown_icpsr <-
 			httr::POST(terms, body = values)
 			httr::POST(login, body = values)
 			
+			httr::HEAD(
+			    catalog[ i , 'full_url' ] ,
+			    query = values
+			)
+
+			httr::POST(terms, body = values)
+			httr::POST(login, body = values)
+			
 			cachaca(
-			    gsub( "(.*)\\?" , download_prefix , catalog[ i , 'full_url' ] ) ,
+			    catalog[ i , 'full_url' ] ,
 			    destfile = tf ,
 			    FUN = httr::GET ,
 			    filesize_fun = 'unzip_verify' ,
@@ -80,7 +88,7 @@ lodown_icpsr <-
 #' @rdname lodown_icpsr
 #' @export
 get_catalog_icpsr <-
-	function( series_number = NULL , study_numbers = NULL , archive = "ICPSR" , bundle_preference = c( "rdata" , "stata" , "sas" , "spss" , "delimited" , "ascsas" , "ascstata" , "ascspss" , "ascii" ) ){
+	function( series_number = NULL , study_numbers = NULL , archive = "ICPSR" , bundle_preference = c( "rdata" , "stata" , "sas" , "spss" , "delimited" , "ascsas" , "ascstata" , "ascspss" , "ascii" , "gis" , "doc" ) ){
 
 		if( is.null( study_numbers ) ){
 
@@ -96,54 +104,63 @@ get_catalog_icpsr <-
 
 		for( study_number in study_numbers ){
 
-			study_page <- paste0( "https://www.icpsr.umich.edu/icpsrweb/" , archive , "/studies/" , study_number , "?archive=" , archive , "&sortBy=7" )
+			study_page <- paste0( "https://pcms.icpsr.umich.edu/pcms/api/1.0/studies/" , study_number , "/files" )
+			
+			study_datasets <- jsonlite::fromJSON( study_page , simplifyDataFrame = TRUE )
 
-			study_xml <- xml2::read_html( study_page )
+			study_datasets$fileUris <- study_datasets$files <- NULL
+		
+			available_bundles <- study_datasets[ grep( "^bundles" , names( study_datasets ) ) ][[1]]
 
-			study_json <- rvest::html_text( rvest::html_nodes( study_xml , 'script[type$="json"]' ) )
-
-			# skip studies with no downloadable data
-			# skip studies with a mal-formed json snippet
-			if( !grepl( "No downloadable data files available." , rvest::html_text( study_xml ) ) & !( class( try( jsonlite::fromJSON( gsub( "\n|\r|\t" , " " , study_json ) , simplifyDataFrame = TRUE ) , silent = TRUE ) ) == 'try-error' ) ){
-
-				json_result <- jsonlite::fromJSON( gsub( "\n|\r|\t" , " " , study_json ) , simplifyDataFrame = TRUE )
-
-				this_study <- json_result[ 'distribution' ][[1]]
-
-				available_bundles <- gsub( "(.*)bundle=" , "" , this_study[ , 'contentURL' ] )
-
-				first_matching_bundle <- match( bundle_preference , available_bundles )[1]
-
-				if( length( first_matching_bundle ) == 0 ){
-					stop( "bundle_preference= parameter requests a bundle that isn't available for this study" )
-				} else {
-					this_study <- this_study[ first_matching_bundle , ]
-				}
-
-				stopifnot( nrow( this_study ) == 1 )
-
-				in_results_not_study <- setdiff( names( series_results ) , names( this_study ) )
-
-				in_study_not_results <- setdiff( names( this_study ) , names( series_results ) )
-
-				this_study[ in_results_not_study ] <- NA
-
-				if( !is.null( series_results ) ) series_results[ in_study_not_results ] <- NA
-
-				this_study$study_number <- study_number
-
-				series_results <- rbind( series_results , this_study )
-
+			sorted_bundle_preference <- available_bundles[ bundle_preference ]
+			
+			sorted_bundle_preference[ , 'this_bundle' ] <- NA
+			
+			for( i in seq( ncol( sorted_bundle_preference ) - 1 ) ){
+			
+				sorted_bundle_preference[ is.na( sorted_bundle_preference[ , 'this_bundle' ] ) & sorted_bundle_preference[ , i ] , 'this_bundle' ] <-
+					names( sorted_bundle_preference )[ i ]
+				
 			}
+			
+			if( any( is.na( sorted_bundle_preference[ , 'this_bundle' ] ) ) ){
+			
+				cat( "removing datasets without matching bundles\r\r\n\n" )
+			
+				print( study_datasets[ is.na( sorted_bundle_preference[ , 'this_bundle' ] ) , ] )
+			
+			}
+			
+			study_datasets$bundle <- sorted_bundle_preference$this_bundle
+			
+			this_study <- study_datasets[ !is.na( study_datasets[ , 'bundle' ] ) , ]
+		
+			in_results_not_study <- setdiff( names( series_results ) , names( this_study ) )
+
+			in_study_not_results <- setdiff( names( this_study ) , names( series_results ) )
+
+			this_study[ in_results_not_study ] <- NA
+
+			if( !is.null( series_results ) ) series_results[ in_study_not_results ] <- NA
+
+			this_study$study_number <- study_number
+
+			series_results <- rbind( series_results , this_study )
 
 		}
 
-		series_results$bundle <- gsub( "(.*)bundle=" , "" , series_results$contentURL )
 
-		names( series_results )[ names( series_results ) == 'contentURL' ] <- 'full_url'
-
-		series_results[ series_results$bundle %in% 'sas' , 'bundle' ] <- 'ascsas'
-
+		series_results[ , 'full_url' ] <- 
+			paste0( 
+				"https://www.icpsr.umich.edu/cgi-bin/bob/zipcart2?study=" ,
+				series_results[ i , 'study_number' ] ,
+				"&bundle=" ,
+				series_results[ i , 'bundle' ] ,
+				"&ds=" ,
+				series_results[ i , 'dsNo' ]
+			)
+		
+		
 		series_results
 
 	}
