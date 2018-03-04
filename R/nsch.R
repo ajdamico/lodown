@@ -59,7 +59,7 @@ get_catalog_nsch <-
 		this_page <- xml2::read_html( dataset_hrefs[ i ] )
 		
 		link_urls <- rvest::html_attr( rvest::html_nodes( this_page , "a" ) , 'href' )
-		link_urls <- ifelse( grepl( "^http" , link_urls ) , link_urls , paste0( "https://www.census.gov/" , link_urls ) )
+		link_urls <- ifelse( grepl( "^http" , link_urls ) , link_urls , paste0( "https:" , link_urls ) )
 		link_text <- rvest::html_text( rvest::html_nodes( this_page , "a" ) )
 		
 		catalog <-
