@@ -45,7 +45,7 @@ lodown_nppes <-
 			# build the string to send to the terminal on non-windows systems
 			dos.command <- paste0( '"' , path_to_7za , '" x ' , tf , ' -o"' , tempdir() , '"' )
 			system( dos.command )
-			unzipped_files <- list.files( tempdir() , full.names = TRUE )
+			unzipped_files <- list.files( tempdir() , full.names = TRUE , recursive = TRUE )
 
 		}
 
