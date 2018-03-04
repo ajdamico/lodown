@@ -33,7 +33,7 @@ lodown_nppes <-
  		
 		tf <- tempfile()
 		
-		cachaca( catalog$full_url , tf , mode = 'wb', filesize_fun = 'unzip_verify' )
+		download.file( catalog$full_url , tf , mode = 'wb' )
 		
 		# extract the file, platform-specific
 		if ( .Platform$OS.type == 'windows' ){
