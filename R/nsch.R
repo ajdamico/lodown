@@ -69,9 +69,9 @@ get_catalog_nsch <-
 					directory = four_digit_years[ i ] ,
 					virgin_islands = FALSE ,
 					year = four_digit_years[ i ] ,
-					dat_url = grep( "topical\\.sas7bdat\\.zip" , link_urls , value = TRUE , ignore.case = TRUE ) ,
+					dat_url = grep( "topical\\.zip" , link_urls , value = TRUE , ignore.case = TRUE ) ,
 					screener_url = grep( "screener\\.zip" , link_urls , value = TRUE , ignore.case = TRUE ) ,
-					mi_url = grep( "implicate(.*)\\.sas7bdat\\.zip" , link_urls , value = TRUE , ignore.case = TRUE ) ,
+					mi_url = grep( "implicate\\.zip" , link_urls , value = TRUE , ignore.case = TRUE ) ,
 					stringsAsFactors = FALSE
 				)
 			)
