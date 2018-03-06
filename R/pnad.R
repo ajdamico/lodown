@@ -16,8 +16,8 @@ get_catalog_pnad <-
 
 		catalog <-
 			data.frame(
-				year = c( 1992:1993 , 1996:1999 , 2001:2009 , 2011:2012 , year.lines ) ,
-				ftp_folder = paste0( year.ftp , c( 1992:1993 , 1996:1999 , rep( 'reponderacao_2001_2012' , 11 ) , year.lines ) , '/' ) ,
+				year = c( 1992:1993 , 1997:1999 , 2001:2009 , 2011:2012 , year.lines ) ,
+				ftp_folder = paste0( year.ftp , c( 1992:1993 , 1997:1999 , rep( 'reponderacao_2001_2012' , 11 ) , year.lines ) , '/' ) ,
 				stringsAsFactors = FALSE
 			)
 		
@@ -137,9 +137,9 @@ lodown_pnad <-
 			dom.fn <- unzipped_files[ grepl( paste0( '/dom' , catalog[ i , 'year' ] ) , tolower( unzipped_files ) ) ]
 			pes.fn <- unzipped_files[ grepl( paste0( '/pes' , catalog[ i , 'year' ] ) , tolower( unzipped_files ) ) ]
 
-			if( length( dom.fn ) == 0 ) dom.fn <- unzipped_files[ grepl( 'dados/dom' , tolower( unzipped_files ) ) ]
+			if( length( dom.fn ) == 0 ) dom.fn <- unzipped_files[ grepl( 'dados/d' , tolower( unzipped_files ) ) ]
 			
-			if( length( pes.fn ) == 0 ) pes.fn <- unzipped_files[ grepl( 'dados/pes' , tolower( unzipped_files ) ) ]
+			if( length( pes.fn ) == 0 ) pes.fn <- unzipped_files[ grepl( 'dados/p' , tolower( unzipped_files ) ) ]
 
 			
 			pes_df <-
