@@ -228,7 +228,9 @@ lodown_pnad <-
 				}
 			}
 			
+			if( ( 'v0102' %in% names( pes_df ) ) ) pes_df$uf <- substr( pes_df$v0102 , 1 , 2 )
 			
+			if( ( 'v0102' %in% names( pes_df ) ) ) pes_df$region <- substr( pes_df$v0102 , 1 , 1 )
 			
 			pes_df$one <- 1
 			
