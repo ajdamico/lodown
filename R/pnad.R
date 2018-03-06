@@ -16,8 +16,8 @@ get_catalog_pnad <-
 
 		catalog <-
 			data.frame(
-				year = c( 1992:1993 , 1998:1999 , 2001:2009 , 2011:2012 , year.lines ) ,
-				ftp_folder = paste0( year.ftp , c( 1992:1993 , 1998:1999 , rep( 'reponderacao_2001_2012' , 11 ) , year.lines ) , '/' ) ,
+				year = c( 1992:1993 , 2001:2009 , 2011:2012 , year.lines ) ,
+				ftp_folder = paste0( year.ftp , c( 1992:1993 , rep( 'reponderacao_2001_2012' , 11 ) , year.lines ) , '/' ) ,
 				stringsAsFactors = FALSE
 			)
 		
@@ -228,9 +228,13 @@ lodown_pnad <-
 				}
 			}
 			
-			if( ( 'v0102' %in% names( pes_df ) ) ) pes_df$uf <- substr( pes_df$v0102 , 1 , 2 )
+			if( catalog[ i , 'year' ] >= 2001 ){
+				
+				pes_df$uf <- substr( pes_df$v0102 , 1 , 2 )
 			
-			if( ( 'v0102' %in% names( pes_df ) ) ) pes_df$region <- substr( pes_df$v0102 , 1 , 1 )
+				pes_df$region <- substr( pes_df$v0102 , 1 , 1 )
+				
+			}
 			
 			pes_df$one <- 1
 			
