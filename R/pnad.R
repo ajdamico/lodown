@@ -42,11 +42,16 @@ get_catalog_pnad <-
 
 			} else {
 			
-				catalog[ this_entry , 'full_url' ] <- paste0( catalog[ this_entry , 'ftp_folder' ] , "/Dados.zip" )
+				catalog[ this_entry , 'sas_ri' ] <- paste0( catalog[ this_entry , 'ftp_folder' ] , grep( "^layout" , filenames , ignore.case = TRUE , value = TRUE ) )
+			
+				catalog[ this_entry , 'full_url' ] <- paste0( catalog[ this_entry , 'ftp_folder' ] , "Dados.zip" )
 			
 			}
 			
 		}
+		
+		# currently the sas files aren't available before 1992
+		catalog <- subset( catalog , year >= 1992 )
 		
 		catalog$output_filename <- paste0( output_dir , "/" , catalog$year , " main.rds" )
 		
@@ -111,6 +116,9 @@ lodown_pnad <-
 			dom.sas <- pnad_remove_uf( unzipped_files[ grepl( paste0( 'input[^?]dom' , catalog[ i , 'year' ] , '.txt' ) , tolower( unzipped_files ) ) ] )
 			pes.sas <- pnad_remove_uf( unzipped_files[ grepl( paste0( 'input[^?]pes' , catalog[ i , 'year' ] , '.txt' ) , tolower( unzipped_files ) ) ] )
 
+			if( length( dom.sas ) == 0 ) dom.sas <- pnad_remove_uf( unzipped_files[ grepl( paste0( 'sas_dom.txt' ) , tolower( unzipped_files ) ) ] )
+			if( length( pes.sas ) == 0 ) pes.sas <- pnad_remove_uf( unzipped_files[ grepl( paste0( 'sas_pes.txt' ) , tolower( unzipped_files ) ) ] )
+			
 			# in 2003 and 2007, the age variable had been read in as a factor variable
 			# which breaks certain commands by treating the variable incorrectly as a factor
 			if( catalog[ i , 'year' ] %in% c( 2003 , 2007 ) ){
