@@ -137,9 +137,9 @@ lodown_pnad <-
 			dom.fn <- unzipped_files[ grepl( paste0( '/dom' , catalog[ i , 'year' ] ) , tolower( unzipped_files ) ) ]
 			pes.fn <- unzipped_files[ grepl( paste0( '/pes' , catalog[ i , 'year' ] ) , tolower( unzipped_files ) ) ]
 
-			if( length( dom.fn ) == 0 ) dom.fn <- unzipped_files[ grepl( '/dom' , tolower( unzipped_files ) ) ]
+			if( length( dom.fn ) == 0 ) dom.fn <- unzipped_files[ grepl( 'dados/dom' , tolower( unzipped_files ) ) ]
 			
-			if( length( pes.fn ) == 0 ) pes.fn <- unzipped_files[ grepl( '/pes' , tolower( unzipped_files ) ) ]
+			if( length( pes.fn ) == 0 ) pes.fn <- unzipped_files[ grepl( 'dados/pes' , tolower( unzipped_files ) ) ]
 
 			
 			pes_df <-
