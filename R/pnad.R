@@ -107,14 +107,19 @@ lodown_pnad <-
 			# manually set the encoding of the unziped files so they don't break things.
 			if( catalog[ i , 'year' ] > 2012 & .Platform$OS.type != 'windows' ) Encoding( unzipped_files ) <- 'UTF-8' else Encoding( unzipped_files ) <- 'latin1'
 			
+			dom_uf <- unzipped_files[ grepl( paste0( 'input[^?]dom' , catalog[ i , 'year' ] , '.txt' ) , tolower( unzipped_files ) ) ]
+			
+			pes_uf <- unzipped_files[ grepl( paste0( 'input[^?]pes' , catalog[ i , 'year' ] , '.txt' ) , tolower( unzipped_files ) ) ]
+			
+			if( length( dom_uf ) == 0 ) dom_uf <- unzipped_files[ grepl( paste0( 'sas_dom.txt' ) , tolower( unzipped_files ) ) ]
+			
+			if( length( pes_uf ) == 0 ) pes_uf <- unzipped_files[ grepl( paste0( 'sas_pes.txt' ) , tolower( unzipped_files ) ) ]
 			
 			# remove the UF column and the mistake with "LOCAL ULTIMO FURTO"
 			# described in the pnad_remove_uf() function that was loaded with source_url as pnad.survey.R
-			dom.sas <- pnad_remove_uf( unzipped_files[ grepl( paste0( 'input[^?]dom' , catalog[ i , 'year' ] , '.txt' ) , tolower( unzipped_files ) ) ] )
-			pes.sas <- pnad_remove_uf( unzipped_files[ grepl( paste0( 'input[^?]pes' , catalog[ i , 'year' ] , '.txt' ) , tolower( unzipped_files ) ) ] )
+			dom.sas <- pnad_remove_uf( dom_uf )
+			pes.sas <- pnad_remove_uf( pes_uf )
 
-			if( length( dom.sas ) == 0 ) dom.sas <- pnad_remove_uf( unzipped_files[ grepl( paste0( 'sas_dom.txt' ) , tolower( unzipped_files ) ) ] )
-			if( length( pes.sas ) == 0 ) pes.sas <- pnad_remove_uf( unzipped_files[ grepl( paste0( 'sas_pes.txt' ) , tolower( unzipped_files ) ) ] )
 			
 			# in 2003 and 2007, the age variable had been read in as a factor variable
 			# which breaks certain commands by treating the variable incorrectly as a factor
@@ -132,6 +137,11 @@ lodown_pnad <-
 			dom.fn <- unzipped_files[ grepl( paste0( '/dom' , catalog[ i , 'year' ] ) , tolower( unzipped_files ) ) ]
 			pes.fn <- unzipped_files[ grepl( paste0( '/pes' , catalog[ i , 'year' ] ) , tolower( unzipped_files ) ) ]
 
+			if( length( dom.fn ) == 0 ) dom.fn <- unzipped_files[ grepl( '/dom' , tolower( unzipped_files ) ) ]
+			
+			if( length( pes.fn ) == 0 ) pes.fn <- unzipped_files[ grepl( '/pes' , tolower( unzipped_files ) ) ]
+
+			
 			pes_df <-
 				read_SAScii(
 					pes.fn ,
