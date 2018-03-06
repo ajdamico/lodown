@@ -16,8 +16,8 @@ get_catalog_pnad <-
 
 		catalog <-
 			data.frame(
-				year = c( 1992:1993 , 1997:1999 , 2001:2009 , 2011:2012 , year.lines ) ,
-				ftp_folder = paste0( year.ftp , c( 1992:1993 , 1997:1999 , rep( 'reponderacao_2001_2012' , 11 ) , year.lines ) , '/' ) ,
+				year = c( 1992:1993 , 1998:1999 , 2001:2009 , 2011:2012 , year.lines ) ,
+				ftp_folder = paste0( year.ftp , c( 1992:1993 , 1998:1999 , rep( 'reponderacao_2001_2012' , 11 ) , year.lines ) , '/' ) ,
 				stringsAsFactors = FALSE
 			)
 		
