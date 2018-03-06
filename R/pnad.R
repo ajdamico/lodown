@@ -16,8 +16,8 @@ get_catalog_pnad <-
 
 		catalog <-
 			data.frame(
-				year = c( 1976:1979 , 1981:1990 , 1992:1993 , 1995:1999 , 2001:2009 , 2011:2012 , year.lines ) ,
-				ftp_folder = paste0( year.ftp , c( c( 1976:1979 , 1981:1990 , 1992:1993 , 1995:1999 )  , rep( 'reponderacao_2001_2012' , 11 ) , year.lines ) , '/' ) ,
+				year = c( 1992:1993 , 1995:1999 , 2001:2009 , 2011:2012 , year.lines ) ,
+				ftp_folder = paste0( year.ftp , c( 1992:1993 , 1995:1999 , rep( 'reponderacao_2001_2012' , 11 ) , year.lines ) , '/' ) ,
 				stringsAsFactors = FALSE
 			)
 		
@@ -42,16 +42,13 @@ get_catalog_pnad <-
 
 			} else {
 			
-				catalog[ this_entry , 'sas_ri' ] <- paste0( catalog[ this_entry , 'ftp_folder' ] , grep( "^layout" , filenames , ignore.case = TRUE , value = TRUE ) )
+				catalog[ this_entry , 'sas_ri' ] <- paste0( catalog[ this_entry , 'ftp_folder' ] , grep( "^layout\\.zip" , filenames , ignore.case = TRUE , value = TRUE ) )
 			
 				catalog[ this_entry , 'full_url' ] <- paste0( catalog[ this_entry , 'ftp_folder' ] , "Dados.zip" )
 			
 			}
 			
 		}
-		
-		# currently the sas files aren't available before 1992
-		catalog <- subset( catalog , year >= 1992 )
 		
 		catalog$output_filename <- paste0( output_dir , "/" , catalog$year , " main.rds" )
 		
