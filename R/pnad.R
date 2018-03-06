@@ -16,8 +16,8 @@ get_catalog_pnad <-
 
 		catalog <-
 			data.frame(
-				year = c( 1992:1993 , 1995:1999 , 2001:2009 , 2011:2012 , year.lines ) ,
-				ftp_folder = paste0( year.ftp , c( 1992:1993 , 1995:1999 , rep( 'reponderacao_2001_2012' , 11 ) , year.lines ) , '/' ) ,
+				year = c( 1992:1993 , 1996:1999 , 2001:2009 , 2011:2012 , year.lines ) ,
+				ftp_folder = paste0( year.ftp , c( 1992:1993 , 1996:1999 , rep( 'reponderacao_2001_2012' , 11 ) , year.lines ) , '/' ) ,
 				stringsAsFactors = FALSE
 			)
 		
@@ -111,9 +111,9 @@ lodown_pnad <-
 			
 			pes_uf <- unzipped_files[ grepl( paste0( 'input[^?]pes' , catalog[ i , 'year' ] , '.txt' ) , tolower( unzipped_files ) ) ]
 			
-			if( length( dom_uf ) == 0 ) dom_uf <- unzipped_files[ grepl( paste0( 'sas_dom.txt' ) , tolower( unzipped_files ) ) ]
+			if( length( dom_uf ) == 0 ) dom_uf <- unzipped_files[ grepl( paste0( 'sas_do(.*)\\.txt' ) , tolower( unzipped_files ) ) ]
 			
-			if( length( pes_uf ) == 0 ) pes_uf <- unzipped_files[ grepl( paste0( 'sas_pes.txt' ) , tolower( unzipped_files ) ) ]
+			if( length( pes_uf ) == 0 ) pes_uf <- unzipped_files[ grepl( paste0( 'sas_pe(.*)\\.txt' ) , tolower( unzipped_files ) ) ]
 			
 			# remove the UF column and the mistake with "LOCAL ULTIMO FURTO"
 			# described in the pnad_remove_uf() function that was loaded with source_url as pnad.survey.R
