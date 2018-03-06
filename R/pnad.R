@@ -170,7 +170,7 @@ lodown_pnad <-
 			names( pes_df ) <- tolower( names( pes_df ) )
 	
 			# confirm no fields are in `dom` unless they are in `pes`
-			b_fields <- c( 'v0101' , if( 'v0102' %in% names( pes_df ) ) 'v0102' , 'v0103' , setdiff( names( pes_df ) , names( dom_df ) ) )
+			b_fields <- c( 'v0101' , if( 'v0102' %in% names( pes_df ) ) 'v0102' else c( 'control' , 'uf' ) , 'v0103' , setdiff( names( pes_df ) , names( dom_df ) ) )
 			
 			pes_df <- pes_df[ b_fields ] ; gc()
 			
