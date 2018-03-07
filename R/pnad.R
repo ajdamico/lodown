@@ -145,9 +145,7 @@ lodown_pnad <-
 			pes_df <-
 				read_SAScii(
 					pes.fn ,
-					pes.sas ,
-					zipped = FALSE ,
-					na = c( "" , "NA" , "." )
+					pes.sas
 				) 
 				
 			# dump 100% missing columns
@@ -157,9 +155,7 @@ lodown_pnad <-
 			dom_df <-
 				read_SAScii(
 					dom.fn , 
-					dom.sas ,
-					zipped = FALSE ,
-					na = c( "" , "NA" , "." )
+					dom.sas
 				) 
 				
 			# dump 100% missing columns
@@ -259,7 +255,7 @@ lodown_pnad <-
 
 			catalog[ i , 'case_count' ] <- nrow( x )
 
-			saveRDS( x , file = catalog[ i , 'output_filename' ] , compress = FALSE ) ; rm( x ) ; gc()
+			saveRDS( x , file = catalog[ i , 'output_filename' ] ) ; rm( x ) ; gc()
 			
 			# delete the temporary files
 			suppressWarnings( file.remove( tf , unzipped_files ) )
