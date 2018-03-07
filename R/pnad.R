@@ -145,9 +145,7 @@ lodown_pnad <-
 			pes_df <-
 				read_SAScii(
 					pes.fn ,
-					pes.sas ,
-					zipped = FALSE ,
-					na = c( "" , "NA" , "." )
+					pes.sas
 				) 
 				
 			# dump 100% missing columns
@@ -157,9 +155,7 @@ lodown_pnad <-
 			dom_df <-
 				read_SAScii(
 					dom.fn , 
-					dom.sas ,
-					zipped = FALSE ,
-					na = c( "" , "NA" , "." )
+					dom.sas
 				) 
 				
 			# dump 100% missing columns
