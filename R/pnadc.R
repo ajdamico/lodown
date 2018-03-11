@@ -6,8 +6,9 @@ get_catalog_pnadc <-
 
 		# read the text of the microdata ftp into working memory
 		# download the contents of the ftp directory for all microdata
-		year.listing <- readLines( textConnection( RCurl::getURL( year.ftp ) ) )
+		year.listing <- gsub( "(.*)<p>|<\\/p>(.*)" , "" , strsplit( as.character( xml2::read_html( year.ftp ) ) , '\r(\n?)' )[[1]] )
 
+		
 		# extract all years
 		year.lines <- gsub( "(.*)([0-9][0-9][0-9][0-9])(</A>)?" , "\\2" , year.listing )
 		
@@ -20,8 +21,9 @@ get_catalog_pnadc <-
 		for ( this.year in year.lines ){
 
 			# find the zipped files in the year-specific folder
-			ftp.listing <- readLines( textConnection( RCurl::getURL( paste0( year.ftp , this.year , "/" ) ) ) )
+			ftp.listing <- gsub( "(.*)<p>|<\\/p>(.*)" , "" , strsplit( as.character( xml2::read_html( paste0( year.ftp , this.year , "/" ) ) ) , '\r(\n?)' )[[1]] )
 
+			
 			# break up the string based on the ending extension
 			zip.lines <- grep( "\\.zip$" , ftp.listing , value = TRUE )
 
@@ -60,7 +62,10 @@ lodown_pnadc <-
 		# initiate the full ftp path
 		doc_ftp <- "ftp://ftp.ibge.gov.br/Trabalho_e_Rendimento/Pesquisa_Nacional_por_Amostra_de_Domicilios_continua/Trimestral/Microdados/Documentacao/"
 
-		doc_path <- paste0( doc_ftp , gsub( "(.*) (.*)" , "\\2" , grep( "Dicionario_e_input" , readLines( textConnection( RCurl::getURL( doc_ftp ) ) ) , value = TRUE ) ) )
+		
+		doc_lines <- gsub( "(.*)<p>|<\\/p>(.*)" , "" , strsplit( as.character( xml2::read_html( doc_ftp ) ) , '\r(\n?)' )[[1]] )
+		
+		doc_path <- paste0( doc_ftp , gsub( "(.*) (.*)" , "\\2" , grep( "Dicionario_e_input" , doc_lines , value = TRUE ) ) )
 		
 		cachaca( doc_path , tf , mode = 'wb' , attempts = 10 )
 

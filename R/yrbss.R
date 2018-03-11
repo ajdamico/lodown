@@ -27,7 +27,7 @@ get_catalog_yrbss <-
 						sas_url = grep( "input_program\\.sas$" , this_year_paths , value = TRUE , ignore.case = TRUE ) ,
 						stringsAsFactors = FALSE
 					)
-			)
+				)
 		}
 		
 		catalog$output_filename <- paste0( output_dir , "/" , catalog$year , " main.rds" )

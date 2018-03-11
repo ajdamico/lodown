@@ -6,14 +6,11 @@ get_catalog_censo <-
 		# designate the location of the 2010 general sample microdata files
 		ftp_path_2010 <-	"ftp://ftp.ibge.gov.br/Censos/Censo_Demografico_2010/Resultados_Gerais_da_Amostra/Microdados/"
 
-		# fetch all available files in the ftp site's directory
-		all_files <- RCurl::getURL( ftp_path_2010 , dirlistonly = TRUE )
-
-		# those files are separated by newline characters in the code,
-		# so simply split them up into a character vector
-		# full of individual zipped file strings
-		all_files <- scan( text = all_files , what = "character", quiet = T )
-
+		all_files <- gsub( "(.*)<p>|<\\/p>(.*)" , "" , strsplit( as.character( xml2::read_html( ftp_path_2010 ) ) , '\r(\n?)' )[[1]] )
+		all_files <- gsub( "(.*) " , "" , all_files )
+		all_files <- all_files[ all_files != '' ]
+		
+		
 		# remove the two files you don't need to import
 		files_to_download_2010 <- all_files[ !grepl( "documentacao|atualizacoes" , all_files , ignore.case = TRUE ) ]
 
@@ -42,13 +39,10 @@ get_catalog_censo <-
 		# designate the location of the 2000 general sample microdata files
 		ftp_path_2000 <- "ftp://ftp.ibge.gov.br/Censos/Censo_Demografico_2000/Microdados/"
 
-		# fetch all available files in the ftp site's directory
-		all_files <- RCurl::getURL( ftp_path_2000 , dirlistonly = TRUE )
+		all_files <- gsub( "(.*)<p>|<\\/p>(.*)" , "" , strsplit( as.character( xml2::read_html( ftp_path_2000 ) ) , '\r(\n?)' )[[1]] )
+		all_files <- gsub( "(.*) " , "" , all_files )
+		all_files <- all_files[ all_files != '' ]
 
-		# those files are separated by newline characters in the code,
-		# so simply split them up into a character vector
-		# full of individual zipped file strings
-		all_files <- scan( text = all_files , what = "character", quiet = T )
 
 		# remove the two files you don't need to import
 		files_to_download_2000 <- all_files[ !grepl( "documentacao|atualizacoes" , all_files , ignore.case = TRUE ) ]
