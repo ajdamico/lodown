@@ -35,6 +35,8 @@ lodown <-
 	function( data_name , catalog = NULL , ... ){
 
 		if( is.null( catalog ) ) catalog <- get_catalog( data_name , ... )
+		
+		if( nrow( catalog ) == 0 ) stop( "catalog must have at least one record" )
 
 		unique_directories <- unique( c( catalog$unzip_folder , if( 'output_filename' %in% names( catalog ) ) np_dirname( catalog$output_filename ) , if( 'dbfile' %in% names( catalog ) ) np_dirname( catalog$dbfile ) , catalog$output_folder ) )
 
