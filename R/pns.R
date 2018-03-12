@@ -3,19 +3,16 @@ get_catalog_pns <-
 
 		catalog <- NULL
 	
-		year_listing <- gsub( "(.*)<p>|<\\/p>(.*)" , "" , strsplit( as.character( xml2::read_html( "ftp://ftp.ibge.gov.br/PNS/" ) ) , '\r(\n?)' )[[1]] )
-		
-		
+		year_listing <- readLines( textConnection( RCurl::getURL( "ftp://ftp.ibge.gov.br/PNS/" ) ) )
+
 		ay <- rev( gsub( "(.*) (.*)" , "\\2" , year_listing ) )
 
 		suppressWarnings( available_years <- ay[ as.numeric( ay ) %in% ay ] )
 	
 		for( this_year in available_years ){
 			
-			file_listing <- gsub( "(.*)<p>|<\\/p>(.*)" , "" , strsplit( as.character( xml2::read_html( paste0( "ftp://ftp.ibge.gov.br/PNS/" , this_year , "/microdados/" ) ) ) , '\r(\n?)' )[[1]] )
+			file_listing <- RCurl::getURL( paste0( "ftp://ftp.ibge.gov.br/PNS/" , this_year , "/microdados/" ) )
 
-			
-			
 			af <- gsub( "(.*) (.*)" , "\\2" , file_listing )
 			af <- gsub( "\\r\\n" , "" , af )
 			af <- gsub( "\\n" , "" , af )

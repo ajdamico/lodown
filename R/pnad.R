@@ -6,11 +6,8 @@ get_catalog_pnad <-
 
 		# read the text of the microdata ftp into working memory
 		# download the contents of the ftp directory for all microdata
-		year.listing <- 
-			gsub( "(.*)<p>|<\\/p>(.*)" , "" , strsplit( as.character( xml2::read_html( year.ftp ) ) , '\r(\n?)' )[[1]] )
+		year.listing <- readLines( textConnection( RCurl::getURL( year.ftp ) ) )
 
-
-		
 		# extract all years
 		year.lines <- gsub( "(.*)([0-9][0-9][0-9][0-9])" , "\\2" , year.listing )
 		
@@ -29,9 +26,7 @@ get_catalog_pnad <-
 		for ( this_entry in seq( nrow( catalog ) ) ){
 
 			# find the zipped files in the year-specific folder
-			ftp.listing <- 
-				gsub( "(.*)<p>|<\\/p>(.*)" , "" , strsplit( as.character( xml2::read_html( catalog[ this_entry , 'ftp_folder' ] ) ) , '\r(\n?)' )[[1]] )
-
+			ftp.listing <- readLines( textConnection( RCurl::getURL( catalog[ this_entry , 'ftp_folder' ] ) ) )
 			
 			filenames <- gsub( "(.*) (.*)" , "\\2" , ftp.listing ) ; filenames <- filenames[ filenames != "" ]
 							

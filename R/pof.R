@@ -4,10 +4,9 @@ get_catalog_pof <-
 		if ( !requireNamespace( "archive" , quietly = TRUE ) ) stop( "archive needed for this function to work. to install it, type `devtools::install_github( 'jimhester/archive' )`" , call. = FALSE )
 
 		pof_ftp <- "ftp://ftp.ibge.gov.br/Orcamentos_Familiares/"
-		
-		ftp_listing <- gsub( "(.*)<p>|<\\/p>(.*)" , "" , strsplit( as.character( xml2::read_html( pof_ftp ) ) , '\r(\n?)' )[[1]] )
 
-		
+		ftp_listing <- readLines( textConnection( RCurl::getURL( pof_ftp ) ) )
+
 		ay <- rev( gsub( "(.*) (.*)" , "\\2" , ftp_listing ) )
 
 		# hardcoded removal of microdata before 2003

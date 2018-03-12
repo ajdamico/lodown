@@ -1,10 +1,9 @@
 get_catalog_pme <-
 	function( data_name = "pme" , output_dir , ... ){
 
-
-		pme_ftp <- "ftp://ftp.ibge.gov.br/Trabalho_e_Rendimento/Pesquisa_Mensal_de_Emprego/Microdados/"
-				
-		ftp.listing <- gsub( "(.*)<p>|<\\/p>(.*)" , "" , strsplit( as.character( xml2::read_html( pme_ftp ) ) , '\r(\n?)' )[[1]] )
+		# read the text of the microdata ftp into working memory
+		# download the contents of the ftp directory for all microdata
+		ftp.listing <- readLines( textConnection( RCurl::getURL( "ftp://ftp.ibge.gov.br/Trabalho_e_Rendimento/Pesquisa_Mensal_de_Emprego/Microdados/" ) ) )
 
 		# extract the text from all lines containing a year of microdata
 		# figure out the names of those year directories
@@ -24,10 +23,7 @@ get_catalog_pme <-
 			cat( paste0( "loading " , data_name , " catalog from " , year_dir , "\r\n\n" ) )
 
 			# just like above, read those lines into working memory
-			year.ftp.string <- 
-				gsub( "(.*)<p>|<\\/p>(.*)" , "" , strsplit( as.character( xml2::read_html( year_dir ) ) , '\r(\n?)' )[[1]] )
-
-
+			year.ftp.string <- readLines( textConnection( RCurl::getURL( year_dir ) ) )
 			
 			# break up the string based on the ending extension
 			zip.lines <- unlist( strsplit( year.ftp.string , "\\.zip$" ) )
