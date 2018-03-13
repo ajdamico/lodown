@@ -153,11 +153,11 @@ get_catalog_icpsr <-
 		series_results[ , 'full_url' ] <- 
 			paste0( 
 				"https://www.icpsr.umich.edu/cgi-bin/bob/zipcart2?study=" ,
-				series_results[ i , 'study_number' ] ,
+				series_results[ , 'study_number' ] ,
 				"&bundle=" ,
-				series_results[ i , 'bundle' ] ,
+				series_results[ , 'bundle' ] ,
 				"&ds=" ,
-				series_results[ i , 'dsNo' ]
+				series_results[ , 'dsNo' ]
 			)
 		
 		
