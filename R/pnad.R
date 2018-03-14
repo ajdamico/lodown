@@ -16,8 +16,8 @@ get_catalog_pnad <-
 
 		catalog <-
 			data.frame(
-				year = c( 1992:1993,1995:1999 , 2001:2009, 2011:2012 , year.lines ) ,
-				ftp_folder = paste0( year.ftp , c( 1992:1993,1995:1999, rep( 'reponderacao_2001_2012' , 11 ) , year.lines ) , '/' ) ,
+				year = c( 1992:1993 , 2001:2009 , 2011:2012 , year.lines ) ,
+				ftp_folder = paste0( year.ftp , c( 1992:1993 , rep( 'reponderacao_2001_2012' , 11 ) , year.lines ) , '/' ) ,
 				stringsAsFactors = FALSE
 			)
 		
@@ -166,9 +166,9 @@ lodown_pnad <-
 			names( pes_df ) <- tolower( names( pes_df ) )
 	
 			# confirm no fields are in `dom` unless they are in `pes`
-			# b_fields <- c( 'v0101' , if( 'v0102' %in% names( pes_df ) ) 'v0102' else c( 'control' , 'uf' ) , 'v0103' , setdiff( names( pes_df ) , names( dom_df ) ) )
+			b_fields <- c( 'v0101' , if( 'v0102' %in% names( pes_df ) ) 'v0102' else c( 'control' , 'uf' ) , 'v0103' , setdiff( names( pes_df ) , names( dom_df ) ) )
 			
-			# pes_df <- pes_df[ b_fields ] ; gc()
+			pes_df <- pes_df[ b_fields ] ; gc()
 			
 			# the ASCII and SAS importation instructions stored in temporary files
 			# on the local disk are no longer necessary, so delete them.
@@ -234,7 +234,7 @@ lodown_pnad <-
 			
 			pes_df$one <- 1
 			
-			x <- merge( dom_df , pes_df, by = c("v0101","uf", "v0102", "v0103") )
+			x <- merge( dom_df , pes_df )
 			
 			stopifnot( nrow( x ) == nrow( pes_df ) ) ; rm( pes_df , dom_df ) ; gc()
 			
