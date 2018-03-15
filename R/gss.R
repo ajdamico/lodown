@@ -45,7 +45,7 @@ lodown_gss <-
 
 			stopifnot( length( this_sav <- grep( "\\.sav$" , unzipped_files , ignore.case = TRUE , value = TRUE ) ) == 1 )
 			
-			x <- foreign::read.spss( this_sav , to.data.frame = TRUE , use.value.labels = FALSE )
+			x <- data.frame( haven::read_spss( this_sav ) )
 
 			x$one <- 1
 			
