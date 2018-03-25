@@ -111,6 +111,9 @@ get_catalog_hrs <-
 		
 		catalog <- catalog[ !is.na( catalog$output_folder ) , ]
 		
+		# skip the corrupted zip harmonized hrs version A
+		catalog <- subset( catalog , !grepl( "HarmonizedHRSA\\.zip$" , output_filename ) )
+		
 		catalog
 		
 	}
