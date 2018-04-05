@@ -27,6 +27,9 @@ get_catalog_psid <-
 
 		catalog$output_folder <- paste0( output_dir , "/" , gsub( ":|,|\\(|\\)" , "" , tolower( catalog$type ) ) , "/" )
 
+		# remove files ending in xlsx or pdf
+		catalog <- subset( catalog , !grepl( "\\.pdf$|\\.xlsx$" , full_url ) )
+		
 		catalog
 
 	}
