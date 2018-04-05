@@ -20,33 +20,13 @@ get_catalog_psid <-
 		catalog <- catalog[ !grepl( "/NA$" , catalog[ , 'full_url' ] ) , ]
 		
 		follow_urls <- !grepl( "GetFile" , catalog$full_url )
-		
-		for( this_url in which( follow_urls ) ){
-		
-			link_refs <- rvest::html_attr( rvest::html_nodes( xml2::read_html( catalog[ this_url , 'full_url' ] ) , "a" ) , "href" )
-			
-			getfiles <- link_refs[ grep( "GetFile" , link_refs ) ]
-		
-			all_panes <- gsub( "(.*)pane=" , "" , getfiles )
-			
-			desired_pane <- gsub( "(.*)pane=" , "" , catalog[ this_url , 'full_url' ] )
-			
-			desired_url <- paste0( "https://simba.isr.umich.edu/Zips/" , getfiles[ all_panes == desired_pane ] )
-			
-			catalog[ this_url , 'full_url' ] <- desired_url
-			
-		}
-		
+	
 		catalog$year = ifelse( grepl( "^[0-9][0-9][0-9][0-9]" , catalog$table_name ) , substr( catalog$table_name , 1 , 4 ) , NA )
 		
 		catalog$type <- ifelse( grepl( "^[0-9][0-9][0-9][0-9] Wealth$" , catalog$table_name ) , "Wealth Files" , catalog$directory )
 
 		catalog$output_folder <- paste0( output_dir , "/" , gsub( ":|,|\\(|\\)" , "" , tolower( catalog$type ) ) , "/" )
 
-		# file currently missing from umich
-		# https://github.com/ajdamico/asdfree/issues/302
-		catalog <- subset( catalog , table_name != 'Risk Tolerance' )
-		
 		catalog
 
 	}
