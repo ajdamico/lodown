@@ -30,10 +30,10 @@ get_catalog_cpsbasic <-
 		
 		# unique_versions <- unique( cps_version )
 		
-		possible_dds <- grep( "\\.txt$" , basic_refs , ignore.case = TRUE , value = TRUE )
+		possible_dds <- grep( "\\.txt$|\\.asc$" , basic_refs , ignore.case = TRUE , value = TRUE )
 		
 		# hardcoded exclusion
-		possible_dds <- possible_dds[ !grepl( "dec07revwgts_dd\\.txt" , possible_dds ) ]
+		possible_dds <- possible_dds[ !grepl( "dec07revwgts_dd\\.txt|2000\\-2extract\\.txt" , possible_dds ) ]
 
 		this_dd <- mapply( rep , possible_dds , rle( cps_version )$length )
 
