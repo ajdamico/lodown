@@ -65,7 +65,7 @@ lodown_enade <-
 			# remove duplicated basenames
 			csvfile <- csvfile[ !duplicated( basename( csvfile ) ) ]
 			
-			if( length( csvfile ) == 0 ) csvfile <- grep( "microdados_enade_" , z , value = TRUE , ignore.case = TRUE )
+			if( length( csvfile ) == 0 ) csvfile <- z[ grep( "microdados_enade_" , basename( z ) , ignore.case = TRUE ) ]
 			
 			stopifnot( length( csvfile ) == 1 )
 
