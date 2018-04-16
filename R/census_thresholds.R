@@ -32,7 +32,7 @@ census_thresholds <-
 			fn <- paste0( tempdir() , "/" , basename( this_excel ) )
 			
 			# download the file to your local disk
-			download.file( this_excel , fn , mode = 'wb' )
+			cachaca( this_excel , fn , mode = 'wb' )
 			
 			# import the current table
 			if( grepl( "\\.csv$" , fn ) ){
