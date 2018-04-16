@@ -190,15 +190,9 @@ lodown_scf <-
 
 
 	
-	
+
 #' variant of mitools::MIcombine that only uses the sampling variance from the first implicate instead of averaging all five
 #'
-#' @param results a list of results from inference on separate imputed datasets
-#' @param variances if results is a list of parameter vectors, variances should be the corresponding variance-covariance matrices
-#' @param call a function call for labelling the results
-#' @param df.complete complete-data degrees of freedom
-#' @param ... other arguments, not used
-#' 
 #' @seealso \url{https://cran.r-project.org/web/packages/mitools/mitools.pdf}
 #'
 #' @export

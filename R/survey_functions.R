@@ -1,7 +1,10 @@
 
 
-# svyttest() variant (code from the `survey` package)
-# that works on multiply-imputed data
+#' variant of survey::svyttest that works on multiply-imputed data
+#'
+#' @seealso \url{http://r-survey.r-forge.r-project.org/survey/html/svyttest.html}
+#'
+#' @export
 MIsvyttest<-function(formula, design , ...){
 
 	# the MIcombine function runs differently than a normal svyglm() call
@@ -27,6 +30,11 @@ MIsvyttest<-function(formula, design , ...){
 
 }
 
+#' variant of survey::svyciprop that works on multiply-imputed data
+#'
+#' @seealso \url{http://r-survey.r-forge.r-project.org/survey/html/svyciprop.html}
+#'
+#' @export
 MIsvyciprop <-
 	function (formula, design, method = c("logit", "likelihood",
 		"asin", "beta", "mean", "xlogit"), level = 0.95, df = mean(unlist(lapply(design$designs,survey::degf))),...)
@@ -124,7 +132,11 @@ miceadds_micombine.chisquare <-
 	}
 
 
-# svychisq()  on multiply-imputed data
+#' variant of survey::svychisq that works on multiply-imputed data
+#'
+#' @seealso \url{http://r-survey.r-forge.r-project.org/survey/html/svychisq.html}
+#'
+#' @export
 MIsvychisq<-function(formula, design , statistic = "Chisq" , ... ) {
 
   if ( !( statistic %in% c( "Chisq" ) ) ) { stop( " This method is only implemented for `statistic = 'Chisq'`." ) }

@@ -14,17 +14,6 @@ pirls_MIcombine(results, variances, call = sys.call(), df.complete = Inf,
 pirls_MIcombine(results, variances, call = sys.call(), df.complete = Inf,
   ...)
 }
-\arguments{
-\item{results}{a list of results from inference on separate imputed datasets}
-
-\item{variances}{if results is a list of parameter vectors, variances should be the corresponding variance-covariance matrices}
-
-\item{call}{a function call for labelling the results}
-
-\item{df.complete}{complete-data degrees of freedom}
-
-\item{...}{other arguments, not used}
-}
 \description{
 variant of mitools::MIcombine that only uses the sampling variance from the first implicate instead of averaging all five
 }
