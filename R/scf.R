@@ -189,9 +189,20 @@ lodown_scf <-
 	}
 
 
-# MIcombine() variant (code from the `mitools` package) that only uses
-# the sampling variance from the *first* imputation instead of averaging all five
-pirls_MIcombine <- timss_MIcombine <- scf_MIcombine <-
+	
+	
+#' variant of mitools::MIcombine that only uses the sampling variance from the first implicate instead of averaging all five
+#'
+#' @param results a list of results from inference on separate imputed datasets
+#' @param variances if results is a list of parameter vectors, variances should be the corresponding variance-covariance matrices
+#' @param call a function call for labelling the results
+#' @param df.complete complete-data degrees of freedom
+#' @param ... other arguments, not used
+#' 
+#' @seealso \url{https://cran.r-project.org/web/packages/mitools/mitools.pdf}
+#'
+#' @export
+scf_MIcombine <-
 	function (results, variances, call = sys.call(), df.complete = Inf, ...) {
 		m <- length(results)
 		oldcall <- attr(results, "call")
@@ -226,3 +237,12 @@ pirls_MIcombine <- timss_MIcombine <- scf_MIcombine <-
 		class(rval) <- "MIresult"
 		rval
 	}
+
+	
+#' @rdname scf_MIcombine
+#' @export
+pirls_MIcombine <- scf_MIcombine
+
+#' @rdname scf_MIcombine
+#' @export
+pirls_MIcombine <- scf_MIcombine
