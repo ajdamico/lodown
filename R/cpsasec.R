@@ -654,24 +654,28 @@ lodown_cpsasec <-
 	
 # data dictionary parser
 cpsasec_dd_parser <-
-	function( url ){
+	function( this_url ){
 
+		tf <- tempfile()
+	
 		# read in the data dictionary
-		lines <- readLines ( url )
+		httr::GET( this_url , httr::write_disk( tf , overwrite = TRUE ) )
+		
+		these_lines <- readLines ( tf )
 		
 		# find the record positions
-		hh_start <- grep( "HOUSEHOLD RECORD" , lines )
+		hh_start <- grep( "HOUSEHOLD RECORD" , these_lines )
 		
-		fm_start <- grep( "FAMILY RECORD" , lines )
+		fm_start <- grep( "FAMILY RECORD" , these_lines )
 		
-		pn_start <- grep( "PERSON RECORD" , lines )
+		pn_start <- grep( "PERSON RECORD" , these_lines )
 		
 		# segment the data dictionary into three parts
-		hh_lines <- lines[ hh_start:(fm_start - 1 ) ]
+		hh_lines <- these_lines[ hh_start:(fm_start - 1 ) ]
 		
-		fm_lines <- lines[ fm_start:( pn_start - 1 ) ]
+		fm_lines <- these_lines[ fm_start:( pn_start - 1 ) ]
 		
-		pn_lines <- lines[ pn_start:length(lines) ]
+		pn_lines <- these_lines[ pn_start:length(these_lines) ]
 		
 		# loop through all three parts		
 		for ( i in c( "hh_lines" , "fm_lines" , "pn_lines" ) ){
@@ -720,7 +724,7 @@ cpsasec_dd_parser <-
 			stopifnot( cumsum( j$width )[ nrow( j ) - 1 ] == j[ nrow( j ) , 'position' ] - 1 )
 
 			# confirm that the last variable is filler and can be tossed
-			if ( !grepl( "2015" , url ) ){
+			if ( !grepl( "2015" , this_url ) ){
 			
 				stopifnot( j[ nrow( j ) , 'varname' ] == 'FILLER' )
 			
