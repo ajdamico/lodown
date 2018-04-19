@@ -117,6 +117,9 @@ lodown_nis <-
 			# load the r script into a character vector
 			script.r <- readLines( catalog[ i , 'r_script' ] , warn = FALSE )
 
+			# remove the Hmisc library
+			script.r <- script.r[ !grepl( 'library(Hmisc)' , script.r , fixed = TRUE ) ]
+			
 			# change the path to the data to the local working directory
 			script.r <- gsub( "path-to-data" , normalizePath( tempdir() , winslash = "/" ) , script.r , fixed = TRUE )
 
@@ -134,7 +137,7 @@ lodown_nis <-
 			# for a prime example, see what happens to the `seqnumhh` column.  whoops.
 
 			# figure out the line position of step four within the character vector
-			cutoff <- max( grep( "Step 4:   ASSIGN VARIABLE LABELS" , script.r , fixed = TRUE ) )
+			cutoff <- max( grep( "ASSIGN VARIABLE LABELS" , script.r , fixed = TRUE ) )
 
 			# reduce the r script to its contents from the beginning up till step four
 			script.r <- script.r[ seq( cutoff ) ]
