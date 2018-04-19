@@ -115,7 +115,8 @@ lodown_nis <-
 			options( encoding = "windows-1252" )
 
 			# load the r script into a character vector
-			script.r <- readLines( catalog[ i , 'r_script' ] , warn = FALSE )
+			httr::GET( catalog[ i , 'r_script' ] , httr::write_disk( tf , overwrite = TRUE ) )
+			script.r <- readLines ( tf )
 
 			# remove the Hmisc library
 			script.r <- script.r[ !grepl( 'library(Hmisc)' , script.r , fixed = TRUE ) ]
