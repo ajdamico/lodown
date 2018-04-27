@@ -88,7 +88,7 @@ lodown_nsfg <-
 
 			cachaca( catalog[ i , "sas_ri" ] , tf2 , mode = 'wb' )
 			
-			this_sas <- file( tf2 , 'r' , encoding = 'windows-1252' )
+			this_sas <- file( tf2 , 'rb' , encoding = 'windows-1252' )
 			sas_lines <- readLines( this_sas )
 			close( this_sas )
 			writeLines( sas_lines , tf2 )
@@ -199,7 +199,7 @@ lodown_nsfg <-
 				fwf88 <- NULL
 				
 				# initiate a file-read connection to the downloaded file
-				conn <- file( tf , 'r' )
+				conn <- file( tf , 'rb' )
 				
 				# read 3553 characters at a time (the actual line length of this file)
 				# until you are out of lines

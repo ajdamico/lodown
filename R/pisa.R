@@ -317,8 +317,8 @@ lodown_pisa <-
 
 					unzipped_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) )
 
-					# read-only file connection "r" - pointing to the ASCII file
-					incon <- file( unzipped_files , "r")
+					# read-only file connection "rb" - pointing to the ASCII file
+					incon <- file( unzipped_files , "rb")
 
 					# write-only file connections "w"
 					outcon <- file( tf2 , "w" )

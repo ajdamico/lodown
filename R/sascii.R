@@ -8,7 +8,7 @@ read_SAScii <-
 		if( !is.null( sas_path ) & !is.null( sas_stru ) ) stop( "either sas_path= or sas_stru= must be specified, but not both" )
 
 		if( is.null( sas_stru ) ){
-			this_con <- file( sas_path , "r" , encoding = sas_encoding )
+			this_con <- file( sas_path , "rb" , encoding = sas_encoding )
 			this_sas <- readLines( this_con )
 			close( this_con )
 			tf <- tempfile()
@@ -158,7 +158,7 @@ read_SAScii_monetdb <-
 		# otherwise, just copy it over.
 		} else tf_sri <- sas_ri
 
-		this_con <- file( tf_sri , "r" , encoding = "windows-1252" )
+		this_con <- file( tf_sri , "rb" , encoding = "windows-1252" )
 		this_sas <- readLines( this_con )
 		close( this_con )
 		tf_sas <- tempfile()

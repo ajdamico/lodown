@@ -124,7 +124,7 @@ lodown_pnad <-
 			# in 2003 and 2007, the age variable had been read in as a factor variable
 			# which breaks certain commands by treating the variable incorrectly as a factor
 			if( catalog[ i , 'year' ] %in% c( 2003 , 2007 ) ){
-				pes_con <- file( pes.sas , "r" , encoding = "windows-1252" )
+				pes_con <- file( pes.sas , "rb" , encoding = "windows-1252" )
 				pes_lines <- readLines( pes_con )
 				close( pes_con )
 				pes_lines <- iconv( pes_lines , "" , "ASCII//TRANSLIT" )
@@ -278,7 +278,7 @@ pnad_remove_uf <-
 	function( sasfile ){
 
 		# read the SAS import file into R
-		sascon <- file( sasfile , "r" , blocking = FALSE , encoding = "windows-1252" )
+		sascon <- file( sasfile , "rb" , blocking = FALSE , encoding = "windows-1252" )
 		sas_lines <- readLines( sascon )
 		close( sascon )
 		

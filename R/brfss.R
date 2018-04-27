@@ -70,7 +70,7 @@ lodown_brfss <-
 				
 			} else {
 			
-				sas_con <- file( catalog[ i , 'sas_ri' ] , "r" , encoding = "windows-1252" )
+				sas_con <- file( catalog[ i , 'sas_ri' ] , "rb" , encoding = "windows-1252" )
 				z <- readLines( sas_con )
 				close( sas_con )
 						

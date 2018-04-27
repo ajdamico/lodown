@@ -396,7 +396,7 @@ get.tsv <-
 		tf.person <- tempfile()
 		
 		# initiate a read-only connection to the input file
-		incon <- file( txt_file , "r")
+		incon <- file( txt_file , "rb")
 
 		# initiate two write-only file connections "w" - pointing to the household and person files
 		outcon.household <- file( tf.household , "w" )

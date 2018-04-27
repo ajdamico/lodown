@@ -712,7 +712,7 @@ clear.goofy.characters <-
 		tf <- tempfile()
 		
 		# initiate a read-only connection to the input file
-		incon <- file( fn , "r")
+		incon <- file( fn , "rb")
 
 		outcon <- file( tf , "w" )
 

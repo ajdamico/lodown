@@ -166,8 +166,8 @@ lodown_cpsasec <-
 				
 				# create four file connections.
 
-				# one read-only file connection "r" - pointing to the ASCII file
-				incon <- file( fn , "r") 
+				# one read-only file connection "rb" - pointing to the ASCII file
+				incon <- file( fn , "rb") 
 
 				# three write-only file connections "w" - pointing to the household, family, and person files
 				outcon.household <- file( tf.household , "w") 

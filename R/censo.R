@@ -151,7 +151,7 @@ censo_sas <-
 
 		tf <- tempfile()
 
-		incon <- file( sasfile , "r" , encoding = "windows-1252" )
+		incon <- file( sasfile , "rb" , encoding = "windows-1252" )
 
 		this_sas <- readLines( incon )
 
