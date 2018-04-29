@@ -1,8 +1,6 @@
 get_catalog_enade <-
 	function( data_name = "enade" , output_dir , ... ){
 
-		if ( !requireNamespace( "archive" , quietly = TRUE ) ) stop( "archive needed for this function to work. to install it, type `devtools::install_github( 'jimhester/archive' )`" , call. = FALSE )
-
 		inep_portal <- "http://portal.inep.gov.br/microdados"
 
 		w <- rvest::html_attr( rvest::html_nodes( xml2::read_html( inep_portal ) , "a" ) , "href" )
@@ -26,8 +24,10 @@ get_catalog_enade <-
 
 
 lodown_enade <-
-	function( data_name = "enade" , catalog , ... ){
+	function( data_name = "enade" , catalog , path_to_7z = if( .Platform$OS.type != 'windows' ) '7za' else normalizePath( "C:/Program Files/7-zip/7z.exe" ) , ... ){
 
+		if( system( paste0( '"' , path_to_7z , '" -h' ) , show.output.on.console = FALSE ) != 0 ) stop( paste0( "you need to install 7-zip.  if you already have it, include a parameter like path_to_7z='" , path_to_7z , "'" ) )
+		
 		on.exit( print( catalog ) )
 
 		tf <- tempfile()
@@ -36,7 +36,9 @@ lodown_enade <-
 
 			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' , attempts = 10 )
 
-			archive::archive_extract( tf , dir = normalizePath( catalog[ i , "output_folder" ] ) )
+			dos.command <- paste0( '"' , path_to_7z , '" x "' , tf , '" -o"' , normalizePath( catalog[ i , "output_folder" ] ) , '"' )
+
+			system( dos.command )
 
 			z <- unique( list.files( catalog[ i , 'output_folder' ] , recursive = TRUE , full.names = TRUE  ) )
 
@@ -44,8 +46,10 @@ lodown_enade <-
 
 			if( length( zf ) > 0 ){
 
-				archive::archive_extract( zf , dir = normalizePath( catalog[ i , "output_folder" ] ) )
+				dos.command <- paste0( '"' , path_to_7z , '" x "' , zf , '" -o"' , normalizePath( catalog[ i , "output_folder" ] ) , '"' )
 
+				system( dos.command )
+				
 				z <- unique( c( z , list.files( catalog[ i , 'output_folder' ] , recursive = TRUE , full.names = TRUE  ) ) )
 
 			}
@@ -54,8 +58,10 @@ lodown_enade <-
 
 			if( length( rfi ) > 0 ) {
 
-				archive::archive_extract( rfi , dir = normalizePath( catalog[ i , "output_folder" ] ) )
+				dos.command <- paste0( '"' , path_to_7z , '" x "' , rfi , '" -o"' , normalizePath( catalog[ i , "output_folder" ] ) , '"' )
 
+				system( dos.command )
+				
 				z <- unique( c( z , list.files( catalog[ i , 'output_folder' ] , recursive = TRUE , full.names = TRUE  ) ) )
 
 			}
