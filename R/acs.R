@@ -1,8 +1,6 @@
 get_catalog_acs <-
-	function( data_name = "acs" , output_dir , include_puerto_rico = TRUE , path_to_7za = '7za' , ... ){
+	function( data_name = "acs" , output_dir , include_puerto_rico = TRUE , ... ){
 
-		if( ( .Platform$OS.type != 'windows' ) && ( system( paste0('"', path_to_7za , '" -h' ) , show.output.on.console = FALSE ) != 0 ) ) stop( "you need to install 7-zip.  if you already have it, include a path_to_7za='/directory/7za' parameter" )
-		
 		catalog <- NULL
 		
 		h_basenames <- paste0( "csv_h" , tolower( c( state.abb , "DC" , "PR" ) ) , ".zip" )
@@ -68,8 +66,10 @@ get_catalog_acs <-
 	}
 
 lodown_acs <-
-	function( data_name = "acs" , catalog , ... ){
+	function( data_name = "acs" , catalog , path_to_7za = '7za' , ... ){
 
+		if( ( .Platform$OS.type != 'windows' ) && ( system( paste0('"', path_to_7za , '" -h' ) , show.output.on.console = FALSE ) != 0 ) ) stop( "you need to install 7-zip.  if you already have it, include a path_to_7za='/directory/7za' parameter" )
+		
 		on.exit( print( catalog ) )
 
 		tf <- tempfile()
