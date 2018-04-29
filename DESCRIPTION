@@ -9,9 +9,8 @@ URL: http://asdfree.com/
 BugReports: https://github.com/ajdamico/asdfree/issues
 Depends: R (>= 3.4)
 Imports: survey, SAScii, RCurl, digest, readr, httr, Hmisc, XML, foreign, stringr, rvest, haven, xml2, DBI, RSQLite, R.utils
-Suggests: memisc, readxl, reshape2, jsonlite, purrr, descr, mitools, jpeg, read.dbc, archive
+Suggests: memisc, readxl, reshape2, jsonlite, purrr, descr, mitools, jpeg, read.dbc
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.1
-Remotes: jimhester/archive
