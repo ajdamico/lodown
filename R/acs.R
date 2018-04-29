@@ -1,8 +1,8 @@
 get_catalog_acs <-
-	function( data_name = "acs" , output_dir , include_puerto_rico = TRUE , ... ){
+	function( data_name = "acs" , output_dir , include_puerto_rico = TRUE , path_to_7za = '7za' , ... ){
 
-		if ( !requireNamespace( "archive" , quietly = TRUE ) ) stop( "archive needed for this function to work. to install it, type `devtools::install_github( 'jimhester/archive' )`" , call. = FALSE )
-
+		if( ( .Platform$OS.type != 'windows' ) && ( system( paste0('"', path_to_7za , '" -h' ) , show.output.on.console = FALSE ) != 0 ) ) stop( "you need to install 7-zip.  if you already have it, include a path_to_7za='/directory/7za' parameter" )
+		
 		catalog <- NULL
 		
 		h_basenames <- paste0( "csv_h" , tolower( c( state.abb , "DC" , "PR" ) ) , ".zip" )
@@ -93,7 +93,20 @@ lodown_acs <-
 
 				cachaca( catalog[ i , if( j == 'h' ) 'h_full_url' else 'p_full_url' ] , tf , mode = 'wb' )
 				
-				archive::archive_extract( tf , dir = paste0( tempdir() , "/unzips" ) )
+				# unzip the file's contents to the temporary directory
+				# extract the file, platform-specific
+				if ( .Platform$OS.type == 'windows' ){
+
+					tfn <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) , overwrite = TRUE )
+
+				} else {
+
+					# build the string to send to the terminal on non-windows systems
+					dos.command <- paste0( '"' , path_to_7za , '" x ' , tf , ' -aoa -o"' , paste0( tempdir() , "/unzips" ) , '"' )
+
+					system( dos.command )
+
+				}
 
 				tfn <- list.files( paste0( tempdir() , "/unzips" ) , full.names = TRUE )
 
