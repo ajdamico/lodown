@@ -104,8 +104,10 @@ cps_dd_parser <-
 	function( dd_url ){
 
 		# read in the data dictionary
-		dd_con <- file( dd_url , encoding = 'windows-1252' )
-		the_lines <- readLines ( dd_con )
+		tf <- tempfile()
+		httr::GET( dd_url , httr::write_disk( tf , overwrite = TRUE ) )
+		dd_con <- file( tf , 'rb' , encoding = 'windows-1252' )
+		the_lines <- readLines( dd_con )
 		close( dd_con )
 		
 		the_lines <- gsub( "\\(|\\)" , "" , the_lines )
