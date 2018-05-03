@@ -96,9 +96,9 @@ lodown_sbo <-
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 
-#' variant of mitools::MIcombine that copies the census bureau's dual design calculation for the survey of business owners
+#' dual design calculations for the survey of business owners
 #'
-#' the MIcombine variant includes a 2007-specific variance adjustment.  this will change in other years.
+#' the \code{mitools::MIcombine} variant includes a 2007-specific variance adjustment.  this will change in other years.
 #' this adjustment statistic was pulled from the middle of page 8
 #' \url{https://www2.census.gov/econ/sbo/07/pums/2007_sbo_pums_users_guide.pdf#page=8}
 #'
@@ -107,7 +107,7 @@ lodown_sbo <-
 #'
 #' @seealso \url{https://cran.r-project.org/web/packages/mitools/mitools.pdf}
 #'
-#' @rdname sbo_MIcombine
+#' @rdname sbo
 #' @export
 sbo_MIcombine <-
 	function( x , adjustment = 1.992065 ){
@@ -155,7 +155,7 @@ sbo_MIcombine <-
 
 
 
-#' @rdname sbo_MIcombine
+#' @rdname sbo
 #' @export
 sbo_with <-
 	function ( sbo.svy , expr , ... ){
@@ -198,7 +198,7 @@ sbo_with <-
 
 
 
-#' @rdname sbo_MIcombine
+#' @rdname sbo
 #' @export
 sbo_subset <-
 	function( x , ... ){
@@ -234,7 +234,7 @@ sbo_subset <-
 	}
 
 	
-#' @rdname sbo_MIcombine
+#' @rdname sbo
 #' @export
 sbo_update <-
 	function( x , ... ){
@@ -266,12 +266,12 @@ sbo_update <-
 		upd.svy
 	}
 
-#' @rdname sbo_MIcombine
+#' @rdname sbo
 #' @export
 sbo_degf <- function( x ) survey:::degf( x$coef )
 
 
-#' @rdname sbo_MIcombine
+#' @rdname sbo
 #' @export
 sbo_MIsvyciprop <-
 	function (formula, design, method = c("logit", "likelihood",

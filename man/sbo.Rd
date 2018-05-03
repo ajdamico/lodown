@@ -7,7 +7,7 @@
 \alias{sbo_update}
 \alias{sbo_degf}
 \alias{sbo_MIsvyciprop}
-\title{variant of mitools::MIcombine that copies the census bureau's dual design calculation for the survey of business owners}
+\title{dual design calculations for the survey of business owners}
 \usage{
 sbo_MIcombine(x, adjustment = 1.992065)
 
@@ -24,7 +24,7 @@ sbo_MIsvyciprop(formula, design, method = c("logit", "likelihood", "asin",
   df = mean(unlist(lapply(design$designs, survey::degf))), ...)
 }
 \description{
-the MIcombine variant includes a 2007-specific variance adjustment.  this will change in other years.
+the \code{mitools::MIcombine} variant includes a 2007-specific variance adjustment.  this will change in other years.
 this adjustment statistic was pulled from the middle of page 8
 \url{https://www2.census.gov/econ/sbo/07/pums/2007_sbo_pums_users_guide.pdf#page=8}
 }

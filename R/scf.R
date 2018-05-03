@@ -191,10 +191,11 @@ lodown_scf <-
 
 	
 
-#' variant of mitools::MIcombine that only uses the sampling variance from the first implicate instead of averaging all five
+#' variant of \code{mitools::MIcombine} that only uses the sampling variance from the first implicate instead of averaging all five
 #'
 #' @seealso \url{https://cran.r-project.org/web/packages/mitools/mitools.pdf}
 #'
+#' @rdname scf
 #' @export
 scf_MIcombine <-
 	function (results, variances, call = sys.call(), df.complete = Inf, ...) {
@@ -232,11 +233,23 @@ scf_MIcombine <-
 		rval
 	}
 
+
+
+
+#' multiply-imputed plausible value calculations for the Trends in International Mathematics and Science Study
+#'
+#' @seealso \url{https://cran.r-project.org/web/packages/mitools/mitools.pdf}
+#'
+#' @rdname timss
+#' @export
+timss_MIcombine <- scf_MIcombine
+
 	
-#' @rdname scf_MIcombine
+#' multiply-imputed plausible value calculations for the Progress in International Reading Literacy Study
+#'
+#' @seealso \url{https://cran.r-project.org/web/packages/mitools/mitools.pdf}
+#'
+#' @rdname pirls
 #' @export
 pirls_MIcombine <- scf_MIcombine
 
-#' @rdname scf_MIcombine
-#' @export
-timss_MIcombine <- scf_MIcombine
