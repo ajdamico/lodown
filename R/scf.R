@@ -239,4 +239,4 @@ pirls_MIcombine <- scf_MIcombine
 
 #' @rdname scf_MIcombine
 #' @export
-pirls_MIcombine <- scf_MIcombine
+timss_MIcombine <- scf_MIcombine
