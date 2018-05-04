@@ -98,7 +98,18 @@ lodown_nls <-
 # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 
-# initiate a function to download all available survey-year selections for any of the nlsy studies
+#' functions to access the national longitudinal studies panel weights
+#'
+#' download all available survey-year selections for any of the nlsy studies, then download the appropriate set of weights
+#'
+#' @param study must be one of the options shown at \url{https://www.nlsinfo.org/weights} like \code{c( "nlsy97" , "nlsy79" , "nlscya" , "nlsym" , "nlsom" , "nlsyw" , "nlsmw" )}
+#' @param uona use "NO" if you want to weight using "the respondents are in ALL of the selected years" or "YES" for "the respondents are in ANY OR ALL of the selected years"
+#' @param selections panel timepoints to use, as returned by \code{nls_get_selections}
+#'
+#' @seealso \url{http://www.asdfree.com} for usage examples
+#'
+#' @rdname nls
+#' @export
 nls_get_selections <-
 	function(
 		study
@@ -127,16 +138,9 @@ nls_get_selections <-
 	}
 
 	
-# initiate a function to download a specific combination of survey-year weights
-# for one of the nlsy studies
-	
-	
-# set uona = "NO" if you want to weight using
-# "the respondents are in ALL of the selected years"
 
-# set uona = "YES" if you want to weight using
-# "the respondents are in ANY OR ALL of the selected years"
-
+#' @rdname nls
+#' @export
 nls_get_weights <-
 	function( 
 		study , 
