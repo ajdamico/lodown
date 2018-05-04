@@ -163,11 +163,18 @@ lodown_pirls <-
 pirls_rwcf <- 
 	function( z , wgt ){
 		for ( i in 1:75 ){
+			
 			z[ z$jkzone != i , paste0( 'rw' , i ) ] <- z[ z$jkzone != i , wgt ]
+			z[ z$jkzone != i , paste0( 'rw' , i + 75 ) ] <- z[ z$jkzone != i , wgt ]
+			
 			z[ z$jkzone == i & z$jkrep == 1 , paste0( 'rw' , i ) ] <- z[ z$jkzone == i & z$jkrep == 1 , wgt ] * 2
 			z[ z$jkzone == i & z$jkrep == 0 , paste0( 'rw' , i ) ] <- 0
+			
+			z[ z$jkzone == i & z$jkrep == 1 , paste0( 'rw' , i + 75 ) ] <- 0
+			z[ z$jkzone == i & z$jkrep == 0 , paste0( 'rw' , i + 75 ) ] <- z[ z$jkzone == i & z$jkrep == 1 , wgt ] * 2
+			
 		}
-		z[ , paste0( 'rw' , 1:75 ) ]
+		z[ , paste0( 'rw' , 1:150 ) ]
 }
 
 
@@ -218,7 +225,7 @@ pirls_pvsd <-
 				survey::svrepdesign( 	
 					weights = as.formula( paste( "~" , wgt ) ) , 
 					repweights = rw ,
-					rscales = rep( 1 , 75 ) ,
+					rscales = rep( 1 , 150 ) ,
 					scale = 1 ,
 					type = 'other' ,
 					data = mitools::imputationList( mget( paste0( "x" , 1:5 ) ) ) ,
@@ -234,7 +241,7 @@ pirls_pvsd <-
 				survey::svrepdesign( 	
 					weights = as.formula( paste( "~" , wgt ) ) , 
 					repweights = rw ,
-					rscales = rep( 1 , 75 ) ,
+					rscales = rep( 1 , 150 ) ,
 					scale = 1 ,
 					type = 'other' ,
 					data = x ,

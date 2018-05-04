@@ -234,22 +234,3 @@ scf_MIcombine <-
 	}
 
 
-
-
-#' multiply-imputed plausible value calculations for the Trends in International Mathematics and Science Study
-#'
-#' @seealso \url{https://cran.r-project.org/web/packages/mitools/mitools.pdf}
-#'
-#' @rdname timss
-#' @export
-timss_MIcombine <- scf_MIcombine
-
-	
-#' multiply-imputed plausible value calculations for the Progress in International Reading Literacy Study
-#'
-#' @seealso \url{https://cran.r-project.org/web/packages/mitools/mitools.pdf}
-#'
-#' @rdname pirls
-#' @export
-pirls_MIcombine <- scf_MIcombine
-
