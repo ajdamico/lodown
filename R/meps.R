@@ -32,7 +32,7 @@ get_catalog_meps <-
 
 			available_pufs <- rvest::html_table( xml2::read_html( tf ) , fill = TRUE )[[11]]
 
-			available_pufs <- available_pufs[ grepl( "^HC" , available_pufs$X1 ) , ]
+			available_pufs <- available_pufs[ grepl( "^HC" , available_pufs[ , 1 ] ) , ]
 
 			names( available_pufs ) <- c( "table_id" , "file_name" , "data_update" , "year" , "file_type" )
 			
