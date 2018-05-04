@@ -171,7 +171,7 @@ pirls_rwcf <-
 			z[ z$jkzone == i & z$jkrep == 0 , paste0( 'rw' , i ) ] <- 0
 			
 			z[ z$jkzone == i & z$jkrep == 1 , paste0( 'rw' , i + 75 ) ] <- 0
-			z[ z$jkzone == i & z$jkrep == 0 , paste0( 'rw' , i + 75 ) ] <- z[ z$jkzone == i & z$jkrep == 1 , wgt ] * 2
+			z[ z$jkzone == i & z$jkrep == 0 , paste0( 'rw' , i + 75 ) ] <- z[ z$jkzone == i & z$jkrep == 0 , wgt ] * 2
 			
 		}
 		z[ , paste0( 'rw' , 1:150 ) ]
