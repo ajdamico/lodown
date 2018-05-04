@@ -3,7 +3,7 @@ get_catalog_pirls <-
 
 		catalog <-
 			data.frame(
-				year = seq( 2001 , 2011 , 5 ) ,
+				year = seq( 2001 , 2016 , 5 ) ,
 				stringsAsFactors = FALSE
 			)
 
@@ -31,6 +31,8 @@ lodown_pirls <-
 			# specify the pathway to each and every spss data set to download.
 			ftd <-
 				c(
+					"https://timssandpirls.bc.edu/pirls2016/international-database/downloads/P16_SPSSData_pt1.zip" ,
+					"https://timssandpirls.bc.edu/pirls2016/international-database/downloads/P16_SPSSData_pt2.zip" ,
 					"https://timssandpirls.bc.edu/pirls2011/downloads/P11_SPSSData_pt1.zip" ,
 					"https://timssandpirls.bc.edu/pirls2011/downloads/P11_SPSSData_pt2.zip" ,
 					"https://timssandpirls.bc.edu/PDF/PIRLS2006_SPSSData.zip" ,
