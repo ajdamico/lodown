@@ -190,7 +190,7 @@ cps_dd_parser <-
 		# end of hardcodes
 		
 		# pull the lines into a temporary variable
-		the_dd <- stringr::str_trim( stringi::stri_enc_toutf8( the_lines ) )
+		the_dd <- stringr::str_trim( the_lines )
 	
 		the_dd <- iconv( the_dd , "" , "ASCII//TRANSLIT" )
 		
