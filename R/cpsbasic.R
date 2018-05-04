@@ -53,7 +53,9 @@ get_catalog_cpsbasic <-
 		catalog$output_filename = paste0( output_dir , "/" , catalog$year , " " , stringr::str_pad( catalog$month , 2 , pad = "0" ) , " cps basic.rds" )
 		
 		rownames( catalog ) <- NULL
-			
+
+		catalog <- catalog[ order( catalog$year , catalog$month ) , ]
+		
 		catalog
 
 	}
@@ -188,7 +190,7 @@ cps_dd_parser <-
 		# end of hardcodes
 		
 		# pull the lines into a temporary variable
-		the_dd <- stringr::str_trim( the_lines )
+		the_dd <- stringr::str_trim( stringi::stri_enc_toutf8( the_lines ) )
 	
 		the_dd <- iconv( the_dd , "" , "ASCII//TRANSLIT" )
 		
