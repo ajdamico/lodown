@@ -112,6 +112,7 @@ cps_dd_parser <-
 		the_lines <- readLines( dd_con , encoding = 'latin1' )
 		close( dd_con )
 		
+		the_lines <- gsub( "\u0096" , "-" , the_lines )
 		the_lines <- gsub( "\\(|\\)" , "" , the_lines )
 		
 		# hardcodes
