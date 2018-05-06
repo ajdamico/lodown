@@ -71,7 +71,7 @@ lodown_brfss <-
 			} else {
 			
 				sas_con <- file( catalog[ i , 'sas_ri' ] , "rb" , encoding = "windows-1252" )
-				z <- readLines( sas_con )
+				z <- readLines( sas_con , encoding = 'latin1' )
 				close( sas_con )
 						
 				# throw out a few columns that cause importation trouble with monetdb
