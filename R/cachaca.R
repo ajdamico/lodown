@@ -107,6 +107,7 @@ download_to_filename <- function(url, dlfile, curl=RCurl::getCurlHandle(), ...) 
 #' @param sleepsec length of \code{Sys.sleep()} between broken downloads
 #' @param filesize_fun use \code{httr::HEAD} or \code{RCurl::getURL} to determine file size.  use "unzip_verify" to verify the download by attempting to unzip the file without issue
 #' @param savecache whether to actually cache the downloaded files in the temporary directories.  setting this option to FALSE eliminates the purpose of cachaca(), but sometimes it's necessary to disable for a single call, or globally.
+#' @param cdc_ftp_https whether to substitute cdc ftp sites with https, i.e. \code{gsub( "ftp://ftp.cdc.gov/" , "https://ftp.cdc.gov/" , this_url , fixed = TRUE )}.
 #'
 #' @return just pass on whatever FUN returns
 #'
@@ -154,11 +155,15 @@ cachaca <-
 		# whether to actually cache the downloaded files
 		# setting this option to FALSE eliminates the purpose of cachaca()
 		# but sometimes it's necessary to disable for a single call, or globally
-		savecache = getOption( "lodown.cachaca.savecache" , TRUE )
+		savecache = getOption( "lodown.cachaca.savecache" , TRUE ) ,
+		
+		cdc_ftp_https = TRUE
 
 	) {
 
 		if( !( filesize_fun %in% c( 'httr' , 'rcurl' , 'unzip_verify' ) ) ) stop( "filesize_fun= must be 'httr', 'rcurl', or 'unzip_verify'" )
+	
+		if( cdc_ftp_https ) this_url <- gsub( "ftp://ftp.cdc.gov/" , "https://ftp.cdc.gov/" , this_url , fixed = TRUE )
 	
 		# if the cached file exists, assume it's good.
 		urlhash <- digest::digest(this_url)
