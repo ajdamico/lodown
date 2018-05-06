@@ -553,8 +553,7 @@ lodown_cpsasec <-
 					read_SAScii( 
 						CPS.replicate.weight.file.location , 
 						CPS.replicate.weight.SAS.read.in.instructions , 
-						zipped = zip_file ,
-						filesize_fun = 'httr'
+						zipped = zip_file
 					)
 
 
