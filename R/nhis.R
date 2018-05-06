@@ -165,9 +165,10 @@ get_catalog_nhis <-
 
 			cat( paste0( "loading " , data_name , " catalog from " , income_dir , "\r\n\n" ) )
 
-			# just like above, read those lines into working memory
-			ftp_files <- tolower( readLines( textConnection( RCurl::getURL( income_dir , dirlistonly = TRUE ) ) ) )
+			this_listing <- strsplit( RCurl::getURL( income_dir ) , "<br>" )[[1]]
 			
+			ftp_files <- tolower( gsub( '(.*)\\">(.*)<\\/A>$' , "\\2" , this_listing ) )
+	
 			# remove stata files and missing files
 			ftp_files <- ftp_files[ !( ftp_files %in% "" ) & !grepl( "\\.do$" , ftp_files ) ]
 
