@@ -88,8 +88,8 @@ lodown_nsfg <-
 
 			cachaca( catalog[ i , "sas_ri" ] , tf2 , mode = 'wb' )
 			
-			this_sas <- file( tf2 , 'rb' , encoding = 'windows-1252' )
-			sas_lines <- readLines( this_sas , encoding = 'windows-1252' )
+			this_sas <- file( tf2 , 'rb' , encoding = 'latin1' )
+			sas_lines <- readLines( this_sas , encoding = 'latin1' )
 			close( this_sas )
 			writeLines( sas_lines , tf2 )
 			

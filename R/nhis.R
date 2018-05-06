@@ -219,7 +219,7 @@ lodown_nhis <-
 
 			if( catalog[ i , 'imputed_income' ] ){
 			
-				SAScii_start <- grep( "INPUT ALL VARIABLES" , readLines( catalog[ i , 'sas_script' ] ) ) + 1
+				SAScii_start <- grep( "INPUT ALL VARIABLES" , readLines( catalog[ i , 'sas_script' ] , encoding = 'latin1' ) ) + 1
 				
 				# unzip the file into a temporary directory.
 				# the unzipped file should contain *five* ascii files
@@ -228,7 +228,7 @@ lodown_nhis <-
 				# loop through all five imputed income files
 				for ( j in 1:length( income_file_names ) ){
 
-					ii <- read_SAScii( income_file_names[ j ] , catalog[ i , 'sas_script' ] , beginline = SAScii_start )
+					ii <- read_SAScii( income_file_names[ j ] , catalog[ i , 'sas_script' ] , beginline = SAScii_start , sas_encoding = 'latin1' )
 
 					names( ii ) <- tolower( names( ii ) )
 
@@ -252,7 +252,7 @@ lodown_nhis <-
 				
 				# ..and read that text file directly into an R data.frame
 				# using the sas importation script downloaded before this big fat loop
-				x <- read_SAScii( unzipped_files , catalog[ i , "sas_script" ] )
+				x <- read_SAScii( unzipped_files , catalog[ i , "sas_script" ] , sas_encoding = 'latin1' )
 				
 				# convert all column names to lowercase
 				names( x ) <- tolower( names( x ) )
