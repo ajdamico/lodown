@@ -9,7 +9,7 @@ read_SAScii <-
 
 		if( is.null( sas_stru ) ){
 			this_con <- file( sas_path , "rb" , encoding = sas_encoding )
-			this_sas <- readLines( this_con )
+			this_sas <- readLines( this_con , encoding = sas_encoding )
 			close( this_con )
 			tf <- tempfile()
 			writeLines( this_sas , tf )
