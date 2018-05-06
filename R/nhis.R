@@ -9,11 +9,11 @@ get_catalog_nhis <-
 		
 			# read the text of the microdata ftp into working memory
 			# download the contents of the ftp directory for all microdata
-			ftp.listing <- readLines( textConnection( RCurl::getURL( base_ftp_dir ) ) )
+			ftp.listing <- strsplit( RCurl::getURL( base_ftp_dir ) , "<br>" )[[1]]
 
 			# extract the text from all lines containing a this_year of microdata
 			# figure out the names of those this_year directories
-			ay <- rev( gsub( "(.*) (.*)" , "\\2" , ftp.listing ) )
+			ay <- rev( gsub( '(.*)\\">(.*)<\\/A>$', "\\2" , ftp.listing ) )
 
 			# remove non-numeric strings
 			suppressWarnings( available_years <- ay[ as.numeric( ay ) %in% ay ] )
@@ -27,7 +27,9 @@ get_catalog_nhis <-
 				cat( paste0( "loading " , data_name , " catalog from " , year_dir , "\r\n\n" ) )
 
 				# just like above, read those lines into working memory
-				ftp_files <- tolower( readLines( textConnection( RCurl::getURL( year_dir , dirlistonly = TRUE ) ) ) )
+				this_listing <- strsplit( RCurl::getURL( year_dir ) , "<br>" )[[1]]
+				
+				ftp_files <- tolower( gsub( '(.*)\\">(.*)<\\/A>$' , "\\2" , this_listing ) )
 				
 				# identify all .exe files..
 				exe.filenames <- ftp_files[ grepl( ".exe" , ftp_files ) ]
