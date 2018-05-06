@@ -3,9 +3,9 @@ get_catalog_yrbss <-
 
 		catalog <- NULL
 	
-		yrbss_ftp_contents <- RCurl::getURL( "ftp://ftp.cdc.gov/pub/data/yrbs/" , ftp.use.epsv = TRUE, dirlistonly = TRUE )
+		yrbss_ftp_contents <- RCurl::getURL( "https://ftp.cdc.gov/pub/data/yrbs/" , ftp.use.epsv = TRUE, dirlistonly = TRUE )
 
-		yrbss_ftp_paths <- paste0( "ftp://ftp.cdc.gov/pub/data/yrbs/" , strsplit( yrbss_ftp_contents , '(\r)?\n' )[[1]] , "/" )
+		yrbss_ftp_paths <- paste0( "https://ftp.cdc.gov/pub/data/yrbs/" , strsplit( yrbss_ftp_contents , '(\r)?\n' )[[1]] , "/" )
 
 		yrbss_folders <- grep( "([0-9][0-9][0-9][0-9])" , yrbss_ftp_paths , value = TRUE )
 		

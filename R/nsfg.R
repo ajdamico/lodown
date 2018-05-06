@@ -2,7 +2,7 @@ get_catalog_nsfg <-
 	function( data_name = "nsfg" , output_dir , ... ){
 
 		# figure out all `.dat` files on the cdc's nsfg ftp site
-		dat_dir <- "ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/NSFG/"
+		dat_dir <- "https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/NSFG/"
 		dat_ftp <- readLines( textConnection( RCurl::getURL( dat_dir ) ) )
 		all_files <- gsub( "(.*) (.*)" , "\\2" , dat_ftp )
 		dat_files <- all_files[ grep( "\\.dat$" , tolower( all_files ) ) ]

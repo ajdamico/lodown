@@ -15,7 +15,7 @@ get_catalog_nvss <-
 		z <- gsub( "\t" , "" , z )
 
 		# keep only the lines in the html code containing an ftp site
-		files <- z[ grep( 'ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/' , z ) ]
+		files <- z[ grep( 'https://ftp.cdc.gov/pub/Health_Statistics/NCHS/' , z ) ]
 		# this, i'm assuming, points to every file available for download.  cool.
 
 		catalog <-
@@ -65,7 +65,7 @@ lodown_nvss <-
 		z <- gsub( "\t" , "" , z )
 
 		# keep only the lines in the html code containing an ftp site
-		files <- z[ grep( 'ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/' , z ) ]
+		files <- z[ grep( 'https://ftp.cdc.gov/pub/Health_Statistics/NCHS/' , z ) ]
 		# this, i'm assuming, points to every file available for download.  cool.
 
 		for ( i in seq_len( nrow( catalog ) ) ){
@@ -649,7 +649,7 @@ lodown_nvss <-
 				# build the full filepath of the fetal death zipped file
 				fn <- 
 					paste0( 
-						"ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/DVS/fetaldeathus/Fetal" , 
+						"https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/DVS/fetaldeathus/Fetal" , 
 						catalog[ i , 'year' ] , 
 						"US.zip" 
 					)
@@ -664,7 +664,7 @@ lodown_nvss <-
 				# build the full filepath of the fetal death zipped file
 				fn <- 
 					paste0( 
-						"ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/DVS/fetaldeathter/Fetal" , 
+						"https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/DVS/fetaldeathter/Fetal" , 
 						catalog[ i , 'year' ] , 
 						"PS.zip" 
 					)
@@ -791,19 +791,19 @@ nchs_extract_files <-
 	
 		y <- tolower( y )
 
-		pdfs <- y[ grep( "(ftp://ftp.cdc.gov/.*\\.pdf)" , y ) ]
+		pdfs <- y[ grep( "(https://ftp.cdc.gov/.*\\.pdf)" , y ) ]
 
-		pdf.files <- gsub( "(.*a href=\\\")(ftp://ftp.cdc.gov/.*\\.pdf)(.*)$" , "\\2" , pdfs )
+		pdf.files <- gsub( "(.*a href=\\\")(https://ftp.cdc.gov/.*\\.pdf)(.*)$" , "\\2" , pdfs )
 
 		if( length( pdf.files ) == 0 ) pdf.files <- NA
 		
-		zips <- y[ grep( "(ftp://ftp.cdc.gov/.*\\.zip)" , y ) ]
+		zips <- y[ grep( "(https://ftp.cdc.gov/.*\\.zip)" , y ) ]
 
 		ps <- zips[ grep( 'ps.zip' , zips ) ]
 		us <- zips[ !grepl( 'ps.zip' , zips ) ]
 
-		ps.files <- gsub( "(.*a href=\\\")(ftp://ftp.cdc.gov/.*\\.zip)(.*)$" , "\\2" , ps )
-		us.files <- gsub( "(.*a href=\\\")(ftp://ftp.cdc.gov/.*\\.zip)(.*)$" , "\\2" , us )
+		ps.files <- gsub( "(.*a href=\\\")(https://ftp.cdc.gov/.*\\.zip)(.*)$" , "\\2" , ps )
+		us.files <- gsub( "(.*a href=\\\")(https://ftp.cdc.gov/.*\\.zip)(.*)$" , "\\2" , us )
 
 		list( name = name , pdfs = pdf.files , ps = ps.files , us = us.files )
 	}

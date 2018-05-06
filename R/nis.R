@@ -5,8 +5,8 @@ get_catalog_nis <-
 
 	for( nis_ftp_site in
 		c(
-			"ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/nis/" ,
-			"ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/nis/NHFS/"
+			"https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/nis/" ,
+			"https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/nis/NHFS/"
 		) ) {
 
 		nis_ftp_contents <- RCurl::getURL( nis_ftp_site , dirlistonly = TRUE )

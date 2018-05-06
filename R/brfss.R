@@ -7,14 +7,14 @@ get_catalog_brfss <-
 
 		path_to_files <-
 			ifelse( available_years < 1990 , 
-				paste0( "ftp://ftp.cdc.gov/pub/data/Brfss/CDBRFS" , substr( available_years , 3 , 4 ) , "_XPT.zip" ) ,
+				paste0( "https://ftp.cdc.gov/pub/data/Brfss/CDBRFS" , substr( available_years , 3 , 4 ) , "_XPT.zip" ) ,
 			ifelse( available_years < 2002 , 
-				paste0( "ftp://ftp.cdc.gov/pub/data/Brfss/CDBRFS" , substr( available_years , 3 , 4 ) , "XPT.zip" ) ,
+				paste0( "https://ftp.cdc.gov/pub/data/Brfss/CDBRFS" , substr( available_years , 3 , 4 ) , "XPT.zip" ) ,
 			ifelse( available_years >= 2012 ,
 				paste0( "https://www.cdc.gov/brfss/annual_data/" , available_years , "/files/LLCP" , available_years , "ASC.ZIP" ) ,
 			ifelse( available_years == 2011 ,
-				"ftp://ftp.cdc.gov/pub/data/brfss/LLCP2011ASC.ZIP" ,
-				paste0( "ftp://ftp.cdc.gov/pub/data/brfss/cdbrfs" , ifelse( available_years == 2002 , available_years , substr( available_years , 3 , 4 ) ) , "asc.zip" )
+				"https://ftp.cdc.gov/pub/data/brfss/LLCP2011ASC.ZIP" ,
+				paste0( "https://ftp.cdc.gov/pub/data/brfss/cdbrfs" , ifelse( available_years == 2002 , available_years , substr( available_years , 3 , 4 ) ) , "asc.zip" )
 				) ) ) )
 
 		sas_files <-

@@ -5,7 +5,7 @@ get_catalog_nhis <-
 		
 		for( this_name in c( "nhpi" , "NHIS" ) ){
 			
-			base_ftp_dir <- paste0( "ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/" , this_name , "/" )
+			base_ftp_dir <- paste0( "https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/" , this_name , "/" )
 		
 			# read the text of the microdata ftp into working memory
 			# download the contents of the ftp directory for all microdata
