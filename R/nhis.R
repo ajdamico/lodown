@@ -59,14 +59,12 @@ get_catalog_nhis <-
 					ftp_files <- ftp_files[ !( ftp_files %in% c( "" , "injuryverbatim" ) ) ]
 				
 					
-				} else {
-					
-					# throw out folders (assumed to be files without a . in them)
-					# (any files in folders within the main this_year folder need to be downloaded separately)
-					ftp_files <- ftp_files[ grepl( "\\." , ftp_files ) ]
-
 				}
-				
+
+				# throw out folders (assumed to be files without a . in them)
+				# (any files in folders within the main this_year folder need to be downloaded separately)
+				ftp_files <- ftp_files[ grepl( "\\." , ftp_files ) ]
+
 						
 				# skip txt files
 				ftp_files <- ftp_files[ !grepl( '\\.txt' , ftp_files ) ]
