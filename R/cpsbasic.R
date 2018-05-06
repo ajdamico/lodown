@@ -108,11 +108,13 @@ cps_dd_parser <-
 		# read in the data dictionary
 		tf <- tempfile()
 		httr::GET( dd_url , httr::write_disk( tf , overwrite = TRUE ) )
-		dd_con <- file( tf , 'rb' , encoding = 'windows-1252' )
+		dd_con <- file( tf , 'rb' , encoding = 'latin1' )
 		the_lines <- readLines( dd_con , encoding = 'latin1' )
 		close( dd_con )
 		
 		the_lines <- gsub( "\u0096" , "-" , the_lines )
+		the_lines <- gsub( "\\u0096" , "-" , the_lines )
+		the_lines <- gsub( "\\\u0096" , "-" , the_lines )
 		the_lines <- gsub( "\\(|\\)" , "" , the_lines )
 		
 		# hardcodes
