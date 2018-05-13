@@ -24,11 +24,11 @@ get_catalog_nsch <-
 		nsch_ftp_contents <- gsub( '(.*)\\">(.*)<\\/A>$', "\\2" , nsch_ftp_contents )
 		nsch_ftp_paths <- nsch_ftp_contents[ grep( "\\.zip$" , tolower( nsch_ftp_contents ) ) ]
 		
-		nsch_ftp_paths <- gsub( " " , "%20" , nsch_ftp_paths )
+		nsch_ftp_paths <- gsub( " " , "%20" , nsch_ftp_paths , fixed = TRUE )
 		
-		dat_files <- nsch_ftp_paths[ !grepl( "mimp|Multiple Imputation" , basename( nsch_ftp_paths ) ) ]
+		dat_files <- nsch_ftp_paths[ !grepl( "mimp|Multiple%20Imputation" , basename( nsch_ftp_paths ) ) ]
 
-		mi_files <- nsch_ftp_paths[ grepl( "mimp|Multiple Imputation" , basename( nsch_ftp_paths ) ) ]
+		mi_files <- nsch_ftp_paths[ grepl( "mimp|Multiple%20Imputation" , basename( nsch_ftp_paths ) ) ]
 		
 		catalog <-
 			rbind(
