@@ -96,7 +96,7 @@ lodown_nsch <-
 		for ( i in seq_len( nrow( catalog ) ) ){
 
 			# download the file
-			cachaca( catalog[ i , "dat_url" ] , tf , mode = 'wb' )
+			cachaca( catalog[ i , "dat_url" ] , tf , mode = 'wb' , filesize_fun = 'unzip_verify' )
 
 			unzipped_files <- unzip_warn_fail( tf , exdir = tempdir() )
 
@@ -116,7 +116,7 @@ lodown_nsch <-
 			x$one <- 1
 
 			# download the multiply-imputed poverty data.frame
-			cachaca( catalog[ i , "mi_url" ] , tf , mode = 'wb' )
+			cachaca( catalog[ i , "mi_url" ] , tf , mode = 'wb' , filesize_fun = 'unzip_verify' )
 
 			unzipped_files <- unzip_warn_fail( tf , exdir = tempdir() )
 
