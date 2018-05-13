@@ -7,7 +7,7 @@ get_catalog_nsch <-
 	
 	dataset_lines <- grep( "ataset" , data_links , value = TRUE )
 	
-	dataset_hrefs <- paste0( gsub( '(.*)href=\"(.*)\"(.*)' , "\\2" , dataset_lines ) , "/" )
+	dataset_hrefs <- gsub( "^ftp" , "https" , paste0( gsub( '(.*)href=\"(.*)\"(.*)' , "\\2" , dataset_lines ) , "/" ) )
 
 	four_digit_years <- suppressWarnings( as.numeric( gsub( "(.*)([0-9][0-9][0-9][0-9])(.*)" , "\\2" , dataset_hrefs ) ) )
 	
@@ -20,10 +20,10 @@ get_catalog_nsch <-
 			
 	for( i in seq_along( available_years ) ){
 	
-		nsch_ftp_contents <- RCurl::getURL( dataset_hrefs[i] , ftp.use.epsv = TRUE, dirlistonly = TRUE )
-
-		nsch_ftp_paths <- paste0( dataset_hrefs[i] , strsplit( nsch_ftp_contents , '(\r)?\n' )[[1]] )
-
+		nsch_ftp_contents <- strsplit( RCurl::getURL( dataset_hrefs[i] ) , "<br>" )[[1]]
+		nsch_ftp_contents <- gsub( '(.*)\\">(.*)<\\/A>$', "\\2" , nsch_ftp_contents )
+		nsch_ftp_paths <- nsch_ftp_contents[ grep( "\\.zip$" , tolower( nsch_ftp_contents ) ) ]
+		
 		dat_files <- nsch_ftp_paths[ !grepl( "mimp|Multiple Imputation" , basename( nsch_ftp_paths ) ) ]
 
 		mi_files <- nsch_ftp_paths[ grepl( "mimp|Multiple Imputation" , basename( nsch_ftp_paths ) ) ]
@@ -36,8 +36,8 @@ get_catalog_nsch <-
 					virgin_islands = grepl( "_vi" , basename( dat_files ) ) ,
 					year = available_years[ i ] ,
 					screener_url = NA ,
-					dat_url = dat_files ,
-					mi_url = mi_files ,
+					dat_url = paste0( dataset_hrefs[i] , dat_files ) ,
+					mi_url = paste0( dataset_hrefs[i] , mi_files ) ,
 					stringsAsFactors = FALSE
 				)
 			)
