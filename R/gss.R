@@ -24,6 +24,9 @@ get_catalog_gss <-
 				stringsAsFactors = FALSE
 			)
 		
+		# remove broken links
+		catalog <- subset( catalog , !grepl( "panel06w123|2010merged_R1_spss1|gss_panel_W2.spss" , full_url ) )
+		
 		catalog
 
 	}
