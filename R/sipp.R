@@ -697,6 +697,8 @@ lodown_sipp <-
 
 		}
 
+		DBI::dbDisconnect( db , shutdown = TRUE )
+		
 		on.exit()
 		
 		catalog
