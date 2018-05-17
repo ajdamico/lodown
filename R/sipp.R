@@ -112,7 +112,7 @@ lodown_sipp <-
 		for( i in seq_len( nrow( catalog ) ) ){
 
 			# open the connection to the monetdblite database
-			db <- DBI::dbConnect( RSQLite::SQLite() , catalog[ i , 'dbfile' ] )
+			db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog[ i , 'dbfile' ] )
 
 
 			if( catalog[ i , 'panel' ] == 1996 ){
