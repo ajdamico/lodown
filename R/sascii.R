@@ -58,10 +58,11 @@ read_SAScii <-
 			user.defined.scipen <- getOption("scipen")
 			
 			options(scipen = 1e+06)
+
 			
-			no_decimal_points <- unlist( sapply( x , function( z ) ( sum( grepl( "." , z , fixed = TRUE ) ) == 0 ) ) )
+			no_decimal_points <- unlist( sapply( x , function( z ) ( isTRUE( all.equal( sum( grepl( "." , z , fixed = TRUE ) ) , 0 ) ) ) ) )
 			
-			cols_to_multiply <- no_decimal_points & !y[ , "char" ] & y[ , "divisor" ] != 1
+			cols_to_multiply <- no_decimal_points & !y[ , "char" ] & !sapply( y[ , "divisor" ] , function(x,y)isTRUE(all.equal(x,y)) , y = 1 )
 			
 			x[ cols_to_multiply ] <- data.frame( t( t( x[ cols_to_multiply ] ) * y[ cols_to_multiply , "divisor" ] ) )
 			
@@ -71,7 +72,7 @@ read_SAScii <-
 		
 			if( !skip_decimal_division ){
 
-				cols_to_multiply <- !y[ , "char" ] & y[ , "divisor" ] != 1
+				cols_to_multiply <- !y[ , "char" ] & !sapply( y[ , "divisor" ] , function(x,y)isTRUE(all.equal(x,y)) , y = 1 )
 			
 				x[ cols_to_multiply ] <- data.frame( t( t( x[ cols_to_multiply ] ) * y[ cols_to_multiply , "divisor" ] ) )
 			
