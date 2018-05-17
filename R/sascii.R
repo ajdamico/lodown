@@ -55,18 +55,21 @@ read_SAScii <-
 			
 		if (is.null(skip_decimal_division)) {
 			
-			user.defined.scipen <- getOption("scipen")
-			
-			options(scipen = 999)
-
-			
-			no_decimal_points <- unlist( sapply( x , function( z ) ( isTRUE( all.equal( sum( grepl( "." , z , fixed = TRUE ) ) , 0 ) ) ) ) )
+			no_decimal_points <- 
+				unlist( 
+					sapply( 
+						x , 
+						function( z ) 
+							( isTRUE( all.equal( 
+								sum( grepl( "\\." , format( z , scientific = FALSE ) ) ) , 
+								0 
+							) ) ) 
+					) 
+				)
 			
 			cols_to_multiply <- no_decimal_points & !y[ , "char" ] & !sapply( y[ , "divisor" ] , function(x,y)isTRUE(all.equal(x,y)) , y = 1 )
 			
 			x[ cols_to_multiply ] <- data.frame( t( t( x[ cols_to_multiply ] ) * y[ cols_to_multiply , "divisor" ] ) )
-			
-			options(scipen = user.defined.scipen)
 			
 		} else {
 		
