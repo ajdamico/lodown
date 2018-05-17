@@ -4,7 +4,7 @@ get_catalog_mlces <-
 		catalog <-
 			data.frame(
 				full_url = paste0( "https://www.soa.org/Files/Research/" , 1997:1999 , ".zip" ) ,
-				output_filename = paste0( output_dir , "/mcles" , 1997:1999 , ".rds" ) ,
+				output_filename = paste0( output_dir , "/mlces" , 1997:1999 , ".rds" ) ,
 				stringsAsFactors = FALSE
 			)
 
