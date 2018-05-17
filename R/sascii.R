@@ -57,7 +57,7 @@ read_SAScii <-
 			
 			user.defined.scipen <- getOption("scipen")
 			
-			options(scipen = 1e+06)
+			options(scipen = 999)
 
 			
 			no_decimal_points <- unlist( sapply( x , function( z ) ( isTRUE( all.equal( sum( grepl( "." , z , fixed = TRUE ) ) , 0 ) ) ) ) )
