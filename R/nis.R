@@ -5,8 +5,8 @@ get_catalog_nis <-
 
 	for( nis_ftp_site in
 		c(
-			"ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/nis/" ,
-			"ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/nis/NHFS/"
+			"https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/nis/" ,
+			"https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/nis/NHFS/"
 		) ) {
 
 		nis_ftp_contents <- RCurl::getURL( nis_ftp_site , dirlistonly = TRUE )
@@ -115,8 +115,12 @@ lodown_nis <-
 			options( encoding = "windows-1252" )
 
 			# load the r script into a character vector
-			script.r <- readLines( catalog[ i , 'r_script' ] , warn = FALSE )
+			httr::GET( catalog[ i , 'r_script' ] , httr::write_disk( tf , overwrite = TRUE ) )
+			script.r <- readLines ( tf )
 
+			# remove the Hmisc library
+			script.r <- script.r[ !grepl( 'library(Hmisc)' , script.r , fixed = TRUE ) ]
+			
 			# change the path to the data to the local working directory
 			script.r <- gsub( "path-to-data" , normalizePath( tempdir() , winslash = "/" ) , script.r , fixed = TRUE )
 
@@ -134,7 +138,7 @@ lodown_nis <-
 			# for a prime example, see what happens to the `seqnumhh` column.  whoops.
 
 			# figure out the line position of step four within the character vector
-			cutoff <- max( grep( "Step 4:   ASSIGN VARIABLE LABELS" , script.r , fixed = TRUE ) )
+			cutoff <- max( grep( "ASSIGN VARIABLE LABELS" , script.r , fixed = TRUE ) )
 
 			# reduce the r script to its contents from the beginning up till step four
 			script.r <- script.r[ seq( cutoff ) ]
@@ -183,7 +187,7 @@ lodown_nis <-
 
 	  catalog[ i , 'case_count' ] <- nrow( x )
 
-      saveRDS( x , file = catalog[ i , 'output_filename' ] )
+      saveRDS( x , file = catalog[ i , 'output_filename' ] , compress = FALSE )
 
       # delete the temporary files
       file.remove( tf , paste0( tempdir() , "/" , basename( unzipped_file ) ) )

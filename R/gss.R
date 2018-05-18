@@ -24,6 +24,9 @@ get_catalog_gss <-
 				stringsAsFactors = FALSE
 			)
 		
+		# remove broken links
+		catalog <- subset( catalog , !grepl( "panel06w123|2010merged_R1_spss1|gss_panel_W2.spss" , full_url ) )
+		
 		catalog
 
 	}
@@ -45,7 +48,7 @@ lodown_gss <-
 
 			stopifnot( length( this_sav <- grep( "\\.sav$" , unzipped_files , ignore.case = TRUE , value = TRUE ) ) == 1 )
 			
-			x <- foreign::read.spss( this_sav , to.data.frame = TRUE , use.value.labels = FALSE )
+			x <- data.frame( haven::read_spss( this_sav ) )
 
 			x$one <- 1
 			
@@ -54,7 +57,7 @@ lodown_gss <-
 
 			catalog[ i , 'case_count' ] <- nrow( x )
 			
-			saveRDS( x , file = catalog[ i , 'output_filename' ] ) ; rm( x ) ; gc()
+			saveRDS( x , file = catalog[ i , 'output_filename' ] , compress = FALSE ) ; rm( x ) ; gc()
 
 			# delete the temporary files
 			suppressWarnings( file.remove( tf , unzipped_files ) )

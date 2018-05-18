@@ -9,7 +9,7 @@ get_catalog_timss <-
 
 		catalog$output_folder <- paste0( output_dir , "/" , catalog$year , "/" )
 		
-		catalog$dbfolder <- paste0( output_dir , "/MonetDB" )
+		catalog$dbfile <- paste0( output_dir , "/SQLite.db" )
 		
 		catalog
 
@@ -26,7 +26,7 @@ lodown_timss <-
 		for ( i in seq_len( nrow( catalog ) ) ){
 
 			# open the connection to the monetdblite database
-			db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog[ i , 'dbfolder' ] )
+			db <- DBI::dbConnect( RSQLite::SQLite() , catalog[ i , 'dbfile' ] )
 
 			# # # # # # # # # # # #
 			# download all files  #
@@ -143,7 +143,7 @@ lodown_timss <-
 					names( y ) <- tolower( names( y ) )
 					
 					# save that single all-country stack-a-mole
-					saveRDS( y , file = paste0( catalog[ i , 'output_folder' ] , '/' , p , '.rds' ) )
+					saveRDS( y , file = paste0( catalog[ i , 'output_folder' ] , '/' , p , '.rds' ) , compress = FALSE )
 					
 				}
 				
@@ -210,7 +210,7 @@ lodown_timss <-
 							if( 'jkindic' %in% names( y ) & !( 'jkrep' %in% names( y ) ) ) names( y ) <- gsub( 'jkindic' , 'jkrep' , names( y ) )
 							
 							# save that single all-country stack-a-mole
-							saveRDS( y , file = paste0( catalog[ i , 'output_folder' ] , '/' , p , s , '.rds' ) )
+							saveRDS( y , file = paste0( catalog[ i , 'output_folder' ] , '/' , p , s , '.rds' ) , compress = FALSE )
 					
 						}
 					}
@@ -299,11 +299,11 @@ lodown_timss <-
 							survey::svrepdesign( 
 								weights = as.formula( paste( "~" , wgt ) )  , 
 								repweights = design_weights , 
-								data = mitools::imputationList( datasets = as.list( five_tablenames ) , dbtype = "MonetDBLite" ) , 
+								data = mitools::imputationList( datasets = as.list( five_tablenames ) , dbtype = "SQLite" ) , 
 								type = "other" ,
 								combined.weights = TRUE , 
-								dbtype = "MonetDBLite" ,
-								dbname = catalog[ i , 'dbfolder' ]
+								dbtype = "SQLite" ,
+								dbname = catalog[ i , 'dbfile' ]
 							)
 
 
@@ -326,8 +326,8 @@ lodown_timss <-
 								data = one_tablename , 
 								type = "other" ,
 								combined.weights = TRUE ,
-								dbtype = "MonetDBLite" ,
-								dbname = catalog[ i , 'dbfolder' ]
+								dbtype = "SQLite" ,
+								dbname = catalog[ i , 'dbfile' ]
 							)
 							
 						# workaround for a bug in survey::svrepdesign.character
@@ -337,16 +337,13 @@ lodown_timss <-
 
 					catalog[ i , 'case_count' ] <- nrow( design )
 					
-					saveRDS( design , file = paste0( catalog[ i , 'output_folder' ] , '/' , gsub( "(.*)\\.(.*)" , "\\1" , basename( rdss ) ) , '_design.rds' ) )
+					saveRDS( design , file = paste0( catalog[ i , 'output_folder' ] , '/' , gsub( "(.*)\\.(.*)" , "\\1" , basename( rdss ) ) , '_design.rds' ) , compress = FALSE )
 					
-					saveRDS( design_weights , file = paste0( catalog[ i , 'output_folder' ] , '/' , gsub( "(.*)\\.(.*)" , "\\1" , basename( rdss ) ) , '_weights.rds' ) )
+					saveRDS( design_weights , file = paste0( catalog[ i , 'output_folder' ] , '/' , gsub( "(.*)\\.(.*)" , "\\1" , basename( rdss ) ) , '_weights.rds' ) , compress = FALSE )
 					
 				}
 				
-			}	
-
-			# disconnect from the current monet database
-			DBI::dbDisconnect( db , shutdown = TRUE )
+			}
 
 			# delete the temporary files
 			suppressWarnings( file.remove( tf , unzipped_files ) )
@@ -360,5 +357,3 @@ lodown_timss <-
 		catalog
 
 	}
-
-

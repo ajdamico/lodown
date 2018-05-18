@@ -28,49 +28,46 @@ lodown_icpsr <-
 
 		for ( i in seq_len( nrow( catalog ) ) ){
 
-			# initiate a curl handle so the remote server knows it's you.
-			curl = RCurl::getCurlHandle()
+			login <- "https://www.icpsr.umich.edu/rpxlogin"
+			terms <- "https://www.icpsr.umich.edu/cgi-bin/terms"
+			download_prefix <- "https://www.icpsr.umich.edu/cgi-bin/bob/zipcart2?"
 
-			# set a cookie file on the local disk
-			RCurl::curlSetOpt(
-				cookiejar = 'cookies.txt' ,
-				followlocation = TRUE ,
-				autoreferer = TRUE ,
-				curl = curl
+			values <-
+				list(
+					agree = "yes",
+					path = "ICPSR" ,
+					study = catalog[ i , 'study_number' ] ,
+					ds = catalog[ i , 'dsNo' ] ,
+					bundle = catalog[ i , 'bundle' ] ,
+					dups = "yes",
+					email=your_email,
+					password=your_password
+				)
+
+			# Accept the terms on the form,
+			# generating the appropriate cookies
+			httr::POST(terms, body = values)
+			httr::POST(login, body = values)
+			
+			httr::HEAD(
+			    catalog[ i , 'full_url' ] ,
+			    query = values
 			)
 
-			# list out the filepath on the server of the file-to-download
-			dp <- catalog[ i , 'full_url' ]
+			httr::POST(terms, body = values)
+			httr::POST(login, body = values)
+			
+			cachaca(
+			    catalog[ i , 'full_url' ] ,
+			    destfile = tf ,
+			    FUN = httr::GET ,
+			    filesize_fun = 'unzip_verify' ,
+			    httr::write_disk( tf , overwrite = TRUE ) ,
+			    httr::progress() ,
+			    query = values
+			)
 
-			# post your username and password to the umich server
-			login.page <-
-				RCurl::postForm(
-					"https://www.icpsr.umich.edu/rpxlogin" ,
-					email = your_email ,
-					password = your_password ,
-					path = catalog[ i , 'archive' ] ,
-					request_uri = dp ,
-					app_seq = "" ,
-					style = "POST" ,
-					curl = curl
-				)
-
-			# consent to terms of use page
-			terms.of.use.page <-
-				RCurl::postForm(
-					"http://www.icpsr.umich.edu/cgi-bin/terms" ,
-					agree = 'yes' ,
-					path = catalog[ i , 'archive' ] ,
-					study = gsub( "(.*)study=([0-9]+)&(.*)" , "\\2" , catalog[ i , 'full_url' ] ) ,
-					bundle = catalog[ i , 'bundle' ] ,
-					dups = "yes" ,
-					style = "POST" ,
-					curl = curl
-				)
-
-			cachaca( dp , tf , FUN = download_to_filename, curl=curl, filesize_fun = 'unzip_verify' )
-
-			unzip_warn_fail( tf , exdir =  gsub( "/$" , "" , catalog[ i , "unzip_folder" ] ) , junkpaths = TRUE )
+			unzip_warn_fail( tf , exdir = gsub( "/$" , "" , catalog[ i , "unzip_folder" ] ) , junkpaths = TRUE )
 
 			# delete the temporary files
 			file.remove( tf )
@@ -80,7 +77,7 @@ lodown_icpsr <-
 		}
 
 		on.exit()
-		
+
 		catalog
 
 	}
@@ -91,11 +88,11 @@ lodown_icpsr <-
 #' @rdname lodown_icpsr
 #' @export
 get_catalog_icpsr <-
-	function( series_number = NULL , study_numbers = NULL , archive = "ICPSR" , bundle_preference = c( "rdata" , "stata" , "sas" , "spss" , "delimited" , "ascsas" , "ascstata" , "ascspss" , "ascii" ) ){
+	function( series_number = NULL , study_numbers = NULL , archive = "ICPSR" , bundle_preference = c( "rdata" , "stata" , "sas" , "spss" , "delimited" , "ascsas" , "ascstata" , "ascspss" , "ascii" , "gis" , "doc" ) ){
 
 		if( is.null( study_numbers ) ){
 
-			series_page <- paste0( "http://www.icpsr.umich.edu/icpsrweb/ICPSR/series/" , series_number , "/studies?archive=" , archive , "&sortBy=7" )
+			series_page <- paste0( "https://www.icpsr.umich.edu/icpsrweb/" , archive , "/series/" , series_number )
 
 			series_xml <- xml2::read_html( series_page )
 
@@ -106,87 +103,64 @@ get_catalog_icpsr <-
 		series_results <- NULL
 
 		for( study_number in study_numbers ){
+
+			study_page <- paste0( "https://pcms.icpsr.umich.edu/pcms/api/1.0/studies/" , study_number , "/files" )
+			
+			study_datasets <- jsonlite::fromJSON( study_page , simplifyDataFrame = TRUE )
+
+			study_datasets$fileUris <- study_datasets$files <- NULL
 		
-			study_page <- paste0( "http://www.icpsr.umich.edu/icpsrweb/ICPSR/" , if( !is.null( series_number ) ) paste0( "series/" , series_number ) , "/studies/" , study_number , "?archive=" , archive , "&sortBy=7" )
+			available_bundles <- study_datasets[ grep( "^bundles" , names( study_datasets ) ) ][[1]]
 
-			study_xml <- xml2::read_html( study_page )
-
-			study_json <- rvest::html_text( rvest::html_nodes( study_xml , 'script[type$="json"]' ) )
-
-			# skip studies with no downloadable data
-			# skip studies with a mal-formed json snippet
-			if( !grepl( "No downloadable data files available." , rvest::html_text( study_xml ) ) & !( class( try( jsonlite::fromJSON( gsub( "\n|\r|\t" , " " , study_json ) , simplifyDataFrame = TRUE ) , silent = TRUE ) ) == 'try-error' ) ){
-
-				json_result <- jsonlite::fromJSON( gsub( "\n|\r|\t" , " " , study_json ) , simplifyDataFrame = TRUE )
-
-				dataset_xml <- rvest::html_nodes( study_xml , 'div[class$=datasetDownload]' )
-
-				dataset_names <- gsub( "\n|\t" , "" , rvest::html_text( rvest::html_nodes( dataset_xml , 'strong' ) ) )
-
-				dataset_ids <- sapply( rvest::html_attrs( rvest::html_nodes( study_xml , "div[id^=dataset]" ) ) , '[[' , 2 )
-
-				dataset_ids <- gsub( "dataset" , "" , grep( "dataset" , dataset_ids , value = TRUE ) )
-
-				available_bundles <- grep( "ds=" , rvest::html_attr( rvest::html_nodes( study_xml , "a" ) , "href" ) , value = TRUE )
-
-				all_ds <- NULL
-
-				for( this_id in dataset_ids ){
-
-					this_bundle <- NULL
-
-					pref_num <- 1
-
-					while( length( this_bundle ) == 0 ){
-
-						current_preference <- bundle_preference[ pref_num ]
-
-						bundle_test <- grep( paste0( "ds=" , this_id , "&bundle=" , current_preference ) , available_bundles , value = TRUE )
-
-						if( length( bundle_test ) == 1 ) this_bundle <- bundle_test else pref_num <- pref_num + 1
-
-						if( pref_num > length( bundle_preference ) ) break
-
-					}
-
-					if( length( this_bundle ) > 0 ) all_ds <- rbind( all_ds , data.frame( dataset_name = dataset_names[ which( this_id == dataset_ids ) ] , ds = this_id , full_url = this_bundle , stringsAsFactors = FALSE ) )
-
-				}
-
-				all_ds$dataset_name <- stringr::str_trim( gsub( "\\n|\\t|\\r|DS([0-9]+):" , "" , all_ds$dataset_name ) )
-
-				json_result$distribution <- NULL
-
-				multiples <- lapply( json_result , length ) > 1
-
-				json_result[ multiples ] <- lapply( json_result[ multiples ] , function( z ) paste( z , collapse = " " ) )
-
-				this_study <- as.data.frame( json_result , stringsAsFactors = FALSE )
-
-				stopifnot( nrow( this_study ) == 1 )
-
-				this_study <- merge( this_study , all_ds )
-
-				in_results_not_study <- setdiff( names( series_results ) , names( this_study ) )
-
-				in_study_not_results <- setdiff( names( this_study ) , names( series_results ) )
-
-				this_study[ in_results_not_study ] <- NA
-
-				if( !is.null( series_results ) ) series_results[ in_study_not_results ] <- NA
-
-				series_results <- rbind( series_results , this_study )
-
+			sorted_bundle_preference <- available_bundles[ bundle_preference ]
+			
+			sorted_bundle_preference[ , 'this_bundle' ] <- NA
+			
+			for( i in seq( ncol( sorted_bundle_preference ) - 1 ) ){
+			
+				sorted_bundle_preference[ is.na( sorted_bundle_preference[ , 'this_bundle' ] ) & sorted_bundle_preference[ , i ] , 'this_bundle' ] <-
+					names( sorted_bundle_preference )[ i ]
+				
 			}
+			
+			if( any( is.na( sorted_bundle_preference[ , 'this_bundle' ] ) ) ){
+			
+				cat( "removing datasets without matching bundles\r\r\n\n" )
+			
+				print( study_datasets[ is.na( sorted_bundle_preference[ , 'this_bundle' ] ) , ] )
+			
+			}
+			
+			study_datasets$bundle <- sorted_bundle_preference$this_bundle
+			
+			this_study <- study_datasets[ !is.na( study_datasets[ , 'bundle' ] ) , ]
+		
+			in_results_not_study <- setdiff( names( series_results ) , names( this_study ) )
+
+			in_study_not_results <- setdiff( names( this_study ) , names( series_results ) )
+
+			this_study[ in_results_not_study ] <- NA
+
+			if( !is.null( series_results ) ) series_results[ in_study_not_results ] <- NA
+
+			this_study$study_number <- study_number
+
+			series_results <- rbind( series_results , this_study )
 
 		}
 
-		series_results$archive <- gsub( "(.*)icpsrweb/(.*)/(.*)" , "\\2" , series_results$includedInDataCatalog )
 
-		series_results$bundle <- gsub( "(.*)bundle=(.*)&(.*)" , "\\2" , series_results$full_url )
-
-		series_results[ series_results$bundle %in% 'sas' , 'bundle' ] <- 'ascsas'
-
+		series_results[ , 'full_url' ] <- 
+			paste0( 
+				"https://www.icpsr.umich.edu/cgi-bin/bob/zipcart2?study=" ,
+				series_results[ , 'study_number' ] ,
+				"&bundle=" ,
+				series_results[ , 'bundle' ] ,
+				"&ds=" ,
+				series_results[ , 'dsNo' ]
+			)
+		
+		
 		series_results
 
 	}
@@ -197,7 +171,7 @@ icpsr_stata <-
 		x <- data.frame( haven::read_dta( path_to_stata ) )
 
 		# path to the supplemental recodes file
-		path_to_supp <- grep( "\\Supplemental_syntax\\.do$" , list.files( catalog_entry[ , 'unzip_folder' ] , full.names = TRUE ) , value = TRUE )
+		path_to_supp <- grep( "upplemental( |_|-)syntax\\.do$" , list.files( catalog_entry[ , 'unzip_folder' ] , full.names = TRUE ) , value = TRUE )
 
 		# read the supplemental recodes lines into R
 		commented.supp.syntax <- readLines( path_to_supp )
@@ -206,7 +180,7 @@ icpsr_stata <-
 		uncommented.supp.syntax <- SAScii::SAS.uncomment( commented.supp.syntax , "/*" , "*/" )
 
 		# remove blank lines
-		supp.syntax <- uncommented.supp.syntax[ uncommented.supp.syntax != "" ]
+		supp.syntax <- stringr::str_trim( uncommented.supp.syntax[ uncommented.supp.syntax != "" ] )
 
 		# confirm all remaining recode lines contain the word 'replace'
 		# right now, the supplemental recodes are relatively straightforward.

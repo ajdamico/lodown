@@ -35,7 +35,7 @@ get_catalog_bsapuf <-
 			data.frame(
 				year = substr( basename( file_links ) , 1 , 4 ) ,
 				full_url = file_links ,
-				dbfolder = paste0( output_dir , "/MonetDB" ) ,
+				dbfile = paste0( output_dir , "/SQLite.db" ) ,
 				db_tablename = with_year ,
 				stringsAsFactors = FALSE
 			)
@@ -57,7 +57,7 @@ lodown_bsapuf <-
 		for ( i in seq_len( nrow( catalog ) ) ){
 
 			# open the connection to the monetdblite database
-			db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog[ i , 'dbfolder' ] )
+			db <- DBI::dbConnect( RSQLite::SQLite() , catalog[ i , 'dbfile' ] )
 
 			# download the file
 			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
@@ -69,13 +69,28 @@ lodown_bsapuf <-
 			stopifnot( length( unzipped_files ) == 1 )
 			
 			if( grepl( "chronic|ipbs" , unzipped_files , ignore.case = TRUE ) ){
-				this_connection <- file( unzipped_files , 'r' , encoding = 'windows-1252' )
+				this_connection <- file( unzipped_files , 'rb' , encoding = 'windows-1252' )
 				these_lines <- readLines( this_connection )
 				close( this_connection )
 				writeLines( these_lines , unzipped_files )
 			}
 			
-			DBI::dbWriteTable( db , catalog[ i , 'db_tablename' ] , unzipped_files , lower.case.names = TRUE , append = TRUE , nrow.check = 250000 )
+			if( !( catalog[ i , 'db_tablename' ] %in% DBI::dbListTables( db ) ) ){
+			
+				headers <- 
+					read.csv( 
+						unzipped_files[1] , 
+						nrows = 100000 ,
+						stringsAsFactors = FALSE
+					)
+				
+				names( headers ) <- tolower( names( headers ) )
+				
+				DBI::dbWriteTable( db , catalog[ i , 'db_tablename' ] , headers[ FALSE , , drop = FALSE ] )
+			}
+
+			
+			DBI::dbWriteTable( db , catalog[ i , 'db_tablename' ] , unzipped_files , append = TRUE )
 
 			# if this is the final catalog entry for the unique db_tablename, store the case counts
 			if( i == max( which( catalog$db_tablename == catalog[ i , 'db_tablename' ] ) ) ){
@@ -87,10 +102,7 @@ lodown_bsapuf <-
 			# delete the temporary files
 			suppressWarnings( file.remove( tf , unzipped_files ) )
 
-			# disconnect from the current monet database
-			DBI::dbDisconnect( db , shutdown = TRUE )
-
-			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'dbfolder' ] , "'\r\n\n" ) )
+			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'dbfile' ] , "'\r\n\n" ) )
 
 		}
 

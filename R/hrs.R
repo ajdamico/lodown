@@ -40,15 +40,11 @@ get_catalog_hrs <-
 		
 		versid_text <- stringr::str_trim( link_text[ grepl( 'versid' , link_refs ) ] )
 		
-		versid_text <- versid_text[ !grepl( "versid=107$|versid=139$" , valid_versids ) ]
-		
-		valid_versids <- valid_versids[ !grepl( "versid=107$|versid=139$" , valid_versids ) ]
-		
 		for( this_page in seq_along( valid_versids ) ){
 		
 			this_resp <- httr::GET( valid_versids[ this_page ] , query = values )
 
-			all_links <- rvest::html_nodes( httr::content( this_resp ) , "a" )
+			all_links <- rvest::html_nodes( httr::content( this_resp , encoding = 'latin1' ) , "a" )
 			
 			link_text <- rvest::html_text( all_links )
 			
@@ -80,7 +76,7 @@ get_catalog_hrs <-
 						
 				if( !any( grepl( "rand" , this_cat$output_filename , ignore.case = TRUE ) ) & !any( grepl( "rand" , this_cat$file_title , ignore.case = TRUE ) ) ){
 
-					this_table <- rvest::html_table( httr::content( this_resp ) , fill = TRUE )
+					this_table <- rvest::html_table( httr::content( this_resp , encoding = 'latin1' ) , fill = TRUE )
 					
 					which_table <- which( unlist( lapply( this_table , function( z ) any( grepl( "distribution set" , z , ignore.case = TRUE ) ) ) ) )
 				
@@ -110,6 +106,9 @@ get_catalog_hrs <-
 		}
 		
 		catalog <- catalog[ !is.na( catalog$output_folder ) , ]
+		
+		# skip the corrupted zip harmonized hrs version A
+		catalog <- subset( catalog , !grepl( "HarmonizedHRSA\\.zip$" , output_filename ) )
 		
 		catalog
 		
@@ -169,7 +168,7 @@ lodown_hrs <-
 
 						catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , nrow( x ) , na.rm = TRUE )
 						
-						saveRDS( x , file = paste0( catalog[ i , 'output_folder' ] , "/" , tolower( gsub( "\\.dta" , ".rds" , basename( this_stata ) , ignore.case = TRUE ) ) ) )
+						saveRDS( x , file = paste0( catalog[ i , 'output_folder' ] , "/" , tolower( gsub( "\\.dta" , ".rds" , basename( this_stata ) , ignore.case = TRUE ) ) ) , compress = FALSE )
 						
 						rm( x ) ; gc()
 						
@@ -245,7 +244,7 @@ lodown_hrs <-
 
 						catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , nrow( x ) )
 
-						saveRDS( x , file = paste0( catalog[ i , 'output_folder' ] , "/" , tolower( gsub( "\\.da" , ".rds" , basename( this_dat ) , ignore.case = TRUE ) ) ) )
+						saveRDS( x , file = paste0( catalog[ i , 'output_folder' ] , "/" , tolower( gsub( "\\.da" , ".rds" , basename( this_dat ) , ignore.case = TRUE ) ) ) , compress = FALSE )
 
 						rm( x ) ; gc()
 						

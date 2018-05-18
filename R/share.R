@@ -57,7 +57,7 @@ lodown_share <-
 		for ( i in seq_len( nrow( catalog ) ) ){
 
 			# download the file
-			this_file <- cachaca( catalog[ i , "full_url" ] , FUN = httr::GET , filesize_fun = 'httr' )
+			this_file <- cachaca( catalog[ i , "full_url" ] , FUN = httr::GET )
 
 			writeBin( httr::content( this_file , "raw" ) , tf )
 			
@@ -71,7 +71,7 @@ lodown_share <-
 				
 				catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , nrow( x ) , na.rm = TRUE )
 
-				saveRDS( x , file = gsub( "\\.dta$" , ".rds" , this_stata ) )
+				saveRDS( x , file = gsub( "\\.dta$" , ".rds" , this_stata ) , compress = FALSE )
 			
 			}
 				

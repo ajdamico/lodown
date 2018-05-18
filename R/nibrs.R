@@ -14,7 +14,7 @@ get_catalog_nibrs <-
 		
 		catalog$unzip_folder <- gsub( "IncidentBased" , "Incident Based" , catalog$unzip_folder )
 
-		catalog$dbfolder <- paste0( output_dir , "/MonetDB" )
+		catalog$dbfile <- paste0( output_dir , "/SQLite.db" )
 
 		catalog
 
@@ -35,7 +35,7 @@ lodown_nibrs <-
 			unzipped_files <- list.files( catalog[ i , 'unzip_folder' ] , full.names = TRUE )
 
 			# open the connection to the monetdblite database
-			db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog[ i , 'dbfolder' ] )
+			db <- DBI::dbConnect( RSQLite::SQLite() , catalog[ i , 'dbfile' ] )
 
 			# determine the filenames that end with `sas`
 			sas.import <- unzipped_files[ grep( "sas$" , tolower( unzipped_files ) ) ]
@@ -178,7 +178,7 @@ lodown_nibrs <-
 					}
 					
 					# save the r data.frame object to the local disk as an `.rds`
-					saveRDS( x , file = gsub( "txt$" , "rds" , data.file ) )
+					saveRDS( x , file = gsub( "txt$" , "rds" , data.file ) , compress = FALSE )
 				
 					# remove the object from working memory
 					rm( x )
@@ -214,7 +214,7 @@ lodown_nibrs <-
 					x <- DBI::dbReadTable( db , catalog[ i , 'db_tablename' ] )
 				
 					# save the r data.frame object to the local disk as an `.rds`
-					saveRDS( x , file = gsub( "txt$" , "rds" , data.file ) )
+					saveRDS( x , file = gsub( "txt$" , "rds" , data.file ) , compress = FALSE )
 				
 				}
 				
@@ -224,9 +224,6 @@ lodown_nibrs <-
 
 			catalog[ i , 'case_count' ] <- DBI::dbGetQuery( db , paste0( "SELECT COUNT(*) FROM " , catalog[ i , 'db_tablename' ] ) )[ 1 , 1 ]
 			
-			# disconnect from the current monet database
-			DBI::dbDisconnect( db , shutdown = TRUE )
-
 			# delete the temporary files
 			file.remove( tf , unzipped_files )
 

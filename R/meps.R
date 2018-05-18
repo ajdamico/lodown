@@ -32,7 +32,7 @@ get_catalog_meps <-
 
 			available_pufs <- rvest::html_table( xml2::read_html( tf ) , fill = TRUE )[[11]]
 
-			available_pufs <- available_pufs[ grepl( "^HC" , available_pufs$X1 ) , ]
+			available_pufs <- available_pufs[ grepl( "^HC" , available_pufs[ , 1 ] ) , ]
 
 			names( available_pufs ) <- c( "table_id" , "file_name" , "data_update" , "year" , "file_type" )
 			
@@ -112,7 +112,7 @@ lodown_meps <-
 
 					catalog[ i , 'case_count' ] <- nrow( x )
 					
-					saveRDS( x , file = catalog[ i , 'output_filename' ] )
+					saveRDS( x , file = catalog[ i , 'output_filename' ] , compress = FALSE )
 				} , silent = TRUE )
 				
 			if( class( import_result ) == 'try-error' ) cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " failed.'\r\n\n" ) )

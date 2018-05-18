@@ -1,5 +1,5 @@
 
-#' rmarkdown syntax extractor for sisyphean perpetual testing
+#' rmarkdown syntax extractor
 #'
 #' parses asdfree textbook for runnable code.  probably not useful for anything else.
 #'
@@ -36,118 +36,78 @@
 #'
 #' @export
 syntaxtractor <-
-	function( data_name , repo = "ajdamico/asdfree" , ref = "master" , replacements = NULL , setup_test = NULL , local_comp = FALSE ){
+	function( data_name , repo = "ajdamico/asdfree" , ref = "master" , replacements = NULL , setup_rmd = TRUE , test_rmd = TRUE , sample_setup_breaks = NULL , broken_sample_test_condition = NULL ){
+
+		this_rmd <- grep( paste0( "-" , data_name , "\\.Rmd$" ) , list.files( "C:/Users/anthonyd/Documents/GitHub/asdfree/" , full.names = TRUE ) , value = TRUE )
+		
+		rmd_page <- readLines( this_rmd )
 	
-		if( !local_comp ){
-		
-			options( "monetdb.debug.query" = TRUE )
-		
-			repo_homepage <- readLines_retry( paste0( "https://github.com/" , repo , "/tree/" , ref , "/" ) )
-			
-			rmd_links <- gsub( "(.*)>(.*)\\.Rmd</a>(.*)" , "\\2" , grep( "Rmd" , repo_homepage , value = TRUE ) )
-			
-			this_rmd <- grep( paste0( "-" , ifelse( data_name %in% c( 'acs2' , 'acs3' , 'acs4' ) , 'acs' , data_name ) , "$" ) , rmd_links , value = TRUE )
-		
-			rmd_page <- readLines_retry( paste0( "https://raw.githubusercontent.com/" , repo , "/" , ref , "/" , this_rmd , ".Rmd" ) )
-		
-		} else {
-			
-			this_rmd <- grep( paste0( "-" , ifelse( data_name %in% c( 'acs2' , 'acs3' , 'acs4' ) , 'acs' , data_name ) , "\\.Rmd$" ) , list.files( "C:/Users/anthonyd/Documents/GitHub/asdfree/" , full.names = TRUE ) , value = TRUE )
-			
-			rmd_page <- readLines( this_rmd )
-		
-		}
-		
 		v <- grep( "```" , rmd_page )
 		
 		lines_to_eval <- unlist( mapply( `:` , v[ seq( 1 , length( v ) - 1 , 2 ) ] + 1 , v[ seq( 2 , length( v ) + 1 , 2 ) ] - 1 ) )
 		
 		rmd_page <- rmd_page[ lines_to_eval ]
+	
+		# find the second `library(lodown)` line
+		second_library_lodown_line <- grep( "^library\\(lodown\\)$" , rmd_page )[ 2 ]
 		
-		# if there's a `dbdir` line, use it for corruption sniffing
-		dbdir_line <- grep( "dbdir" , rmd_page , value = TRUE )
-		
-		if( !is.null( setup_test ) ){
-		
-			# find the second `library(lodown)` line
-			second_library_lodown_line <- grep( "^library\\(lodown\\)$" , rmd_page )[ 2 ]
+		# if that line does not exist, simply use the first two lines of code
+		if( is.na( second_library_lodown_line ) ){
+			second_library_lodown_line <- 3
+		}
+	
+		if( is.null( sample_setup_breaks ) & setup_rmd ){
+
+			setup_rmd_page <- rmd_page[ seq_along( rmd_page ) < second_library_lodown_line ]
 			
-			# if that line does not exist, simply use the first two lines of code
-			if( is.na( second_library_lodown_line ) ){
-				second_library_lodown_line <- 3
+		} else setup_rmd_page <- NULL
+	
+		test_rmd_page <- rmd_page[ seq_along( rmd_page ) >= second_library_lodown_line ]
+		
+		if( !is.null( sample_setup_breaks ) & setup_rmd ){
+		
+			sample_break_block <-				
+				c(
+					"library(lodown)" ,
+					"this_sample_break <- Sys.getenv( \"this_sample_break\" )" , 
+					"chapter_tag_cat <- get_catalog( \"chapter_tag\" , output_dir = file.path( getwd() ) )" ,
+					paste0( "record_categories <- ceiling( seq( nrow( chapter_tag_cat ) ) / ceiling( nrow( chapter_tag_cat ) / " , sample_setup_breaks , " ) )" ) ,
+					"chapter_tag_cat <- chapter_tag_cat[ record_categories == this_sample_break , ]" ,
+					"chapter_tag_cat <- lodown( \"chapter_tag\" , chapter_tag_cat )"
+				)
+
+			sample_break_block <- gsub( "chapter_tag" , data_name , sample_break_block )
+			
+			setup_rmd_page <- c( setup_rmd_page , sample_break_block )
+		}
+		
+		if( !is.null( broken_sample_test_condition ) ) test_rmd_page <- c( paste0( "if( " , broken_sample_test_condition , " ){" ) , test_rmd_page , "}" )
+		
+		if( test_rmd ){
+
+			lodown_command_line <- grep( paste0( "^" , data_name , "_cat <\\- lodown\\(" ) , test_rmd_page )
+
+			if( length( lodown_command_line ) > 0 ){
+
+				# skip the second `get_catalog` for broken samples, since sometimes `chapter_tag_cat <- lodown(...)` stores needed file information
+				if( !is.null( broken_sample_test_condition ) ) test_rmd_page[ seq( 2 , lodown_command_line ) ] <- "" else test_rmd_page[ lodown_command_line ] <- ""
+				
+				# following few lines might include usernames/passwords
+				if( grepl( "your_" , test_rmd_page[ lodown_command_line + 1 ] ) ) test_rmd_page[ lodown_command_line + 1 ] <- ""
+				if( grepl( "your_" , test_rmd_page[ lodown_command_line + 2 ] ) ) test_rmd_page[ lodown_command_line + 2 ] <- ""
+				if( grepl( "your_" , test_rmd_page[ lodown_command_line + 3 ] ) ) test_rmd_page[ lodown_command_line + 3 ] <- ""
+				
 			}
 			
-			if( setup_test == "setup" ){
-				
-				if( data_name == 'acs' ){
-				
-					rmd_page <-
-						"library(lodown)\nacs_cat <- get_catalog( \"acs\" , , output_dir = file.path( path.expand( \"~\" ) , \"ACS\" ) )\nlodown( \"acs\" , subset( acs_cat , ( time_period == '1-Year' & year == 2011 ) | year <= 2008 ) )"
-					
-				} else if( data_name == 'acs2' ){
-				
-					rmd_page <-
-						"library(lodown)\nacs_cat <- get_catalog( \"acs\" , , output_dir = file.path( path.expand( \"~\" ) , \"ACS\" ) )\nlodown( \"acs\" , subset( acs_cat , year >= 2009 & year <= 2011 ) )"
-					
-				} else if( data_name == 'acs3' ){
-				
-					rmd_page <-
-						"library(lodown)\nacs_cat <- get_catalog( \"acs\" , , output_dir = file.path( path.expand( \"~\" ) , \"ACS\" ) )\nlodown( \"acs\" , subset( acs_cat , ( time_period == '1-Year' & year == 2011 ) | ( year >= 2012 & year <= 2014 ) ) )"
-					
-				} else if( data_name == 'acs4' ){
-				
-					rmd_page <-
-						"library(lodown)\nacs_cat <- get_catalog( \"acs\" , , output_dir = file.path( path.expand( \"~\" ) , \"ACS\" ) )\nlodown( \"acs\" , subset( acs_cat , ( time_period == '1-Year' & year == 2011 ) | ( year >= 2015 ) ) )"
-					
-				} else {
-					
-					rmd_page <- rmd_page[ seq_along( rmd_page ) < second_library_lodown_line ]
-					
-				}
-			
-			} else if( setup_test == "test" ) {
-			
-				rmd_page <- rmd_page[ seq_along( rmd_page ) >= second_library_lodown_line ]
-				
-				lodown_command_line <- grep( "^lodown\\(" , rmd_page )
-				
-				if( length( lodown_command_line ) > 0 ){
-				
-					rmd_page[ lodown_command_line ] <- paste0( "stopifnot( nrow( " , ifelse( data_name %in% c( 'acs2' , 'acs3' , 'acs4' ) , 'acs' , data_name ) , "_cat ) > 0 )" )
-					
-					# following two lines might include usernames/passwords
-					if( grepl( "your_" , rmd_page[ lodown_command_line + 1 ] ) ) rmd_page[ lodown_command_line + 1 ] <- ""
-					if( grepl( "your_" , rmd_page[ lodown_command_line + 2 ] ) ) rmd_page[ lodown_command_line + 2 ] <- ""
-					if( grepl( "your_" , rmd_page[ lodown_command_line + 3 ] ) ) rmd_page[ lodown_command_line + 3 ] <- ""
-					
-				}
-			
-			} else stop( "setup_test= must be 'setup' or 'test'" )
-		
 		}
 		
-		if( length( dbdir_line ) > 0 ){
+		rmd_page <- c( setup_rmd_page , test_rmd_page )
 				
-			cs_query <- "select tables.name, columns.name, location from tables inner join columns on tables.id=columns.table_id left join storage on tables.name=storage.table and columns.name=storage.column where location is null and tables.name not in ('tables', 'columns', 'users', 'querylog_catalog', 'querylog_calls', 'querylog_history', 'tracelog', 'sessions', 'optimizers', 'environment', 'queue', 'rejects', 'storage', 'storagemodel', 'tablestoragemodel')"
-			
-			cs_lines <-
-				paste(
-					dbdir_line[1] ,
-					'\nwarnings()\nlibrary(DBI)\ndb <- dbConnect( MonetDBLite::MonetDBLite() , dbdir )\ncs <- dbGetQuery( db , "' , cs_query , '" )\nprint(cs)\nstopifnot(nrow(cs) == 0)\ndbDisconnect( db , shutdown = TRUE )'
-				)
-				
-			rmd_page <- c( rmd_page , cs_lines )
-				
-		
-		}
-		
 		temp_script <- tempfile()
 
 		for ( this_replacement in replacements ) rmd_page <- gsub( this_replacement[ 1 ] , this_replacement[ 2 ] , rmd_page , fixed = TRUE )
 
-		writeLines( rmd_page , temp_script )
-
-		temp_script
+		rmd_page
 	}
 
 

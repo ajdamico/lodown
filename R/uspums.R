@@ -46,7 +46,7 @@ get_catalog_uspums <-
 			paste0( "https://www2.census.gov/census_1990/1990_PUMS_A/PUMSAX" , catalog[ catalog$year == 1990 & catalog$percent == 5 , 'state.abb' ] , ".zip" )
 		
 		
-		catalog$dbfolder <- paste0( output_dir , "/MonetDB" )
+		catalog$dbfile <- paste0( output_dir , "/SQLite.db" )
 		
 		catalog$design <- paste0( output_dir , '/pums_' , catalog$year , '_' , catalog$percent , '_m.rds' )
 		
@@ -86,7 +86,7 @@ lodown_uspums <-
 			of <- tempfile()
 			
 			# download the pums sas script provided by the census bureau
-			cachaca( "https://www2.census.gov/census_1990/1990_PUMS_A/TOOLS/sas/PUMS.SAS" , tf , mode = 'wb' , filesize_fun = 'httr' )
+			cachaca( "https://www2.census.gov/census_1990/1990_PUMS_A/TOOLS/sas/PUMS.SAS" , tf , mode = 'wb' )
 			
 			# read the script into working memory
 			sas.90 <- readLines( tf )
@@ -142,7 +142,7 @@ lodown_uspums <-
 			pums.layout <- paste0( tempfile() , '.xls' )
 
 			# download the layout excel file
-			cachaca( "https://www2.census.gov/census_2000/datasets/PUMS/FivePercent/5%25_PUMS_record_layout.xls" , pums.layout , mode = 'wb' , filesize_fun = 'httr' )
+			cachaca( "https://www2.census.gov/census_2000/datasets/PUMS/FivePercent/5%25_PUMS_record_layout.xls" , pums.layout , mode = 'wb' )
 
 			# initiate a quick layout read-in function #
 			code.str <-
@@ -210,7 +210,7 @@ lodown_uspums <-
 			pums.layout <- paste0( tempfile() , ".xlsx" )
 
 			# download the layout excel file
-			cachaca( "https://www2.census.gov/census_2010/12-Stateside_PUMS/2010%20PUMS%20Record%20Layout.xlsx" , pums.layout , mode = 'wb' , filesize_fun = 'httr' )
+			cachaca( "https://www2.census.gov/census_2010/12-Stateside_PUMS/2010%20PUMS%20Record%20Layout.xlsx" , pums.layout , mode = 'wb' )
 
 			# initiate a quick layout read-in function #
 			code.str <-
@@ -262,12 +262,12 @@ lodown_uspums <-
 		}
 
 		
-		unique_designs <- unique( catalog[ , c( 'year' , 'design' , 'hh_structure' , 'person_structure' , 'merged_tablename' , 'household_tablename' , 'person_tablename' , 'dbfolder' ) ] )
+		unique_designs <- unique( catalog[ , c( 'year' , 'design' , 'hh_structure' , 'person_structure' , 'merged_tablename' , 'household_tablename' , 'person_tablename' , 'dbfile' ) ] )
 		
 		for( i in seq_len( nrow( unique_designs ) ) ){
 
 			# open the connection to the monetdblite database
-			db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , unique_designs[ i , 'dbfolder' ] )
+			db <- DBI::dbConnect( RSQLite::SQLite() , unique_designs[ i , 'dbfile' ] )
 
 		
 			these_files <- merge( catalog , unique_designs[ i , ] )[ , 'full_url' ]
@@ -304,13 +304,10 @@ lodown_uspums <-
 				)
 
 			# save the monetdb-backed complex sample survey design object to the local disk		
-			saveRDS( this_design , file = unique_designs[ i , 'design' ] )
+			saveRDS( this_design , file = unique_designs[ i , 'design' ] , compress = FALSE )
 			
 			catalog[ catalog$design == unique_designs[ i , 'design' ] , 'case_count' ] <- nrow( this_design )
 			
-			# disconnect from the current monet database
-			DBI::dbDisconnect( db , shutdown = TRUE )
-
 			cat( paste0( data_name , " survey design entry " , i , " of " , nrow( unique_designs ) , " stored at '" , unique_designs[ i , 'design' ] , "'\r\n\n" ) )
 			
 		}
@@ -372,7 +369,7 @@ get.tsv <-
 		dlfile <- tempfile()
 		txt_file <- tempfile()
 		
-		cachaca( fp , dlfile , mode = 'wb' , filesize_fun = 'httr' )
+		cachaca( fp , dlfile , mode = 'wb' )
 		
 		# the warning breakage can end now..
 		options( "warn" = previous.warning.setting )
@@ -399,7 +396,7 @@ get.tsv <-
 		tf.person <- tempfile()
 		
 		# initiate a read-only connection to the input file
-		incon <- file( txt_file , "r")
+		incon <- file( txt_file , "rb")
 
 		# initiate two write-only file connections "w" - pointing to the household and person files
 		outcon.household <- file( tf.household , "w" )
@@ -614,7 +611,7 @@ pums.import.merge.design <-
 				hh.tn ,
 				"as a inner join" , 
 				person.tn , 
-				"as b on a.fileno = b.fileno AND a.serialno = b.serialno WITH DATA" 
+				"as b on a.fileno = b.fileno AND a.serialno = b.serialno" 
 			)
 		
 		# create a new merged table (named according to the input parameter `merged.tn`
@@ -641,7 +638,7 @@ pums.import.merge.design <-
 				weight = if( grepl( "1990" , merged.tn ) ) ~pwgt1 else ~pweight ,			# weight variable column
 				id = ~1 ,					# sampling unit column (defined in the character string above)
 				data = merged.tn ,			# table name within the monet database (defined in the character string above)
-				dbtype = "MonetDBLite" ,
+				dbtype = "SQLite" ,
 				dbname = DBI::dbGetInfo( db )$gdk_dbpath
 			)
 		# ..and return that at the end of the function.

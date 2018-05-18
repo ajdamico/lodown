@@ -28,7 +28,9 @@ get_catalog_pof <-
 
 
 lodown_pof <-
-	function( data_name = "nppes" , catalog , ... ){
+	function( data_name = "nppes" , catalog , path_to_7za = if( .Platform$OS.type != 'windows' ) '7za' else normalizePath( "C:/Program Files/7-zip/7z.exe" ) , ... ){
+
+		if( system( paste0( '"' , path_to_7za , '" -h' ) , show.output.on.console = FALSE ) != 0 ) stop( paste0( "you need to install 7-zip.  if you already have it, include a parameter like path_to_7za='" , path_to_7za , "'" ) )
 
 		on.exit( print( catalog ) )
 
@@ -80,9 +82,9 @@ lodown_pof <-
 
 
 				# save both of these data frames to the local disk
-				saveRDS( componentes , file = paste0( catalog[ i , 'output_folder' ] , "/codigos de alimentacao componentes.rds" ) )
+				saveRDS( componentes , file = paste0( catalog[ i , 'output_folder' ] , "/codigos de alimentacao componentes.rds" ) , compress = FALSE )
 
-				saveRDS( estrutura , file = paste0( catalog[ i , 'output_folder' ] , "/codigos de alimentacao estrutura.rds" ) )
+				saveRDS( estrutura , file = paste0( catalog[ i , 'output_folder' ] , "/codigos de alimentacao estrutura.rds" ) , compress = FALSE )
 
 				# # # # # # # # # # # # # # # # #
 				# table for post-stratification #
@@ -100,7 +102,7 @@ lodown_pof <-
 				names( poststr ) <- tolower( names( poststr ) )
 
 				# save this data frame to the local disk
-				saveRDS( poststr , file = paste0( catalog[ i , 'output_folder' ] , "/poststr.rds" ) )
+				saveRDS( poststr , file = paste0( catalog[ i , 'output_folder' ] , "/poststr.rds" ) , compress = FALSE )
 
 				# remove all three of these tables from memory
 				rm( componentes , estrutura , poststr )
@@ -230,8 +232,12 @@ lodown_pof <-
 
 				# otherwise, the file must be unzipped with 7-zip
 				} else {
+				
+					# build the string to send to DOS
+					dos.command <- paste0( '"' , path_to_7za , '" x "' , normalizePath( data.file ) , '" -o"' , normalizePath( paste0( tempdir() , '/unzips' ) ) , '"' )
 
-					archive::archive_extract( normalizePath( data.file ) , dir = file.path( tempdir() , 'unzips' ) )
+					# extract the file
+					system( dos.command , show.output.on.console = FALSE )
 
 					# find the name of the final ASCII data file to be imported
 					curfile <- paste0( tempdir() , '/unzips/' , gsub( ".7z" , ".txt" , basename( data.file ) ) )
@@ -261,7 +267,7 @@ lodown_pof <-
 				# save the current data.frame
 				# to the appropriate year folder
 				# within the current working directory
-				saveRDS( x , file = paste0( catalog[ i , 'output_folder' ] , "/" , tolower( dfn ) , ".rds" ) )
+				saveRDS( x , file = paste0( catalog[ i , 'output_folder' ] , "/" , tolower( dfn ) , ".rds" ) , compress = FALSE )
 
 				# delete the current file from the current working directory
 				file.remove( curfile )

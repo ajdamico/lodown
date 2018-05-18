@@ -1,15 +1,21 @@
 get_catalog_addhealth <-
 	function( data_name = "addhealth" , output_dir , ... ){
 
-	catalog <- get_catalog_icpsr( study_numbers = "21600" , bundle_preference = "rdata" )
+	catalog <- get_catalog_icpsr( study_numbers = "21600" , bundle_preference = "rdata" , archive = "DSDR" )
 	
-	catalog$wave <- tolower( stringr::str_trim( gsub( "[[:punct:]]" , "" , sapply( strsplit( catalog$dataset_name , ":" ) , "[[" , 1 ) ) ) )
+	catalog$unzip_folder <- paste0( output_dir , "/" , gsub( "[^[:alnum:][:space:]]" , "" , tolower( catalog$title ) ) , "/" )
 	
-	catalog$data_title <- tolower( stringr::str_trim( gsub( "[[:punct:]]" , "" , sapply( strsplit( catalog$dataset_name , ":" ) , "[[" , 2 ) ) ) )
+	catalog$output_folder <- paste0( output_dir , "/" )
 	
-	catalog$unzip_folder <- paste0( output_dir , "/" , catalog$wave , "/" , catalog$data_title , "/" )
-	
-	catalog$output_folder <- paste0( output_dir , "/" , catalog$wave , "/" )
+	catalog$wave <- 
+		ifelse( 
+			grepl( "^wave" , catalog$title , ignore.case = TRUE ) , 
+			gsub( "^wave ([a-z]+) (.*)" , "wave \\1" , 
+				gsub( "[^[:alnum:][:space:]]" , "" , tolower( catalog$title ) ) , 
+				ignore.case = TRUE 
+			) , 
+			NA 
+		)
 
 	catalog
 
@@ -93,7 +99,7 @@ lodown_addhealth <-
 					cat( paste( "did not merge" , this_rda , " -- copying to working directory" , "\r                                  " ) )
 					
 					# just save the data.frame object into the main output folder
-					saveRDS( x , file = gsub( "/individual tables" , "" , gsub( "\\.rda" , ".rds" , this_rda ) ) )
+					saveRDS( x , file = gsub( "/individual tables" , "" , gsub( "\\.rda" , ".rds" , this_rda ) ) , compress = FALSE )
 				}
 				
 				# remove the current data.frame from working memory
@@ -113,7 +119,7 @@ lodown_addhealth <-
 			
 			# once you've merged as many files as you can,
 			# save the final `cons` object to the local disk
-			saveRDS( cons , file = consolidated_filename )
+			saveRDS( cons , file = consolidated_filename , compress = FALSE )
 			
 			cat( paste0( data_name , " consolidated file stored at '" , consolidated_filename , "'\r                                  " ) )
 

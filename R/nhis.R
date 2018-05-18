@@ -5,15 +5,15 @@ get_catalog_nhis <-
 		
 		for( this_name in c( "nhpi" , "NHIS" ) ){
 			
-			base_ftp_dir <- paste0( "ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/" , this_name , "/" )
+			base_ftp_dir <- paste0( "https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/" , this_name , "/" )
 		
 			# read the text of the microdata ftp into working memory
 			# download the contents of the ftp directory for all microdata
-			ftp.listing <- readLines( textConnection( RCurl::getURL( base_ftp_dir ) ) )
+			ftp.listing <- strsplit( RCurl::getURL( base_ftp_dir ) , "<br>" )[[1]]
 
 			# extract the text from all lines containing a this_year of microdata
 			# figure out the names of those this_year directories
-			ay <- rev( gsub( "(.*) (.*)" , "\\2" , ftp.listing ) )
+			ay <- rev( gsub( '(.*)\\">(.*)<\\/A>$', "\\2" , ftp.listing ) )
 
 			# remove non-numeric strings
 			suppressWarnings( available_years <- ay[ as.numeric( ay ) %in% ay ] )
@@ -27,7 +27,9 @@ get_catalog_nhis <-
 				cat( paste0( "loading " , data_name , " catalog from " , year_dir , "\r\n\n" ) )
 
 				# just like above, read those lines into working memory
-				ftp_files <- tolower( readLines( textConnection( RCurl::getURL( year_dir , dirlistonly = TRUE ) ) ) )
+				this_listing <- strsplit( RCurl::getURL( year_dir ) , "<br>" )[[1]]
+				
+				ftp_files <- tolower( gsub( '(.*)\\">(.*)<\\/A>$' , "\\2" , this_listing ) )
 				
 				# identify all .exe files..
 				exe.filenames <- ftp_files[ grepl( ".exe" , ftp_files ) ]
@@ -57,14 +59,12 @@ get_catalog_nhis <-
 					ftp_files <- ftp_files[ !( ftp_files %in% c( "" , "injuryverbatim" ) ) ]
 				
 					
-				} else {
-					
-					# throw out folders (assumed to be files without a . in them)
-					# (any files in folders within the main this_year folder need to be downloaded separately)
-					ftp_files <- ftp_files[ grepl( "\\." , ftp_files ) ]
-
 				}
-				
+
+				# throw out folders (assumed to be files without a . in them)
+				# (any files in folders within the main this_year folder need to be downloaded separately)
+				ftp_files <- ftp_files[ grepl( "\\." , ftp_files ) ]
+
 						
 				# skip txt files
 				ftp_files <- ftp_files[ !grepl( '\\.txt' , ftp_files ) ]
@@ -163,9 +163,10 @@ get_catalog_nhis <-
 
 			cat( paste0( "loading " , data_name , " catalog from " , income_dir , "\r\n\n" ) )
 
-			# just like above, read those lines into working memory
-			ftp_files <- tolower( readLines( textConnection( RCurl::getURL( income_dir , dirlistonly = TRUE ) ) ) )
+			this_listing <- strsplit( RCurl::getURL( income_dir ) , "<br>" )[[1]]
 			
+			ftp_files <- tolower( gsub( '(.*)\\">(.*)<\\/A>$' , "\\2" , this_listing ) )
+	
 			# remove stata files and missing files
 			ftp_files <- ftp_files[ !( ftp_files %in% "" ) & !grepl( "\\.do$" , ftp_files ) ]
 
@@ -194,6 +195,8 @@ get_catalog_nhis <-
 			catalog <- rbind( catalog , inc_cat )
 		}
 		
+		catalog <- catalog[ order( catalog[ , 'year' ] ) , ]
+		
 		catalog
 
 	}
@@ -209,13 +212,13 @@ lodown_nhis <-
 		for ( i in seq_len( nrow( catalog ) ) ){
 
 			# download the file
-			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' , filesize_fun = 'httr' )
+			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
 
 			unzipped_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) )
 
 			if( catalog[ i , 'imputed_income' ] ){
 			
-				SAScii_start <- grep( "INPUT ALL VARIABLES" , readLines( catalog[ i , 'sas_script' ] ) ) + 1
+				SAScii_start <- grep( "INPUT ALL VARIABLES" , readLines( catalog[ i , 'sas_script' ] , encoding = 'latin1' ) ) + 1
 				
 				# unzip the file into a temporary directory.
 				# the unzipped file should contain *five* ascii files
@@ -224,7 +227,7 @@ lodown_nhis <-
 				# loop through all five imputed income files
 				for ( j in 1:length( income_file_names ) ){
 
-					ii <- read_SAScii( income_file_names[ j ] , catalog[ i , 'sas_script' ] , beginline = SAScii_start )
+					ii <- read_SAScii( income_file_names[ j ] , catalog[ i , 'sas_script' ] , beginline = SAScii_start , sas_encoding = 'latin1' )
 
 					names( ii ) <- tolower( names( ii ) )
 
@@ -238,7 +241,7 @@ lodown_nhis <-
 				catalog[ i , 'case_count' ] <- nrow( ii )
 				
 				# save all five imputed income data frames to a single .rds file #
-				saveRDS( mget( paste0( "ii" , 1:5 ) ) , file = catalog[ i , 'output_filename' ] )
+				saveRDS( mget( paste0( "ii" , 1:5 ) ) , file = catalog[ i , 'output_filename' ] , compress = FALSE )
 						
 			
 			} else {
@@ -248,14 +251,14 @@ lodown_nhis <-
 				
 				# ..and read that text file directly into an R data.frame
 				# using the sas importation script downloaded before this big fat loop
-				x <- read_SAScii( unzipped_files , catalog[ i , "sas_script" ] )
+				x <- read_SAScii( unzipped_files , catalog[ i , "sas_script" ] , sas_encoding = 'latin1' )
 				
 				# convert all column names to lowercase
 				names( x ) <- tolower( names( x ) )
 				
 				catalog[ i , 'case_count' ] <- nrow( x )
 				
-				saveRDS( x , file = catalog[ i , 'output_filename' ] )
+				saveRDS( x , file = catalog[ i , 'output_filename' ] , compress = FALSE )
 
 			}
 			

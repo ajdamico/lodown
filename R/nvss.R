@@ -1,6 +1,8 @@
 get_catalog_nvss <-
 	function( data_name = "nvss" , output_dir , ... ){
 
+		if ( !requireNamespace( "archive" , quietly = TRUE ) ) stop( "archive needed for this function to work. to install it, type `devtools::install_github( 'jimhester/archive' )`" , call. = FALSE )
+
 		catalog <- NULL
 			
 		# create a character string containing the cdc's vital statistics website
@@ -13,7 +15,7 @@ get_catalog_nvss <-
 		z <- gsub( "\t" , "" , z )
 
 		# keep only the lines in the html code containing an ftp site
-		files <- z[ grep( 'ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/' , z ) ]
+		files <- z[ grep( 'https://ftp.cdc.gov/pub/Health_Statistics/NCHS/' , z ) ]
 		# this, i'm assuming, points to every file available for download.  cool.
 
 		catalog <-
@@ -25,7 +27,7 @@ get_catalog_nvss <-
 				data.frame( type = 'fetaldeath' , year = 2005:nvss_max_year( "/fetaldeathus/" , files ) , stringsAsFactors = FALSE ) 
 			)
 		
-		catalog$dbfolder <- paste0( output_dir , "/MonetDB" )
+		catalog$dbfile <- paste0( output_dir , "/SQLite.db" )
 		
 		catalog$output_folder <- output_dir
 		
@@ -63,14 +65,14 @@ lodown_nvss <-
 		z <- gsub( "\t" , "" , z )
 
 		# keep only the lines in the html code containing an ftp site
-		files <- z[ grep( 'ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/' , z ) ]
+		files <- z[ grep( 'https://ftp.cdc.gov/pub/Health_Statistics/NCHS/' , z ) ]
 		# this, i'm assuming, points to every file available for download.  cool.
 
 		for ( i in seq_len( nrow( catalog ) ) ){
 
 					
 			# open the connection to the monetdblite database
-			db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog[ i , 'dbfolder' ] )
+			db <- DBI::dbConnect( RSQLite::SQLite() , catalog[ i , 'dbfile' ] )
 
 			tables_before <- DBI::dbListTables( db )
 			
@@ -647,7 +649,7 @@ lodown_nvss <-
 				# build the full filepath of the fetal death zipped file
 				fn <- 
 					paste0( 
-						"ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/DVS/fetaldeathus/Fetal" , 
+						"https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/DVS/fetaldeathus/Fetal" , 
 						catalog[ i , 'year' ] , 
 						"US.zip" 
 					)
@@ -662,7 +664,7 @@ lodown_nvss <-
 				# build the full filepath of the fetal death zipped file
 				fn <- 
 					paste0( 
-						"ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/DVS/fetaldeathter/Fetal" , 
+						"https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/DVS/fetaldeathter/Fetal" , 
 						catalog[ i , 'year' ] , 
 						"PS.zip" 
 					)
@@ -674,8 +676,8 @@ lodown_nvss <-
 				names( ps ) <- tolower( names( ps ) )
 
 				# save both data.frame objects to an R data file
-				saveRDS( us , file = paste0( catalog[ i , 'output_folder' ] , "/fetal death " , catalog[ i , 'year' ] , " us.rds" ) )
-				saveRDS( ps , file = paste0( catalog[ i , 'output_folder' ] , "/fetal death " , catalog[ i , 'year' ] , " ps.rds" ) )
+				saveRDS( us , file = paste0( catalog[ i , 'output_folder' ] , "/fetal death " , catalog[ i , 'year' ] , " us.rds" ) , compress = FALSE )
+				saveRDS( ps , file = paste0( catalog[ i , 'output_folder' ] , "/fetal death " , catalog[ i , 'year' ] , " ps.rds" ) , compress = FALSE )
 
 				catalog[ i , 'case_count' ] <- nrow( us ) + nrow( ps )
 				
@@ -686,10 +688,6 @@ lodown_nvss <-
 				for( this_table in tables_after ) catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , DBI::dbGetQuery( db , paste0( "SELECT COUNT(*) FROM " , this_table ) )[ 1 , 1 ] , na.rm = TRUE )
 				
 			}
-				
-
-			# disconnect from the current monet database
-			DBI::dbDisconnect( db , shutdown = TRUE )
 
 			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'output_folder' ] , "'\r\n\n" ) )
 
@@ -714,7 +712,7 @@ clear.goofy.characters <-
 		tf <- tempfile()
 		
 		# initiate a read-only connection to the input file
-		incon <- file( fn , "r")
+		incon <- file( fn , "rb")
 
 		outcon <- file( tf , "w" )
 
@@ -793,19 +791,19 @@ nchs_extract_files <-
 	
 		y <- tolower( y )
 
-		pdfs <- y[ grep( "(ftp://ftp.cdc.gov/.*\\.pdf)" , y ) ]
+		pdfs <- y[ grep( "(https://ftp.cdc.gov/.*\\.pdf)" , y ) ]
 
-		pdf.files <- gsub( "(.*a href=\\\")(ftp://ftp.cdc.gov/.*\\.pdf)(.*)$" , "\\2" , pdfs )
+		pdf.files <- gsub( "(.*a href=\\\")(https://ftp.cdc.gov/.*\\.pdf)(.*)$" , "\\2" , pdfs )
 
 		if( length( pdf.files ) == 0 ) pdf.files <- NA
 		
-		zips <- y[ grep( "(ftp://ftp.cdc.gov/.*\\.zip)" , y ) ]
+		zips <- y[ grep( "(https://ftp.cdc.gov/.*\\.zip)" , y ) ]
 
 		ps <- zips[ grep( 'ps.zip' , zips ) ]
 		us <- zips[ !grepl( 'ps.zip' , zips ) ]
 
-		ps.files <- gsub( "(.*a href=\\\")(ftp://ftp.cdc.gov/.*\\.zip)(.*)$" , "\\2" , ps )
-		us.files <- gsub( "(.*a href=\\\")(ftp://ftp.cdc.gov/.*\\.zip)(.*)$" , "\\2" , us )
+		ps.files <- gsub( "(.*a href=\\\")(https://ftp.cdc.gov/.*\\.zip)(.*)$" , "\\2" , ps )
+		us.files <- gsub( "(.*a href=\\\")(https://ftp.cdc.gov/.*\\.zip)(.*)$" , "\\2" , us )
 
 		list( name = name , pdfs = pdf.files , ps = ps.files , us = us.files )
 	}

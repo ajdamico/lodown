@@ -1,6 +1,8 @@
 get_catalog_enem <-
 	function( data_name = "enem" , output_dir , ... ){
 
+		if ( !requireNamespace( "archive" , quietly = TRUE ) ) stop( "archive needed for this function to work. to install it, type `devtools::install_github( 'jimhester/archive' )`" , call. = FALSE )
+
 		inep_portal <- "http://portal.inep.gov.br/microdados"
 
 		w <- rvest::html_attr( rvest::html_nodes( xml2::read_html( inep_portal ) , "a" ) , "href" )
@@ -13,7 +15,7 @@ get_catalog_enem <-
 			data.frame(
 				year = enem_years ,
 				full_url = these_links ,
-				dbfolder = paste0( output_dir , "/MonetDB" ) ,
+				dbfile = paste0( output_dir , "/SQLite.db" ) ,
 				output_folder = paste0( output_dir , "/" , enem_years ) ,
 				stringsAsFactors = FALSE
 			)
@@ -43,7 +45,7 @@ lodown_enem <-
 		for ( i in seq_len( nrow( catalog ) ) ){
 
 			# open the connection to the monetdblite database
-			db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog[ i , 'dbfolder' ] )
+			db <- DBI::dbConnect( RSQLite::SQLite() , catalog[ i , 'dbfile' ] )
 
 			# download the file
 			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
@@ -141,7 +143,7 @@ lodown_enem <-
 				if( length( sas_ri ) > 1 ) sas_ri <- sas_ri[ !grepl( "questionario|prova" , tolower( basename( sas_ri ) ) ) ]
 
 				# if( catalog[ i , 'year' ] %in% 1999:2000 ) options( encoding = 'native.enc' )
-				sas_con <- file( sas_ri , "r" , encoding = 'windows-1252' )
+				sas_con <- file( sas_ri , "rb" , encoding = 'windows-1252' )
 				sas_t <- readLines( sas_con )
 				sas_t <- gsub( "\t" , " " , sas_t )
 				sas_t <- gsub( "char(.*)" , "\\1" , tolower( sas_t ) )
@@ -210,13 +212,10 @@ lodown_enem <-
 
 			catalog[ i , 'case_count' ] <- DBI::dbGetQuery( db , paste0( "SELECT COUNT(*) FROM enem" , catalog[ i , 'year' ] ) )[ 1 , 1 ]
 			
-			# disconnect from the current monet database
-			DBI::dbDisconnect( db , shutdown = TRUE )
-
 			# delete the temporary files?  or move some docs to a save folder?
 			suppressWarnings( file.remove( tf ) )
 
-			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'dbfolder' ] , "'\r\n\n" ) )
+			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'dbfile' ] , "'\r\n\n" ) )
 
 		}
 
@@ -237,7 +236,7 @@ enem_ranc <-
 
 		outcon <- file( tf_a , "w" )
 
-		incon <- file( infile , "r")
+		incon <- file( infile , "rb")
 
 		line.num <- 0
 			

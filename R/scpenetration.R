@@ -1,5 +1,5 @@
-get_catalog_sc_penetration <-
-	function( data_name = "sc_penetration" , output_dir , ... ){
+get_catalog_scpenetration <-
+	function( data_name = "scpenetration" , output_dir , ... ){
 
 		catalog <- NULL
 	
@@ -46,8 +46,8 @@ get_catalog_sc_penetration <-
 	}
 
 
-lodown_sc_penetration <-
-	function( data_name = "sc_penetration" , catalog , ... ){
+lodown_scpenetration <-
+	function( data_name = "scpenetration" , catalog , ... ){
 
 		on.exit( print( catalog ) )
 
@@ -64,7 +64,7 @@ lodown_sc_penetration <-
 			for ( i in seq_len( nrow( these_entries ) ) ){
 
 				# download the file
-				cachaca( these_entries[ i , "full_url" ] , tf , mode = 'wb' , filesize_fun = 'httr' )
+				cachaca( these_entries[ i , "full_url" ] , tf , mode = 'wb' )
 
 
 				# extract the contents of the zipped file
@@ -100,7 +100,7 @@ lodown_sc_penetration <-
 
 			}
 			
-			saveRDS( this_result , file = this_savefile )
+			saveRDS( this_result , file = this_savefile , compress = FALSE )
 
 			cat( paste0( data_name , " catalog entry " , which( this_savefile == unique_savefiles ) , " of " , length( unique_savefiles ) , " stored at '" , this_savefile , "'\r\n\n" ) )
 

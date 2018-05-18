@@ -3,7 +3,7 @@ get_catalog_pirls <-
 
 		catalog <-
 			data.frame(
-				year = seq( 2001 , 2011 , 5 ) ,
+				year = seq( 2001 , 2016 , 5 ) ,
 				stringsAsFactors = FALSE
 			)
 
@@ -31,6 +31,8 @@ lodown_pirls <-
 			# specify the pathway to each and every spss data set to download.
 			ftd <-
 				c(
+					"https://timssandpirls.bc.edu/pirls2016/international-database/downloads/P16_SPSSData_pt1.zip" ,
+					"https://timssandpirls.bc.edu/pirls2016/international-database/downloads/P16_SPSSData_pt2.zip" ,
 					"https://timssandpirls.bc.edu/pirls2011/downloads/P11_SPSSData_pt1.zip" ,
 					"https://timssandpirls.bc.edu/pirls2011/downloads/P11_SPSSData_pt2.zip" ,
 					"https://timssandpirls.bc.edu/PDF/PIRLS2006_SPSSData.zip" ,
@@ -91,7 +93,7 @@ lodown_pirls <-
 				catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , nrow( y ) , na.rm = TRUE )
 				
 				# save that single all-country stack-a-mole
-				saveRDS( y , file = paste0( catalog[ i , 'output_folder' ] , '/' , p , '.rds' ) ) ; rm( y ) ; gc()
+				saveRDS( y , file = paste0( catalog[ i , 'output_folder' ] , '/' , p , '.rds' ) , compress = FALSE ) ; rm( y ) ; gc()
 				
 			}
 
@@ -101,12 +103,12 @@ lodown_pirls <-
 			# asa alone #
 			asa <- readRDS( paste0( catalog[ i , 'output_folder' ] , '/asa.rds' ) )
 			asa_design <- pirls_pvsd( asa , 'totwgt' , pirls_rwcf( asa , 'totwgt' ) ) ; rm( asa ) ; gc()
-			saveRDS( asa_design , file = paste0( catalog[ i , 'output_folder' ] , '/asa_design.rds' ) ) ; rm( asa_design ) ; gc()
+			saveRDS( asa_design , file = paste0( catalog[ i , 'output_folder' ] , '/asa_design.rds' ) , compress = FALSE ) ; rm( asa_design ) ; gc()
 			
 			# asg alone #
 			asg <- readRDS( paste0( catalog[ i , 'output_folder' ] , '/asg.rds' ) )
 			asg_design <- pirls_pvsd( asg , 'totwgt' , pirls_rwcf( asg , 'totwgt' ) )
-			saveRDS( asg_design , file = paste0( catalog[ i , 'output_folder' ] , '/asg_design.rds' ) ) ; rm( asg_design ) ; gc()
+			saveRDS( asg_design , file = paste0( catalog[ i , 'output_folder' ] , '/asg_design.rds' ) , compress = FALSE ) ; rm( asg_design ) ; gc()
 			
 			# asg + ash
 			ash <- readRDS( paste0( catalog[ i , 'output_folder' ] , '/ash.rds' ) )
@@ -116,7 +118,7 @@ lodown_pirls <-
 			stopifnot( nrow( asg_ash ) == nrow( ash ) & nrow( ash ) == nrow( asg ) )
 
 			asg_ash_design <- pirls_pvsd( asg_ash , 'totwgt' , pirls_rwcf( asg_ash , 'totwgt' ) ) ; rm( asg_ash ) ; gc()
-			saveRDS( asg_ash_design , file = paste0( catalog[ i , 'output_folder' ] , '/asg_ash_design.rds' ) ) ; rm( asg_ash_design ) ; gc()
+			saveRDS( asg_ash_design , file = paste0( catalog[ i , 'output_folder' ] , '/asg_ash_design.rds' ) , compress = FALSE ) ; rm( asg_ash_design ) ; gc()
 
 			
 			# asg + acg
@@ -125,13 +127,13 @@ lodown_pirls <-
 			stopifnot( nrow( asg_acg ) == nrow( asg ) ) ; rm( asg ) ; gc()
 			
 			asg_acg_design <- pirls_pvsd( asg_acg , 'totwgt' , pirls_rwcf( asg_acg , 'totwgt' ) ) ; rm( asg_acg ) ; gc()
-			saveRDS( asg_acg_design , file = paste0( catalog[ i , 'output_folder' ] , '/asg_acg_design.rds' ) ) ; rm( asg_acg_design ) ; gc()
+			saveRDS( asg_acg_design , file = paste0( catalog[ i , 'output_folder' ] , '/asg_acg_design.rds' ) , compress = FALSE ) ; rm( asg_acg_design ) ; gc()
 
 			
 			# ast alone #
 			ast <- readRDS( paste0( catalog[ i , 'output_folder' ] , '/ast.rds' ) )
 			ast_design <- pirls_pvsd( ast , 'tchwgt' , pirls_rwcf( ast , 'tchwgt' ) )
-			saveRDS( ast_design , file = paste0( catalog[ i , 'output_folder' ] , '/ast_design.rds' ) ) ; rm( ast_design ) ; gc()
+			saveRDS( ast_design , file = paste0( catalog[ i , 'output_folder' ] , '/ast_design.rds' ) , compress = FALSE ) ; rm( ast_design ) ; gc()
 
 			
 			# ast + atg
@@ -140,7 +142,7 @@ lodown_pirls <-
 			stopifnot( nrow( ast_atg ) == nrow( ast ) )
 
 			ast_atg_design <- pirls_pvsd( ast_atg , 'tchwgt' , pirls_rwcf( ast_atg , 'tchwgt' ) ) ; rm( ast_atg ) ; gc()
-			saveRDS( ast_atg_design , file = paste0( catalog[ i , 'output_folder' ] , '/ast_atg_design.rds' ) ) ; rm( ast_atg_design ) ; gc()
+			saveRDS( ast_atg_design , file = paste0( catalog[ i , 'output_folder' ] , '/ast_atg_design.rds' ) , compress = FALSE ) ; rm( ast_atg_design ) ; gc()
 			
 			# delete the temporary files
 			suppressWarnings( file.remove( tf , unzipped_files ) )
@@ -161,9 +163,12 @@ lodown_pirls <-
 pirls_rwcf <- 
 	function( z , wgt ){
 		for ( i in 1:75 ){
+			
 			z[ z$jkzone != i , paste0( 'rw' , i ) ] <- z[ z$jkzone != i , wgt ]
+			
 			z[ z$jkzone == i & z$jkrep == 1 , paste0( 'rw' , i ) ] <- z[ z$jkzone == i & z$jkrep == 1 , wgt ] * 2
 			z[ z$jkzone == i & z$jkrep == 0 , paste0( 'rw' , i ) ] <- 0
+			
 		}
 		z[ , paste0( 'rw' , 1:75 ) ]
 }

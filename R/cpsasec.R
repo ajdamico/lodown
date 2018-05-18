@@ -24,6 +24,8 @@ get_catalog_cpsasec <-
 		# overwrite 2014.58 with three-eights
 		catalog$output_filename <- gsub( "\\.58" , "_5x8" , catalog$output_filename )
 
+		catalog <- catalog[ order( catalog[ , 'year' ] ) , ]
+		
 		catalog
 
 	}
@@ -50,9 +52,9 @@ lodown_cpsasec <-
 				
 				tf1 <- tempfile() ; tf2 <- tempfile() ; tf3 <- tempfile()
 			
-				cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/income-poverty/time-series/data-extracts/hhld.sas7bdat" , tf1 , mode = 'wb' , filesize_fun = 'httr' )
-				cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/income-poverty/time-series/data-extracts/family.sas7bdat" , tf2 , mode = 'wb' , filesize_fun = 'httr' )
-				cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/income-poverty/time-series/data-extracts/person.sas7bdat" , tf3 , mode = 'wb' , filesize_fun = 'httr' )
+				cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/income-poverty/time-series/data-extracts/hhld.sas7bdat" , tf1 , mode = 'wb' )
+				cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/income-poverty/time-series/data-extracts/family.sas7bdat" , tf2 , mode = 'wb' )
+				cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/income-poverty/time-series/data-extracts/person.sas7bdat" , tf3 , mode = 'wb' )
 
 				
 				fmly <- data.frame( haven::read_sas( tf2 ) )
@@ -150,7 +152,7 @@ lodown_cpsasec <-
 				tf <- tempfile() ; td <- tempdir()
 
 				# download the CPS repwgts zipped file to the local computer
-				cachaca( CPS.ASEC.mar.file.location , tf , mode = "wb" , filesize_fun = 'httr' )
+				cachaca( CPS.ASEC.mar.file.location , tf , mode = "wb" )
 
 				# unzip the file's contents and store the file name within the temporary directory
 				fn <- unzip( tf , exdir = td , overwrite = TRUE )
@@ -164,8 +166,8 @@ lodown_cpsasec <-
 				
 				# create four file connections.
 
-				# one read-only file connection "r" - pointing to the ASCII file
-				incon <- file( fn , "r") 
+				# one read-only file connection "rb" - pointing to the ASCII file
+				incon <- file( fn , "rb") 
 
 				# three write-only file connections "w" - pointing to the household, family, and person files
 				outcon.household <- file( tf.household , "w") 
@@ -364,7 +366,7 @@ lodown_cpsasec <-
 					
 					ace <- "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/asec14_now_anycov.dat"
 
-					cachaca( ace , tf , mode = "wb" , filesize_fun = 'httr' )	
+					cachaca( ace , tf , mode = "wb" )	
 
 					ac <- rbind( ac , data.frame( readr::read_fwf( tf , readr::fwf_widths( c( 5 , 2 , 1 ) ) , col_types = 'nnn' ) ) )
 					
@@ -374,7 +376,7 @@ lodown_cpsasec <-
 					
 					ace <- "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/asec14_now_anycov_redes.dat"
 
-					cachaca( ace , tf , mode = "wb" , filesize_fun = 'httr' )	
+					cachaca( ace , tf , mode = "wb" )	
 
 					ac <- rbind( ac , data.frame( readr::read_fwf( tf , readr::fwf_widths( c( 5 , 2 , 1 ) ) , col_types = 'nnn' ) ) )
 					
@@ -384,11 +386,11 @@ lodown_cpsasec <-
 				
 					ote <- "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/asec14_outtyp_full.dat"
 					
-					cachaca( ote , tf , mode = 'wb' , filesize_fun = 'httr' )
+					cachaca( ote , tf , mode = 'wb' )
 					
 					ot <- data.frame( readr::read_fwf( tf , readr::fwf_widths( c( 5 , 2 , 2 , 1 ) ) , col_types = 'nnnn' ) )
 					
-					cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/ppint14esi_offer_ext.sas7bdat" , tf , mode = 'wb' , filesize_fun = 'httr' )
+					cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/ppint14esi_offer_ext.sas7bdat" , tf , mode = 'wb' )
 					
 					offer <- data.frame( haven::read_sas( tf ) )
 					
@@ -399,17 +401,17 @@ lodown_cpsasec <-
 				
 					ote <- "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/asec15_outtyp.dat"
 				
-					cachaca( ote , tf , mode = 'wb' , filesize_fun = 'httr' )
+					cachaca( ote , tf , mode = 'wb' )
 					
 					ot <- data.frame( readr::read_fwf( tf , readr::fwf_widths( c( 5 , 2 , 2 , 1 ) ) , col_types = 'nnnn' ) )
 					
 					ace <- "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/asec15_currcov_extract.dat"
 				
-					cachaca( ace , tf , mode = 'wb' , filesize_fun = 'httr' )
+					cachaca( ace , tf , mode = 'wb' )
 					
 					ac <- data.frame( readr::read_fwf( tf , readr::fwf_widths( c( 5 , 2 , 1 ) ) , col_types = 'nnn' ) )
 
-					cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/ppint15esi_offer_ext.sas7bdat" , tf , mode = 'wb' , filesize_fun = 'httr' )
+					cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/ppint15esi_offer_ext.sas7bdat" , tf , mode = 'wb' )
 					
 					offer <- data.frame( haven::read_sas( tf ) )
 				
@@ -419,17 +421,17 @@ lodown_cpsasec <-
 				
 					ote <- "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2016/cps-redesign/asec16_outtyp_full.dat"
 				
-					cachaca( ote , tf , mode = 'wb' , filesize_fun = 'httr' )
+					cachaca( ote , tf , mode = 'wb' )
 					
 					ot <- data.frame( readr::read_fwf( tf , readr::fwf_widths( c( 5 , 2 , 2 , 1 ) ) , col_types = 'nnnn' ) )
 					
 					ace <- "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2016/cps-redesign/asec16_currcov_extract.dat"
 				
-					cachaca( ace , tf , mode = 'wb' , filesize_fun = 'httr' )
+					cachaca( ace , tf , mode = 'wb' )
 					
 					ac <- data.frame( readr::read_fwf( tf , readr::fwf_widths( c( 5 , 2 , 1 ) ) , col_types = 'nnn' ) )
 
-					cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/pubuse_esioffer_2016.sas7bdat" , tf , mode = 'wb' , filesize_fun = 'httr' )
+					cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/pubuse_esioffer_2016.sas7bdat" , tf , mode = 'wb' )
 					
 					offer <- data.frame( haven::read_sas( tf ) )
 				
@@ -439,17 +441,17 @@ lodown_cpsasec <-
 				
 					ote <- "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2017/cps-redesign/asec17_outtyp_extract.dat"
 				
-					cachaca( ote , tf , mode = 'wb' , filesize_fun = 'httr' )
+					cachaca( ote , tf , mode = 'wb' )
 					
 					ot <- data.frame( readr::read_fwf( tf , readr::fwf_widths( c( 5 , 2 , 2 , 1 ) ) , col_types = 'nnnn' ) )
 					
 					ace <- "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2017/cps-redesign/asec17_currcov_extract.dat"
 				
-					cachaca( ace , tf , mode = 'wb' , filesize_fun = 'httr' )
+					cachaca( ace , tf , mode = 'wb' )
 					
 					ac <- data.frame( readr::read_fwf( tf , readr::fwf_widths( c( 5 , 2 , 1 ) ) , col_types = 'nnn' ) )
 
-					cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2017/cps-redesign/pubuse_esioffer_2017.sas7bdat" , tf , mode = 'wb' , filesize_fun = 'httr' )
+					cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2017/cps-redesign/pubuse_esioffer_2017.sas7bdat" , tf , mode = 'wb' )
 					
 					offer <- data.frame( haven::read_sas( tf ) )
 				
@@ -542,7 +544,7 @@ lodown_cpsasec <-
 					
 				if( !zip_file ){
 					rw_tf <- tempfile()
-					cachaca( CPS.replicate.weight.file.location , rw_tf , mode = 'wb' , filesize_fun = 'httr' )
+					cachaca( CPS.replicate.weight.file.location , rw_tf , mode = 'wb' )
 					CPS.replicate.weight.file.location <- rw_tf
 				}
 				
@@ -551,8 +553,7 @@ lodown_cpsasec <-
 					read_SAScii( 
 						CPS.replicate.weight.file.location , 
 						CPS.replicate.weight.SAS.read.in.instructions , 
-						zipped = zip_file ,
-						filesize_fun = 'httr'
+						zipped = zip_file
 					)
 
 
@@ -597,7 +598,7 @@ lodown_cpsasec <-
 				
 				}
 				
-				cachaca( sp.url , tf , mode = 'wb' , filesize_fun = 'httr' )
+				cachaca( sp.url , tf , mode = 'wb' )
 				
 				sp <- data.frame( haven::read_sas( tf ) )
 			
@@ -605,7 +606,7 @@ lodown_cpsasec <-
 					
 					sp.url <- "https://www.census.gov/housing/povmeas/spmresearch/spmresearch2013_redes.sas7bdat"
 						
-					cachaca( sp.url , tf , mode = 'wb' , filesize_fun = 'httr' )
+					cachaca( sp.url , tf , mode = 'wb' )
 					
 					sp2 <- data.frame( haven::read_sas( tf ) )
 				
@@ -632,7 +633,7 @@ lodown_cpsasec <-
 			
 			names( x ) <- tolower( names( x ) )
 			
-			saveRDS( x , file = catalog[ i , 'output_filename' ] ) ; rm( x ) ; gc()
+			saveRDS( x , file = catalog[ i , 'output_filename' ] , compress = FALSE ) ; rm( x ) ; gc()
 			
 			# delete the temporary files
 			suppressWarnings( file.remove( tf ) )
@@ -652,24 +653,28 @@ lodown_cpsasec <-
 	
 # data dictionary parser
 cpsasec_dd_parser <-
-	function( url ){
+	function( this_url ){
 
+		tf <- tempfile()
+	
 		# read in the data dictionary
-		lines <- readLines ( url )
+		httr::GET( this_url , httr::write_disk( tf , overwrite = TRUE ) )
+		
+		these_lines <- readLines ( tf )
 		
 		# find the record positions
-		hh_start <- grep( "HOUSEHOLD RECORD" , lines )
+		hh_start <- grep( "HOUSEHOLD RECORD" , these_lines )
 		
-		fm_start <- grep( "FAMILY RECORD" , lines )
+		fm_start <- grep( "FAMILY RECORD" , these_lines )
 		
-		pn_start <- grep( "PERSON RECORD" , lines )
+		pn_start <- grep( "PERSON RECORD" , these_lines )
 		
 		# segment the data dictionary into three parts
-		hh_lines <- lines[ hh_start:(fm_start - 1 ) ]
+		hh_lines <- these_lines[ hh_start:(fm_start - 1 ) ]
 		
-		fm_lines <- lines[ fm_start:( pn_start - 1 ) ]
+		fm_lines <- these_lines[ fm_start:( pn_start - 1 ) ]
 		
-		pn_lines <- lines[ pn_start:length(lines) ]
+		pn_lines <- these_lines[ pn_start:length(these_lines) ]
 		
 		# loop through all three parts		
 		for ( i in c( "hh_lines" , "fm_lines" , "pn_lines" ) ){
@@ -718,7 +723,7 @@ cpsasec_dd_parser <-
 			stopifnot( cumsum( j$width )[ nrow( j ) - 1 ] == j[ nrow( j ) , 'position' ] - 1 )
 
 			# confirm that the last variable is filler and can be tossed
-			if ( !grepl( "2015" , url ) ){
+			if ( !grepl( "2015" , this_url ) ){
 			
 				stopifnot( j[ nrow( j ) , 'varname' ] == 'FILLER' )
 			

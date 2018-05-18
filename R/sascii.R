@@ -2,14 +2,14 @@
 
 
 read_SAScii <-
-	function( dat_path , sas_path = NULL , beginline = 1 , lrecl = NULL , skip_decimal_division = NULL , zipped = FALSE , na_values = c( "NA" , "" , "." ) , sas_stru = NULL , sas_encoding = "windows-1252" , filesize_fun = 'rcurl' , ... ){
+	function( dat_path , sas_path = NULL , beginline = 1 , lrecl = NULL , skip_decimal_division = NULL , zipped = FALSE , na_values = c( "NA" , "" , "." ) , sas_stru = NULL , sas_encoding = "windows-1252" , filesize_fun = 'httr' , ... ){
 
 		if( is.null( sas_path ) & is.null( sas_stru ) ) stop( "either sas_path= or sas_stru= must be specified" )
 		if( !is.null( sas_path ) & !is.null( sas_stru ) ) stop( "either sas_path= or sas_stru= must be specified, but not both" )
 
 		if( is.null( sas_stru ) ){
-			this_con <- file( sas_path , "r" , encoding = sas_encoding )
-			this_sas <- readLines( this_con )
+			this_con <- file( sas_path , "rb" , encoding = sas_encoding )
+			this_sas <- readLines( this_con , encoding = sas_encoding )
 			close( this_con )
 			tf <- tempfile()
 			writeLines( this_sas , tf )
@@ -55,23 +55,27 @@ read_SAScii <-
 			
 		if (is.null(skip_decimal_division)) {
 			
-			user.defined.scipen <- getOption("scipen")
+			no_decimal_points <- 
+				unlist( 
+					sapply( 
+						x , 
+						function( z ) 
+							( isTRUE( all.equal( 
+								sum( grepl( "\\." , format( z , scientific = FALSE ) ) ) , 
+								0 
+							) ) ) 
+					) 
+				)
 			
-			options(scipen = 1e+06)
-			
-			no_decimal_points <- unlist( sapply( x , function( z ) ( sum( grepl( "." , z , fixed = TRUE ) ) == 0 ) ) )
-			
-			cols_to_multiply <- no_decimal_points & !y[ , "char" ] & y[ , "divisor" ] != 1
+			cols_to_multiply <- no_decimal_points & !y[ , "char" ] & !sapply( y[ , "divisor" ] , function(x,y)isTRUE(all.equal(x,y)) , y = 1 )
 			
 			x[ cols_to_multiply ] <- data.frame( t( t( x[ cols_to_multiply ] ) * y[ cols_to_multiply , "divisor" ] ) )
-			
-			options(scipen = user.defined.scipen)
 			
 		} else {
 		
 			if( !skip_decimal_division ){
 
-				cols_to_multiply <- !y[ , "char" ] & y[ , "divisor" ] != 1
+				cols_to_multiply <- !y[ , "char" ] & !sapply( y[ , "divisor" ] , function(x,y)isTRUE(all.equal(x,y)) , y = 1 )
 			
 				x[ cols_to_multiply ] <- data.frame( t( t( x[ cols_to_multiply ] ) * y[ cols_to_multiply , "divisor" ] ) )
 			
@@ -111,7 +115,7 @@ read_SAScii_monetdb <-
 		na_strings = ""	,				# by default, na strings are empty
 		unzip_fun = unzip_warn_fail ,
 		winslash_edit = "\\" ,
-		filesize_fun = 'rcurl'
+		filesize_fun = 'httr'
 	) {
 		if( is.null( sas_ri ) & is.null( sas_stru ) ) stop( "either sas_ri= or sas_stru= must be specified" )
 		if( !is.null( sas_ri ) & !is.null( sas_stru ) ) stop( "either sas_ri= or sas_stru= must be specified, but not both" )
@@ -158,7 +162,7 @@ read_SAScii_monetdb <-
 		# otherwise, just copy it over.
 		} else tf_sri <- sas_ri
 
-		this_con <- file( tf_sri , "r" , encoding = "windows-1252" )
+		this_con <- file( tf_sri , "rb" , encoding = "windows-1252" )
 		this_sas <- readLines( this_con )
 		close( this_con )
 		tf_sas <- tempfile()

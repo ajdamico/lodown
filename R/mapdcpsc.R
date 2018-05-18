@@ -1,5 +1,5 @@
-get_catalog_mapd_cpsc <-
-  function( data_name = "mapd_cpsc" , output_dir , ... ){
+get_catalog_mapdcpsc <-
+  function( data_name = "mapdcpsc" , output_dir , ... ){
 
 	cpsc_url <- "https://www.cms.gov/Research-Statistics-Data-and-Systems/Statistics-Trends-and-Reports/MCRAdvPartDEnrolData/Monthly-Enrollment-by-Contract-Plan-State-County.html"
 
@@ -38,8 +38,8 @@ get_catalog_mapd_cpsc <-
   }
 
 
-lodown_mapd_cpsc <-
-  function( data_name = "mapd_cpsc" , catalog , ... ){
+lodown_mapdcpsc <-
+  function( data_name = "mapdcpsc" , catalog , ... ){
 
 	on.exit( print( catalog ) )
 
@@ -49,7 +49,7 @@ lodown_mapd_cpsc <-
     for ( i in seq_len( nrow( catalog ) ) ){
 
 		# download the file
-		cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' , filesize_fun = 'httr' )
+		cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
 
 
 		# extract the contents of the zipped file
@@ -95,7 +95,7 @@ lodown_mapd_cpsc <-
 		
 		names( x )[ names( x ) == 'fips_state_county_code' ] <- 'fips'
 
-		saveRDS( x , file = catalog[ i , 'output_filename' ] )
+		saveRDS( x , file = catalog[ i , 'output_filename' ] , compress = FALSE )
 
 		# add the number of records to the catalog
 		catalog[ i , 'case_count' ] <- nrow( x )

@@ -30,6 +30,9 @@ get_catalog_pew <-
 
 			year_link_text <- to_link_text[ grep( "^[0-9][0-9][0-9][0-9]$" , to_link_text ) ]
 
+			# each topic should have something
+			stopifnot( length( year_link_text ) > 0 )
+			
 			for( year_num in seq_along( year_link_text ) ){
 
 				# figure out pages #
@@ -55,19 +58,19 @@ get_catalog_pew <-
 
 					these_data_link_refs <- rvest::html_attr( rvest::html_nodes( these_data_page , "a" ) , "href" )
 
-					these_data_link_title <- rvest::html_attr( rvest::html_nodes( these_data_page , "a" ) , "title" )
+					these_data_link_title <- rvest::html_attr( rvest::html_nodes( these_data_page , "div" ) , "dataset-title" )
 					
 					these_data_link_text <- rvest::html_text( rvest::html_nodes( these_data_page , "a" ) )
 					
 					these_data_link_text <- these_data_link_text[ !is.na( these_data_link_link ) ]
 					
-					these_data_link_title <- these_data_link_title[ !is.na( these_data_link_link ) ]
+					these_data_link_title <- these_data_link_title[ !is.na( these_data_link_title ) ]
 					
 					these_data_link_refs <- these_data_link_refs[ !is.na( these_data_link_link ) ]
 					
 					these_data_link_link <- these_data_link_link[ !is.na( these_data_link_link ) ]
 					
-					
+					stopifnot( length( these_data_link_title ) == length( these_data_link_link ) )
 					
 					if( length( these_data_link_refs ) > 0 ){
 						
@@ -85,7 +88,7 @@ get_catalog_pew <-
 						
 						# this_catalog[ !grepl( "^[0-9][0-9][0-9][0-9]$" , this_catalog$year ) , 'year' ] <- NA
 						
-						# keep only datasets with dl-links for now
+						# keep only datasets with dl-links for now..  this misses a few datasets
 						this_catalog <- subset( this_catalog , these_data_link_link != '' )
 						
 						catalog <- rbind( catalog , this_catalog )
@@ -111,6 +114,14 @@ get_catalog_pew <-
 			catalog[ 
 				!( catalog$full_url %in% 
 					c( 
+					
+					# https://github.com/tidyverse/haven/issues/342
+					"https://assets.pewresearch.org/wp-content/uploads/sites/5/datasets/Sept07.zip" ,
+					"http://assets.pewresearch.org/wp-content/uploads/sites/5/datasets/Iraq2003-2.zip" ,
+					"http://assets.pewresearch.org/wp-content/uploads/sites/5/datasets/Oct01NII.zip" ,
+					"http://assets.pewresearch.org/wp-content/uploads/sites/5/datasets/april01nii.zip" ,
+					
+					
 					"http://assets.pewresearch.org/wp-content/uploads/sites/11/2015/12/Religion-in-Latin-America-Dataset.zip" , 
 					"http://www.people-press.org/files/datasets/Jan%2030-Feb%202%202014%20omnibus.zip" , 
 					"http://www.pewforum.org/datasets/a-portrait-of-jewish-americans/?submitted" ,
@@ -122,8 +133,6 @@ get_catalog_pew <-
 					'http://assets.pewresearch.org/wp-content/uploads/sites/14/old-datasets/November-2010--Paid-Content-(Omnibus).zip' ,
 					'http://assets.pewresearch.org/wp-content/uploads/sites/5/datasets/June16%20public.zip' ,
 					
-					# https://github.com/tidyverse/haven/issues/304
-					'http://assets.pewresearch.org/wp-content/uploads/sites/2/2009/09/Pew-GAP-Fall-2009-BW-survey-for-website.zip' ,
 					'http://assets.pewresearch.org/wp-content/uploads/sites/2/2017/07/20111442/Pew-GAP-Spring-2007-survey-for-website.zip' ,
 					'http://assets.pewresearch.org/wp-content/uploads/sites/2/2009/06/Pew-GAP-Spring-2009-survey-for-website.zip'
 				) ) , ]
@@ -146,7 +155,7 @@ lodown_pew <-
 			
 			if( grepl( "\\.zip$" , catalog[ i , 'full_url' ] , ignore.case = TRUE ) ){
 				
-				unzipped_files <- unzip_warn_fail( tf , exdir = catalog[ i , "output_folder" ] , junkpaths = TRUE )
+				unzipped_files <- unzip( tf , exdir = catalog[ i , "output_folder" ] , junkpaths = TRUE )
 
 				macosx <- grep( "\\._" , unzipped_files , value = TRUE )
 				
@@ -172,14 +181,18 @@ lodown_pew <-
 				
 				for( this_sav in sav_files ){
 
-					x <- data.frame( haven::read_spss( this_sav ) )
+					if( catalog[ i , 'full_url' ] == 'http://assets.pewresearch.org/wp-content/uploads/sites/2/2009/09/Pew-GAP-Fall-2009-BW-survey-for-website.zip' ){
+						x <- data.frame( haven::read_spss( this_sav , encoding = "WINDOWS-1250" ) )
+					} else {
+						x <- data.frame( haven::read_spss( this_sav ) )
+					}
 
 					# convert all column names to lowercase
 					names( x ) <- tolower( names( x ) )
 
 					catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , nrow( x ) , na.rm = TRUE )
 					
-					saveRDS( x , file = gsub( "\\.sav$" , ".rds" , this_sav , ignore.case = TRUE ) )
+					saveRDS( x , file = gsub( "\\.sav$" , ".rds" , this_sav , ignore.case = TRUE ) , compress = FALSE )
 
 				}
 					

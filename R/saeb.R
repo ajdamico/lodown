@@ -12,7 +12,6 @@ get_catalog_saeb <-
 		catalog <-
 			data.frame(
 				year = saeb_years ,
-				dbfolder = paste0( output_dir , "/MonetDB" ) ,
 				output_folder = paste0( output_dir , "/" , saeb_years ) ,
 				full_url = these_links ,
 				stringsAsFactors = FALSE
@@ -31,11 +30,6 @@ lodown_saeb <-
 		tf <- tempfile()
 
 		for ( i in seq_len( nrow( catalog ) ) ){
-
-			# open the connection to the monetdblite database
-			db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog[ i , 'dbfolder' ] )
-
-			tables_before <- DBI::dbListTables( db )
 			
 			# download the file
 			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
@@ -136,87 +130,21 @@ lodown_saeb <-
 				# convert column names to lowercase
 				names( x ) <- tolower( names( x ) )
 				
-				# do not use monetdb reserved words
-				for ( j in names( x )[ toupper( names( x ) ) %in% getFromNamespace( "reserved_monetdb_keywords" , "MonetDBLite" ) ] ) names( x )[ names( x ) == j ] <- paste0( j , "_" )
-				
-				# store the `x` data.frame object in MonetDBLite database as well
-				DBI::dbWriteTable( db , tnwy , x )
-				
 				# save the current table in the year-specific folder on the local drive
 				saveRDS( x , file = paste0( catalog[ i , 'output_folder' ] , "/" , table.name , ".rds" ) )
+				
+				catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , nrow( x ) , na.rm = TRUE )
 
 			}
 
-			# loop through each available csv (also data) file..
-			for ( this.csv in csv.files ){
+			# loop through each available csv (also data) file for the case count
+			for ( this.csv in csv.files ) catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , R.utils::countLines( this.csv ) - 1 , na.rm = TRUE )
 			
-				# remove the `.csv` to determine the name of the current table
-				tnwy <- paste0( gsub( "\\.csv$" , "" , tolower( basename( this.csv ) ) ) , "_" , catalog[ i , 'year' ] )
-
-				# specify the chunk size to read in
-				chunk_size <- 500000
-
-				# create a file connection to the current csv
-				input <- file( this.csv , "r")
-
-				# read in the first chunk
-				headers <- 
-					read.csv( 
-						input , 
-						sep = if( catalog[ i , 'year' ] >= 2013 ) "," else ";" , 
-						dec = if( catalog[ i , 'year' ] >= 2013 ) "." else "," , 
-						na.strings = if( catalog[ i , 'year' ] >= 2013 ) "" else "." , 
-						nrows = chunk_size ,
-						stringsAsFactors = FALSE
-					)
-				
-				# convert column names to lowercase
-				names( headers ) <- tolower( names( headers ) )
-				
-				# do not use monetdb reserved words
-				for ( j in names( headers )[ toupper( names( headers ) ) %in% getFromNamespace( "reserved_monetdb_keywords" , "MonetDBLite" ) ] ) names( headers )[ names( headers ) == j ] <- paste0( j , "_" )
-
-				cc <- sapply( headers , class )
-
-				# initiate the current table
-				DBI::dbWriteTable( db , tnwy , headers , overwrite = TRUE , row.names = FALSE )
-				
-				# so long as there are lines to read, add them to the current table
-				tryCatch({
-				   while (TRUE) {
-					   part <- 
-						read.csv(
-							input , 
-							header = FALSE ,
-							nrows = chunk_size , 
-							sep = if( catalog[ i , 'year' ] >= 2013 ) "," else ";" ,
-							dec = if( catalog[ i , 'year' ] >= 2013 ) "." else "," ,
-							na.strings = if( catalog[ i , 'year' ] >= 2013 ) "" else "." , 
-							colClasses = cc
-						)
 						
-						# coerce logical columns to character
-						part[ sapply( part , class ) == 'logical' ] <- sapply( part[ sapply( part , class ) == 'logical' ] , as.character )
-						
-					   DBI::dbWriteTable( db , tnwy , part , append = TRUE , row.names = FALSE )
-				   }
-				   
-				} , error = function(e) { if ( grepl( "no lines available" , conditionMessage( e ) ) ) TRUE else stop( conditionMessage( e ) ) }
-				)
-					
-			}
-			
-			tables_after <- setdiff( tables_before , DBI::dbListTables( db ) )
-			
-			for( this_table in tables_after ) catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , DBI::dbGetQuery( db , paste0( "SELECT COUNT(*) FROM " , this_table ) )[ 1 , 1 ] , na.rm = TRUE )
-			
-			# disconnect from the current monet database
-			DBI::dbDisconnect( db , shutdown = TRUE )
-
 			# delete the temporary files?  or move some docs to a save folder?
 			suppressWarnings( file.remove( tf ) )
 
-			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'dbfolder' ] , "'\r\n\n" ) )
+			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'output_folder' ] , "'\r\n\n" ) )
 
 		}
 

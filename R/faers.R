@@ -95,7 +95,7 @@ lodown_faers <-
 		for ( i in seq_len( nrow( catalog ) ) ){
 		
 			# download the file
-			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' , filesize_fun = 'httr' )
+			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
 
 			unzipped_files <- unzip_warn_fail( tf , exdir = paste0( catalog[ i , "output_folder" ] , "/unzips" ) )
 
@@ -188,7 +188,7 @@ lodown_faers <-
 				names( x )[ names( x ) == 'lot_num' ] <- 'lot_nbr'
 				
 				# save the data.frame object to the rds filename on the local disk
-				saveRDS( x , file = rds.filename )
+				saveRDS( x , file = rds.filename , compress = FALSE )
 				
 				catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , nrow( x ) , na.rm = TRUE )
 				

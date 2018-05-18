@@ -4,7 +4,7 @@ get_catalog_mlces <-
 		catalog <-
 			data.frame(
 				full_url = paste0( "https://www.soa.org/Files/Research/" , 1997:1999 , ".zip" ) ,
-				output_filename = paste0( output_dir , "/mcles" , 1997:1999 , ".rds" ) ,
+				output_filename = paste0( output_dir , "/mlces" , 1997:1999 , ".rds" ) ,
 				stringsAsFactors = FALSE
 			)
 
@@ -23,7 +23,7 @@ lodown_mlces <-
 		for ( i in seq_len( nrow( catalog ) ) ){
 
 			# download the file
-			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' , filesize_fun = 'httr' )
+			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
 
 			unzipped_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) )
 
@@ -33,7 +33,7 @@ lodown_mlces <-
 			# convert all column names to lowercase
 			names( x ) <- tolower( names( x ) )
 
-			saveRDS( x , file = catalog[ i , 'output_filename' ] )
+			saveRDS( x , file = catalog[ i , 'output_filename' ] , compress = FALSE )
 
 			catalog[ i , 'case_count' ] <- nrow( x )
 			

@@ -84,7 +84,7 @@ get_catalog_hmda <-
 			
 		catalog <- rbind( cat_hmda_lar , cat_pmic_lar , cat_hmda_inst , cat_pmic_inst , cat_hmda_reporter , cat_pmic_reporter , cat_hmda_msa , cat_pmic_msa )
 
-		catalog$dbfolder <- paste0( output_dir , "/MonetDB" )
+		catalog[ , 'dbfile' ] <- paste0( output_dir , "/SQLite.db" )
 		
 		catalog$db_tablename <- paste0( catalog$type , "_" , catalog$year )
 		
@@ -95,8 +95,10 @@ get_catalog_hmda <-
 
 
 lodown_hmda <-
-	function( data_name = "hmda" , catalog , ... ){
+	function( data_name = "hmda" , catalog , path_to_7za = '7za' , ... ){
 
+		if( ( .Platform$OS.type != 'windows' ) && ( system( paste0('"', path_to_7za , '" -h' ) ) != 0 ) ) stop( "you need to install 7-zip.  if you already have it, include a path_to_7za='/directory/7za' parameter" )
+		
 		on.exit( print( catalog ) )
 
 		tf <- tempfile()
@@ -141,19 +143,30 @@ lodown_hmda <-
 		for ( i in seq_len( nrow( catalog ) ) ){
 
 			# open the connection to the monetdblite database
-			db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog[ i , 'dbfolder' ] )
+			db <- DBI::dbConnect( RSQLite::SQLite() , catalog[ i , 'dbfile' ] )
 
 			# download the file
 			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
-		
-			files_before <- list.files( paste0( tempdir() , "/unzips" ) , full.names = TRUE )
+	
+			if ( .Platform$OS.type == 'windows' ){
 
-			archive::archive_extract( tf , dir = paste0( tempdir() , "/unzips" ) )
+				unzipped_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) , overwrite = TRUE )
 
-			unzipped_files <- list.files( paste0( tempdir() , "/unzips" ) , full.names = TRUE )
+			} else {
+			
+				files_before <- list.files( paste0( tempdir() , "/unzips" ) , full.names = TRUE )
 
-			unzipped_files <- unzipped_files[ !( unzipped_files %in% files_before ) ]
+				# build the string to send to the terminal on non-windows systems
+				dos_command <- paste0( '"' , path_to_7za , '" x ' , tf , ' -aoa -o"' , paste0( tempdir() , "/unzips" ) , '"' )
+
+				system( dos_command )
+
+				unzipped_files <- list.files( paste0( tempdir() , "/unzips" ) , full.names = TRUE )
+
+				unzipped_files <- unzipped_files[ !( unzipped_files %in% files_before ) ]
 				
+			}
+	
 			
 			if( length( unzipped_files ) != 1 ) stop( "always expecting a single import file" )
 
@@ -291,9 +304,6 @@ lodown_hmda <-
 			
 			stopifnot( catalog[ i , 'case_count' ] > 0 )
 
-			# disconnect from the current monet database
-			DBI::dbDisconnect( db , shutdown = TRUE )
-			
 			# delete the temporary files
 			suppressWarnings( file.remove( tf , unzipped_files , list.files( paste0( tempdir() , "/unzips" ) , full.names = TRUE ) ) )
 
@@ -309,7 +319,7 @@ lodown_hmda <-
 		for( i in seq_along( unique_merge_tables ) ){
 			
 			# open the connection to the monetdblite database
-			db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , unique( catalog[ which( catalog$merge_table == unique_merge_tables[ i ] ) , 'dbfolder' ] ) )
+			db <- DBI::dbConnect( RSQLite::SQLite() , unique( catalog[ which( catalog$merge_table == unique_merge_tables[ i ] ) , 'dbfile' ] ) )
 
 			ins.tablename <- catalog[ substr( catalog$type , 6 , 8 ) == 'ins' & catalog$merge_table == unique_merge_tables[ i ] , 'db_tablename' ]
 			lar.tablename <- catalog[ substr( catalog$type , 6 , 8 ) == 'lar' & catalog$merge_table == unique_merge_tables[ i ] , 'db_tablename' ]
@@ -355,7 +365,7 @@ lodown_hmda <-
 					lar.tablename ,
 					"AS a INNER JOIN" ,
 					ins.tablename ,
-					"AS b ON a.respondentid = b.respondentid AND a.agencycode = b.agencycode WITH DATA"
+					"AS b ON a.respondentid = b.respondentid AND a.agencycode = b.agencycode"
 				)
 			
 			# with your sql string built, execute the command
@@ -500,9 +510,6 @@ lodown_hmda <-
 			# # # # # # # # # # # # # # # # # # # # # # # # #
 			# # finished with race and ethnicity recoding # #
 			# # # # # # # # # # # # # # # # # # # # # # # # #
-			
-			# disconnect from the current monet database
-			DBI::dbDisconnect( db , shutdown = TRUE )
 			
 			
 		}

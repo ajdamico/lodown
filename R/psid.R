@@ -20,32 +20,15 @@ get_catalog_psid <-
 		catalog <- catalog[ !grepl( "/NA$" , catalog[ , 'full_url' ] ) , ]
 		
 		follow_urls <- !grepl( "GetFile" , catalog$full_url )
-		
-		for( this_url in which( follow_urls ) ){
-		
-			link_refs <- rvest::html_attr( rvest::html_nodes( xml2::read_html( catalog[ this_url , 'full_url' ] ) , "a" ) , "href" )
-			
-			getfiles <- link_refs[ grep( "GetFile" , link_refs ) ]
-		
-			all_panes <- gsub( "(.*)pane=" , "" , getfiles )
-			
-			desired_pane <- gsub( "(.*)pane=" , "" , catalog[ this_url , 'full_url' ] )
-			
-			desired_url <- paste0( "https://simba.isr.umich.edu/Zips/" , getfiles[ all_panes == desired_pane ] )
-			
-			catalog[ this_url , 'full_url' ] <- desired_url
-			
-		}
-		
+	
 		catalog$year = ifelse( grepl( "^[0-9][0-9][0-9][0-9]" , catalog$table_name ) , substr( catalog$table_name , 1 , 4 ) , NA )
 		
 		catalog$type <- ifelse( grepl( "^[0-9][0-9][0-9][0-9] Wealth$" , catalog$table_name ) , "Wealth Files" , catalog$directory )
 
 		catalog$output_folder <- paste0( output_dir , "/" , gsub( ":|,|\\(|\\)" , "" , tolower( catalog$type ) ) , "/" )
 
-		# file currently missing from umich
-		# https://github.com/ajdamico/asdfree/issues/302
-		catalog <- subset( catalog , table_name != 'Risk Tolerance' )
+		# remove files ending in xlsx or pdf
+		catalog <- subset( catalog , !grepl( "\\.pdf$|\\.xlsx$" , full_url ) )
 		
 		catalog
 
@@ -135,7 +118,7 @@ lodown_psid <-
 				if( length( this_sas ) > 1 ) this_sas <- this_sas[ gsub( "\\.sas" , "" , basename( this_sas ) , ignore.case = TRUE ) == gsub( "\\.txt" , "" , basename( dat_files[ dat_num ] ) , ignore.case = TRUE ) ]
 				
 				# deal with unix/mac multibyte strings
-				this_con <- file( this_sas , "r" , encoding = "windows-1252" )
+				this_con <- file( this_sas , "rb" , encoding = "windows-1252" )
 				these_lines <- readLines( this_con )
 				close( this_con )
 				writeLines( these_lines , this_sas )
@@ -153,7 +136,7 @@ lodown_psid <-
 				
 				save_name <- paste0( catalog[ i , 'output_folder' ] , "/" , gsub( ":|,|\\(|\\)" , "" , tolower( catalog[ i , 'table_name' ] ) ) , if( length( dat_files ) > 1 ) tolower( paste0( " " , sas_name ) ) , ".rds" )
 				
-				saveRDS( x , file = save_name )
+				saveRDS( x , file = save_name , compress = FALSE )
 				
 			}
 			
@@ -177,7 +160,7 @@ lodown_psid <-
 
 					save_name <- paste0( catalog[ i , 'output_folder' ] , "/" , gsub( ":|,|\\(|\\)" , "" , tolower( catalog[ i , 'table_name' ] ) ) , if( length( sas7bdat_files ) > 1 ) tolower( paste0( " " , sas_name ) ) , ".rds" )
 					
-					saveRDS( x , file = save_name )
+					saveRDS( x , file = save_name , compress = FALSE )
 					
 				}
 				

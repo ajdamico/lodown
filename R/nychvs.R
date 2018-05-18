@@ -113,7 +113,7 @@ lodown_nychvs <-
 			cleaned.sas.script <- nychvs_sas_cleanup( catalog[ i , "sas_ri" ] )
 
 			# download the file
-			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' , filesize_fun = 'httr' )
+			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
 
 			# read the file into a data frame
 			x <- read_SAScii( tf , cleaned.sas.script , beginline = catalog[ i , 'beginline' ] )
@@ -135,7 +135,7 @@ lodown_nychvs <-
 
 			catalog[ i , 'case_count' ] <- nrow( x )
 			
-			saveRDS( x , file = catalog[ i , 'output_filename' ] )
+			saveRDS( x , file = catalog[ i , 'output_filename' ] , compress = FALSE )
 
 			# delete the temporary files
 			suppressWarnings( file.remove( tf ) )

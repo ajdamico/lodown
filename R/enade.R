@@ -1,13 +1,11 @@
 get_catalog_enade <-
 	function( data_name = "enade" , output_dir , ... ){
 
-		dat_dir <- "ftp://ftp.inep.gov.br/microdados/Enade_Microdados/"
+		inep_portal <- "http://portal.inep.gov.br/microdados"
 
-		dat_ftp <- readLines( textConnection( RCurl::getURL( dat_dir ) ) )
-
-		all_files <- gsub( "(.*) (.*)" , "\\2" , dat_ftp )
+		w <- rvest::html_attr( rvest::html_nodes( xml2::read_html( inep_portal ) , "a" ) , "href" )
 		
-		these_links <- file.path( dat_dir , all_files[ grep( "enade(.*)zip$|enade(.*)rar$" , basename( all_files ) , ignore.case = TRUE ) ] )
+		these_links <- w[ grep( "enade(.*)zip$|enade(.*)rar$" , basename( w ) , ignore.case = TRUE ) ]
 
 		enade_years <- substr( gsub( "[^0-9]" , "" , these_links ) , 1 , 4 )
 
@@ -19,8 +17,6 @@ get_catalog_enade <-
 				output_folder = paste0( output_dir , "/" , enade_years , "/" ) ,
 				stringsAsFactors = FALSE
 			)
-
-		catalog <- subset( catalog , full_url != 'ftp://ftp.inep.gov.br/microdados/Enade_Microdados//microdados_enade_versao_27092017.zip' )
 			
 		catalog
 
@@ -28,8 +24,10 @@ get_catalog_enade <-
 
 
 lodown_enade <-
-	function( data_name = "enade" , catalog , ... ){
+	function( data_name = "enade" , catalog , path_to_7z = if( .Platform$OS.type != 'windows' ) '7za' else normalizePath( "C:/Program Files/7-zip/7z.exe" ) , ... ){
 
+		if( system( paste0( '"' , path_to_7z , '" -h' ) , show.output.on.console = FALSE ) != 0 ) stop( paste0( "you need to install 7-zip.  if you already have it, include a parameter like path_to_7z='" , path_to_7z , "'" ) )
+		
 		on.exit( print( catalog ) )
 
 		tf <- tempfile()
@@ -38,7 +36,9 @@ lodown_enade <-
 
 			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' , attempts = 10 )
 
-			archive::archive_extract( tf , dir = normalizePath( catalog[ i , "output_folder" ] ) )
+			dos.command <- paste0( '"' , path_to_7z , '" x "' , tf , '" -o"' , normalizePath( catalog[ i , "output_folder" ] ) , '"' )
+
+			system( dos.command )
 
 			z <- unique( list.files( catalog[ i , 'output_folder' ] , recursive = TRUE , full.names = TRUE  ) )
 
@@ -46,8 +46,10 @@ lodown_enade <-
 
 			if( length( zf ) > 0 ){
 
-				archive::archive_extract( zf , dir = normalizePath( catalog[ i , "output_folder" ] ) )
+				dos.command <- paste0( '"' , path_to_7z , '" x "' , zf , '" -o"' , normalizePath( catalog[ i , "output_folder" ] ) , '"' )
 
+				system( dos.command )
+				
 				z <- unique( c( z , list.files( catalog[ i , 'output_folder' ] , recursive = TRUE , full.names = TRUE  ) ) )
 
 			}
@@ -56,8 +58,10 @@ lodown_enade <-
 
 			if( length( rfi ) > 0 ) {
 
-				archive::archive_extract( rfi , dir = normalizePath( catalog[ i , "output_folder" ] ) )
+				dos.command <- paste0( '"' , path_to_7z , '" x "' , rfi , '" -o"' , normalizePath( catalog[ i , "output_folder" ] ) , '"' )
 
+				system( dos.command )
+				
 				z <- unique( c( z , list.files( catalog[ i , 'output_folder' ] , recursive = TRUE , full.names = TRUE  ) ) )
 
 			}
@@ -67,20 +71,25 @@ lodown_enade <-
 			# remove duplicated basenames
 			csvfile <- csvfile[ !duplicated( basename( csvfile ) ) ]
 			
+			if( length( csvfile ) == 0 ) csvfile <- z[ grep( "microdados_enade_" , basename( z ) , ignore.case = TRUE ) ]
+			
 			stopifnot( length( csvfile ) == 1 )
 
 			tablename <- tolower( gsub( "\\.(.*)" , "" , basename( csvfile ) ) )
 
+			# are separators ; or , ?
+			more_semicolons_than_commas <- length( gregexpr( ";" , readLines( csvfile , n = 2 )[2] )[[1]] ) > length( gregexpr( "," , readLines( csvfile , n = 2 )[2] )[[1]] )
+			
 			# are decimals , or . ?
 			dots_in_row <- grepl( "\\." , readLines( csvfile , n = 2 )[2] )
 
-			x <- data.frame( readr::read_delim( csvfile , ';' , locale = readr::locale( decimal_mark = if( dots_in_row ) "." else "," ) ) )
+			x <- data.frame( readr::read_delim( csvfile , if( more_semicolons_than_commas ) ';' else "," , locale = readr::locale( decimal_mark = if( dots_in_row ) "." else "," ) ) )
 
 			names( x ) <- tolower( names( x ) )
 			
 			stopifnot( R.utils::countLines( csvfile ) == nrow( x ) + 1 )
 
-			saveRDS( x , catalog[ i , 'output_filename' ] )
+			saveRDS( x , catalog[ i , 'output_filename' ] , compress = FALSE )
 			
 			catalog[ i , 'case_count' ] <- nrow( x )
 		

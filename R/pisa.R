@@ -1,6 +1,8 @@
 get_catalog_pisa <-
 	function( data_name = "pisa" , output_dir , ... ){
 
+		if ( !requireNamespace( "archive" , quietly = TRUE ) ) stop( "archive needed for this function to work. to install it, type `devtools::install_github( 'jimhester/archive' )`" , call. = FALSE )
+
 	
 		http.pre <- "https://www.oecd.org/pisa/pisaproducts/"
 
@@ -9,7 +11,7 @@ get_catalog_pisa <-
 	
 		cat_2015 <-
 			data.frame(
-				dbfolder = paste0( output_dir , "/MonetDB" ) ,
+				dbfile = paste0( output_dir , "/SQLite.db" ) ,
 				db_tablename = paste0( tolower( tables_2015 ) , "_2015" ),
 				year = 2015 ,
 				full_url = paste0( "http://vs-web-fs-1.oecd.org/pisa/PUF_SAS_COMBINED_" , files_2015 , ".zip" ) ,
@@ -25,7 +27,7 @@ get_catalog_pisa <-
 		
 		cat_2012 <-
 			data.frame(
-				dbfolder = paste0( output_dir , "/MonetDB" ) ,
+				dbfile = paste0( output_dir , "/SQLite.db" ) ,
 				db_tablename = tolower( files_2012 ) ,
 				year = 2012 ,
 				full_url = paste0( http.pre , files_2012 , ".zip" ) ,
@@ -40,7 +42,7 @@ get_catalog_pisa <-
 	
 		cat_2009 <-
 			data.frame(
-				dbfolder = paste0( output_dir , "/MonetDB" ) ,
+				dbfile = paste0( output_dir , "/SQLite.db" ) ,
 				db_tablename = tolower( files_2009 ) ,
 				year = 2009 ,
 				full_url = paste0( http.pre , files_2009 , ".zip" ) ,
@@ -56,7 +58,7 @@ get_catalog_pisa <-
 		
 		cat_2006 <-
 			data.frame(
-				dbfolder = paste0( output_dir , "/MonetDB" ) ,
+				dbfile = paste0( output_dir , "/SQLite.db" ) ,
 				db_tablename = tolower( files_2006 ) ,
 				year = 2006 ,
 				full_url = paste0( http.pre , files_2006 , ".zip" ) ,
@@ -72,7 +74,7 @@ get_catalog_pisa <-
 	
 		cat_2003 <-
 			data.frame(
-				dbfolder = paste0( output_dir , "/MonetDB" ) ,
+				dbfile = paste0( output_dir , "/SQLite.db" ) ,
 				db_tablename = tolower( files_2003 ) ,
 				year = 2003 ,
 				full_url = paste0( http.pre , files_2003 , ".zip" ) ,
@@ -88,7 +90,7 @@ get_catalog_pisa <-
 	
 		cat_2000 <-
 			data.frame(
-				dbfolder = paste0( output_dir , "/MonetDB" ) ,
+				dbfile = paste0( output_dir , "/SQLite.db" ) ,
 				db_tablename = tolower( files_2000 ) ,
 				year = 2000 ,
 				full_url = paste0( http.pre , files_2000 , ".zip" ) ,
@@ -116,7 +118,7 @@ lodown_pisa <-
 		for ( i in seq_len( nrow( catalog ) ) ){
 
 			# open the connection to the monetdblite database
-			db <- DBI::dbConnect( MonetDBLite::MonetDBLite() , catalog[ i , 'dbfolder' ] )
+			db <- DBI::dbConnect( RSQLite::SQLite() , catalog[ i , 'dbfile' ] )
 
 			tables_before <- DBI::dbListTables( db )
 
@@ -315,8 +317,8 @@ lodown_pisa <-
 
 					unzipped_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) )
 
-					# read-only file connection "r" - pointing to the ASCII file
-					incon <- file( unzipped_files , "r")
+					# read-only file connection "rb" - pointing to the ASCII file
+					incon <- file( unzipped_files , "rb")
 
 					# write-only file connections "w"
 					outcon <- file( tf2 , "w" )
@@ -528,13 +530,10 @@ lodown_pisa <-
 			
 			for( this_table in tables_after ) catalog[ i , 'case_count' ] <- max( catalog[ i , 'case_count' ] , DBI::dbGetQuery( db , paste0( "SELECT COUNT(*) FROM " , this_table ) )[ 1 , 1 ] , na.rm = TRUE )
 			
-			# disconnect from the current monet database
-			DBI::dbDisconnect( db , shutdown = TRUE )
-			
 			# delete the temporary files
 			suppressWarnings( file.remove( tf , if( exists( "unzipped_files" ) ) unzipped_files ) )
 
-			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'dbfolder' ] , "'\r\n\n" ) )
+			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored in '" , catalog[ i , 'dbfile' ] , "'\r\n\n" ) )
 
 		}
 
@@ -822,7 +821,7 @@ svyMDBdesign <-
 	function( my_design ){
 	
 		# open each of those design connections with MonetDB hooray
-		my_design$designs <- lapply( my_design$designs , open , MonetDBLite::MonetDBLite() )
+		my_design$designs <- lapply( my_design$designs , open , RSQLite::SQLite() )
 
 		class( my_design ) <- 'svyMDBimputationList'
 		
@@ -984,8 +983,8 @@ pisa_construct.pisa.survey.designs <-
 				rscales = rep( 1 , 80 ) ,
 				mse = TRUE ,
 				type = 'JK1' ,
-				data = mitools::imputationList( datasets = as.list( paste0( table.name , "_imp" , seq( implicates ) ) ) , dbtype = "MonetDBLite" ) ,
-				dbtype = "MonetDBLite" ,
+				data = mitools::imputationList( datasets = as.list( paste0( table.name , "_imp" , seq( implicates ) ) ) , dbtype = "SQLite" ) ,
+				dbtype = "SQLite" ,
 				dbname = DBI::dbGetInfo( conn )$gdk_dbpath
 			)
 		
@@ -993,7 +992,7 @@ pisa_construct.pisa.survey.designs <-
 		this_design$mse <- TRUE
 		
 		# save all of the database design objects as r data files
-		saveRDS( this_design , file = save_name )
+		saveRDS( this_design , file = save_name , compress = FALSE )
 
 		save_name
 	}

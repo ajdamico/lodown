@@ -3,9 +3,9 @@ get_catalog_yrbss <-
 
 		catalog <- NULL
 	
-		yrbss_ftp_contents <- RCurl::getURL( "ftp://ftp.cdc.gov/pub/data/yrbs/" , ftp.use.epsv = TRUE, dirlistonly = TRUE )
+		yrbss_ftp_contents <- strsplit( RCurl::getURL( "https://ftp.cdc.gov/pub/data/yrbs/" ) , "<br>" )[[1]]
 
-		yrbss_ftp_paths <- paste0( "ftp://ftp.cdc.gov/pub/data/yrbs/" , strsplit( yrbss_ftp_contents , '(\r)?\n' )[[1]] , "/" )
+		yrbss_ftp_paths <- paste0( "https://ftp.cdc.gov/pub/data/yrbs/" , gsub( '(.*)\\">(.*)<\\/A>$', "\\2" , yrbss_ftp_contents ) , "/" )
 
 		yrbss_folders <- grep( "([0-9][0-9][0-9][0-9])" , yrbss_ftp_paths , value = TRUE )
 		
@@ -13,9 +13,9 @@ get_catalog_yrbss <-
 		
 		for( this_year in yrbss_folders ){
 				
-			this_year_contents <- RCurl::getURL( this_year , ftp.use.epsv = TRUE, dirlistonly = TRUE )
+			this_year_contents <- strsplit( RCurl::getURL( this_year ) , "<br>" )[[1]]
 
-			this_year_paths <- paste0( this_year , strsplit( this_year_contents , '(\r)?\n' )[[1]] )
+			this_year_paths <- paste0( this_year , gsub( '(.*)\\">(.*)<\\/A>$', "\\2" , this_year_contents ) )
 
 			catalog <-
 				rbind(
@@ -29,6 +29,9 @@ get_catalog_yrbss <-
 					)
 			)
 		}
+		
+		# hardcode 2015 since it doesn't fit the pattern
+		catalog[ catalog[ , 'year' ] == 2015 , 'dat_url' ] <- "https://www.cdc.gov/healthyyouth/data/yrbs/files/yrbs2015.dat"
 		
 		catalog$output_filename <- paste0( output_dir , "/" , catalog$year , " main.rds" )
 			
@@ -151,7 +154,7 @@ lodown_yrbss <-
 			catalog[ i , 'case_count' ] <- nrow( x )
 			
 			# save the current `x` data.frame to the local disk
-			saveRDS( x , file = catalog[ i , "output_filename" ] )
+			saveRDS( x , file = catalog[ i , "output_filename" ] , compress = FALSE )
 
 			cat( paste0( data_name , " catalog entry " , i , " of " , nrow( catalog ) , " stored at '" , catalog[ i , 'output_filename' ] , "'\r\n\n" ) )
 

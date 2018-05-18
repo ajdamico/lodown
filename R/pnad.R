@@ -16,8 +16,8 @@ get_catalog_pnad <-
 
 		catalog <-
 			data.frame(
-				year = c( 2001:2009 , 2011:2012 , year.lines ) ,
-				ftp_folder = paste0( year.ftp , c( rep( 'reponderacao_2001_2012' , 11 ) , year.lines ) , '/' ) ,
+				year = c( 1992:1993 , 2001:2009 , 2011:2012 , year.lines ) ,
+				ftp_folder = paste0( year.ftp , c( 1992:1993 , rep( 'reponderacao_2001_2012' , 11 ) , year.lines ) , '/' ) ,
 				stringsAsFactors = FALSE
 			)
 		
@@ -36,10 +36,16 @@ get_catalog_pnad <-
 
 				catalog[ this_entry , 'sas_ri' ] <- paste0( catalog[ this_entry , 'ftp_folder' ] , grep( "^dicionarios" , filenames , ignore.case = TRUE , value = TRUE ) )
 			
-			} else {
+			} else if( catalog[ this_entry , 'year' ] >= 2001 ) {
 			
 				catalog[ this_entry , 'full_url' ] <- paste0( catalog[ this_entry , 'ftp_folder' ] , grep( paste0( "pnad_reponderado_" , catalog[ this_entry , 'year' ] ) , filenames , ignore.case = TRUE , value = TRUE ) )
 
+			} else {
+			
+				catalog[ this_entry , 'sas_ri' ] <- paste0( catalog[ this_entry , 'ftp_folder' ] , grep( "^layout\\.zip" , filenames , ignore.case = TRUE , value = TRUE ) )
+			
+				catalog[ this_entry , 'full_url' ] <- paste0( catalog[ this_entry , 'ftp_folder' ] , "Dados.zip" )
+			
 			}
 			
 		}
@@ -80,7 +86,7 @@ lodown_pnad <-
 		for ( i in seq_len( nrow( catalog ) ) ){
 
 			# download the file
-			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
+			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb', filesize_fun = 'unzip_verify' )
 
 			unzipped_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) )
 
@@ -101,16 +107,24 @@ lodown_pnad <-
 			# manually set the encoding of the unziped files so they don't break things.
 			if( catalog[ i , 'year' ] > 2012 & .Platform$OS.type != 'windows' ) Encoding( unzipped_files ) <- 'UTF-8' else Encoding( unzipped_files ) <- 'latin1'
 			
+			dom_uf <- unzipped_files[ grepl( paste0( 'input[^?]dom' , catalog[ i , 'year' ] , '.txt' ) , tolower( unzipped_files ) ) ]
+			
+			pes_uf <- unzipped_files[ grepl( paste0( 'input[^?]pes' , catalog[ i , 'year' ] , '.txt' ) , tolower( unzipped_files ) ) ]
+			
+			if( length( dom_uf ) == 0 ) dom_uf <- unzipped_files[ grepl( paste0( 'sas_do(.*)\\.txt' ) , tolower( unzipped_files ) ) ]
+			
+			if( length( pes_uf ) == 0 ) pes_uf <- unzipped_files[ grepl( paste0( 'sas_pe(.*)\\.txt' ) , tolower( unzipped_files ) ) ]
 			
 			# remove the UF column and the mistake with "LOCAL ULTIMO FURTO"
 			# described in the pnad_remove_uf() function that was loaded with source_url as pnad.survey.R
-			dom.sas <- pnad_remove_uf( unzipped_files[ grepl( paste0( 'input[^?]dom' , catalog[ i , 'year' ] , '.txt' ) , tolower( unzipped_files ) ) ] )
-			pes.sas <- pnad_remove_uf( unzipped_files[ grepl( paste0( 'input[^?]pes' , catalog[ i , 'year' ] , '.txt' ) , tolower( unzipped_files ) ) ] )
+			dom.sas <- pnad_remove_uf( dom_uf )
+			pes.sas <- pnad_remove_uf( pes_uf )
 
+			
 			# in 2003 and 2007, the age variable had been read in as a factor variable
 			# which breaks certain commands by treating the variable incorrectly as a factor
 			if( catalog[ i , 'year' ] %in% c( 2003 , 2007 ) ){
-				pes_con <- file( pes.sas , "r" , encoding = "windows-1252" )
+				pes_con <- file( pes.sas , "rb" , encoding = "windows-1252" )
 				pes_lines <- readLines( pes_con )
 				close( pes_con )
 				pes_lines <- iconv( pes_lines , "" , "ASCII//TRANSLIT" )
@@ -123,12 +137,15 @@ lodown_pnad <-
 			dom.fn <- unzipped_files[ grepl( paste0( '/dom' , catalog[ i , 'year' ] ) , tolower( unzipped_files ) ) ]
 			pes.fn <- unzipped_files[ grepl( paste0( '/pes' , catalog[ i , 'year' ] ) , tolower( unzipped_files ) ) ]
 
+			if( length( dom.fn ) == 0 ) dom.fn <- unzipped_files[ grepl( 'dados/d' , tolower( unzipped_files ) ) ]
+			
+			if( length( pes.fn ) == 0 ) pes.fn <- unzipped_files[ grepl( 'dados/p' , tolower( unzipped_files ) ) ]
+
+			
 			pes_df <-
 				read_SAScii(
 					pes.fn ,
-					pes.sas ,
-					zipped = FALSE ,
-					na = c( "" , "NA" , "." )
+					pes.sas
 				) 
 				
 			# dump 100% missing columns
@@ -138,9 +155,7 @@ lodown_pnad <-
 			dom_df <-
 				read_SAScii(
 					dom.fn , 
-					dom.sas ,
-					zipped = FALSE ,
-					na = c( "" , "NA" , "." )
+					dom.sas
 				) 
 				
 			# dump 100% missing columns
@@ -151,7 +166,7 @@ lodown_pnad <-
 			names( pes_df ) <- tolower( names( pes_df ) )
 	
 			# confirm no fields are in `dom` unless they are in `pes`
-			b_fields <- c( 'v0101' , 'v0102' , 'v0103' , setdiff( names( pes_df ) , names( dom_df ) ) )
+			b_fields <- c( 'v0101' , if( 'v0102' %in% names( pes_df ) ) 'v0102' else c( 'control' , 'uf' ) , 'v0103' , setdiff( names( pes_df ) , names( dom_df ) ) )
 			
 			pes_df <- pes_df[ b_fields ] ; gc()
 			
@@ -209,9 +224,13 @@ lodown_pnad <-
 				}
 			}
 			
-			pes_df$uf <- substr( pes_df$v0102 , 1 , 2 )
+			if( catalog[ i , 'year' ] >= 2001 ){
+				
+				pes_df$uf <- substr( pes_df$v0102 , 1 , 2 )
 			
-			pes_df$region <- substr( pes_df$v0102 , 1 , 1 )
+				pes_df$region <- substr( pes_df$v0102 , 1 , 1 )
+				
+			}
 			
 			pes_df$one <- 1
 			
@@ -259,7 +278,7 @@ pnad_remove_uf <-
 	function( sasfile ){
 
 		# read the SAS import file into R
-		sascon <- file( sasfile , "r" , blocking = FALSE , encoding = "windows-1252" )
+		sascon <- file( sasfile , "rb" , blocking = FALSE , encoding = "windows-1252" )
 		sas_lines <- readLines( sascon )
 		close( sascon )
 		

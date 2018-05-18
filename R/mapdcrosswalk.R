@@ -1,5 +1,5 @@
-get_catalog_mapd_crosswalk <-
-  function( data_name = "mapd_crosswalk" , output_dir , ... ){
+get_catalog_mapdcrosswalk <-
+  function( data_name = "mapdcrosswalk" , output_dir , ... ){
 
 	cpsc_url <- "https://www.cms.gov/Research-Statistics-Data-and-Systems/Statistics-Trends-and-Reports/MCRAdvPartDEnrolData/Plan-Crosswalks.html"
 
@@ -38,8 +38,8 @@ get_catalog_mapd_crosswalk <-
   }
 
 
-lodown_mapd_crosswalk <-
-  function( data_name = "mapd_crosswalk" , catalog , ... ){
+lodown_mapdcrosswalk <-
+  function( data_name = "mapdcrosswalk" , catalog , ... ){
 
 	on.exit( print( catalog ) )
 
@@ -48,7 +48,7 @@ lodown_mapd_crosswalk <-
     for ( i in seq_len( nrow( catalog ) ) ){
 
 		# download the file
-		cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' , filesize_fun = 'httr' )
+		cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
 
 
 		# extract the contents of the zipped file
@@ -69,7 +69,7 @@ lodown_mapd_crosswalk <-
 		# convert all column names to lowercase
 		names( x ) <- tolower( names( x ) )
 		
-		saveRDS( x , file = catalog[ i , 'output_filename' ] )
+		saveRDS( x , file = catalog[ i , 'output_filename' ] , compress = FALSE )
 
 		# add the number of records to the catalog
 		catalog[ i , 'case_count' ] <- nrow( x )

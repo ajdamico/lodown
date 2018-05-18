@@ -2,16 +2,16 @@ get_catalog_nsfg <-
 	function( data_name = "nsfg" , output_dir , ... ){
 
 		# figure out all `.dat` files on the cdc's nsfg ftp site
-		dat_dir <- "ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/NSFG/"
-		dat_ftp <- readLines( textConnection( RCurl::getURL( dat_dir ) ) )
-		all_files <- gsub( "(.*) (.*)" , "\\2" , dat_ftp )
+		dat_dir <- "https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/NSFG/"
+		dat_ftp <- strsplit( RCurl::getURL( dat_dir ) , "<br>" )[[1]]
+		all_files <- gsub( '(.*)\\">(.*)<\\/A>$', "\\2" , dat_ftp )
 		dat_files <- all_files[ grep( "\\.dat$" , tolower( all_files ) ) ]
 
 
 		# figure out all `.sas` files on the cdc's nsfg ftp site
 		sas_dir <- paste0( dat_dir , "sas/" )
-		sas_ftp <- readLines( textConnection( RCurl::getURL( sas_dir ) ) )
-		all_files <- gsub( "(.*) (.*)" , "\\2" , sas_ftp )
+		sas_ftp <- strsplit( RCurl::getURL( sas_dir ) , "<br>" )[[1]]
+		all_files <- gsub( '(.*)\\">(.*)<\\/A>$', "\\2" , sas_ftp )
 		sas_files <- all_files[ grep( "\\.sas$" , tolower( all_files ) ) ]
 
 		# but remove ValueLabel and VarLabel scripts
@@ -88,8 +88,8 @@ lodown_nsfg <-
 
 			cachaca( catalog[ i , "sas_ri" ] , tf2 , mode = 'wb' )
 			
-			this_sas <- file( tf2 , 'r' , encoding = 'windows-1252' )
-			sas_lines <- readLines( this_sas )
+			this_sas <- file( tf2 , 'rb' , encoding = 'latin1' )
+			sas_lines <- readLines( this_sas , encoding = 'latin1' )
 			close( this_sas )
 			writeLines( sas_lines , tf2 )
 			
@@ -199,7 +199,7 @@ lodown_nsfg <-
 				fwf88 <- NULL
 				
 				# initiate a file-read connection to the downloaded file
-				conn <- file( tf , 'r' )
+				conn <- file( tf , 'rb' )
 				
 				# read 3553 characters at a time (the actual line length of this file)
 				# until you are out of lines
@@ -273,7 +273,7 @@ lodown_nsfg <-
 			catalog[ i , 'case_count' ] <- nrow( x )
 			
 			# save this data.frame object to the local disk
-			saveRDS( x , file = catalog[ i , "output_filename" ] )
+			saveRDS( x , file = catalog[ i , "output_filename" ] , compress = FALSE )
 			
 			# delete the temporary files
 			suppressWarnings( file.remove( tf ) )
