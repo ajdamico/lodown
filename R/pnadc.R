@@ -64,8 +64,8 @@ lodown_pnadc <-
 		
 		cachaca( doc_path , tf , mode = 'wb' , attempts = 10 )
 
-		sasfile <- grep( "\\.sas$" , unzip_warn_fail( tf , exdir = tempdir() ) , value = TRUE , ignore.case = TRUE )
-			
+		sasfile <- grep( "input.*\\.(sas|txt)$" , unzip_warn_fail( tf , exdir = tempdir() ) , value = TRUE , ignore.case = TRUE )
+
 		if( length( sasfile ) != 1 ) stop( 'only expecting one sas file within the documentation' )
 
 		for ( i in seq_len( nrow( catalog ) ) ){
@@ -81,7 +81,7 @@ lodown_pnadc <-
 				
 			# ..and read that text file directly into an R data.frame
 			# using the sas importation script downloaded before this big fat loop
-			x <- read_SAScii( txt_file , sasfile )
+			x <- read_SAScii( txt_file , sasfile , sas_encoding = "latin1" )
 
 			# immediately make every field numeric
 			for( j in names( x ) ) x[ , j ] <- as.numeric( as.character( x[ , j ] ) )
