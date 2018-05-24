@@ -113,7 +113,11 @@ lodown_pnadc <-
 				
 			if( is.na( catalog[ i , 'interview' ] ) ) this_sasfile <- sasfile else{
 			
-				cachaca( paste0( annual_doc_ftp , grep( paste0( catalog[ i , 'interview' ] , 'entr_' , catalog[ i , 'year' ] ) , annual_docs , value = TRUE ) ) , tf , mode = 'wb' , attempts = 10 )
+				this_extension <- grep( paste0( catalog[ i , 'interview' ] , 'entr_' , catalog[ i , 'year' ] ) , annual_docs , value = TRUE )
+				
+				if( length( this_extension ) == 0 ) this_extension <- grep( '1entr_2012_a_2014' , annual_docs , value = TRUE )
+			
+				cachaca( paste0( annual_doc_ftp , this_extension ) , tf , mode = 'wb' , attempts = 10 )
 				
 				this_sasfile <- tf
 			
