@@ -38,6 +38,7 @@ get_catalog_pnadc <-
 			data.frame(
 				year = gsub( "(.*)PNADC_([0-9][0-9])([0-9][0-9][0-9][0-9])(.*)\\.(zip|ZIP)" , "\\3" , zip.filenames ) ,
 				quarter = gsub( "(.*)PNADC_([0-9][0-9])([0-9][0-9][0-9][0-9])(.*)\\.(zip|ZIP)" , "\\2" , zip.filenames ) ,
+				entry = NA ,
 				stringsAsFactors = FALSE
 			)
 
@@ -45,6 +46,30 @@ get_catalog_pnadc <-
 		
 		catalog$output_filename <- paste0( output_dir , '/pnadc ' , catalog$year , ' ' , catalog$quarter , '.rds' )
 		
+		annual_ftp <-
+			"ftp://ftp.ibge.gov.br/Trabalho_e_Rendimento/Pesquisa_Nacional_por_Amostra_de_Domicilios_continua/Anual/Microdados/Dados/"
+		
+		ftp.listing <- readLines( textConnection( RCurl::getURL( annual_ftp ) ) )
+
+		# break up the string based on the ending extension
+		zip.lines <- unique( gsub( '(.*) (.*)' , "\\2" , grep( "\\.zip$" , ftp.listing , value = TRUE ) ) )
+		
+		
+		
+		catalog <-
+			rbind(
+				catalog ,
+				data.frame(
+					year = gsub( "PNADC_([0-9][0-9][0-9][0-9])_(.*)" , "\\1" , zip.lines ) ,
+					quarter = NA ,
+					entry = gsub( "(.*)_entr([0-9])(.*)" , "\\2" , zip.lines ) ,
+					full_url = paste0( annual_ftp , zip.lines ) ,
+					output_filename = 
+						paste0( output_dir , '/pnadc ' , gsub( "PNADC_([0-9][0-9][0-9][0-9])_(.*)" , "\\1" , zip.lines ) , ' entr' , gsub( "(.*)_entr([0-9])(.*)" , "\\2" , zip.lines ) , '.rds' ) ,
+					stringsAsFactors = FALSE
+				)
+			)
+			
 		catalog
 
 	}
@@ -68,6 +93,13 @@ lodown_pnadc <-
 
 		if( length( sasfile ) != 1 ) stop( 'only expecting one sas file within the documentation' )
 
+		annual_doc_ftp <- "ftp://ftp.ibge.gov.br/Trabalho_e_Rendimento/Pesquisa_Nacional_por_Amostra_de_Domicilios_continua/Anual/Microdados/Documentacao/"
+		
+		annual_docs <- gsub( "(.*) Input(.*)" , "Input\\2" , grep( "Input_PNADC_" , readLines( textConnection( RCurl::getURL( annual_doc_ftp ) ) ) , value = TRUE ) )
+		
+		
+		
+		
 		for ( i in seq_len( nrow( catalog ) ) ){
 
 			# download the file
@@ -79,9 +111,17 @@ lodown_pnadc <-
 
 			if( length( txt_file ) != 1 ) stop( 'only expecting one txt file within each zip' )
 				
+			if( is.na( catalog[ i , 'entry' ] ) ) this_sasfile <- sasfile else{
+			
+				cachaca( paste0( annual_doc_ftp , grep( paste0( catalog[ i , 'entry' ] , 'entr_' , catalog[ i , 'year' ] ) , annual_docs , value = TRUE ) ) , tf , mode = 'wb' , attempts = 10 )
+				
+				this_sasfile <- tf
+			
+			}
+				
 			# ..and read that text file directly into an R data.frame
 			# using the sas importation script downloaded before this big fat loop
-			x <- read_SAScii( txt_file , sasfile , sas_encoding = "latin1" )
+			x <- read_SAScii( txt_file , this_sasfile , sas_encoding = "latin1" )
 
 			# immediately make every field numeric
 			for( j in names( x ) ) x[ , j ] <- as.numeric( as.character( x[ , j ] ) )
