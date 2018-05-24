@@ -38,7 +38,7 @@ get_catalog_pnadc <-
 			data.frame(
 				year = gsub( "(.*)PNADC_([0-9][0-9])([0-9][0-9][0-9][0-9])(.*)\\.(zip|ZIP)" , "\\3" , zip.filenames ) ,
 				quarter = gsub( "(.*)PNADC_([0-9][0-9])([0-9][0-9][0-9][0-9])(.*)\\.(zip|ZIP)" , "\\2" , zip.filenames ) ,
-				entry = NA ,
+				interview = NA ,
 				stringsAsFactors = FALSE
 			)
 
@@ -62,7 +62,7 @@ get_catalog_pnadc <-
 				data.frame(
 					year = gsub( "PNADC_([0-9][0-9][0-9][0-9])_(.*)" , "\\1" , zip.lines ) ,
 					quarter = NA ,
-					entry = gsub( "(.*)_entr([0-9])(.*)" , "\\2" , zip.lines ) ,
+					interview = gsub( "(.*)_entr([0-9])(.*)" , "\\2" , zip.lines ) ,
 					full_url = paste0( annual_ftp , zip.lines ) ,
 					output_filename = 
 						paste0( output_dir , '/pnadc ' , gsub( "PNADC_([0-9][0-9][0-9][0-9])_(.*)" , "\\1" , zip.lines ) , ' entr' , gsub( "(.*)_entr([0-9])(.*)" , "\\2" , zip.lines ) , '.rds' ) ,
@@ -111,9 +111,9 @@ lodown_pnadc <-
 
 			if( length( txt_file ) != 1 ) stop( 'only expecting one txt file within each zip' )
 				
-			if( is.na( catalog[ i , 'entry' ] ) ) this_sasfile <- sasfile else{
+			if( is.na( catalog[ i , 'interview' ] ) ) this_sasfile <- sasfile else{
 			
-				cachaca( paste0( annual_doc_ftp , grep( paste0( catalog[ i , 'entry' ] , 'entr_' , catalog[ i , 'year' ] ) , annual_docs , value = TRUE ) ) , tf , mode = 'wb' , attempts = 10 )
+				cachaca( paste0( annual_doc_ftp , grep( paste0( catalog[ i , 'interview' ] , 'entr_' , catalog[ i , 'year' ] ) , annual_docs , value = TRUE ) ) , tf , mode = 'wb' , attempts = 10 )
 				
 				this_sasfile <- tf
 			
