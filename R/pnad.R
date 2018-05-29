@@ -278,9 +278,10 @@ pnad_remove_uf <-
 	function( sasfile ){
 
 		# read the SAS import file into R
-		sascon <- file( sasfile , "rb" , blocking = FALSE , encoding = "windows-1252" )
-		sas_lines <- readLines( sascon )
-		close( sascon )
+		##does not work on linux sascon <- file( sasfile , "rb" , blocking = FALSE , encoding = "windows-1252" )
+		sas_lines <- readLines( sascon , encoding="windows-1252")
+		if (is.na(sas_lines[1])) sas_lines <- readLines( sascon , encoding="latin1")		      
+		##close( sascon )
 		
 		sas_lines <- iconv( sas_lines , "" , "ASCII//TRANSLIT" )
 		
