@@ -115,6 +115,12 @@ cps_dd_parser <-
 		the_lines <- gsub( "\u0096" , "-" , the_lines )
 		the_lines <- gsub( "\\u0096" , "-" , the_lines )
 		the_lines <- gsub( "\\\u0096" , "-" , the_lines )
+		the_lines <- gsub("\u0085", "X", the_lines)
+		the_lines <- gsub("\\u0085", "X", the_lines)
+		the_lines <- gsub("\\\u0085", "X", the_lines)
+		the_lines <- gsub("\u0092", "X", the_lines)
+		the_lines <- gsub("\\u0092", "X", the_lines)
+		the_lines <- gsub("\\\u0092", "X", the_lines)
 		the_lines <- gsub( "\\(|\\)" , "" , the_lines )
 		
 		# hardcodes
@@ -245,6 +251,18 @@ cps_dd_parser <-
 		the_dd <- gsub( "( +)-" , "-" , the_dd )
 
 		the_dd <- gsub( "( +)" , " " , the_dd )
+		
+		the_dd <- gsub("\u0085", "X", the_dd)
+		
+		the_dd <- gsub("\\u0085", "X", the_dd)
+		
+		the_dd <- gsub("\\\u0085", "X", the_dd)
+
+		the_dd <- gsub("\u0092", "X", the_dd)
+		
+		the_dd <- gsub("\\u0092", "X", the_dd)
+		
+		the_dd <- gsub("\\\u0092", "X", the_dd)
 	
 		the_dd <- gsub( "^FILLER ([0-9]+) ([0-9]+)-([0-9]+)$" , "FILLER \\1 FILLER \\2-\\3" , the_dd )
 	
