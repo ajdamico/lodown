@@ -3,14 +3,14 @@ get_catalog_nsfg <-
 
 		# figure out all `.dat` files on the cdc's nsfg ftp site
 		dat_dir <- "https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/NSFG/"
-		dat_ftp <- strsplit( RCurl::getURL( dat_dir ) , "<br>" )[[1]]
+		dat_ftp <- strsplit( RCurl::getURL( dat_dir , ssl.verifypeer = FALSE ) , "<br>" )[[1]]
 		all_files <- gsub( '(.*)\\">(.*)<\\/A>$', "\\2" , dat_ftp )
 		dat_files <- all_files[ grep( "\\.dat$" , tolower( all_files ) ) ]
 
 
 		# figure out all `.sas` files on the cdc's nsfg ftp site
 		sas_dir <- paste0( dat_dir , "sas/" )
-		sas_ftp <- strsplit( RCurl::getURL( sas_dir ) , "<br>" )[[1]]
+		sas_ftp <- strsplit( RCurl::getURL( sas_dir , ssl.verifypeer = FALSE ) , "<br>" )[[1]]
 		all_files <- gsub( '(.*)\\">(.*)<\\/A>$', "\\2" , sas_ftp )
 		sas_files <- all_files[ grep( "\\.sas$" , tolower( all_files ) ) ]
 

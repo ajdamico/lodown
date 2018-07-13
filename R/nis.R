@@ -9,7 +9,7 @@ get_catalog_nis <-
 			"https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/nis/NHFS/"
 		) ) {
 
-		nis_ftp_contents <- RCurl::getURL( nis_ftp_site , dirlistonly = TRUE )
+		nis_ftp_contents <- RCurl::getURL( nis_ftp_site , dirlistonly = TRUE , ssl.verifypeer = FALSE )
 
 		nis_ftp_paths <- paste0( nis_ftp_site , strsplit( nis_ftp_contents , '(\r)?\n' )[[1]] )
 
@@ -23,7 +23,7 @@ get_catalog_nis <-
 			"https://ftp.cdc.gov/pub/vaccines2/nis-teen/"
 		) ) {
 
-		nis_ftp_contents <- RCurl::getURL( nis_ftp_site , dirlistonly = TRUE )
+		nis_ftp_contents <- RCurl::getURL( nis_ftp_site , dirlistonly = TRUE , ssl.verifypeer = FALSE )
 
 		possible_filenames <- grep( "\\.dat$|\\.R$" , strsplit( nis_ftp_contents , '>|<' )[[1]] , value = TRUE , ignore.case = TRUE )
 

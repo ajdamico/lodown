@@ -9,7 +9,7 @@ get_catalog_nhis <-
 		
 			# read the text of the microdata ftp into working memory
 			# download the contents of the ftp directory for all microdata
-			ftp.listing <- strsplit( RCurl::getURL( base_ftp_dir ) , "<br>" )[[1]]
+			ftp.listing <- strsplit( RCurl::getURL( base_ftp_dir , ssl.verifypeer = FALSE ) , "<br>" )[[1]]
 
 			# extract the text from all lines containing a this_year of microdata
 			# figure out the names of those this_year directories
@@ -27,7 +27,7 @@ get_catalog_nhis <-
 				cat( paste0( "loading " , data_name , " catalog from " , year_dir , "\r\n\n" ) )
 
 				# just like above, read those lines into working memory
-				this_listing <- strsplit( RCurl::getURL( year_dir ) , "<br>" )[[1]]
+				this_listing <- strsplit( RCurl::getURL( year_dir , ssl.verifypeer = FALSE ) , "<br>" )[[1]]
 				
 				ftp_files <- tolower( gsub( '(.*)\\">(.*)<\\/A>$' , "\\2" , this_listing ) )
 				
@@ -163,7 +163,7 @@ get_catalog_nhis <-
 
 			cat( paste0( "loading " , data_name , " catalog from " , income_dir , "\r\n\n" ) )
 
-			this_listing <- strsplit( RCurl::getURL( income_dir ) , "<br>" )[[1]]
+			this_listing <- strsplit( RCurl::getURL( income_dir , ssl.verifypeer = FALSE ) , "<br>" )[[1]]
 			
 			ftp_files <- tolower( gsub( '(.*)\\">(.*)<\\/A>$' , "\\2" , this_listing ) )
 	

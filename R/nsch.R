@@ -20,7 +20,7 @@ get_catalog_nsch <-
 			
 	for( i in seq_along( available_years ) ){
 	
-		nsch_ftp_contents <- strsplit( RCurl::getURL( dataset_hrefs[i] ) , "<br>" )[[1]]
+		nsch_ftp_contents <- strsplit( RCurl::getURL( dataset_hrefs[i] , ssl.verifypeer = FALSE ) , "<br>" )[[1]]
 		nsch_ftp_contents <- gsub( '(.*)\\">(.*)<\\/A>$', "\\2" , nsch_ftp_contents )
 		nsch_ftp_paths <- nsch_ftp_contents[ grep( "\\.zip$" , tolower( nsch_ftp_contents ) ) ]
 		

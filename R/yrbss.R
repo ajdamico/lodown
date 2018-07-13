@@ -3,7 +3,7 @@ get_catalog_yrbss <-
 
 		catalog <- NULL
 	
-		yrbss_ftp_contents <- strsplit( RCurl::getURL( "https://ftp.cdc.gov/pub/data/yrbs/" ) , "<br>" )[[1]]
+		yrbss_ftp_contents <- strsplit( RCurl::getURL( "https://ftp.cdc.gov/pub/data/yrbs/" , ssl.verifypeer = FALSE ) , "<br>" )[[1]]
 
 		yrbss_ftp_paths <- paste0( "https://ftp.cdc.gov/pub/data/yrbs/" , gsub( '(.*)\\">(.*)<\\/A>$', "\\2" , yrbss_ftp_contents ) , "/" )
 
@@ -13,7 +13,7 @@ get_catalog_yrbss <-
 		
 		for( this_year in yrbss_folders ){
 				
-			this_year_contents <- strsplit( RCurl::getURL( this_year ) , "<br>" )[[1]]
+			this_year_contents <- strsplit( RCurl::getURL( this_year , ssl.verifypeer = FALSE ) , "<br>" )[[1]]
 
 			this_year_paths <- paste0( this_year , gsub( '(.*)\\">(.*)<\\/A>$', "\\2" , this_year_contents ) )
 
