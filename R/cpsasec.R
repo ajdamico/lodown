@@ -612,6 +612,11 @@ lodown_cpsasec <-
 					
 					sp2 <- data.frame( haven::read_sas( tf ) )
 				
+					names( sp ) <- toupper( names( sp ) )
+					names( sp2 ) <- toupper( names( sp2 ) )
+					sp <- sp[ intersect( names( sp ) , names( sp2 ) ) ]
+					sp2 <- sp2[ intersect( names( sp ) , names( sp2 ) ) ]
+					
 					sp <- rbind( sp , sp2 )
 					
 					rm( sp2 ) ; gc()
