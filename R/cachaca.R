@@ -64,7 +64,7 @@ httr_filesize <-
 
 			failed.attempt <-
 				try( {
-
+					httr::set_config(httr::config(ssl_verifypeer = 0L))
 					xx <- httr::HEAD(url)
 					yy <- httr::headers(xx)$`content-length`
 					return( as.numeric( yy ) )
@@ -264,6 +264,8 @@ cachaca <-
 						if( identical( FUN , httr::GET ) ){
 						# do not include the destfile= in the call, since it's already included inside the write_disk()
 						
+							httr::set_config(httr::config(ssl_verifypeer = 0L))
+							
 							# did the download work?
 							success <- do.call( FUN , list( this_url , ... ) )
 
