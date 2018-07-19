@@ -590,7 +590,9 @@ lodown_cpsasec <-
 				
 					sp.url <- 
 						paste0( 
-							"https://www.census.gov/housing/povmeas/spmresearch/spmresearch" , 
+							"https://www.census.gov/housing/povmeas/datasets/spm" , 
+							if( catalog[ i , 'year' ] == 2014.38 ) "-redes" , 
+							"/spmresearch" , 
 							floor( catalog[ i , 'year' ] - 1 ) , 
 							if ( catalog[ i , 'year' ] == 2014.38 ) "_redes" else if ( catalog[ i , 'year' ] >= 2016 ) "" else "new" ,
 							".sas7bdat" 
