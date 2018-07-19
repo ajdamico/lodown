@@ -78,7 +78,7 @@ httr_filesize <-
 			
 		}
 		
-		stop( paste( "httr::HEAD(" , url , ")\nfailed after" , initial.attempts , "attempts" ) )					
+		stop( paste0( "httr::HEAD( '" , url , "' )\nfailed after " , initial.attempts , " attempts" ) )					
 
 	}
 
