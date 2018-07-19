@@ -64,7 +64,6 @@ httr_filesize <-
 
 			failed.attempt <-
 				try( {
-					httr::set_config(httr::config(ssl_verifypeer = 0L))
 					xx <- httr::HEAD(url)
 					yy <- httr::headers(xx)$`content-length`
 					return( as.numeric( yy ) )
@@ -155,16 +154,12 @@ cachaca <-
 		# whether to actually cache the downloaded files
 		# setting this option to FALSE eliminates the purpose of cachaca()
 		# but sometimes it's necessary to disable for a single call, or globally
-		savecache = getOption( "lodown.cachaca.savecache" , TRUE ) ,
-		
-		cdc_ftp_https = TRUE
+		savecache = getOption( "lodown.cachaca.savecache" , TRUE ) 
 
 	) {
 
 		if( !( filesize_fun %in% c( 'httr' , 'rcurl' , 'unzip_verify' ) ) ) stop( "filesize_fun= must be 'httr', 'rcurl', or 'unzip_verify'" )
-	
-		if( cdc_ftp_https ) this_url <- gsub( "ftp://ftp.cdc.gov/" , "https://ftp.cdc.gov/" , this_url , fixed = TRUE )
-	
+		
 		# if the cached file exists, assume it's good.
 		urlhash <- digest::digest(this_url)
 
@@ -263,8 +258,6 @@ cachaca <-
 						# if using GET with write_disk..
 						if( identical( FUN , httr::GET ) ){
 						# do not include the destfile= in the call, since it's already included inside the write_disk()
-						
-							httr::set_config(httr::config(ssl_verifypeer = 0L))
 							
 							# did the download work?
 							success <- do.call( FUN , list( this_url , ... ) )
