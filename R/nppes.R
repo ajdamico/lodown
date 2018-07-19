@@ -13,7 +13,7 @@ get_catalog_nppes <-
 	catalog <-
 		data.frame(
 			full_url = fn ,
-			output_filename = paste0( output_dir , "/nppes.csv" ) ,
+			output_folder = output_dir ,
 			stringsAsFactors = FALSE
 		)
 
@@ -29,6 +29,10 @@ lodown_nppes <-
 	
 		if( nrow( catalog ) != 1 ) stop( "nppes catalog must be exactly one record" )
 		
+		dir.create( catalog[ , 'output_folder' ] , showWarnings = FALSE )
+		
+		if( length( list.files( catalog[ , 'output_folder' ] ) ) > 0 ) stop( paste( catalog[ , 'output_folder' ] , "must be empty" ) )
+		
 		if( ( .Platform$OS.type != 'windows' ) && ( system( paste0('"', path_to_7za , '" -h' ) ) != 0 ) ) stop( "you need to install 7-zip.  if you already have it, include a path_to_7za='/directory/7za' parameter" )
  		
 		tf <- tempfile()
@@ -38,24 +42,22 @@ lodown_nppes <-
 		# extract the file, platform-specific
 		if ( .Platform$OS.type == 'windows' ){
 
-			unzipped_files <- unzip_warn_fail( tf , exdir = tempdir() )
+			unzipped_files <- unzip_warn_fail( tf , exdir = catalog[ , 'output_folder' ] )
 
 		} else {
 
 			# build the string to send to the terminal on non-windows systems
-			dos.command <- paste0( '"' , path_to_7za , '" x ' , tf , ' -o"' , tempdir() , '"' )
+			dos.command <- paste0( '"' , path_to_7za , '" x ' , tf , ' -o"' , catalog[ , 'output_folder' ] , '"' )
 			system( dos.command )
-			unzipped_files <- list.files( tempdir() , full.names = TRUE , recursive = TRUE )
+			unzipped_files <- list.files( catalog[ , 'output_folder' ] , full.names = TRUE , recursive = TRUE )
 
 		}
 
-		csv.file <- unzipped_files[ grepl( '\\.csv$' , basename( unzipped_files ) , ignore.case = TRUE ) & !grepl( 'FileHeader' , basename( unzipped_files ) , ignore.case = TRUE ) ]
+		csv.file <- unzipped_files[ grepl( '^npidata_pfile_(.*)\\.csv$' , basename( unzipped_files ) , ignore.case = TRUE ) & !grepl( 'FileHeader' , basename( unzipped_files ) , ignore.case = TRUE ) ]
 
-		file.copy( csv.file , catalog$output_filename )
-		
 		catalog$case_count <- R.utils::countLines( csv.file ) - 1
 
-		file.remove( unzipped_files , tf )
+		file.remove( tf )
 		
 		on.exit()
 		
