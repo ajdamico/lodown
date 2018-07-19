@@ -590,7 +590,7 @@ lodown_cpsasec <-
 				
 					sp.url <- 
 						paste0( 
-							"https://www.census.gov/housing/povmeas/datasets/spm" , 
+							"https://www2.census.gov/programs-surveys/supplemental-poverty-measure/datasets/spm" , 
 							if( catalog[ i , 'year' ] == 2014.38 ) "-redes" , 
 							"/spmresearch" , 
 							floor( catalog[ i , 'year' ] - 1 ) , 
@@ -606,7 +606,7 @@ lodown_cpsasec <-
 			
 				if ( catalog[ i , 'year' ] == 2014 ){
 					
-					sp.url <- "https://www.census.gov/housing/povmeas/spmresearch/spmresearch2013_redes.sas7bdat"
+					sp.url <- "https://www2.census.gov/programs-surveys/supplemental-poverty-measure/datasets/spm-redes/spmresearch2013_redes.sas7bdat"
 						
 					cachaca( sp.url , tf , mode = 'wb' )
 					
