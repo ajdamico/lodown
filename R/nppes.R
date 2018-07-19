@@ -31,8 +31,6 @@ lodown_nppes <-
 		
 		dir.create( catalog[ , 'output_folder' ] , showWarnings = FALSE )
 		
-		if( length( list.files( catalog[ , 'output_folder' ] ) ) > 0 ) stop( paste( catalog[ , 'output_folder' ] , "must be empty" ) )
-		
 		if( ( .Platform$OS.type != 'windows' ) && ( system( paste0('"', path_to_7za , '" -h' ) ) != 0 ) ) stop( "you need to install 7-zip.  if you already have it, include a path_to_7za='/directory/7za' parameter" )
  		
 		tf <- tempfile()
