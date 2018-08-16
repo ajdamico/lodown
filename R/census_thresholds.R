@@ -26,7 +26,7 @@ census_thresholds <-
 		for ( year in rev(ya) ){
 
 			# figure out the location of the excel file on the drive
-			this_excel <- paste0( "https:" , grep( substr( year , 3 , 4 ) , excel_locations , value = TRUE ) )
+			this_excel <- unique( paste0( "https:" , grep( substr( year , 3 , 4 ) , excel_locations , value = TRUE ) ) )
 			
 			# name the excel file something appropriate
 			fn <- paste0( tempdir() , "/" , basename( this_excel ) )
