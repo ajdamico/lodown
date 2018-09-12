@@ -109,10 +109,10 @@ lodown_cpsasec <-
 										"http://thedataweb.rm.census.gov/pub/cps/march/asec2014_pubuse_tax_fix_5x8_2017.zip" ,
 										ifelse( catalog[ i , 'year' ] == 2016 ,
 											paste0( "http://thedataweb.rm.census.gov/pub/cps/march/asec" , catalog[ i , 'year' ] , "_pubuse_v3.zip" ) ,
-											# ifelse( catalog[ i , 'year' ] == 2017 ,
-												# "http://thedataweb.rm.census.gov/pub/cps/march/asec2017early_pubuse.zip" ,
+											ifelse( catalog[ i , 'year' ] == 2018 ,
+												"http://thedataweb.rm.census.gov/pub/cps/march/asec2018early_pubuse.zip" ,
 												paste0( "http://thedataweb.rm.census.gov/pub/cps/march/asec" , catalog[ i , 'year' ] , "_pubuse.zip" )
-											# )
+											)
 										)
 									)
 								)
@@ -457,6 +457,25 @@ lodown_cpsasec <-
 				
 				}
 				
+				if ( catalog[ i , 'year' ] %in% 2018 ){
+				
+					ote <- "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2018/cps-redesign/asec18_outtyp_extract.dat"
+				
+					cachaca( ote , tf , mode = 'wb' )
+					
+					ot <- data.frame( readr::read_fwf( tf , readr::fwf_widths( c( 5 , 2 , 2 , 1 ) ) , col_types = 'nnnn' ) )
+					
+					ace <- "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2018/cps-redesign/asec18_currcov_extract.dat"
+				
+					cachaca( ace , tf , mode = 'wb' )
+					
+					ac <- data.frame( readr::read_fwf( tf , readr::fwf_widths( c( 5 , 2 , 1 ) ) , col_types = 'nnn' ) )
+
+					cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2018/cps-redesign/pubuse_esioffer_2018.sas7bdat" , tf , mode = 'wb' )
+					
+					offer <- data.frame( haven::read_sas( tf ) )
+				
+				}
 				names( ot ) <- c( 'ph_seq' , 'ppposold' , 'outtyp' , 'i_outtyp' )
 				
 				names( ac ) <- c( 'ph_seq' , 'ppposold' , 'census_anycov' )
@@ -575,7 +594,7 @@ lodown_cpsasec <-
 			
 			overlapping.spm.fields <- c( "gestfips" , "fpovcut" , "ftotval" , "marsupwt" )
 			
-			if( catalog[ i , 'year' ] %in% c( 2010:2017 , 2014.38 , 2014.58 ) ){
+			if( catalog[ i , 'year' ] %in% c( 2010:2018 , 2014.38 , 2014.58 ) ){
 
 				if( catalog[ i , 'year' ] >= 2017 ){
 				
