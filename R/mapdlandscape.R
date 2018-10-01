@@ -159,7 +159,7 @@ lodown_mapdlandscape <-
 				
 				}
 				
-				csv_df <- csv_df[ , !grepl( "^X" , names( csv_df ) ) ]
+				csv_df <- csv_df[ , !grepl( "^X" , names( csv_df ) ) & ( length( names( csv_df ) ) < 10 ) ]
 				
 				if( grepl( "sanction" , this_csv , ignore.case = TRUE ) ) csv_df$sanctioned <- TRUE else csv_df$sanctioned <- FALSE
 				
