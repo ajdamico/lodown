@@ -613,7 +613,7 @@ lodown_cpsasec <-
 							if( catalog[ i , 'year' ] == 2014.38 ) "-redes" , 
 							"/spmresearch" , 
 							floor( catalog[ i , 'year' ] - 1 ) , 
-							if ( catalog[ i , 'year' ] == 2014.38 ) "_redes" else if ( catalog[ i , 'year' ] >= 2016 ) "" else "new" ,
+							if ( catalog[ i , 'year' ] == 2014.38 ) "_redes" else "" ,
 							".sas7bdat" 
 						)
 				
