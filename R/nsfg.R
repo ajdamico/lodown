@@ -45,6 +45,10 @@ get_catalog_nsfg <-
 		
 		catalog[ catalog$full_url %in% c( "2011_2015_FemaleWeight.dat" , "2011_2015_MaleWeight.dat" ) , 'sas_ri' ] <- "2011_2015_4YearWeightSetup.sas"
 		
+		catalog[ catalog$full_url %in% "2013_2017_2011_2017_Femwgt.dat" , 'sas_ri' ] <- "2013_2017_4Year_2011_2017_6Year_FemWgtSetup.sas"
+		
+		catalog[ catalog$full_url %in% "2013_2017_2011_2017_Malewgt.dat" , 'sas_ri' ] <- "2013_2017_4Year_2011_2017_6Year_MaleWgtSetup.sas"
+		
 		catalog[ is.na( catalog$sas_ri ) , 'sas_ri' ] <- sas_files[ match( gsub( "\\.dat" , "" , catalog[ is.na( catalog$sas_ri ) , 'full_url' ] ) , gsub( "Data" , "" , tsf ) ) ]
 		
 		catalog[ is.na( catalog$sas_ri ) , 'sas_ri' ] <- sas_files[ match( gsub( "\\.dat" , "" , catalog[ is.na( catalog$sas_ri ) , 'full_url' ] ) , gsub( "FemPreg" , "Preg" , tsf ) ) ]
