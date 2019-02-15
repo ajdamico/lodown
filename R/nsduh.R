@@ -82,7 +82,7 @@ lodown_nsduh <-
 			file.remove( tf )
 		
 			# find stata file within unzipped path
-			stata_files <- grep( "\\.dta$" , list.files( catalog[ i , 'unzip_folder' ] , full.names = TRUE ) , value = TRUE )
+			stata_files <- grep( "\\.dta$|\\.DTA$" , list.files( catalog[ i , 'unzip_folder' ] , full.names = TRUE ) , value = TRUE )
 			
 			stopifnot( length( stata_files ) == 1 )
 			
