@@ -6,7 +6,7 @@ get_catalog_nsduh <-
 		links <- grepl( "nsduh|nhsda" , rvest::html_nodes( series_xml , "a" ) )
 		
 		# remove 1994 and 2002-2014 and 2002-2015 files
-		links <- links & !grepl( "1994|2002-201" , rvest::html_text( rvest::html_nodes( series_xml , "a" ) ) )
+		links <- links & !grepl( "Codebooks|1994|2002-201" , rvest::html_text( rvest::html_nodes( series_xml , "a" ) ) )
 		
 		link_text <- rvest::html_text( rvest::html_nodes( series_xml , "a" ) )[ links ]
 		link_year <- gsub( "(.*)-|\\r(.*)" , "" , link_text )
