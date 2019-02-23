@@ -161,6 +161,12 @@ lodown_ess <-
 
     for ( i in seq_len( nrow( catalog ) ) ){
 
+		# ignore special case of a file containing two datasets instead of one
+		# (each dataset is downloaded separately by other catalog entries)
+		if( grepl( "ESS3LVRO" , catalog[ i , 'full_url' ] ) ) {
+			next
+		}
+
 		# download the file
 		current.file <- cachaca( catalog[ i , 'full_url' ] , FUN = httr::GET )
 
