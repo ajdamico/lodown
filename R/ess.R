@@ -182,7 +182,7 @@ lodown_ess <-
 			if ( any( grepl( 'sav' , spss.files ) ) ){
 			
 				# read that dot.sav file as a data.frame object
-				if( grepl( "ESS7occpCZ|ESS6occpSK" , spss.files ) ){
+				if( grepl( "ESS7occpCZ|ESS6occpSK" , spss.files[ grep( 'sav' , spss.files ) ] ) ){
 					x <- foreign::read.spss( spss.files[ grep( 'sav' , spss.files ) ] , to.data.frame = TRUE , use.value.labels = FALSE )
 				} else {
 					x <- data.frame( haven::read_spss( spss.files[ grep( 'sav' , spss.files ) ] ) )
