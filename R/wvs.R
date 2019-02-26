@@ -8,6 +8,8 @@ get_catalog_wvs <-
 		wave_test <- 0
 		try_next <- TRUE
 		
+		my_cookie <- wvs_valid_cookie()
+
 		while( try_next ){
 			wave_test <- wave_test + 1
 			this_wave <- httr::GET( paste0( "http://www.worldvaluessurvey.org/WVSDocumentationWV" , wave_test , ".jsp" ) )
@@ -35,7 +37,8 @@ get_catalog_wvs <-
 			# find country-specific files as well
 			if( this.wave > -1 ){
 
-				countries <- readLines( paste0( "http://www.worldvaluessurvey.org/AJDocumentation.jsp?CndWAVE=" , this.wave , "&COUNTRY=" ) )
+			  countries <- wvs_appreq( paste0( "http://www.worldvaluessurvey.org/AJDocumentation.jsp?CndWAVE=" , this.wave , "&COUNTRY=" ), the_cookie =  my_cookie)
+			  countries <- unlist( strsplit( httr::content(countries, "text"), "\\n|\\t" ) )
 
 				# determine which of those table identifiers lead to actual files
 				table_ids <- gsub( '(.*)tr id=\\"(.*)\\" >(.*)' , "\\2" , grep( "tr id" , countries , value = TRUE ) )
@@ -46,9 +49,10 @@ get_catalog_wvs <-
 				for( this_country in table_ids ){
 
 					# read the country-specific download page
-					dl_page <- readLines( paste0( "http://www.worldvaluessurvey.org/AJDocumentationSmpl.jsp?CndWAVE=" , this.wave , "&SAID=" , this_country ) )
-				
-					# extract the identification number of each file
+				  dl_page <- wvs_appreq( paste0( "http://www.worldvaluessurvey.org/AJDocumentationSmpl.jsp?CndWAVE=" , this.wave , "&SAID=" , this_country ), my_cookie )
+				  dl_page <- unlist( strsplit( httr::content(dl_page, "text"), "\\n|\\t" ) )
+
+				  # extract the identification number of each file
 					dlid <- gsub( "(.*)DocDownload(License)?\\('(.*)'\\)(.*)" , "\\3" , grep( "DocDownload(License)?\\('" , dl_page , value = TRUE ) )
 
 					catalog <-
