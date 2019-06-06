@@ -11,7 +11,7 @@ get_catalog_ahrf <-
 	
 	full_url <- ifelse( grepl( "^https" , partial_url ) , partial_url , paste0( "https://datawarehouse.hrsa.gov" , partial_url ) )
 
-	full_url <- full_url[ !grepl( "_SAS_" , full_url ) ]
+	full_url <- full_url[ !grepl( "_SAS_" , full_url ) & grepl( "zip" , full_url , ignore.case = TRUE ) ]
 	
     this_catalog <-
       data.frame(
