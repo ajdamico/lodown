@@ -74,7 +74,7 @@ lodown_scpenetration <-
 				# your local computer to each of the unzipped files
 				unzipped_files <- unzip_warn_fail( tf , exdir = np_dirname( these_entries[ i , 'output_filename' ] ) )
 
-				x <- data.frame( readr::read_csv( grep( "State_County" , unzipped_files , value = TRUE ) , guess_max = 100000 ) )
+				x <- data.frame( readr::read_csv( grep( "State_County(.*)\\.csv$" , unzipped_files , value = TRUE , ignore.case = TRUE ) , guess_max = 100000 ) )
 
 				x$year_month <- these_entries[ i , 'year_month' ]
 				
