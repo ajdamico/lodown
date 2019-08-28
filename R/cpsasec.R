@@ -647,6 +647,7 @@ lodown_cpsasec <-
 					rw_tf <- tempfile()
 					cachaca( CPS.replicate.weight.file.location , rw_tf , mode = 'wb' , filesize_fun = 'sas_verify' )
 					rw <- data.frame( haven::read_sas( rw_tf ) )
+					names( rw ) <- toupper( names( rw ) )
 					rw[ grepl( "MARSUPWT" , names( rw ) ) ] <-
 						sapply( rw[ grepl( "MARSUPWT" , names( rw ) ) ] , function( w ) w * 1000 )
 						
