@@ -373,7 +373,7 @@ lodown_cpsasec <-
 				
 			# tack on _anycov_ variables
 			# tack on _outtyp_ variables
-			if( catalog[ i , 'year' ] > 2013 ){
+			if( ( catalog[ i , 'production_file' ] ) & ( catalog[ i , 'year' ] > 2013 ) ){
 				
 				stopifnot( catalog[ i , 'year' ] %in% c( 2018 , 2017 , 2016 , 2015 , 2014.58 , 2014.38 , 2014 ) )
 				
