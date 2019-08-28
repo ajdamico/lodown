@@ -647,11 +647,10 @@ lodown_cpsasec <-
 					rw_tf <- tempfile()
 					cachaca( CPS.replicate.weight.file.location , rw_tf , mode = 'wb' , filesize_fun = 'sas_verify' )
 					rw <- data.frame( haven::read_sas( rw_tf ) )
-					names( rw ) <- tolower( names( rw ) )
-					rw[ grepl( "marsupwt" , names( rw ) ) ] <-
-						sapply( rw[ grepl( "marsupwt" , names( rw ) ) ] , function( w ) w * 1000 )
+					rw[ grepl( "MARSUPWT" , names( rw ) ) ] <-
+						sapply( rw[ grepl( "MARSUPWT" , names( rw ) ) ] , function( w ) w * 1000 )
 						
-					names( rw ) <- gsub( "marsupwt_" , "pwwgt" , names( rw ) )
+					names( rw ) <- gsub( "MARSUPWT_" , "PWWGT" , names( rw ) )
 				
 				} else {
 				
