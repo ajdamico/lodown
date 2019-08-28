@@ -534,10 +534,10 @@ lodown_cpsasec <-
 				CPS.replicate.weight.file.location <- 
 					ifelse(
 						!( catalog[ i , 'production_file' ] ) & catalog[ i , 'year' ] == 2017 ,
-						"https://www2.census.gov/programs-surveys/demo/datasets/income-poverty/time-series/data-extracts/2017/cps-asec-research-file/cps_asec_ascii_repwgt_2017_111618.dat" ,
+						"https://www2.census.gov/programs-surveys/demo/datasets/income-poverty/time-series/data-extracts/2017/cps-asec-research-file/repwgt_2017.sas7bdat" ,
 						ifelse(
 							!( catalog[ i , 'production_file' ] ) & catalog[ i , 'year' ] == 2018 ,
-							"https://www2.census.gov/programs-surveys/demo/datasets/income-poverty/time-series/data-extracts/2018/cps-asec-bridge-file/cps_asec_ascii_repwgt_2018_022619.dat" ,
+							"https://www2.census.gov/programs-surveys/demo/datasets/income-poverty/time-series/data-extracts/2018/cps-asec-bridge-file/repwgt_2018.sas7bdat" ,
 							ifelse(
 								catalog[ i , 'year' ] == 2014.38 ,
 								"https://www2.census.gov/programs-surveys/demo/datasets/income-poverty/time-series/weights/cps-asec-ascii-repwgt-2014-redes.dat" ,
@@ -556,7 +556,7 @@ lodown_cpsasec <-
 
 					
 				# census.gov website containing the current population survey's SAS import instructions
-				if( !( catalog[ i , 'production_file' ] ) | ( catalog[ i , 'year' ] %in% 2014.38 ) ){
+				if( ( catalog[ i , 'year' ] %in% 2014.38 ) ){
 				
 					CPS.replicate.weight.SAS.read.in.instructions <- tempfile()
 
@@ -570,6 +570,10 @@ lodown_cpsasec <-
 						CPS.replicate.weight.SAS.read.in.instructions 
 					)
 					
+				} else if( !( catalog[ i , 'production_file' ] ) ){
+				
+					CPS.replicate.weight.SAS.read.in.instructions <- NULL
+				
 				} else {
 					
 					CPS.replicate.weight.SAS.read.in.instructions <- 
@@ -581,31 +585,42 @@ lodown_cpsasec <-
 
 				}
 
-				zip_file <- 
-					tolower( 
-						substr( 
-							CPS.replicate.weight.file.location , 
-							nchar( CPS.replicate.weight.file.location ) - 2 , 
-							nchar( CPS.replicate.weight.file.location ) 
-						)
-					) == 'zip'
 
+				if( !( catalog[ i , 'production_file' ] ) ){
 					
-				if( !zip_file ){
 					rw_tf <- tempfile()
-					download.file( CPS.replicate.weight.file.location , rw_tf , mode = 'wb' )
-					CPS.replicate.weight.file.location <- rw_tf
+					cachaca( CPS.replicate.weight.file.location , rw_tf , mode = 'wb' , filesize_fun = 'sas_verify' )
+					rw <- haven::read_sas( rw_tf )
+				
+				} else {
+				
+					zip_file <- 
+						tolower( 
+							substr( 
+								CPS.replicate.weight.file.location , 
+								nchar( CPS.replicate.weight.file.location ) - 2 , 
+								nchar( CPS.replicate.weight.file.location ) 
+							)
+						) == 'zip'
+
+						
+					if( !zip_file ){
+						rw_tf <- tempfile()
+						download.file( CPS.replicate.weight.file.location , rw_tf , mode = 'wb' )
+						CPS.replicate.weight.file.location <- rw_tf
+					}
+					
+					# store the CPS ASEC march 2011 replicate weight file as an R data frame
+					rw <-
+						read_SAScii( 
+							CPS.replicate.weight.file.location , 
+							CPS.replicate.weight.SAS.read.in.instructions , 
+							zipped = zip_file
+						)
+
 				}
 				
-				# store the CPS ASEC march 2011 replicate weight file as an R data frame
-				rw <-
-					read_SAScii( 
-						CPS.replicate.weight.file.location , 
-						CPS.replicate.weight.SAS.read.in.instructions , 
-						zipped = zip_file
-					)
-
-
+				
 				###################################################
 				# merge cps asec file with replicate weights file #
 				###################################################
