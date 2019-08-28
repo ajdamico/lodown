@@ -593,7 +593,7 @@ lodown_cpsasec <-
 					
 				if( !zip_file ){
 					rw_tf <- tempfile()
-					cachaca( CPS.replicate.weight.file.location , rw_tf , mode = 'wb' )
+					download.file( CPS.replicate.weight.file.location , rw_tf , mode = 'wb' )
 					CPS.replicate.weight.file.location <- rw_tf
 				}
 				
