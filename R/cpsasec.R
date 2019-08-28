@@ -534,10 +534,10 @@ lodown_cpsasec <-
 				CPS.replicate.weight.file.location <- 
 					ifelse(
 						!( catalog[ i , 'production_file' ] ) & catalog[ i , 'year' ] == 2017 ,
-						"https://www2.census.gov/programs-surveys/demo/datasets/income-poverty/time-series/data-extracts/2017/cps-asec-research-file/repwgt_2017.sas7bdat" ,
+						"https://www2.census.gov/programs-surveys/demo/datasets/income-poverty/time-series/data-extracts/2017/cps-asec-research-file/cps_asec_ascii_repwgt_2017_111618.dat" ,
 						ifelse(
 							!( catalog[ i , 'production_file' ] ) & catalog[ i , 'year' ] == 2018 ,
-							"https://www2.census.gov/programs-surveys/demo/datasets/income-poverty/time-series/data-extracts/2018/cps-asec-bridge-file/repwgt_2018.sas7bdat" ,
+							"https://www2.census.gov/programs-surveys/demo/datasets/income-poverty/time-series/data-extracts/2018/cps-asec-bridge-file/cps_asec_ascii_repwgt_2018_022619.dat" ,
 							ifelse(
 								catalog[ i , 'year' ] == 2014.38 ,
 								"https://www2.census.gov/programs-surveys/demo/datasets/income-poverty/time-series/weights/cps-asec-ascii-repwgt-2014-redes.dat" ,
