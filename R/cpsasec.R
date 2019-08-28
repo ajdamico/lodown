@@ -57,6 +57,34 @@ lodown_cpsasec <-
 				cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/income-poverty/time-series/data-extracts/2017/cps-asec-research-file/ffpub17_010919.sas7bdat" , tf2 , mode = 'wb' , filesize_fun = 'sas_verify' )
 				cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/income-poverty/time-series/data-extracts/2017/cps-asec-research-file/pppub17.sas7bdat" , tf3 , mode = 'wb' , filesize_fun = 'sas_verify' )
 
+				fmly <- data.frame( haven::read_sas( tf2 ) )
+				names( fmly ) <- tolower( names( fmly ) )
+				for ( j in names( fmly ) ) fmly[ , j ] <- as.numeric( fmly[ , j ] )
+				fmly$fsup_wgt <- fmly$fsup_wgt / 100
+				file.remove( tf2 )
+				
+				prsn <- data.frame( haven::read_sas( tf3 ) )
+				number_of_records <- nrow( prsn )
+				names( prsn ) <- tolower( names( prsn ) )
+				for ( j in names( prsn ) ) prsn[ , j ] <- as.numeric( prsn[ , j ] )
+				for ( j in c( 'marsupwt' , 'a_ernlwt' , 'a_fnlwgt' ) ) prsn[ , j ] <- prsn[ , j ] / 100
+				names( fmly )[ names( fmly ) == 'fh_seq' ] <- 'h_seq'
+				names( prsn )[ names( prsn ) == 'ph_seq' ] <- 'h_seq'
+				names( prsn )[ names( prsn ) == 'phf_seq' ] <- 'ffpos'
+				x <- merge( fmly , prsn )
+				rm( fmly , prsn ) ; gc() ; file.remove( tf3 )
+
+				hhld <- data.frame( haven::read_sas( tf1 ) )
+				names( hhld ) <- tolower( names( hhld ) )
+				for ( j in names( hhld ) ) hhld[ , j ] <- as.numeric( hhld[ , j ] )
+				hhld$hsup_wgt <- hhld$hsup_wgt / 100
+				x <- merge( hhld , x )
+				rm( hhld ) ; gc() ; file.remove( tf1 )
+				
+				names( x ) <- toupper( names( x ) )
+				
+				stopifnot( nrow( x ) == number_of_records )
+
 				
 			} else if( !( catalog[ i , 'production_file' ] ) & ( catalog[ i , 'year' ] == 2018 ) ){
 
@@ -67,6 +95,34 @@ lodown_cpsasec <-
 				cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/income-poverty/time-series/data-extracts/2018/cps-asec-bridge-file/ppub18_bridge.sas7bdat" , tf3 , mode = 'wb' , filesize_fun = 'sas_verify' )
 
 				
+				fmly <- data.frame( haven::read_sas( tf2 ) )
+				names( fmly ) <- tolower( names( fmly ) )
+				for ( j in names( fmly ) ) fmly[ , j ] <- as.numeric( fmly[ , j ] )
+				fmly$fsup_wgt <- fmly$fsup_wgt / 100
+				file.remove( tf2 )
+				
+				prsn <- data.frame( haven::read_sas( tf3 ) )
+				number_of_records <- nrow( prsn )
+				names( prsn ) <- tolower( names( prsn ) )
+				for ( j in names( prsn ) ) prsn[ , j ] <- as.numeric( prsn[ , j ] )
+				for ( j in c( 'marsupwt' , 'a_ernlwt' , 'a_fnlwgt' ) ) prsn[ , j ] <- prsn[ , j ] / 100
+				names( fmly )[ names( fmly ) == 'fh_seq' ] <- 'h_seq'
+				names( prsn )[ names( prsn ) == 'ph_seq' ] <- 'h_seq'
+				names( prsn )[ names( prsn ) == 'phf_seq' ] <- 'ffpos'
+				x <- merge( fmly , prsn )
+				rm( fmly , prsn ) ; gc() ; file.remove( tf3 )
+
+				hhld <- data.frame( haven::read_sas( tf1 ) )
+				names( hhld ) <- tolower( names( hhld ) )
+				for ( j in names( hhld ) ) hhld[ , j ] <- as.numeric( hhld[ , j ] )
+				hhld$hsup_wgt <- hhld$hsup_wgt / 100
+				x <- merge( hhld , x )
+				rm( hhld ) ; gc() ; file.remove( tf1 )
+				
+				names( x ) <- toupper( names( x ) )
+				
+				stopifnot( nrow( x ) == number_of_records )
+
 
 			# for the 2014 cps, load the income-consistent file as the full-catalog[ i , 'year' ] extract
 			} else if ( catalog[ i , 'year' ] == 2014 ){
@@ -590,7 +646,12 @@ lodown_cpsasec <-
 					
 					rw_tf <- tempfile()
 					cachaca( CPS.replicate.weight.file.location , rw_tf , mode = 'wb' , filesize_fun = 'sas_verify' )
-					rw <- haven::read_sas( rw_tf )
+					rw <- data.frame( haven::read_sas( rw_tf ) )
+					names( rw ) <- tolower( names( rw ) )
+					rw[ grepl( "marsupwt" , names( rw ) ) ] <-
+						sapply( rw[ grepl( "marsupwt" , names( rw ) ) ] , function( w ) w * 1000 )
+						
+					names( rw ) <- gsub( "marsupwt_" , "pwwgt" , names( rw ) )
 				
 				} else {
 				
