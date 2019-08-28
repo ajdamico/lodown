@@ -203,7 +203,7 @@ cachaca <-
 		
 		if( filesize_fun == 'rcurl' ) this_filesize <- rcurl_filesize( this_url , attempts , sleepsec )
 
-		if( !( filesize_fun %in% c( 'sas_verify' , 'unzip_verify' ) && this_filesize == 0 ) stop( "remote server lists file size as zero" )
+		if( !( filesize_fun %in% c( 'sas_verify' , 'unzip_verify' ) ) && this_filesize == 0 ) stop( "remote server lists file size as zero" )
 
 		# start out with a failed attempt, so the while loop below commences
 		failed.attempt <- try( stop() , silent = TRUE )
