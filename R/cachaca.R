@@ -104,7 +104,7 @@ download_to_filename <- function(url, dlfile, curl=RCurl::getCurlHandle(), ...) 
 #' @param FUN defaults to \code{download.file} but \code{downloader::download}, \code{httr::GET}, \code{RCurl::getBinaryURL} also work
 #' @param attempts number of times to retry a broken download
 #' @param sleepsec length of \code{Sys.sleep()} between broken downloads
-#' @param filesize_fun use \code{httr::HEAD} or \code{RCurl::getURL} to determine file size.  use "unzip_verify" to verify the download by attempting to unzip the file without issue
+#' @param filesize_fun use \code{httr::HEAD} or \code{RCurl::getURL} to determine file size.  use "unzip_verify" to verify the download by attempting to unzip the file without issue, use "sas_verify" to verify the download by attempting to \code{haven::read_sas} the file without issue
 #' @param savecache whether to actually cache the downloaded files in the temporary directories.  setting this option to FALSE eliminates the purpose of cachaca(), but sometimes it's necessary to disable for a single call, or globally.
 #' @param cdc_ftp_https whether to substitute cdc ftp sites with https, i.e. \code{gsub( "ftp://ftp.cdc.gov/" , "https://ftp.cdc.gov/" , this_url , fixed = TRUE )}.
 #'
@@ -158,7 +158,7 @@ cachaca <-
 
 	) {
 
-		if( !( filesize_fun %in% c( 'httr' , 'rcurl' , 'unzip_verify' ) ) ) stop( "filesize_fun= must be 'httr', 'rcurl', or 'unzip_verify'" )
+		if( !( filesize_fun %in% c( 'httr' , 'rcurl' , 'unzip_verify' , 'sas_verify' ) ) ) stop( "filesize_fun= must be 'httr', 'rcurl', 'unzip_verify', or 'sas_verify'" )
 		
 		# if the cached file exists, assume it's good.
 		urlhash <- digest::digest(this_url)
@@ -241,6 +241,8 @@ cachaca <-
 							file.remove( unzip_tf , unzipped_files )
 													
 						}
+										
+						if( filesize_fun == 'sas_verify' ) stop( "filesize_fun == 'sas_verify' not implemented when destfile= is NULL" )
 												
 						if( !isTRUE( all.equal( length( success ) , this_filesize ) ) && !isTRUE( all.equal( length( httr::content( success ) ) , this_filesize ) ) ){
 
@@ -278,6 +280,15 @@ cachaca <-
 							this_filesize <- file.info( destfile )$size
 							
 							file.remove( unzipped_files )
+													
+						}
+						
+						if( filesize_fun == 'sas_verify' ){
+						
+							tryCatch( haven::read_sas( destfile ) , warning = function(w) { stop( "sas_verify failed: " , conditionMessage( w ) ) } )
+							
+							# if the unzip worked without issue, then the file size is correct
+							this_filesize <- file.info( destfile )$size
 													
 						}
 						

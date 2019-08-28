@@ -13,8 +13,9 @@ get_catalog_cpsasec <-
 		
 		catalog <-
 			data.frame(
-				year = asec_years ,
-				output_filename = file.path( output_dir , paste0( asec_years , " cps asec.rds" ) ) ,
+				production_file = c( rep( TRUE , length( asec_years ) ) , FALSE , FALSE ) ,
+				year = c( asec_years , 2017 , 2018 ) ,
+				output_filename = file.path( output_dir , paste0( c( asec_years , '2017 research' , '2018 bridge' ) , " cps asec.rds" ) ) ,
 				stringsAsFactors = FALSE
 			)
 
@@ -47,14 +48,34 @@ lodown_cpsasec <-
 			# this process is slow.
 			# for example, the CPS ASEC 2011 file has 204,983 person-records.
 
+
+			if( !( catalog[ i , 'production_file' ] ) & ( catalog[ i , 'year' ] == 2017 ) ){
+
+				tf1 <- tempfile() ; tf2 <- tempfile() ; tf3 <- tempfile()
+			
+				cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/income-poverty/time-series/data-extracts/2017/cps-asec-research-file/hhpub17_010919.sas7bdat" , tf1 , mode = 'wb' , filesize_fun = 'sas_verify' )
+				cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/income-poverty/time-series/data-extracts/2017/cps-asec-research-file/ffpub17_010919.sas7bdat" , tf2 , mode = 'wb' , filesize_fun = 'sas_verify' )
+				cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/income-poverty/time-series/data-extracts/2017/cps-asec-research-file/pppub17.sas7bdat" , tf3 , mode = 'wb' , filesize_fun = 'sas_verify' )
+
+				
+			} else if( !( catalog[ i , 'production_file' ] ) & ( catalog[ i , 'year' ] == 2018 ) ){
+
+				tf1 <- tempfile() ; tf2 <- tempfile() ; tf3 <- tempfile()
+			
+				cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/income-poverty/time-series/data-extracts/2018/cps-asec-bridge-file/hhpub18_bridge.sas7bdat" , tf1 , mode = 'wb' , filesize_fun = 'sas_verify' )
+				cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/income-poverty/time-series/data-extracts/2018/cps-asec-bridge-file/ffpub18_bridge.sas7bdat" , tf2 , mode = 'wb' , filesize_fun = 'sas_verify' )
+				cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/income-poverty/time-series/data-extracts/2018/cps-asec-bridge-file/ppub18_bridge.sas7bdat" , tf3 , mode = 'wb' , filesize_fun = 'sas_verify' )
+
+				
+
 			# for the 2014 cps, load the income-consistent file as the full-catalog[ i , 'year' ] extract
-			if ( catalog[ i , 'year' ] == 2014 ){
+			} else if ( catalog[ i , 'year' ] == 2014 ){
 				
 				tf1 <- tempfile() ; tf2 <- tempfile() ; tf3 <- tempfile()
 			
-				cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/income-poverty/time-series/data-extracts/hhld.sas7bdat" , tf1 , mode = 'wb' )
-				cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/income-poverty/time-series/data-extracts/family.sas7bdat" , tf2 , mode = 'wb' )
-				cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/income-poverty/time-series/data-extracts/person.sas7bdat" , tf3 , mode = 'wb' )
+				cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/income-poverty/time-series/data-extracts/hhld.sas7bdat" , tf1 , mode = 'wb' , filesize_fun = 'sas_verify' )
+				cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/income-poverty/time-series/data-extracts/family.sas7bdat" , tf2 , mode = 'wb' , filesize_fun = 'sas_verify' )
+				cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/income-poverty/time-series/data-extracts/person.sas7bdat" , tf3 , mode = 'wb' , filesize_fun = 'sas_verify' )
 
 				
 				fmly <- data.frame( haven::read_sas( tf2 ) )
@@ -390,7 +411,7 @@ lodown_cpsasec <-
 					
 					ot <- data.frame( readr::read_fwf( tf , readr::fwf_widths( c( 5 , 2 , 2 , 1 ) ) , col_types = 'nnnn' ) )
 					
-					cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/ppint14esi_offer_ext.sas7bdat" , tf , mode = 'wb' )
+					cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/ppint14esi_offer_ext.sas7bdat" , tf , mode = 'wb' , filesize_fun = 'sas_verify' )
 					
 					offer <- data.frame( haven::read_sas( tf ) )
 					
@@ -411,7 +432,7 @@ lodown_cpsasec <-
 					
 					ac <- data.frame( readr::read_fwf( tf , readr::fwf_widths( c( 5 , 2 , 1 ) ) , col_types = 'nnn' ) )
 
-					cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/ppint15esi_offer_ext.sas7bdat" , tf , mode = 'wb' )
+					cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/ppint15esi_offer_ext.sas7bdat" , tf , mode = 'wb' , filesize_fun = 'sas_verify' )
 					
 					offer <- data.frame( haven::read_sas( tf ) )
 				
@@ -431,7 +452,7 @@ lodown_cpsasec <-
 					
 					ac <- data.frame( readr::read_fwf( tf , readr::fwf_widths( c( 5 , 2 , 1 ) ) , col_types = 'nnn' ) )
 
-					cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/pubuse_esioffer_2016.sas7bdat" , tf , mode = 'wb' )
+					cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/pubuse_esioffer_2016.sas7bdat" , tf , mode = 'wb' , filesize_fun = 'sas_verify' )
 					
 					offer <- data.frame( haven::read_sas( tf ) )
 				
@@ -451,7 +472,7 @@ lodown_cpsasec <-
 					
 					ac <- data.frame( readr::read_fwf( tf , readr::fwf_widths( c( 5 , 2 , 1 ) ) , col_types = 'nnn' ) )
 
-					cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2017/cps-redesign/pubuse_esioffer_2017.sas7bdat" , tf , mode = 'wb' )
+					cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2017/cps-redesign/pubuse_esioffer_2017.sas7bdat" , tf , mode = 'wb' , filesize_fun = 'sas_verify' )
 					
 					offer <- data.frame( haven::read_sas( tf ) )
 				
@@ -471,7 +492,7 @@ lodown_cpsasec <-
 					
 					ac <- data.frame( readr::read_fwf( tf , readr::fwf_widths( c( 5 , 2 , 1 ) ) , col_types = 'nnn' ) )
 
-					cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2018/cps-redesign/pubuse_esioffer_2018.sas7bdat" , tf , mode = 'wb' )
+					cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2018/cps-redesign/pubuse_esioffer_2018.sas7bdat" , tf , mode = 'wb' , filesize_fun = 'sas_verify' )
 					
 					offer <- data.frame( haven::read_sas( tf ) )
 				
@@ -512,21 +533,30 @@ lodown_cpsasec <-
 				# census.gov website containing the current population survey's replicate weights file
 				CPS.replicate.weight.file.location <- 
 					ifelse(
-						catalog[ i , 'year' ] == 2014.38 ,
-						"https://www2.census.gov/programs-surveys/demo/datasets/income-poverty/time-series/weights/cps-asec-ascii-repwgt-2014-redes.dat" ,
+						!( catalog[ i , 'production_file' ] ) & catalog[ i , 'year' ] == 2017 ,
+						"https://www2.census.gov/programs-surveys/demo/datasets/income-poverty/time-series/data-extracts/2017/cps-asec-research-file/repwgt_2017.sas7bdat" ,
 						ifelse(
-							catalog[ i , 'year' ] == 2014 ,
-							"https://www2.census.gov/programs-surveys/demo/datasets/income-poverty/time-series/weights/cps-asec-ascii-repwgt-2014-fullsample.dat" ,
-							paste0( 
-								"https://thedataweb.rm.census.gov/pub/cps/march/CPS_ASEC_ASCII_REPWGT_" , 
-								substr( catalog[ i , 'year' ] , 1 , 4 ) , 
-								".zip" 
+							!( catalog[ i , 'production_file' ] ) & catalog[ i , 'year' ] == 2018 ,
+							"https://www2.census.gov/programs-surveys/demo/datasets/income-poverty/time-series/data-extracts/2018/cps-asec-bridge-file/repwgt_2018.sas7bdat" ,
+							ifelse(
+								catalog[ i , 'year' ] == 2014.38 ,
+								"https://www2.census.gov/programs-surveys/demo/datasets/income-poverty/time-series/weights/cps-asec-ascii-repwgt-2014-redes.dat" ,
+								ifelse(
+									catalog[ i , 'year' ] == 2014 ,
+									"https://www2.census.gov/programs-surveys/demo/datasets/income-poverty/time-series/weights/cps-asec-ascii-repwgt-2014-fullsample.dat" ,
+									paste0( 
+										"https://thedataweb.rm.census.gov/pub/cps/march/CPS_ASEC_ASCII_REPWGT_" , 
+										substr( catalog[ i , 'year' ] , 1 , 4 ) , 
+										".zip" 
+									)
+								)
 							)
 						)
 					)
+
 					
 				# census.gov website containing the current population survey's SAS import instructions
-				if( catalog[ i , 'year' ] %in% 2014.38 ){
+				if( !( catalog[ i , 'production_file' ] ) | ( catalog[ i , 'year' ] %in% 2014.38 ) ){
 				
 					CPS.replicate.weight.SAS.read.in.instructions <- tempfile()
 
@@ -594,7 +624,7 @@ lodown_cpsasec <-
 			
 			overlapping.spm.fields <- c( "gestfips" , "fpovcut" , "ftotval" , "marsupwt" )
 			
-			if( catalog[ i , 'year' ] %in% c( 2010:2018 , 2014.38 , 2014.58 ) ){
+			if( ( catalog[ i , 'production_file' ] ) & ( catalog[ i , 'year' ] %in% c( 2010:2018 , 2014.38 , 2014.58 ) ) ){
 
 				if( catalog[ i , 'year' ] >= 2017 ){
 				
@@ -619,7 +649,7 @@ lodown_cpsasec <-
 				
 				}
 				
-				cachaca( sp.url , tf , mode = 'wb' )
+				cachaca( sp.url , tf , mode = 'wb' , filesize_fun = 'sas_verify' )
 				
 				sp <- data.frame( haven::read_sas( tf ) )
 			
@@ -627,7 +657,7 @@ lodown_cpsasec <-
 					
 					sp.url <- "https://www2.census.gov/programs-surveys/supplemental-poverty-measure/datasets/spm-redes/spmresearch2013_redes.sas7bdat"
 						
-					cachaca( sp.url , tf , mode = 'wb' )
+					cachaca( sp.url , tf , mode = 'wb' , filesize_fun = 'sas_verify' )
 					
 					sp2 <- data.frame( haven::read_sas( tf ) )
 				
