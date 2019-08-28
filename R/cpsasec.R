@@ -1,7 +1,7 @@
 get_catalog_cpsasec <-
 	function( data_name = "cpsasec" , output_dir , ... ){
 
-		cps_ftp <- "http://thedataweb.rm.census.gov/ftp/cps_ftp.html#cpsmarch"
+		cps_ftp <- "https://thedataweb.rm.census.gov/ftp/cps_ftp.html#cpsmarch"
 
 		cps_links <- rvest::html_attr( rvest::html_nodes( xml2::read_html( cps_ftp ) , "a" ) , "href" )
 		
@@ -94,24 +94,24 @@ lodown_cpsasec <-
 					ifelse( 
 						# if the catalog[ i , 'year' ] to download is 2007, the filename doesn't match the others..
 						catalog[ i , 'year' ] == 2007 ,
-						"http://thedataweb.rm.census.gov/pub/cps/march/asec2007_pubuse_tax2.zip" ,
+						"https://thedataweb.rm.census.gov/pub/cps/march/asec2007_pubuse_tax2.zip" ,
 						ifelse(
 							catalog[ i , 'year' ] %in% 2004:2003 ,
-							paste0( "http://thedataweb.rm.census.gov/pub/cps/march/asec" , catalog[ i , 'year' ] , ".zip" ) ,
+							paste0( "https://thedataweb.rm.census.gov/pub/cps/march/asec" , catalog[ i , 'year' ] , ".zip" ) ,
 							ifelse(
 								catalog[ i , 'year' ] %in% 2002:1998 ,
-								paste0( "http://thedataweb.rm.census.gov/pub/cps/march/mar" , substr( catalog[ i , 'year' ] , 3 , 4 ) , "supp.zip" ) ,
+								paste0( "https://thedataweb.rm.census.gov/pub/cps/march/mar" , substr( catalog[ i , 'year' ] , 3 , 4 ) , "supp.zip" ) ,
 								ifelse( 
 									catalog[ i , 'year' ] == 2014.38 ,
-									"http://thedataweb.rm.census.gov/pub/cps/march/asec2014_pubuse_3x8_rerun_v2.zip" ,
+									"https://thedataweb.rm.census.gov/pub/cps/march/asec2014_pubuse_3x8_rerun_v2.zip" ,
 									ifelse( 
 										catalog[ i , 'year' ] == 2014.58 ,
-										"http://thedataweb.rm.census.gov/pub/cps/march/asec2014_pubuse_tax_fix_5x8_2017.zip" ,
+										"https://thedataweb.rm.census.gov/pub/cps/march/asec2014_pubuse_tax_fix_5x8_2017.zip" ,
 										ifelse( catalog[ i , 'year' ] == 2016 ,
-											paste0( "http://thedataweb.rm.census.gov/pub/cps/march/asec" , catalog[ i , 'year' ] , "_pubuse_v3.zip" ) ,
+											paste0( "https://thedataweb.rm.census.gov/pub/cps/march/asec" , catalog[ i , 'year' ] , "_pubuse_v3.zip" ) ,
 											# ifelse( catalog[ i , 'year' ] == 2018 ,
-												# "http://thedataweb.rm.census.gov/pub/cps/march/asec2018early_pubuse.zip" ,
-												paste0( "http://thedataweb.rm.census.gov/pub/cps/march/asec" , catalog[ i , 'year' ] , "_pubuse.zip" )
+												# "https://thedataweb.rm.census.gov/pub/cps/march/asec2018early_pubuse.zip" ,
+												paste0( "https://thedataweb.rm.census.gov/pub/cps/march/asec" , catalog[ i , 'year' ] , "_pubuse.zip" )
 											# )
 										)
 									)
@@ -137,14 +137,14 @@ lodown_cpsasec <-
 
 				} else {
 					
-					if( catalog[ i , 'year' ] >= 2017 ) sas_ris <- cpsasec_dd_parser( paste0( "http://thedataweb.rm.census.gov/pub/cps/march/08ASEC" , catalog[ i , 'year' ] , "_Data_Dict_Full.txt" ) )
-					if( catalog[ i , 'year' ] == 2016 ) sas_ris <- cpsasec_dd_parser( paste0( "http://thedataweb.rm.census.gov/pub/cps/march/Asec2016_Data_Dict_Full.txt" ) )
-					if( catalog[ i , 'year' ] == 2015 ) sas_ris <- cpsasec_dd_parser( "http://thedataweb.rm.census.gov/pub/cps/march/asec2015early_pubuse.dd.txt" )
-					if( catalog[ i , 'year' ] == 2014.38 ) sas_ris <- cpsasec_dd_parser( "http://thedataweb.rm.census.gov/pub/cps/march/asec2014R_pubuse.dd.txt" )
-					if( catalog[ i , 'year' ] == 2014.58 ) sas_ris <- cpsasec_dd_parser( "http://thedataweb.rm.census.gov/pub/cps/march/asec2014early_pubuse.dd.txt" )
-					if( catalog[ i , 'year' ] == 2013 ) sas_ris <- cpsasec_dd_parser( "http://thedataweb.rm.census.gov/pub/cps/march/asec2013early_pubuse.dd.txt" )
-					if( catalog[ i , 'year' ] == 2012 ) sas_ris <- cpsasec_dd_parser( "http://thedataweb.rm.census.gov/pub/cps/march/asec2012early_pubuse.dd.txt" )
-					if( catalog[ i , 'year' ] == 2011 ) sas_ris <- cpsasec_dd_parser( "http://thedataweb.rm.census.gov/pub/cps/march/asec2011_pubuse.dd.txt" )
+					if( catalog[ i , 'year' ] >= 2017 ) sas_ris <- cpsasec_dd_parser( paste0( "https://thedataweb.rm.census.gov/pub/cps/march/08ASEC" , catalog[ i , 'year' ] , "_Data_Dict_Full.txt" ) )
+					if( catalog[ i , 'year' ] == 2016 ) sas_ris <- cpsasec_dd_parser( paste0( "https://thedataweb.rm.census.gov/pub/cps/march/Asec2016_Data_Dict_Full.txt" ) )
+					if( catalog[ i , 'year' ] == 2015 ) sas_ris <- cpsasec_dd_parser( "https://thedataweb.rm.census.gov/pub/cps/march/asec2015early_pubuse.dd.txt" )
+					if( catalog[ i , 'year' ] == 2014.38 ) sas_ris <- cpsasec_dd_parser( "https://thedataweb.rm.census.gov/pub/cps/march/asec2014R_pubuse.dd.txt" )
+					if( catalog[ i , 'year' ] == 2014.58 ) sas_ris <- cpsasec_dd_parser( "https://thedataweb.rm.census.gov/pub/cps/march/asec2014early_pubuse.dd.txt" )
+					if( catalog[ i , 'year' ] == 2013 ) sas_ris <- cpsasec_dd_parser( "https://thedataweb.rm.census.gov/pub/cps/march/asec2013early_pubuse.dd.txt" )
+					if( catalog[ i , 'year' ] == 2012 ) sas_ris <- cpsasec_dd_parser( "https://thedataweb.rm.census.gov/pub/cps/march/asec2012early_pubuse.dd.txt" )
+					if( catalog[ i , 'year' ] == 2011 ) sas_ris <- cpsasec_dd_parser( "https://thedataweb.rm.census.gov/pub/cps/march/asec2011_pubuse.dd.txt" )
 
 				}
 					
@@ -518,7 +518,7 @@ lodown_cpsasec <-
 							catalog[ i , 'year' ] == 2014 ,
 							"https://www2.census.gov/programs-surveys/demo/datasets/income-poverty/time-series/weights/cps-asec-ascii-repwgt-2014-fullsample.dat" ,
 							paste0( 
-								"http://thedataweb.rm.census.gov/pub/cps/march/CPS_ASEC_ASCII_REPWGT_" , 
+								"https://thedataweb.rm.census.gov/pub/cps/march/CPS_ASEC_ASCII_REPWGT_" , 
 								substr( catalog[ i , 'year' ] , 1 , 4 ) , 
 								".zip" 
 							)
@@ -544,7 +544,7 @@ lodown_cpsasec <-
 					
 					CPS.replicate.weight.SAS.read.in.instructions <- 
 						paste0( 
-							"http://thedataweb.rm.census.gov/pub/cps/march/CPS_ASEC_ASCII_REPWGT_" , 
+							"https://thedataweb.rm.census.gov/pub/cps/march/CPS_ASEC_ASCII_REPWGT_" , 
 							substr( catalog[ i , 'year' ] , 1 , 4 ) , 
 							".SAS" 
 						)
