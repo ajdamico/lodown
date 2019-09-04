@@ -14,7 +14,7 @@ get_catalog_brfss <-
 				paste0( "https://www.cdc.gov/brfss/annual_data/" , available_years , "/files/LLCP" , available_years , "ASC.ZIP" ) ,
 			ifelse( available_years == 2011 ,
 				"https://www.cdc.gov/brfss/annual_data/2011/files/LLCP2011ASC.ZIP" ,
-				paste0( "www.cdc.gov/brfss/annual_data/" , available_years , "/files/cdbrfs" , ifelse( available_years == 2002 , available_years , substr( available_years , 3 , 4 ) ) , "asc.zip" )
+				paste0( "https://www.cdc.gov/brfss/annual_data/" , available_years , "/files/CDBRFS" , ifelse( available_years == 2002 , available_years , substr( available_years , 3 , 4 ) ) , "ASC.zip" )
 				) ) ) )
 
 		sas_files <-
