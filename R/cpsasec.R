@@ -48,8 +48,44 @@ lodown_cpsasec <-
 			# this process is slow.
 			# for example, the CPS ASEC 2011 file has 204,983 person-records.
 
+			if( catalog[ i , 'year' ] >= 2019 ){
+				
+				td <- tempdir()
+				
+				cachaca( paste0( "https://thedataweb.rm.census.gov/pub/cps/march/asecpub" , substr( catalog[ i , 'year' ] , 3 , 4 ) , "sas.zip" ) , tf1 , mode = 'wb' , filesize_fun = 'unzip_verify' )
 
-			if( !( catalog[ i , 'production_file' ] ) & ( catalog[ i , 'year' ] == 2017 ) ){
+				asec_files <- unzip( tf1 , exdir = td )
+				
+				prsn <- data.frame( haven::read_sas( grep( 'pppub' , asec_files , value = TRUE ) ) )
+				fmly <- data.frame( haven::read_sas( grep( 'ffpub' , asec_files , value = TRUE ) ) )
+				hhld <- data.frame( haven::read_sas( grep( 'hhpub' , asec_files , value = TRUE ) ) )
+				
+				names( fmly ) <- tolower( names( fmly ) )
+				for ( j in names( fmly ) ) fmly[ , j ] <- as.numeric( fmly[ , j ] )
+				fmly$fsup_wgt <- fmly$fsup_wgt / 100
+				
+				number_of_records <- nrow( prsn )
+				names( prsn ) <- tolower( names( prsn ) )
+				for ( j in names( prsn ) ) prsn[ , j ] <- as.numeric( prsn[ , j ] )
+				for ( j in c( 'marsupwt' , 'a_ernlwt' , 'a_fnlwgt' ) ) prsn[ , j ] <- prsn[ , j ] / 100
+				names( fmly )[ names( fmly ) == 'fh_seq' ] <- 'h_seq'
+				names( prsn )[ names( prsn ) == 'ph_seq' ] <- 'h_seq'
+				names( prsn )[ names( prsn ) == 'phf_seq' ] <- 'ffpos'
+				x <- merge( fmly , prsn )
+				rm( fmly , prsn )
+
+				names( hhld ) <- tolower( names( hhld ) )
+				for ( j in names( hhld ) ) hhld[ , j ] <- as.numeric( hhld[ , j ] )
+				hhld$hsup_wgt <- hhld$hsup_wgt / 100
+				x <- merge( hhld , x )
+				rm( hhld )
+				
+				names( x ) <- toupper( names( x ) )
+				
+				stopifnot( nrow( x ) == number_of_records )
+
+
+			} else if( !( catalog[ i , 'production_file' ] ) & ( catalog[ i , 'year' ] == 2017 ) ){
 
 				tf1 <- tempfile() ; tf2 <- tempfile() ; tf3 <- tempfile()
 			
@@ -429,9 +465,7 @@ lodown_cpsasec <-
 				
 			# tack on _anycov_ variables
 			# tack on _outtyp_ variables
-			if( ( catalog[ i , 'production_file' ] ) & ( catalog[ i , 'year' ] > 2013 ) ){
-				
-				stopifnot( catalog[ i , 'year' ] %in% c( 2018 , 2017 , 2016 , 2015 , 2014.58 , 2014.38 , 2014 ) )
+			if( ( catalog[ i , 'production_file' ] ) & ( catalog[ i , 'year' ] %in% c( 2018 , 2017 , 2016 , 2015 , 2014.58 , 2014.38 , 2014 ) ) ){
 				
 				tf <- tempfile()
 				
@@ -691,6 +725,7 @@ lodown_cpsasec <-
 				stopifnot( nrow( x ) == number_of_records )
 				
 			}
+			
 			
 			x$one <- 1
 				
