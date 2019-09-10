@@ -52,9 +52,9 @@ lodown_cpsasec <-
 				
 				td <- tempdir()
 				
-				cachaca( paste0( "https://thedataweb.rm.census.gov/pub/cps/march/asecpub" , substr( catalog[ i , 'year' ] , 3 , 4 ) , "sas.zip" ) , tf1 , mode = 'wb' , filesize_fun = 'unzip_verify' )
+				cachaca( paste0( "https://thedataweb.rm.census.gov/pub/cps/march/asecpub" , substr( catalog[ i , 'year' ] , 3 , 4 ) , "sas.zip" ) , tf , mode = 'wb' , filesize_fun = 'unzip_verify' )
 
-				asec_files <- unzip( tf1 , exdir = td )
+				asec_files <- unzip( tf , exdir = td )
 				
 				prsn <- data.frame( haven::read_sas( grep( 'pppub' , asec_files , value = TRUE ) ) )
 				fmly <- data.frame( haven::read_sas( grep( 'ffpub' , asec_files , value = TRUE ) ) )
@@ -83,6 +83,8 @@ lodown_cpsasec <-
 				names( x ) <- toupper( names( x ) )
 				
 				stopifnot( nrow( x ) == number_of_records )
+
+				file.remove( asec_files , tf )
 
 
 			} else if( !( catalog[ i , 'production_file' ] ) & ( catalog[ i , 'year' ] == 2017 ) ){
