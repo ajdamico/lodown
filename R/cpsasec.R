@@ -75,7 +75,7 @@ lodown_cpsasec <-
 				rm( fmly , prsn )
 
 				names( hhld ) <- tolower( names( hhld ) )
-				for ( j in names( hhld ) ) hhld[ , j ] <- as.numeric( hhld[ , j ] )
+				for ( j in setdiff( names( hhld ) , 'h_idnum' ) ) hhld[ , j ] <- as.numeric( hhld[ , j ] )
 				hhld$hsup_wgt <- hhld$hsup_wgt / 100
 				x <- merge( hhld , x )
 				rm( hhld )
