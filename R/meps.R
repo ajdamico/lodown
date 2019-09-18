@@ -26,11 +26,19 @@ get_catalog_meps <-
 
 			search_result <- strsplit( RCurl::getURL( search_page , ssl.verifypeer = FALSE ) , "(\r)?\n" )[[1]]
 			
+			puf_search_result_table <- grep( "PUF Search Results" , search_result )
+			
+			table_closures <- grep( "/table" , search_result )
+			
+			stopifnot( length( puf_search_result_table ) == 1 )
+			
+			search_result <- search_result[ seq( puf_search_result_table , min( table_closures[ table_closures > puf_search_result_table ] ) ) ]
+			
 			tf <- tempfile()
 
 			writeLines( search_result , tf )
 
-			available_pufs <- rvest::html_table( xml2::read_html( tf ) , fill = TRUE )[[11]]
+			available_pufs <- rvest::html_table( xml2::read_html( tf ) , fill = TRUE )[[1]]
 
 			available_pufs <- available_pufs[ grepl( "^HC" , available_pufs[ , 1 ] ) , ]
 
