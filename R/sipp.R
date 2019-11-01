@@ -9,13 +9,13 @@ get_catalog_sipp <-
 				db_tablename = c( paste0( "w" , 1:12 ) , paste0( "rw" , 1:12 ) , paste0( "tm" , 1:12 ) , "wgtw12" , paste0( 'cy' , 1:4 ) , "pnl" ) ,
 				full_url =
 					c(
-						paste0( "http://thedataweb.rm.census.gov/pub/sipp/1996/l96puw" , 1:12 , ".zip" ) ,
-						paste0( "http://thedataweb.rm.census.gov/pub/sipp/1996/rw96w" , 1:12 , ".zip" ) ,
-						paste0( "http://thedataweb.rm.census.gov/pub/sipp/1996/tm96puw" , 1:9 , ".zip" ) , 
-						"http://thedataweb.rm.census.gov/pub/sipp/1996/p96putm10.zip" ,
-						paste0( "http://thedataweb.rm.census.gov/pub/sipp/1996/tm96puw" , 11:12 , ".zip" ) ,
-						"http://thedataweb.rm.census.gov/pub/sipp/1996/ctl_fer.zip" ,
-						paste0( "http://thedataweb.rm.census.gov/pub/sipp/1996/lrw96" , c( paste0( 'cy' , 1:4 ) , 'pnl' ) , ".zip" )
+						paste0( "https://thedataweb.rm.census.gov/pub/sipp/1996/l96puw" , 1:12 , ".zip" ) ,
+						paste0( "https://thedataweb.rm.census.gov/pub/sipp/1996/rw96w" , 1:12 , ".zip" ) ,
+						paste0( "https://thedataweb.rm.census.gov/pub/sipp/1996/tm96puw" , 1:9 , ".zip" ) , 
+						"https://thedataweb.rm.census.gov/pub/sipp/1996/p96putm10.zip" ,
+						paste0( "https://thedataweb.rm.census.gov/pub/sipp/1996/tm96puw" , 11:12 , ".zip" ) ,
+						"https://thedataweb.rm.census.gov/pub/sipp/1996/ctl_fer.zip" ,
+						paste0( "https://thedataweb.rm.census.gov/pub/sipp/1996/lrw96" , c( paste0( 'cy' , 1:4 ) , 'pnl' ) , ".zip" )
 					) ,
 				dbfile = paste0( output_dir , "/SQLite_1996.db" ) ,
 				stringsAsFactors = FALSE
@@ -29,13 +29,13 @@ get_catalog_sipp <-
 				db_tablename = c( paste0( "w" , 1:9 ) , paste0( "rw" , 1:9 ) , paste0( "tm" , 1:9 ) , "wgtw9" , "hh" , "wf" , paste0( 'cy' , 1:3 ) , paste0( 'pnl' , 1:3 ) ) ,
 				full_url =
 					c(
-						paste0( "http://thedataweb.rm.census.gov/pub/sipp/2001/l01puw" , 1:9 , ".zip" ) ,
-						paste0( "http://thedataweb.rm.census.gov/pub/sipp/2001/rw01w" , 1:9 , ".zip" ) ,
-						paste0( "http://thedataweb.rm.census.gov/pub/sipp/2001/p01putm" , 1:9 , ".zip" ) ,
-						"http://thedataweb.rm.census.gov/pub/sipp/2001/lgtwgt2001w9.zip" ,
-						"http://thedataweb.rm.census.gov/pub/sipp/2001/hhldpuw1.zip" ,
-						"http://thedataweb.rm.census.gov/pub/sipp/2001/p01putm8x.zip" ,
-						paste0( "http://thedataweb.rm.census.gov/pub/sipp/2001/lgtwgt" , c( paste0( 'cy' , 1:3 ) , paste0( 'pnl' , 1:3 ) ) , ".zip" )
+						paste0( "https://thedataweb.rm.census.gov/pub/sipp/2001/l01puw" , 1:9 , ".zip" ) ,
+						paste0( "https://thedataweb.rm.census.gov/pub/sipp/2001/rw01w" , 1:9 , ".zip" ) ,
+						paste0( "https://thedataweb.rm.census.gov/pub/sipp/2001/p01putm" , 1:9 , ".zip" ) ,
+						"https://thedataweb.rm.census.gov/pub/sipp/2001/lgtwgt2001w9.zip" ,
+						"https://thedataweb.rm.census.gov/pub/sipp/2001/hhldpuw1.zip" ,
+						"https://thedataweb.rm.census.gov/pub/sipp/2001/p01putm8x.zip" ,
+						paste0( "https://thedataweb.rm.census.gov/pub/sipp/2001/lgtwgt" , c( paste0( 'cy' , 1:3 ) , paste0( 'pnl' , 1:3 ) ) , ".zip" )
 					) ,
 				dbfile = paste0( output_dir , "/SQLite_2001.db" ) ,
 				stringsAsFactors = FALSE
@@ -50,13 +50,13 @@ get_catalog_sipp <-
 				db_tablename = c( paste0( "w" , 1:12 ) , paste0( "rw" , 1:12 ) , paste0( "tm" , 1:8 ) , "wgtw12" , paste0( 'cy' , 1:4 ) , paste0( 'pnl' , 1:4 ) , 'aoa3' , 'aoa6' ) ,
 				full_url =
 					c(
-						paste0( "http://thedataweb.rm.census.gov/pub/sipp/2004/l04puw" , 1:12 , ".zip" ) ,
-						paste0( "http://thedataweb.rm.census.gov/pub/sipp/2004/rw04w" , 1:12 , ".zip" ) ,
-						paste0( "http://thedataweb.rm.census.gov/pub/sipp/2004/p04putm" , 1:8 , ".zip" ) ,
-						"http://thedataweb.rm.census.gov/pub/sipp/2004/lgtwgt2004w12.zip" ,
-						paste0( "http://thedataweb.rm.census.gov/pub/sipp/2004/lrw04_" , c( paste0( 'cy' , 1:4 ) , paste0( 'pnl' , 1:4 )  ) , ".zip" ) ,
-						"http://thedataweb.rm.census.gov/pub/sipp/2004/p04putm3_aoa.zip" ,
-						"http://thedataweb.rm.census.gov/pub/sipp/2004/p04putm6_aoa.zip"
+						paste0( "https://thedataweb.rm.census.gov/pub/sipp/2004/l04puw" , 1:12 , ".zip" ) ,
+						paste0( "https://thedataweb.rm.census.gov/pub/sipp/2004/rw04w" , 1:12 , ".zip" ) ,
+						paste0( "https://thedataweb.rm.census.gov/pub/sipp/2004/p04putm" , 1:8 , ".zip" ) ,
+						"https://thedataweb.rm.census.gov/pub/sipp/2004/lgtwgt2004w12.zip" ,
+						paste0( "https://thedataweb.rm.census.gov/pub/sipp/2004/lrw04_" , c( paste0( 'cy' , 1:4 ) , paste0( 'pnl' , 1:4 )  ) , ".zip" ) ,
+						"https://thedataweb.rm.census.gov/pub/sipp/2004/p04putm3_aoa.zip" ,
+						"https://thedataweb.rm.census.gov/pub/sipp/2004/p04putm6_aoa.zip"
 					) ,
 				dbfile = paste0( output_dir , "/SQLite_2004.db" ) ,
 				stringsAsFactors = FALSE
@@ -71,11 +71,11 @@ get_catalog_sipp <-
 				db_tablename = c( paste0( "w" , 1:16 ) , paste0( "rw" , 1:16 ) , paste0( "tm" , c( 1:11 , 13 ) ) , "wgtw16" , paste0( 'cy' , 1:5 ) , paste0( 'pn' , 1:5 ) ) ,
 				full_url =
 					c(
-						paste0( "http://thedataweb.rm.census.gov/pub/sipp/2008/l08puw" , 1:16 , ".zip" ) ,
-						paste0( "http://thedataweb.rm.census.gov/pub/sipp/2008/rw08w" , 1:16 , ".zip" ) ,
-						paste0( "http://thedataweb.rm.census.gov/pub/sipp/2008/p08putm" , c( 1:11 , 13 ) , ".zip" ) ,
-						"http://thedataweb.rm.census.gov/pub/sipp/2008/lgtwgt2008w16.zip" ,
-						paste0( "http://thedataweb.rm.census.gov/pub/sipp/2008/lrw08" , c( paste0( 'cy' , 1:5 ) , paste0( 'pn' , 1:5 ) ) , ".zip" )
+						paste0( "https://thedataweb.rm.census.gov/pub/sipp/2008/l08puw" , 1:16 , ".zip" ) ,
+						paste0( "https://thedataweb.rm.census.gov/pub/sipp/2008/rw08w" , 1:16 , ".zip" ) ,
+						paste0( "https://thedataweb.rm.census.gov/pub/sipp/2008/p08putm" , c( 1:11 , 13 ) , ".zip" ) ,
+						"https://thedataweb.rm.census.gov/pub/sipp/2008/lgtwgt2008w16.zip" ,
+						paste0( "https://thedataweb.rm.census.gov/pub/sipp/2008/lrw08" , c( paste0( 'cy' , 1:5 ) , paste0( 'pn' , 1:5 ) ) , ".zip" )
 					) ,
 				dbfile = paste0( output_dir , "/SQLite_2008.df" ) ,
 				stringsAsFactors = FALSE
@@ -89,8 +89,8 @@ get_catalog_sipp <-
 				db_tablename = c( paste0( "w" , 1 ) , paste0( "rw" , 1 ) ) ,
 				full_url =
 					c(
-						paste0( "http://thedataweb.rm.census.gov/pub/sipp/2014/pu2014w" , 1 , "_dat.zip" ) ,
-						paste0( "http://thedataweb.rm.census.gov/pub/sipp/2014/rw14w" , 1 , ".zip" ) 
+						paste0( "https://thedataweb.rm.census.gov/pub/sipp/2014/pu2014w" , 1 , "_dat.zip" ) ,
+						paste0( "https://thedataweb.rm.census.gov/pub/sipp/2014/rw14w" , 1 , ".zip" ) 
 					) ,
 				dbfile = paste0( output_dir , "/SQLite_2014.db" ) ,
 				stringsAsFactors = FALSE
@@ -117,11 +117,11 @@ lodown_sipp <-
 
 			if( catalog[ i , 'panel' ] == 1996 ){
 				
-				if ( catalog[ i , 'full_url' ] == "http://thedataweb.rm.census.gov/pub/sipp/1996/ctl_fer.zip" ){
+				if ( catalog[ i , 'full_url' ] == "https://thedataweb.rm.census.gov/pub/sipp/1996/ctl_fer.zip" ){
 
 					# the census SIPP FTP site does not have a SAS input script,
 					# so create one using the dictionary at
-					# http://thedataweb.rm.census.gov/pub/sipp/1996/ctl_ferd.asc
+					# https://thedataweb.rm.census.gov/pub/sipp/1996/ctl_ferd.asc
 
 					# write an example SAS import script using the dash method
 					sas.import.with.at.signs <-
@@ -159,12 +159,12 @@ lodown_sipp <-
 				
 					
 				
-				if( catalog[ i , 'full_url' ] %in% paste0( "http://thedataweb.rm.census.gov/pub/sipp/1996/l96puw" , 1:12 , ".zip" ) ){
+				if( catalog[ i , 'full_url' ] %in% paste0( "https://thedataweb.rm.census.gov/pub/sipp/1996/l96puw" , 1:12 , ".zip" ) ){
 
 					# add the core wave to the database in a table w#
 					read_SAScii_monetdb (
 						catalog[ i , 'full_url' ] ,
-						chop.suid( fix.ct( "http://thedataweb.rm.census.gov/pub/sipp/1996/sip96lgt.sas" ) ) ,
+						chop.suid( fix.ct( "https://thedataweb.rm.census.gov/pub/sipp/1996/sip96lgt.sas" ) ) ,
 						beginline = 5 ,
 						zipped = TRUE ,
 						tl = TRUE ,
@@ -174,12 +174,12 @@ lodown_sipp <-
 						
 				}
 
-				if( catalog[ i , 'full_url' ] %in% paste0( "http://thedataweb.rm.census.gov/pub/sipp/1996/rw96w" , 1:12 , ".zip" ) ){
+				if( catalog[ i , 'full_url' ] %in% paste0( "https://thedataweb.rm.census.gov/pub/sipp/1996/rw96w" , 1:12 , ".zip" ) ){
 
 					# add the wave-specific replicate weight to the database in a table rw#
 					read_SAScii_monetdb (
 						catalog[ i , 'full_url' ] ,
-						chop.suid( fix.ct( fix.repwgt( "http://thedataweb.rm.census.gov/pub/sipp/1996/rw96wx.sas" ) ) ) ,
+						chop.suid( fix.ct( fix.repwgt( "https://thedataweb.rm.census.gov/pub/sipp/1996/rw96wx.sas" ) ) ) ,
 						beginline = 7 ,
 						zipped = TRUE ,
 						tl = TRUE ,
@@ -192,15 +192,15 @@ lodown_sipp <-
 				if( 
 					catalog[ i , 'full_url' ] %in% 
 						c( 
-							paste0( "http://thedataweb.rm.census.gov/pub/sipp/1996/tm96puw" , 1:9 , ".zip" ) , 
-							"http://thedataweb.rm.census.gov/pub/sipp/1996/p96putm10.zip" ,
-							paste0( "http://thedataweb.rm.census.gov/pub/sipp/1996/tm96puw" , 11:12 , ".zip" )
+							paste0( "https://thedataweb.rm.census.gov/pub/sipp/1996/tm96puw" , 1:9 , ".zip" ) , 
+							"https://thedataweb.rm.census.gov/pub/sipp/1996/p96putm10.zip" ,
+							paste0( "https://thedataweb.rm.census.gov/pub/sipp/1996/tm96puw" , 11:12 , ".zip" )
 						) ){
 				
 					# add each topical module to the database in a table tm#
 					read_SAScii_monetdb (
 						catalog[ i , 'full_url' ] ,
-						chop.suid( fix.ct( paste0( "http://thedataweb.rm.census.gov/pub/sipp/1996/p96putm" , catalog[ i , 'wave' ] , ".sas" ) ) ) ,
+						chop.suid( fix.ct( paste0( "https://thedataweb.rm.census.gov/pub/sipp/1996/p96putm" , catalog[ i , 'wave' ] , ".sas" ) ) ) ,
 						beginline = 5 ,
 						zipped = TRUE ,
 						tl = TRUE ,
@@ -211,12 +211,12 @@ lodown_sipp <-
 				}
 				
 				
-				if( catalog[ i , 'full_url' ] %in% paste0( "http://thedataweb.rm.census.gov/pub/sipp/1996/lrw96" , c( paste0( 'cy' , 1:4 ) , 'pnl' ) , ".zip" ) ){
+				if( catalog[ i , 'full_url' ] %in% paste0( "https://thedataweb.rm.census.gov/pub/sipp/1996/lrw96" , c( paste0( 'cy' , 1:4 ) , 'pnl' ) , ".zip" ) ){
 
 					# add each longitudinal replicate weight file to the database in a table cy1-4 or pnl
 					read_SAScii_monetdb (
 						catalog[ i , 'full_url' ] ,
-						chop.suid( fix.repwgt( "http://thedataweb.rm.census.gov/pub/sipp/1996/lrw96_xx.sas" ) ) ,
+						chop.suid( fix.repwgt( "https://thedataweb.rm.census.gov/pub/sipp/1996/lrw96_xx.sas" ) ) ,
 						beginline = 7 ,
 						zipped = TRUE ,
 						tl = TRUE ,
@@ -232,11 +232,11 @@ lodown_sipp <-
 			
 			if( catalog[ i , 'panel' ] == 2001 ){
 
-				if ( catalog[ i , 'full_url' ] == "http://thedataweb.rm.census.gov/pub/sipp/2001/hhldpuw1.zip" ){
+				if ( catalog[ i , 'full_url' ] == "https://thedataweb.rm.census.gov/pub/sipp/2001/hhldpuw1.zip" ){
 
 					# the census SIPP FTP site does not have a SAS input script,
 					# so create one using the dictionary at
-					# http://thedataweb.rm.census.gov/pub/sipp/2001/hhpuw1d.txt
+					# https://thedataweb.rm.census.gov/pub/sipp/2001/hhpuw1d.txt
 
 					# write an example SAS import script using the dash method
 					sas.import.with.at.signs <-
@@ -271,12 +271,12 @@ lodown_sipp <-
 				}
 					
 				# if the welfare reform module flag has been set to TRUE above..
-				if ( catalog[ i , 'full_url' ] == "http://thedataweb.rm.census.gov/pub/sipp/2001/p01putm8x.zip" ){
+				if ( catalog[ i , 'full_url' ] == "https://thedataweb.rm.census.gov/pub/sipp/2001/p01putm8x.zip" ){
 
 					# add the longitudinal weights to the database in a table 'wf' (welfare)
 					read_SAScii_monetdb(
 						catalog[ i , 'full_url' ] ,
-						chop.suid( fix.ct( "http://thedataweb.rm.census.gov/pub/sipp/2001/p01putm8x.sas" ) ) ,
+						chop.suid( fix.ct( "https://thedataweb.rm.census.gov/pub/sipp/2001/p01putm8x.sas" ) ) ,
 						beginline = 5 ,
 						zipped = TRUE ,
 						tl = TRUE ,
@@ -287,11 +287,11 @@ lodown_sipp <-
 				}
 					
 				# if the longitudinal weights flag has been set to TRUE above..
-				if ( catalog[ i , 'full_url' ] == "http://thedataweb.rm.census.gov/pub/sipp/2001/lgtwgt2001w9.zip" ){
+				if ( catalog[ i , 'full_url' ] == "https://thedataweb.rm.census.gov/pub/sipp/2001/lgtwgt2001w9.zip" ){
 
 					# the census SIPP FTP site does not have a SAS input script,
 					# so create one using the dictionary at
-					# http://thedataweb.rm.census.gov/pub/sipp/2001/lgtwt01d.txt
+					# https://thedataweb.rm.census.gov/pub/sipp/2001/lgtwt01d.txt
 
 					# write an example SAS import script using the dash method
 					sas.import.with.at.signs <-
@@ -329,12 +329,12 @@ lodown_sipp <-
 				}
 					
 				# loop through each core wave..
-				if( catalog[ i , 'full_url' ] %in% paste0( "http://thedataweb.rm.census.gov/pub/sipp/2001/l01puw" , 1:9 , ".zip" ) ){
+				if( catalog[ i , 'full_url' ] %in% paste0( "https://thedataweb.rm.census.gov/pub/sipp/2001/l01puw" , 1:9 , ".zip" ) ){
 
 					# add the core wave to the database in a table w#
 					read_SAScii_monetdb (
 						catalog[ i , 'full_url' ] ,
-						chop.suid( fix.ct( "http://thedataweb.rm.census.gov/pub/sipp/2001/p01puw1.sas" ) ) ,
+						chop.suid( fix.ct( "https://thedataweb.rm.census.gov/pub/sipp/2001/p01puw1.sas" ) ) ,
 						beginline = 5 ,
 						zipped = TRUE ,
 						tl = TRUE ,
@@ -345,12 +345,12 @@ lodown_sipp <-
 				}
 
 				# loop through each replicate weight wave..
-				if( catalog[ i , 'full_url' ] %in% paste0( "http://thedataweb.rm.census.gov/pub/sipp/2001/rw01w" , 1:9 , ".zip" ) ){
+				if( catalog[ i , 'full_url' ] %in% paste0( "https://thedataweb.rm.census.gov/pub/sipp/2001/rw01w" , 1:9 , ".zip" ) ){
 
 					# add the wave-specific replicate weight to the database in a table rw#
 					read_SAScii_monetdb (
 						catalog[ i , 'full_url' ] ,
-						chop.suid( fix.ct( "http://thedataweb.rm.census.gov/pub/sipp/2001/rw01wx.sas" ) ) ,
+						chop.suid( fix.ct( "https://thedataweb.rm.census.gov/pub/sipp/2001/rw01wx.sas" ) ) ,
 						beginline = 5 ,
 						zipped = TRUE ,
 						tl = TRUE ,
@@ -361,12 +361,12 @@ lodown_sipp <-
 				}
 
 				# loop through each topical module..
-				if ( catalog[ i , 'full_url' ] %in% paste0( "http://thedataweb.rm.census.gov/pub/sipp/2001/p01putm" , 1:9 , ".zip" ) ){
+				if ( catalog[ i , 'full_url' ] %in% paste0( "https://thedataweb.rm.census.gov/pub/sipp/2001/p01putm" , 1:9 , ".zip" ) ){
 						
 					# add each topical module to the database in a table tm#
 					read_SAScii_monetdb (
 						catalog[ i , 'full_url' ] ,
-						chop.suid( fix.ct( paste0( "http://thedataweb.rm.census.gov/pub/sipp/2001/p01putm" , catalog[ i , 'wave' ] , ".sas" ) ) ) ,
+						chop.suid( fix.ct( paste0( "https://thedataweb.rm.census.gov/pub/sipp/2001/p01putm" , catalog[ i , 'wave' ] , ".sas" ) ) ) ,
 						beginline = 5 ,
 						zipped = TRUE ,
 						tl = TRUE ,
@@ -377,12 +377,12 @@ lodown_sipp <-
 				}
 
 				# loop through each longitudinal replicate weight file..
-				if ( catalog[ i , 'full_url' ] %in% paste0( "http://thedataweb.rm.census.gov/pub/sipp/2001/lgtwgt" , c( paste0( 'cy' , 1:3 ) , paste0( 'pnl' , 1:3 ) ) , ".zip" ) ){
+				if ( catalog[ i , 'full_url' ] %in% paste0( "https://thedataweb.rm.census.gov/pub/sipp/2001/lgtwgt" , c( paste0( 'cy' , 1:3 ) , paste0( 'pnl' , 1:3 ) ) , ".zip" ) ){
 
 					# add each longitudinal replicate weight file to the database in a table cy1-3 or pnl1-3
 					read_SAScii_monetdb (
 						catalog[ i , 'full_url' ] ,
-						fix.repwgt( "http://thedataweb.rm.census.gov/pub/sipp/2001/lrw01_xx.sas" ) ,
+						fix.repwgt( "https://thedataweb.rm.census.gov/pub/sipp/2001/lrw01_xx.sas" ) ,
 						beginline = 7 ,
 						zipped = TRUE ,
 						tl = TRUE ,
@@ -405,12 +405,12 @@ lodown_sipp <-
 			if( catalog[ i , 'panel' ] == 2004 ){
 
 				# if the longitudinal weights flag has been set to TRUE above..
-				if ( catalog[ i , 'full_url' ] == "http://thedataweb.rm.census.gov/pub/sipp/2004/lgtwgt2004w12.zip" ){
+				if ( catalog[ i , 'full_url' ] == "https://thedataweb.rm.census.gov/pub/sipp/2004/lgtwgt2004w12.zip" ){
 
 					# add the longitudinal weights to the database in a table 'w12'
 					read_SAScii_monetdb(
 						catalog[ i , 'full_url' ] ,
-						chop.suid( fix.ct( "http://thedataweb.rm.census.gov/pub/sipp/2004/lgtwgt2004w12.sas" ) ) ,
+						chop.suid( fix.ct( "https://thedataweb.rm.census.gov/pub/sipp/2004/lgtwgt2004w12.sas" ) ) ,
 						beginline = 5 ,
 						zipped = TRUE ,
 						tl = TRUE ,
@@ -420,12 +420,12 @@ lodown_sipp <-
 				}
 					
 				# loop through each core wave..
-				if ( catalog[ i , 'full_url' ] %in% paste0( "http://thedataweb.rm.census.gov/pub/sipp/2004/l04puw" , 1:12 , ".zip" ) ){
+				if ( catalog[ i , 'full_url' ] %in% paste0( "https://thedataweb.rm.census.gov/pub/sipp/2004/l04puw" , 1:12 , ".zip" ) ){
 
 					# add the core wave to the database in a table w#
 					read_SAScii_monetdb (
 						catalog[ i , 'full_url' ] ,
-						chop.suid( fix.ct( "http://thedataweb.rm.census.gov/pub/sipp/2004/l04puw1.sas" ) ) ,
+						chop.suid( fix.ct( "https://thedataweb.rm.census.gov/pub/sipp/2004/l04puw1.sas" ) ) ,
 						beginline = 5 ,
 						zipped = TRUE ,
 						tl = TRUE ,
@@ -436,12 +436,12 @@ lodown_sipp <-
 				}
 
 				# loop through each replicate weight wave..
-				if ( catalog[ i , 'full_url' ] %in% paste0( "http://thedataweb.rm.census.gov/pub/sipp/2004/rw04w" , 1:12 , ".zip" ) ){
+				if ( catalog[ i , 'full_url' ] %in% paste0( "https://thedataweb.rm.census.gov/pub/sipp/2004/rw04w" , 1:12 , ".zip" ) ){
 
 					# add the wave-specific replicate weight to the database in a table rw#
 					read_SAScii_monetdb (
 						catalog[ i , 'full_url' ] ,
-						chop.suid( fix.ct( "http://thedataweb.rm.census.gov/pub/sipp/2004/rw04wx.sas" ) ) ,
+						chop.suid( fix.ct( "https://thedataweb.rm.census.gov/pub/sipp/2004/rw04wx.sas" ) ) ,
 						beginline = 5 ,
 						zipped = TRUE ,
 						tl = TRUE ,
@@ -452,12 +452,12 @@ lodown_sipp <-
 				}
 
 				# loop through each topical module..
-				if ( catalog[ i , 'full_url' ] %in% paste0( "http://thedataweb.rm.census.gov/pub/sipp/2004/p04putm" , 1:8 , ".zip" ) ){
+				if ( catalog[ i , 'full_url' ] %in% paste0( "https://thedataweb.rm.census.gov/pub/sipp/2004/p04putm" , 1:8 , ".zip" ) ){
 
 					# add each topical module to the database in a table tm#
 					read_SAScii_monetdb (
 						catalog[ i , 'full_url' ] ,
-						chop.suid( fix.ct( paste0( "http://thedataweb.rm.census.gov/pub/sipp/2004/p04putm" , catalog[ i , 'wave' ] , ".sas" ) ) ) ,
+						chop.suid( fix.ct( paste0( "https://thedataweb.rm.census.gov/pub/sipp/2004/p04putm" , catalog[ i , 'wave' ] , ".sas" ) ) ) ,
 						beginline = 5 ,
 						zipped = TRUE ,
 						tl = TRUE ,
@@ -468,13 +468,13 @@ lodown_sipp <-
 				}
 
 				# add the two sipp assets extracts to the database
-				if( catalog[ i , 'full_url' ] == "http://thedataweb.rm.census.gov/pub/sipp/2004/p04putm3_aoa.zip" ){
+				if( catalog[ i , 'full_url' ] == "https://thedataweb.rm.census.gov/pub/sipp/2004/p04putm3_aoa.zip" ){
 
-					tm3_tablename <- catalog[ catalog$full_url == 'http://thedataweb.rm.census.gov/pub/sipp/2004/p04putm3.zip' , 'db_tablename' ]
+					tm3_tablename <- catalog[ catalog$full_url == 'https://thedataweb.rm.census.gov/pub/sipp/2004/p04putm3.zip' , 'db_tablename' ]
 					
 					read_SAScii_monetdb (
 						catalog[ i , 'full_url' ] ,
-						chop.suid(fix.ct( "http://thedataweb.rm.census.gov/pub/sipp/2004/p04putm3_aoa.sas") ) ,
+						chop.suid(fix.ct( "https://thedataweb.rm.census.gov/pub/sipp/2004/p04putm3_aoa.sas") ) ,
 						beginline = 5 ,
 						zipped = TRUE ,
 						tl = TRUE ,
@@ -499,13 +499,13 @@ lodown_sipp <-
 					
 				}
 				
-				if( catalog[ i , 'full_url' ] == "http://thedataweb.rm.census.gov/pub/sipp/2004/p04putm6_aoa.zip" ){
+				if( catalog[ i , 'full_url' ] == "https://thedataweb.rm.census.gov/pub/sipp/2004/p04putm6_aoa.zip" ){
 
-					tm6_tablename <- catalog[ catalog$full_url == 'http://thedataweb.rm.census.gov/pub/sipp/2004/p04putm6.zip' , 'db_tablename' ]
+					tm6_tablename <- catalog[ catalog$full_url == 'https://thedataweb.rm.census.gov/pub/sipp/2004/p04putm6.zip' , 'db_tablename' ]
 					
 					read_SAScii_monetdb (
 						catalog[ i , 'full_url' ] ,
-						chop.suid(fix.ct( "http://thedataweb.rm.census.gov/pub/sipp/2004/p04putm6_aoa.sas") ) ,
+						chop.suid(fix.ct( "https://thedataweb.rm.census.gov/pub/sipp/2004/p04putm6_aoa.sas") ) ,
 						beginline = 4 ,
 						zipped = TRUE ,
 						tl = TRUE ,
@@ -532,18 +532,18 @@ lodown_sipp <-
 				}
 
 				# loop through each longitudinal replicate weight file..
-				if ( catalog[ i , 'full_url' ] %in% paste0( "http://thedataweb.rm.census.gov/pub/sipp/2004/lrw04_" , c( paste0( 'cy' , 1:4 ) , paste0( 'pnl' , 1:4 )  ) , ".zip" ) ){
+				if ( catalog[ i , 'full_url' ] %in% paste0( "https://thedataweb.rm.census.gov/pub/sipp/2004/lrw04_" , c( paste0( 'cy' , 1:4 ) , paste0( 'pnl' , 1:4 )  ) , ".zip" ) ){
 
 					# add each longitudinal replicate weight file to the database in a table cy1-4 or pnl1-4
 					read_SAScii_monetdb (
 						catalog[ i , 'full_url' ] ,
-						chop.suid( fix.ct( "http://thedataweb.rm.census.gov/pub/sipp/2004/lrw04_xx.sas" ) ) ,
+						chop.suid( fix.ct( "https://thedataweb.rm.census.gov/pub/sipp/2004/lrw04_xx.sas" ) ) ,
 						beginline = 5 ,
 						zipped = TRUE ,
 						tl = TRUE ,
 						tablename = catalog[ i , 'db_tablename' ] ,
 						connection = db  ,
-						try_best_effort = ( catalog[ i , 'full_url' ] == "http://thedataweb.rm.census.gov/pub/sipp/2004/lrw04_cy3.zip" )
+						try_best_effort = ( catalog[ i , 'full_url' ] == "https://thedataweb.rm.census.gov/pub/sipp/2004/lrw04_cy3.zip" )
 					)
 					
 				}
@@ -561,12 +561,12 @@ lodown_sipp <-
 
 
 				# if the longitudinal weights flag has been set to TRUE above..
-				if ( catalog[ i , 'full_url' ] == "http://thedataweb.rm.census.gov/pub/sipp/2008/lgtwgt2008w16.zip" ){
+				if ( catalog[ i , 'full_url' ] == "https://thedataweb.rm.census.gov/pub/sipp/2008/lgtwgt2008w16.zip" ){
 
 					# add the longitudinal weights to the database in a table 'wgtw14'
 					read_SAScii_monetdb(
 						catalog[ i , 'full_url' ] ,
-						chop.suid( fix.ct( "http://thedataweb.rm.census.gov/pub/sipp/2008/lgtwgt2008w16.sas" ) ) ,
+						chop.suid( fix.ct( "https://thedataweb.rm.census.gov/pub/sipp/2008/lgtwgt2008w16.sas" ) ) ,
 						beginline = 5 ,
 						zipped = TRUE ,
 						tl = TRUE ,
@@ -577,13 +577,13 @@ lodown_sipp <-
 				}
 					
 				# loop through each core wave..
-				if ( catalog[ i , 'full_url' ] %in% paste0( "http://thedataweb.rm.census.gov/pub/sipp/2008/l08puw" , 1:16 , ".zip" ) ){
+				if ( catalog[ i , 'full_url' ] %in% paste0( "https://thedataweb.rm.census.gov/pub/sipp/2008/l08puw" , 1:16 , ".zip" ) ){
 
 
 					# add the core wave to the database in a table w#
 					read_SAScii_monetdb (
 						catalog[ i , 'full_url' ] ,
-						chop.suid( fix.ct( "http://thedataweb.rm.census.gov/pub/sipp/2008/l08puw1.sas" ) ) ,
+						chop.suid( fix.ct( "https://thedataweb.rm.census.gov/pub/sipp/2008/l08puw1.sas" ) ) ,
 						beginline = 5 ,
 						zipped = TRUE ,
 						tl = TRUE ,
@@ -594,13 +594,13 @@ lodown_sipp <-
 				}
 
 				# loop through each replicate weight wave..
-				if ( catalog[ i , 'full_url' ] %in% paste0( "http://thedataweb.rm.census.gov/pub/sipp/2008/rw08w" , 1:16 , ".zip" ) ){
+				if ( catalog[ i , 'full_url' ] %in% paste0( "https://thedataweb.rm.census.gov/pub/sipp/2008/rw08w" , 1:16 , ".zip" ) ){
 
 
 					# add the wave-specific replicate weight to the database in a table rw#
 					read_SAScii_monetdb (
 						catalog[ i , 'full_url' ] ,
-						chop.suid( fix.ct( "http://thedataweb.rm.census.gov/pub/sipp/2008/rw08wx.sas" ) ) ,
+						chop.suid( fix.ct( "https://thedataweb.rm.census.gov/pub/sipp/2008/rw08wx.sas" ) ) ,
 						beginline = 5 ,
 						zipped = TRUE ,
 						tl = TRUE ,
@@ -611,12 +611,12 @@ lodown_sipp <-
 				}
 
 				# loop through each topical module..
-				if ( catalog[ i , 'full_url' ] %in% paste0( "http://thedataweb.rm.census.gov/pub/sipp/2008/p08putm" , c( 1:11 , 13 ) , ".zip" ) ){
+				if ( catalog[ i , 'full_url' ] %in% paste0( "https://thedataweb.rm.census.gov/pub/sipp/2008/p08putm" , c( 1:11 , 13 ) , ".zip" ) ){
 					
 					# add each topical module to the database in a table tm#
 					read_SAScii_monetdb (
 						catalog[ i , 'full_url' ] ,
-						chop.suid( fix.ct( paste0( "http://thedataweb.rm.census.gov/pub/sipp/2008/p08putm" , catalog[ i , 'wave' ] , ".sas" ) ) ) ,
+						chop.suid( fix.ct( paste0( "https://thedataweb.rm.census.gov/pub/sipp/2008/p08putm" , catalog[ i , 'wave' ] , ".sas" ) ) ) ,
 						beginline = 5 ,
 						zipped = TRUE ,
 						tl = TRUE ,
@@ -627,12 +627,12 @@ lodown_sipp <-
 				}
 
 				# loop through each longitudinal replicate weight file..
-				if ( catalog[ i , 'full_url' ] %in% paste0( "http://thedataweb.rm.census.gov/pub/sipp/2008/lrw08" , c( paste0( 'cy' , 1:5 ) , paste0( 'pn' , 1:5 ) ) , ".zip" ) ){
+				if ( catalog[ i , 'full_url' ] %in% paste0( "https://thedataweb.rm.census.gov/pub/sipp/2008/lrw08" , c( paste0( 'cy' , 1:5 ) , paste0( 'pn' , 1:5 ) ) , ".zip" ) ){
 
 					# add each longitudinal replicate weight file to the database in a table cy1-4 or pnl1-4
 					read_SAScii_monetdb (
 						catalog[ i , 'full_url' ] ,
-						chop.suid( fix.repwgt( "http://thedataweb.rm.census.gov/pub/sipp/2008/lrw08_xx.sas" ) ) ,
+						chop.suid( fix.repwgt( "https://thedataweb.rm.census.gov/pub/sipp/2008/lrw08_xx.sas" ) ) ,
 						beginline = 7 ,
 						zipped = TRUE ,
 						tl = TRUE ,
@@ -650,12 +650,12 @@ lodown_sipp <-
 			if( catalog[ i , 'panel' ] == 2014 ){
 
 				# loop through each core wave..
-				if ( grepl( "http://thedataweb.rm.census.gov/pub/sipp/2014/pu2014w" , catalog[ i , 'full_url' ] , fixed = TRUE ) ){
+				if ( grepl( "https://thedataweb.rm.census.gov/pub/sipp/2014/pu2014w" , catalog[ i , 'full_url' ] , fixed = TRUE ) ){
 
 					# add the core wave to the database in a table w#
 					read_SAScii_monetdb (
 						catalog[ i , 'full_url' ] ,
-						fix.ahiehi( fix.ct( "http://thedataweb.rm.census.gov/pub/sipp/2014/pu2014w1.sas" ) ) ,
+						fix.ahiehi( fix.ct( "https://thedataweb.rm.census.gov/pub/sipp/2014/pu2014w1.sas" ) ) ,
 						beginline = 5 ,
 						zipped = TRUE ,
 						tl = TRUE ,
@@ -668,12 +668,12 @@ lodown_sipp <-
 				}
 					
 				# loop through each replicate weight wave..
-				if ( grepl( "http://thedataweb.rm.census.gov/pub/sipp/2014/rw14w" , catalog[ i , 'full_url' ] , fixed = TRUE ) ){
+				if ( grepl( "https://thedataweb.rm.census.gov/pub/sipp/2014/rw14w" , catalog[ i , 'full_url' ] , fixed = TRUE ) ){
 
 					# add the core wave to the database in a table w#
 					read_SAScii_monetdb (
 						catalog[ i , 'full_url' ] ,
-						fix.repwgt("http://thedataweb.rm.census.gov/pub/sipp/2014/rw14wx_sas.txt") ,
+						fix.repwgt("https://thedataweb.rm.census.gov/pub/sipp/2014/rw14wx_sas.txt") ,
 						beginline = 2 ,
 						zipped = TRUE ,
 						tl = TRUE ,
