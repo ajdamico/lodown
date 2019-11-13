@@ -499,7 +499,7 @@ lodown_cpsasec <-
 				
 					ote <- "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/asec14_outtyp_full.dat"
 					
-					cachaca( ote , tf , mode = 'wb' )
+					download.file( ote , tf , mode = 'wb' )
 					
 					ot <- data.frame( readr::read_fwf( tf , readr::fwf_widths( c( 5 , 2 , 2 , 1 ) ) , col_types = 'nnnn' ) )
 					
