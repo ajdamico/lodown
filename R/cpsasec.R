@@ -479,7 +479,7 @@ lodown_cpsasec <-
 					
 					ace <- "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/asec14_now_anycov.dat"
 
-					cachaca( ace , tf , mode = "wb" )	
+					download.file( ace , tf , mode = "wb" )	
 
 					ac <- rbind( ac , data.frame( readr::read_fwf( tf , readr::fwf_widths( c( 5 , 2 , 1 ) ) , col_types = 'nnn' ) ) )
 					
@@ -489,7 +489,7 @@ lodown_cpsasec <-
 					
 					ace <- "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/asec14_now_anycov_redes.dat"
 
-					cachaca( ace , tf , mode = "wb" )	
+					download.file( ace , tf , mode = "wb" )	
 
 					ac <- rbind( ac , data.frame( readr::read_fwf( tf , readr::fwf_widths( c( 5 , 2 , 1 ) ) , col_types = 'nnn' ) ) )
 					
@@ -514,13 +514,13 @@ lodown_cpsasec <-
 				
 					ote <- "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/asec15_outtyp.dat"
 				
-					cachaca( ote , tf , mode = 'wb' )
+					download.file( ote , tf , mode = 'wb' )
 					
 					ot <- data.frame( readr::read_fwf( tf , readr::fwf_widths( c( 5 , 2 , 2 , 1 ) ) , col_types = 'nnnn' ) )
 					
 					ace <- "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2014/cps-redesign/asec15_currcov_extract.dat"
 				
-					cachaca( ace , tf , mode = 'wb' )
+					download.file( ace , tf , mode = 'wb' )
 					
 					ac <- data.frame( readr::read_fwf( tf , readr::fwf_widths( c( 5 , 2 , 1 ) ) , col_types = 'nnn' ) )
 
@@ -534,13 +534,13 @@ lodown_cpsasec <-
 				
 					ote <- "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2016/cps-redesign/asec16_outtyp_full.dat"
 				
-					cachaca( ote , tf , mode = 'wb' )
+					download.file( ote , tf , mode = 'wb' )
 					
 					ot <- data.frame( readr::read_fwf( tf , readr::fwf_widths( c( 5 , 2 , 2 , 1 ) ) , col_types = 'nnnn' ) )
 					
 					ace <- "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2016/cps-redesign/asec16_currcov_extract.dat"
 				
-					cachaca( ace , tf , mode = 'wb' )
+					download.file( ace , tf , mode = 'wb' )
 					
 					ac <- data.frame( readr::read_fwf( tf , readr::fwf_widths( c( 5 , 2 , 1 ) ) , col_types = 'nnn' ) )
 
@@ -554,13 +554,13 @@ lodown_cpsasec <-
 				
 					ote <- "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2017/cps-redesign/asec17_outtyp_extract.dat"
 				
-					cachaca( ote , tf , mode = 'wb' )
+					download.file( ote , tf , mode = 'wb' )
 					
 					ot <- data.frame( readr::read_fwf( tf , readr::fwf_widths( c( 5 , 2 , 2 , 1 ) ) , col_types = 'nnnn' ) )
 					
 					ace <- "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2017/cps-redesign/asec17_currcov_extract.dat"
 				
-					cachaca( ace , tf , mode = 'wb' )
+					download.file( ace , tf , mode = 'wb' )
 					
 					ac <- data.frame( readr::read_fwf( tf , readr::fwf_widths( c( 5 , 2 , 1 ) ) , col_types = 'nnn' ) )
 
@@ -574,13 +574,13 @@ lodown_cpsasec <-
 				
 					ote <- "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2018/cps-redesign/asec18_outtyp_extract.dat"
 				
-					cachaca( ote , tf , mode = 'wb' )
+					download.file( ote , tf , mode = 'wb' )
 					
 					ot <- data.frame( readr::read_fwf( tf , readr::fwf_widths( c( 5 , 2 , 2 , 1 ) ) , col_types = 'nnnn' ) )
 					
 					ace <- "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2018/cps-redesign/asec18_currcov_extract.dat"
 				
-					cachaca( ace , tf , mode = 'wb' )
+					download.file( ace , tf , mode = 'wb' )
 					
 					ac <- data.frame( readr::read_fwf( tf , readr::fwf_widths( c( 5 , 2 , 1 ) ) , col_types = 'nnn' ) )
 
