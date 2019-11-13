@@ -81,7 +81,7 @@ lodown_acs <-
 				# download the wyoming structure file
 				wyoming_unix <- paste0( dirname( catalog[ i , 'h_full_url' ] ) , "/unix_" , j , "wy.zip" )
 				
-				cachaca( wyoming_unix , tf , mode = 'wb' )
+				cachaca( wyoming_unix , tf , mode = 'wb' , filesize_fun = 'unzip_verify' )
 
 				unzipped_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) )
 
@@ -91,7 +91,7 @@ lodown_acs <-
 				
 				cc <- ifelse( unlist( sapply( wyoming_table , class ) ) == 'numeric' , 'n' , 'c' )
 
-				cachaca( catalog[ i , if( j == 'h' ) 'h_full_url' else 'p_full_url' ] , tf , mode = 'wb' )
+				cachaca( catalog[ i , if( j == 'h' ) 'h_full_url' else 'p_full_url' ] , tf , mode = 'wb' , filesize_fun = 'unzip_verify' )
 				
 				# unzip the file's contents to the temporary directory
 				# extract the file, platform-specific
