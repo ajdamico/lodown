@@ -1,11 +1,11 @@
 get_catalog_mapdlandscape <-
 	function( data_name = "mapdlandscape" , output_dir , ... ){
 
-		landscape_url <- "https://www.cms.gov/Medicare/Prescription-Drug-Coverage/PrescriptionDrugCovGenIn/index.html?redirect=/PrescriptionDrugCovGenIn/"
+		landscape_url <- "https://www.cms.gov/Medicare/Prescription-Drug-Coverage/PrescriptionDrugCovGenIn/index"
 
 		prefix <- "https://www.cms.gov/"
 		
-		all_links <- rvest::html_nodes( xml2::read_html( landscape_url ) , xpath = '//li/a' )
+		all_links <- rvest::html_nodes( xml2::read_html( landscape_url ) , xpath = '//div/a' )
 
 		all_names <- rvest::html_text( all_links )
 	

@@ -27,7 +27,7 @@ get_catalog_mapdcrosswalk <-
 	for( this_row in seq( nrow( this_catalog ) ) ){
 		
 		link_text <- readLines( this_catalog[ this_row , 'full_url' ] )
-		link_line <- grep( "zip" , link_text , value = TRUE )
+		link_line <- grep( "walk(.*)zip|zip(.*)walk" , link_text , value = TRUE )
 		link_line <- gsub( '(.*) href=\"' , "" , gsub( '(.*) href=\"/' , prefix , link_line ) )
 		this_catalog[ this_row , 'full_url' ] <- gsub( '\">(.*)' , "" , link_line )
 
