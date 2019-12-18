@@ -4,7 +4,7 @@ get_catalog_nychvs <-
 		catalog <- NULL
 
 		# hardcoded catalog because nychvs will be incorporated into ahs going forward
-		for( year in c( 2002 , 2005 , 2008 , 2011 , 2014 ) ){
+		for( year in c( 2002 , 2005 , 2008 , 2011 , 2014 , 2017 ) ){
 		
 			# create three year-specific variables:
 			
@@ -18,7 +18,9 @@ get_catalog_nychvs <-
 				filetypes <- c( 'occ' , 'vac' , 'per' , 'ni' )
 			}
 			
-			prefix <- ifelse( year > 2008 , paste0( "/uf_" , subyear ) , "/lng08" )
+			repwgt <- ifelse(year %in% c(2011, 2014), "_repwgt", "")
+			
+			prefix <- ifelse( year > 2008 , paste0( "/uf_" , subyear , repwgt ) , "/lng08" )
 			
 			# loop through each available filetype
 			for ( filetype in filetypes ){
@@ -35,14 +37,14 @@ get_catalog_nychvs <-
 						filetype , 
 						ifelse( year < 2011 , subyear , '' ) , 
 						ifelse( 
-							year < 2014 &
+							year < 2011 &
 							filetype %in% c( 'occ' , 'pers' , 'per' ) , 
 							'_rev' , 
 							'_web' 
-						) , 
-						ifelse( year == 2014 & filetype != 'vac' , "_b" , "" ) ,
+						) ,
+						ifelse( year == 2017 , "_b" , "" ) ,
 						ifelse( 
-							( year == 2011 & filetype == 'vac' ) | ( year == 2014 & filetype != 'vac' ) , 
+							year >= 2011 , 
 							".txt" , 
 							".dat" 
 						)
@@ -70,7 +72,9 @@ get_catalog_nychvs <-
 						beginline <- 413
 					} else stop( "this filetype hasn't been implemented yet." )
 					
-					sas_script <- paste0( "https://www2.census.gov/programs-surveys/nychvs/datasets/" , year , "/microdata/sas_import_program.txt" )
+					suffix <- ifelse(year == 2017, paste0("_", subyear), "")
+					
+					sas_script <- paste0( "https://www2.census.gov/programs-surveys/nychvs/datasets/" , year , "/microdata/sas_import_program" , suffix , ".txt" )
 					
 				}
 
@@ -113,7 +117,7 @@ lodown_nychvs <-
 			cleaned.sas.script <- nychvs_sas_cleanup( catalog[ i , "sas_ri" ] )
 
 			# download the file
-			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
+			download.file( catalog[ i , "full_url" ] , tf , mode = "wb" )
 
 			# read the file into a data frame
 			x <- read_SAScii( tf , cleaned.sas.script , beginline = catalog[ i , 'beginline' ] )
