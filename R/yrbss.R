@@ -17,6 +17,8 @@ get_catalog_yrbss <-
 
 			this_year_paths <- paste0( this_year , gsub( '(.*)\\">(.*)<\\/A>$', "\\2" , this_year_contents ) )
 
+			if( this_year == "https://ftp.cdc.gov/pub/data/yrbs/sadc_2017/" ) this_year_paths[ c( 3 , 5 ) ] <- this_year_paths[ c( 5 , 3 ) ]
+
 			catalog <-
 				rbind(
 					catalog ,
@@ -34,7 +36,18 @@ get_catalog_yrbss <-
 		catalog[ catalog[ , 'year' ] == 2015 , 'dat_url' ] <- "https://www.cdc.gov/healthyyouth/data/yrbs/files/yrbs2015.dat"
 		
 		catalog$output_filename <- paste0( output_dir , "/" , catalog$year , " main.rds" )
+		
+		
+		catalog[ grepl( 'district' , catalog[ , 'dat_url' ] ) , 'output_filename' ] <-
+			gsub( "main" , "district" , catalog[ grepl( 'district' , catalog[ , 'dat_url' ] ) , 'output_filename' ] )
 			
+		catalog[ grepl( 'a-m' , catalog[ , 'dat_url' ] ) , 'output_filename' ] <-
+			gsub( "main" , "states a-m" , catalog[ grepl( 'a-m' , catalog[ , 'dat_url' ] ) , 'output_filename' ] )
+
+		catalog[ grepl( 'n-w' , catalog[ , 'dat_url' ] ) , 'output_filename' ] <-
+			gsub( "main" , "states n-w" , catalog[ grepl( 'n-w' , catalog[ , 'dat_url' ] ) , 'output_filename' ] )
+			
+		
 		catalog
 
 	}
