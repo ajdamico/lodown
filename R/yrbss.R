@@ -41,11 +41,11 @@ get_catalog_yrbss <-
 		catalog[ grepl( 'district' , catalog[ , 'dat_url' ] ) , 'output_filename' ] <-
 			gsub( "main" , "district" , catalog[ grepl( 'district' , catalog[ , 'dat_url' ] ) , 'output_filename' ] )
 			
-		catalog[ grepl( 'a-m' , catalog[ , 'dat_url' ] ) , 'output_filename' ] <-
-			gsub( "main" , "states a-m" , catalog[ grepl( 'a-m' , catalog[ , 'dat_url' ] ) , 'output_filename' ] )
+		catalog[ grepl( 'a_m' , catalog[ , 'dat_url' ] ) , 'output_filename' ] <-
+			gsub( "main" , "states a-m" , catalog[ grepl( 'a_m' , catalog[ , 'dat_url' ] ) , 'output_filename' ] )
 
-		catalog[ grepl( 'n-w' , catalog[ , 'dat_url' ] ) , 'output_filename' ] <-
-			gsub( "main" , "states n-w" , catalog[ grepl( 'n-w' , catalog[ , 'dat_url' ] ) , 'output_filename' ] )
+		catalog[ grepl( 'n_z' , catalog[ , 'dat_url' ] ) , 'output_filename' ] <-
+			gsub( "main" , "states n-z" , catalog[ grepl( 'n_z' , catalog[ , 'dat_url' ] ) , 'output_filename' ] )
 			
 		
 		catalog
