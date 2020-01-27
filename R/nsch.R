@@ -48,38 +48,61 @@ get_catalog_nsch <-
 	
 	
 	
-	data_links <- readLines( "https://www.census.gov/programs-surveys/nsch/data.html" , warn = FALSE )
+	# data_links <- readLines( "https://www.census.gov/programs-surveys/nsch/data.html" , warn = FALSE )
 	
-	dataset_lines <- grep( "html(.*)data release" , data_links , value = TRUE , ignore.case = TRUE )
+	# dataset_lines <- grep( "html(.*)data release" , data_links , value = TRUE , ignore.case = TRUE )
 	
-	dataset_hrefs <- unique( paste0( "https://www.census.gov/" , gsub( '(.*)href=\"(.*)\" (.*)' , "\\2" , dataset_lines ) ) )
+	# dataset_hrefs <- unique( paste0( "https://www.census.gov/" , gsub( '(.*)href=\"(.*)html(.*)' , "\\2html" , dataset_lines ) ) )
 	
-	four_digit_years <- suppressWarnings( as.numeric( gsub( "(.*)([0-9][0-9][0-9][0-9])(.*)" , "\\2" , dataset_hrefs ) ) )
+	# four_digit_years <- suppressWarnings( as.numeric( gsub( "(.*)([0-9][0-9][0-9][0-9])(.*)" , "\\2" , dataset_hrefs ) ) )
 	
-	for( i in seq_along( dataset_hrefs ) ){
 	
-		this_page <- xml2::read_html( dataset_hrefs[ i ] )
-		
-		link_urls <- rvest::html_attr( rvest::html_nodes( this_page , "a" ) , 'href' )
-		link_urls <- ifelse( grepl( "^http" , link_urls ) , link_urls , paste0( "https:" , link_urls ) )
-		link_text <- rvest::html_text( rvest::html_nodes( this_page , "a" ) )
-		
-		catalog <-
-			rbind(
-				catalog ,
-				data.frame(
-					directory = four_digit_years[ i ] ,
-					virgin_islands = FALSE ,
-					year = four_digit_years[ i ] ,
-					dat_url = grep( "topical\\.zip" , link_urls , value = TRUE , ignore.case = TRUE ) ,
-					screener_url = grep( "screener\\.zip" , link_urls , value = TRUE , ignore.case = TRUE ) ,
-					mi_url = grep( "implicate\\.zip" , link_urls , value = TRUE , ignore.case = TRUE ) ,
-					stringsAsFactors = FALSE
-				)
+
+	catalog <-
+		rbind(
+			catalog ,
+			data.frame(
+				directory = 2016 ,
+				virgin_islands = FALSE ,
+				year = 2016 ,
+				dat_url = "https://www2.census.gov/programs-surveys/nsch/datasets/2016/nsch_2016_topical.zip" ,
+				screener_url = "https://www2.census.gov/programs-surveys/nsch/datasets/2016/nsch_2016_screener.zip" ,
+				mi_url = "https://www2.census.gov/programs-surveys/nsch/datasets/2016/nsch_2016_implicate.zip" ,
+				stringsAsFactors = FALSE
 			)
-			
-	}
-			
+		)
+	
+
+	catalog <-
+		rbind(
+			catalog ,
+			data.frame(
+				directory = 2017 ,
+				virgin_islands = FALSE ,
+				year = 2017 ,
+				dat_url = "https://www2.census.gov/programs-surveys/nsch/datasets/2017/nsch_2017_topical.zip" ,
+				screener_url = "https://www2.census.gov/programs-surveys/nsch/datasets/2017/nsch_2017_screener.zip" ,
+				mi_url = NA ,
+				stringsAsFactors = FALSE
+			)
+		)
+	
+	
+
+	catalog <-
+		rbind(
+			catalog ,
+			data.frame(
+				directory = 2018 ,
+				virgin_islands = FALSE ,
+				year = 2018 ,
+				dat_url = "https://www2.census.gov/programs-surveys/nsch/datasets/2018/nsch_2018_topical_SAS.zip" ,
+				screener_url = "https://www2.census.gov/programs-surveys/nsch/datasets/2018/nsch_2018_screener_SAS.zip" ,
+				mi_url = NA ,
+				stringsAsFactors = FALSE
+			)
+		)
+	
 	
 	catalog$output_folder <- output_dir
 	
@@ -117,19 +140,29 @@ lodown_nsch <-
 			# add a column of all ones
 			x$one <- 1
 
-			# download the multiply-imputed poverty data.frame
-			cachaca( catalog[ i , "mi_url" ] , tf , mode = 'wb' , filesize_fun = 'unzip_verify' )
-
-			unzipped_files <- unzip_warn_fail( tf , exdir = tempdir() )
-
-			sas_path <- grep( "\\.sas7bdat$" , unzipped_files , value = TRUE )
-
-			mimp <- data.frame( haven::read_sas( sas_path ) )
-
-			file.remove( unzipped_files )
+			if( catalog[ i , 'year' ] >= 2017 ){
 			
-			# convert all column names to lowercase
-			names( mimp ) <- tolower( names( mimp ) )
+				mimp <- x[ , c( 'hhid' , paste0( 'fpl_i' , 1:6 ) ) ]
+				x <- x[ , !( names( x ) %in% paste0( 'fpl_i' , 1:6 ) ) ]
+			
+			} else {
+
+				# download the multiply-imputed poverty data.frame
+				cachaca( catalog[ i , "mi_url" ] , tf , mode = 'wb' , filesize_fun = 'unzip_verify' )
+
+				unzipped_files <- unzip_warn_fail( tf , exdir = tempdir() )
+
+				sas_path <- grep( "\\.sas7bdat$" , unzipped_files , value = TRUE )
+
+				mimp <- data.frame( haven::read_sas( sas_path ) )
+
+				file.remove( unzipped_files )
+				
+				# convert all column names to lowercase
+				names( mimp ) <- tolower( names( mimp ) )
+
+			}
+
 
 			num_imps <- if( catalog[ i , 'year' ] >= 2016 ) 6 else 5
 			
