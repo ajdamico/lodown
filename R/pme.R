@@ -84,7 +84,7 @@ lodown_pme <-
 
 		tf <- tempfile()
 
-		cachaca( "ftp://ftp.ibge.gov.br/Trabalho_e_Rendimento/Pesquisa_Mensal_de_Emprego/Microdados/documentacao/Documentacao.zip" , tf )
+		cachaca( "ftp://ftp.ibge.gov.br/Trabalho_e_Rendimento/Pesquisa_Mensal_de_Emprego/Microdados/documentacao/Documentacao.zip" , tf, filesize_fun = 'unzip_verify' )
 
 		unzipped_files <- unzip_warn_fail( tf , exdir = unique( np_dirname( catalog$output_filename ) )  )
 
@@ -94,13 +94,16 @@ lodown_pme <-
 		for ( i in seq_len( nrow( catalog ) ) ){
 
 			# download the file
-			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
+			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb', filesize_fun = 'unzip_verify' )
 
 			unzipped_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , '/unzips' ) )
 
 			# ..and read that text file directly into an R data.frame
 			# using the sas importation script downloaded before this big fat loop
-			x <- read_SAScii( unzipped_files , input )
+			# the encoding is specified here to avoid errors with string functions when removing comments
+			# from SAS code. Since comments do not need to be readable, we don't need to know which encoding
+			# the original PME data is in.
+			x <- read_SAScii( unzipped_files , input, filesize_fun = 'unzip_verify', encoding = 'latin1' )
 			
 			# convert all column names to lowercase
 			names( x ) <- tolower( names( x ) )

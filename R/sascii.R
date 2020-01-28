@@ -2,7 +2,7 @@
 
 
 read_SAScii <-
-	function( dat_path , sas_path = NULL , beginline = 1 , lrecl = NULL , skip_decimal_division = NULL , zipped = FALSE , na_values = c( "NA" , "" , "." ) , sas_stru = NULL , sas_encoding = "windows-1252" , filesize_fun = 'httr' , ... ){
+	function( dat_path , sas_path = NULL , beginline = 1 , lrecl = NULL , skip_decimal_division = NULL , zipped = FALSE , na_values = c( "NA" , "" , "." ) , sas_stru = NULL , sas_encoding = "windows-1252" , filesize_fun = 'httr' , encoding = NULL, ... ){
 
 		if( is.null( sas_path ) & is.null( sas_stru ) ) stop( "either sas_path= or sas_stru= must be specified" )
 		if( !is.null( sas_path ) & !is.null( sas_stru ) ) stop( "either sas_path= or sas_stru= must be specified, but not both" )
@@ -13,7 +13,7 @@ read_SAScii <-
 			close( this_con )
 			tf <- tempfile()
 			writeLines( this_sas , tf )
-			suppressWarnings( sasc <- SAScii::parse.SAScii( tf , beginline = beginline , lrecl = lrecl ) )
+			suppressWarnings( sasc <- SAScii::parse.SAScii( tf , beginline = beginline , lrecl = lrecl, encoding = encoding ) )
 		} else sasc <- sas_stru
 			
 		y <- sasc[ !is.na( sasc[ , "varname" ] ) , ]
