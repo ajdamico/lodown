@@ -612,6 +612,46 @@ lodown_cpsasec <-
 			}
 			
 			
+			
+			
+			
+			if ( ( catalog[ i , 'production_file' ] ) & catalog[ i , 'year' ] %in% 2019 ){
+				
+				cachaca( "https://www2.census.gov/programs-surveys/demo/datasets/health-insurance/2019/cps-redesign/asec19_takeup.sas7bdat" , tf , mode = 'wb' , filesize_fun = 'sas_verify' )
+					
+				offer <- data.frame( haven::read_sas( tf ) )
+				
+				names( offer ) <- toupper( names( offer ) )
+				
+				
+				pewnvars <- gsub( "ESI" , "PEWN" , names( offer ) )
+				pewnvars <- pewnvars[ pewnvars %in% names( x ) & !( pewnvars %in% c( 'H_SEQ' , 'PPPOS' ) ) ]
+				x[ , pewnvars ] <- NULL
+				names( offer )[ names( offer ) %in% gsub( "PEWN" , "ESI" , pewnvars ) ] <-
+					gsub( "ESI" , "PEWN" , names( offer )[ names( offer ) %in% gsub( "PEWN" , "ESI" , pewnvars ) ] )
+				
+				
+				pevars <- gsub( "ESI" , "PE" , names( offer ) )
+				pevars <- pevars[ pevars %in% names( x ) & !( pevars %in% c( 'H_SEQ' , 'PPPOS' , pewnvars ) ) ]
+				x[ , pevars ] <- NULL
+				names( offer )[ names( offer ) %in% gsub( "PE" , "ESI" , pevars ) ] <-
+					gsub( "ESI" , "PE" , names( offer )[ names( offer ) %in% gsub( "PE" , "ESI" , pevars ) ] )
+				
+				
+				x <- merge( x , offer , by.x = c( 'H_SEQ' , 'PPPOS' ) , by.y = c( "H_SEQ" , "PPPOS" ) )
+				
+				rm( offer ) ; gc()
+				
+				stopifnot( nrow( x ) == number_of_records )
+				
+				file.remove( tf )
+			
+			}
+			
+			
+			
+			
+			
 
 			if( catalog[ i , 'year' ] > 2004 ){
 
