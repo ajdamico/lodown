@@ -5,7 +5,7 @@ get_catalog_nhanes <-
 		
 		data_html <- xml2::read_html( data_page )
 		
-		this_table <- rvest::html_table( data_html )[[2]]
+		this_table <- rvest::html_table( data_html )[[1]]
 	
 		names( this_table ) <- c( 'years' , 'data_name' , 'doc_name' , 'file_name' , 'date_published' )
 
