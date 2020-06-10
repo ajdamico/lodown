@@ -3,44 +3,48 @@ get_catalog_scpenetration <-
 
 		catalog <- NULL
 	
-		for( ma_pd in c( "MA" , "PDP" ) ){
+		for( this_page in c( 0 , 1 ) ){
 		
-			pene_url <- paste0( "https://www.cms.gov/Research-Statistics-Data-and-Systems/Statistics-Trends-and-Reports/MCRAdvPartDEnrolData/" , ma_pd , "-State-County-Penetration.html" )
+			for( ma_pd in c( "MA" , "PDP" ) ){
+			
+				pene_url <- paste0( "https://www.cms.gov/Research-Statistics-Data-and-Systems/Statistics-Trends-and-Reports/MCRAdvPartDEnrolData/" , ma_pd , "-State-County-Penetration?items_per_page_options%5B5%5D=5%20per%20page&items_per_page_options%5B10%5D=10%20per%20page&items_per_page_options%5B25%5D=25%20per%20page&items_per_page_options%5B50%5D=50%20per%20page&items_per_page_options%5B100%5D=100%20per%20page&combine=&items_per_page=100&page=" , this_page )
 
-			all_dates <- rvest::html_table( xml2::read_html( pene_url ) )
+				all_dates <- rvest::html_table( xml2::read_html( pene_url ) )
 
-			all_dates <- all_dates[[1]][ , "Report Period" ]
+				all_dates <- all_dates[[1]][ , "Report Period" ]
 
-			all_links <- rvest::html_nodes( xml2::read_html( pene_url ) , xpath = '//td/a' )
+				all_links <- rvest::html_nodes( xml2::read_html( pene_url ) , xpath = '//td/a' )
 
-			prefix <- "https://www.cms.gov/"
+				prefix <- "https://www.cms.gov/"
 
-			all_links <- gsub( '<a href=\"' , prefix , all_links )
-			all_links <- gsub( "\">(.*)" , "" , all_links )
+				all_links <- gsub( '<a href=\"' , prefix , all_links )
+				all_links <- gsub( "\">(.*)" , "" , all_links )
 
-			this_catalog <-
-			  data.frame(
-				  output_filename = paste0( output_dir , "/" , tolower( ma_pd ) , "_sc penetration.rds" ) ,
-				  full_url = as.character( all_links ) ,
-				  year_month = all_dates ,
-				  stringsAsFactors = FALSE
-			  )
+				this_catalog <-
+				  data.frame(
+					  output_filename = paste0( output_dir , "/" , tolower( ma_pd ) , "_sc penetration.rds" ) ,
+					  full_url = as.character( all_links ) ,
+					  year_month = all_dates ,
+					  stringsAsFactors = FALSE
+				  )
 
-			for( this_row in seq( nrow( this_catalog ) ) ){
+				for( this_row in seq( nrow( this_catalog ) ) ){
+					
+					link_text <- readLines( this_catalog[ this_row , 'full_url' ] )
+					link_line <- grep( "\\.zip" , link_text , value = TRUE )
+					link_line <- gsub( '(.*) href=\"' , "" , gsub( '(.*) href=\"/' , prefix , link_line ) )
+					this_catalog[ this_row , 'full_url' ] <- gsub( '\">(.*)' , "" , link_line )
+
+				}
+		
+				this_catalog$ma_pd <- ma_pd
 				
-				link_text <- readLines( this_catalog[ this_row , 'full_url' ] )
-				link_line <- grep( "\\.zip" , link_text , value = TRUE )
-				link_line <- gsub( '(.*) href=\"' , "" , gsub( '(.*) href=\"/' , prefix , link_line ) )
-				this_catalog[ this_row , 'full_url' ] <- gsub( '\">(.*)' , "" , link_line )
-
+				catalog <- rbind( catalog , this_catalog )
+				
 			}
-	
-			this_catalog$ma_pd <- ma_pd
-			
-			catalog <- rbind( catalog , this_catalog )
-			
+
 		}
-		
+			
 		catalog[ order( catalog$year_month ) , ]
 		
 	}
