@@ -1,11 +1,11 @@
 get_catalog_cpsasec <-
 	function( data_name = "cpsasec" , output_dir , ... ){
 
-		cps_ftp <- "https://thedataweb.rm.census.gov/ftp/cps_ftp.html#cpsmarch"
+		cps_ftp <- "https://www.census.gov/data/datasets/time-series/demo/cps/cps-asec.html"
 
 		cps_links <- rvest::html_attr( rvest::html_nodes( xml2::read_html( cps_ftp ) , "a" ) , "href" )
 		
-		these_links <- grep( "asec(.*)zip$" , cps_links , value = TRUE , ignore.case = TRUE )
+		these_links <- grep( "asec\\.(.*)\\.html$" , cps_links , value = TRUE , ignore.case = TRUE )
 
 		asec_max_year <- max( as.numeric( substr( gsub( "[^0-9]" , "" , these_links ) , 1 , 4 ) ) )
 		
