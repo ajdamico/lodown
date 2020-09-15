@@ -60,7 +60,12 @@ lodown_cpsasec <-
 				duplicated_files <- asec_files[ duplicated( basename( asec_files ) ) ]
 				file.remove( duplicated_files )
 				asec_files <- setdiff( asec_files , duplicated_files )
-
+				
+				if( catalog[ i , 'year' ] >= 2020 ){
+					repwgt_file <- setdiff( asec_files , grep( 'repwgt' , asec_files , value = TRUE , ignore.case = TRUE ) )
+					asec_files <- setdiff( asec_files , repwgt_file )
+				}
+				
 				
 				prsn <- data.frame( haven::read_sas( grep( 'pppub' , asec_files , value = TRUE ) ) )
 				fmly <- data.frame( haven::read_sas( grep( 'ffpub' , asec_files , value = TRUE ) ) )
@@ -735,7 +740,7 @@ lodown_cpsasec <-
 						
 					names( rw ) <- gsub( "MARSUPWT_" , "PWWGT" , names( rw ) )
 				
-				} else {
+				} else if( catalog[ i , 'year' ] <= 2019 ) {
 				
 					zip_file <- 
 						tolower( 
@@ -762,6 +767,10 @@ lodown_cpsasec <-
 							filesize_fun = 'unzip_verify'
 						)
 
+				} else{
+				
+					rw <- data.frame( haven::read_sas( repwgt_file ) )
+				
 				}
 				
 				
