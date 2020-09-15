@@ -770,7 +770,7 @@ lodown_cpsasec <-
 				} else{
 				
 					rw <- data.frame( haven::read_sas( repwgt_file ) )
-				
+					names( rw ) <- toupper( names( rw ) )
 				}
 				
 				
