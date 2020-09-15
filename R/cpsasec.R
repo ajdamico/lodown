@@ -721,7 +721,7 @@ lodown_cpsasec <-
 					
 					CPS.replicate.weight.SAS.read.in.instructions <- 
 						paste0( 
-							"https://www2.census.gov/programs-surveys/cps/datasets/" , catalog[ i , 'year' ] , "/march/CPS_ASEC_ASCII_REPWGT_" , 
+							"https://www2.census.gov/programs-surveys/cps/datasets/" , substr( catalog[ i , 'year' ] , 1 , 4 ) , "/march/CPS_ASEC_ASCII_REPWGT_" , 
 							substr( catalog[ i , 'year' ] , 1 , 4 ) , 
 							".SAS" 
 						)
