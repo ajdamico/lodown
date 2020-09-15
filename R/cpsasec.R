@@ -267,7 +267,7 @@ lodown_cpsasec <-
 				tf <- tempfile() ; td <- tempdir()
 
 				# download the CPS repwgts zipped file to the local computer
-				cachaca( CPS.ASEC.mar.file.location , tf , mode = "wb" )
+				cachaca( CPS.ASEC.mar.file.location , tf , mode = "wb" , filesize_fun = 'unzip_verify' )
 
 				# unzip the file's contents and store the file name within the temporary directory
 				fn <- unzip( tf , exdir = td , overwrite = TRUE )
