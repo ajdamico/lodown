@@ -57,7 +57,7 @@ lodown_cpsasec <-
 				asec_files <- unzip( tf , exdir = td )
 				
 				# remove any duplicated files
-				duplicated_files <- asec_files[ !duplicated( basename( asec_files ) ) ]
+				duplicated_files <- asec_files[ duplicated( basename( asec_files ) ) ]
 				file.remove( duplicated_files )
 				asec_files <- setdiff( asec_files , duplicated_files )
 
