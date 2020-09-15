@@ -62,7 +62,7 @@ lodown_cpsasec <-
 				asec_files <- setdiff( asec_files , duplicated_files )
 				
 				if( catalog[ i , 'year' ] >= 2020 ){
-					repwgt_file <- setdiff( asec_files , grep( 'repwgt' , asec_files , value = TRUE , ignore.case = TRUE ) )
+					repwgt_file <- grep( 'repwgt' , asec_files , value = TRUE , ignore.case = TRUE )
 					asec_files <- setdiff( asec_files , repwgt_file )
 				}
 				
