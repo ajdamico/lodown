@@ -56,6 +56,12 @@ lodown_cpsasec <-
 
 				asec_files <- unzip( tf , exdir = td )
 				
+				# remove any duplicated files
+				duplicated_files <- asec_files[ !duplicated( basename( asec_files ) ) ]
+				file.remove( duplicated_files )
+				asec_files <- setdiff( asec_files , duplicated_files )
+
+				
 				prsn <- data.frame( haven::read_sas( grep( 'pppub' , asec_files , value = TRUE ) ) )
 				fmly <- data.frame( haven::read_sas( grep( 'ffpub' , asec_files , value = TRUE ) ) )
 				hhld <- data.frame( haven::read_sas( grep( 'hhpub' , asec_files , value = TRUE ) ) )
