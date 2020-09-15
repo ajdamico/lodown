@@ -688,7 +688,7 @@ lodown_cpsasec <-
 									catalog[ i , 'year' ] == 2014 ,
 									"https://www2.census.gov/programs-surveys/demo/datasets/income-poverty/time-series/weights/cps-asec-ascii-repwgt-2014-fullsample.dat" ,
 									paste0( 
-										"https://www2.census.gov/programs-surveys/cps/datasets/" , catalog[ i , 'year' ] , "/march/CPS_ASEC_ASCII_REPWGT_" , 
+										"https://www2.census.gov/programs-surveys/cps/datasets/" , substr( catalog[ i , 'year' ] , 1 , 4 ) , "/march/CPS_ASEC_ASCII_REPWGT_" , 
 										substr( catalog[ i , 'year' ] , 1 , 4 ) , 
 										".zip" 
 									)
