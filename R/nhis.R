@@ -223,7 +223,7 @@ lodown_nhis <-
 
 			if( catalog[ i , 'imputed_income' ] ){
 			
-				SAScii_start <- grep( "INPUT ALL VARIABLES" , readLines( catalog[ i , 'sas_script' ] , encoding = 'latin1' ) ) + 1
+				SAScii_start <- grep( "INPUT ALL VARIABLES|input the data from the ASCII file" , readLines( catalog[ i , 'sas_script' ] , encoding = 'latin1' ) ) + 1
 				
 				# unzip the file into a temporary directory.
 				# the unzipped file should contain *five* ascii files
