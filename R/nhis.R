@@ -232,7 +232,9 @@ lodown_nhis <-
 				
 				if( catalog[ i , 'year' ] >= 2019 ){
 
-					ii <- read_SAScii( income_file_names[ j ] , catalog[ i , 'sas_script' ] , beginline = SAScii_start , sas_encoding = 'latin1' )
+					stopifnot( length( income_file_names ) == 1 )
+
+					ii <- read_SAScii( income_file_names , catalog[ i , 'sas_script' ] , beginline = SAScii_start , sas_encoding = 'latin1' )
 
 					names( ii ) <- tolower( names( ii ) )
 
