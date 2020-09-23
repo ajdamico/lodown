@@ -151,7 +151,7 @@ get_catalog_nhis <-
 		catalog$sas_script <- 
 			gsub( "nhpi/" , "NHPI/" , 
 			gsub( "inc[0-9][0-9]\\." , "inc." , 
-			gsub( "^https" , "^ftp" , 
+			gsub( "^https" , "ftp" , 
 				catalog$sas_script 
 			) ) )
 		
