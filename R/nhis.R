@@ -229,8 +229,8 @@ lodown_nhis <-
 				# the unzipped file should contain *five* ascii files
 				income_file_names <- sort( unzipped_files )
 					
-				# loop through all five imputed income files
-				for ( j in 1:length( income_file_names ) ){
+				
+				if( catalog[ i , 'year' ] >= 2019 ){
 
 					ii <- read_SAScii( income_file_names[ j ] , catalog[ i , 'sas_script' ] , beginline = SAScii_start , sas_encoding = 'latin1' )
 
@@ -238,15 +238,37 @@ lodown_nhis <-
 
 					ii$rectype <- NULL
 					
-					assign( paste0( "ii" , j ) , ii )
+					for( j in 1:10 ) assign( paste0( "ii" , j ) , subset( ii , impnum == j ) )
+				
+					# save all five imputed income data frames to a single .rds file #
+					saveRDS( mget( paste0( "ii" , 1:10 ) ) , file = catalog[ i , 'output_filename' ] , compress = FALSE )
+				
+					catalog[ i , 'case_count' ] <- nrow( ii ) / 10
+				
+				} else {
 					
-					
+					# loop through all five imputed income files
+					for ( j in 1:length( income_file_names ) ){
+
+						ii <- read_SAScii( income_file_names[ j ] , catalog[ i , 'sas_script' ] , beginline = SAScii_start , sas_encoding = 'latin1' )
+
+						names( ii ) <- tolower( names( ii ) )
+
+						ii$rectype <- NULL
+						
+						assign( paste0( "ii" , j ) , ii )
+						
+						
+					}
+				
+					# save all five imputed income data frames to a single .rds file #
+					saveRDS( mget( paste0( "ii" , 1:5 ) ) , file = catalog[ i , 'output_filename' ] , compress = FALSE )
+
+					catalog[ i , 'case_count' ] <- nrow( ii )
+						
 				}
+					
 				
-				catalog[ i , 'case_count' ] <- nrow( ii )
-				
-				# save all five imputed income data frames to a single .rds file #
-				saveRDS( mget( paste0( "ii" , 1:5 ) ) , file = catalog[ i , 'output_filename' ] , compress = FALSE )
 						
 			
 			} else {
