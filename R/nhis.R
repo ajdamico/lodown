@@ -148,11 +148,15 @@ get_catalog_nhis <-
 		catalog$sas_script <- 
 			paste0( gsub( "Datasets" , "Program_Code" , dirname( catalog$full_url ) ) , "/" , gsub( "\\.rds" , ".sas" , basename( catalog$output_filename ) ) )
 		
-		catalog$sas_script <- gsub( "nhpi/" , "NHPI/" , catalog$sas_script )
+		catalog$sas_script <- 
+			gsub( "nhpi/" , "NHPI/" , 
+			gsub( "inc[0-9][0-9]\\." , "inc." , 
+				catalog$sas_script 
+			) )
 		
 		catalog$output_filename <- gsub( "nhpi/" , "nhpi_" , catalog$output_filename )
 
-		catalog$imputed_income <- FALSE
+		catalog$imputed_income <- grepl( 'inc[0-9][0-9]\\.' , catalog$full_url )
 		
 		available_imputed_incomes <- grep( "imputed_income" , ay , value = TRUE , ignore.case = TRUE )
 
