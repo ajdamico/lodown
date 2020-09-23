@@ -151,8 +151,9 @@ get_catalog_nhis <-
 		catalog$sas_script <- 
 			gsub( "nhpi/" , "NHPI/" , 
 			gsub( "inc[0-9][0-9]\\." , "inc." , 
+			gsub( "^https" , "^ftp" , 
 				catalog$sas_script 
-			) )
+			) ) )
 		
 		catalog$output_filename <- gsub( "nhpi/" , "nhpi_" , catalog$output_filename )
 
