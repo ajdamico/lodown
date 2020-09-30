@@ -14,10 +14,10 @@ get_catalog_pof <-
 
 		catalog <-
 			data.frame(
-				full_urls = paste0( pof_ftp , ay , "/Microdados/Dados.zip" ) ,
+				full_urls = paste0( pof_ftp , ay , "/Microdados/", ifelse(second_year == 2018, "Dados_20200917.zip","Dados.zip" )) ,
 				period = gsub( "Pesquisa_de_Orcamentos_Familiares_" , "" , ay ) ,
-				documentation = paste0( pof_ftp , ay , "/Microdados/" , ifelse( second_year < 2009 , "Documentacao.zip" , "documentacao.zip" ) ) ,
-				aliment_file = ifelse( second_year < 2009 , NA , paste0( pof_ftp , ay , "/Microdados/tradutores.zip" ) ) ,
+				documentation = paste0( pof_ftp , ay , "/Microdados/" , ifelse( second_year < 2009 , "Documentacao.zip" , ifelse(second_year == 2018, "Documentacao_20200917.zip","documentacao.zip" )) ) ,
+				aliment_file = ifelse( second_year < 2009 , NA , paste0( pof_ftp , ay , "/Microdados/", ifelse(second_year == 2018, "Tradutores_20200917.zip","tradutores.zip" ) )) ,
 				output_folder = paste0( output_dir , "/" , gsub( "Pesquisa_de_Orcamentos_Familiares_" , "" , ay ) ) ,
 				stringsAsFactors = FALSE
 			)
@@ -40,11 +40,11 @@ lodown_pof <-
 
 		for ( i in seq_len( nrow( catalog ) ) ){
 
-			cachaca( catalog[ i , "full_urls" ] , tf , mode = 'wb' )
+			cachaca( catalog[ i , "full_urls" ] , tf , mode = 'wb' , filesize_fun = 'unzip_verify' )
 
 			unzipped_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) )
 
-			cachaca( catalog[ i , "documentation" ] , tf , mode = 'wb' )
+			cachaca( catalog[ i , "documentation" ] , tf , mode = 'wb' , filesize_fun = 'unzip_verify')
 
 			doc_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) )
 
@@ -54,7 +54,7 @@ lodown_pof <-
 
 			if( !is.na( catalog[ i , 'aliment_file' ] ) ){
 
-				cachaca( catalog[ i , "aliment_file" ] , tf , mode = 'wb' )
+				cachaca( catalog[ i , "aliment_file" ] , tf , mode = 'wb' , filesize_fun = 'unzip_verify')
 
 				ali_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) )
 
