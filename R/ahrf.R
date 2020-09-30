@@ -9,7 +9,7 @@ get_catalog_ahrf <-
 
     partial_url <- gsub( '(.*)href=\"(.+?)\"(.*)' , '\\2' , lines_with_links )
 	
-	full_url <- ifelse( grepl( "^https" , partial_url ) , partial_url , paste0( "https://datawarehouse.hrsa.gov" , partial_url ) )
+	full_url <- ifelse( grepl( "^https" , partial_url ) , partial_url , paste0( "https://data.hrsa.gov" , partial_url ) )
 
 	full_url <- full_url[ !grepl( "_SAS_" , full_url ) & grepl( "zip" , full_url , ignore.case = TRUE ) ]
 	
