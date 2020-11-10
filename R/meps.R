@@ -5,14 +5,14 @@ get_catalog_meps <-
 
 		meps_dl_page <- "https://meps.ahrq.gov/mepsweb/data_stats/download_data_files.jsp"
 
-		meps_dl_text <- RCurl::getURL( meps_dl_page , ssl.verifypeer = FALSE )
+		meps_dl_text <- readLines( curl::curl( meps_dl_page ) )
 
-		year_start <- gregexpr( 'All available years' , meps_dl_text )[[1]][1]
-		year_end <- gregexpr( 'Projected Years' , meps_dl_text )[[1]][1]
+		year_start <- grep( 'All available years' , meps_dl_text ) + 1
+		year_end <- grep( 'Projected Years' , meps_dl_text )
 
-		possible_years <- substr( meps_dl_text , year_start , year_end )
+		possible_years <- meps_dl_text[ seq( year_start , year_end ) ]
 
-		possible_years <- unique( as.numeric( strsplit( gsub( " +" , " " , gsub( "[^0-9]" , " " , possible_years ) ) , " " )[[1]] ) )
+		possible_years <- unique( as.numeric( unlist( strsplit( gsub( " +" , " " , gsub( "[^0-9]" , " " , possible_years ) ) , " " ) ) ) )
 
 		possible_years <- possible_years[ !is.na( possible_years ) ]
 		
@@ -24,7 +24,7 @@ get_catalog_meps <-
 
 			search_page <- paste0( "https://meps.ahrq.gov/mepsweb/data_stats/download_data_files_results.jsp?cboDataYear=" , this_year , "&buttonYearandDataType=Search" )
 
-			search_result <- strsplit( RCurl::getURL( search_page , ssl.verifypeer = FALSE ) , "(\r)?\n" )[[1]]
+			search_result <- readLines( curl::curl( search_page ) )
 			
 			puf_search_result_table <- grep( "PUF Search Results" , search_result )
 			
@@ -54,7 +54,7 @@ get_catalog_meps <-
 					
 				available_pufs[ i , 'this_link' ] <- unique( gsub( '(.*)href=\"(.*)\">(.*)</a>(.*)' , "\\2" , this_line ) )
 
-				puf_result <- strsplit( RCurl::getURL( paste0( "https://meps.ahrq.gov/mepsweb/data_stats/" , available_pufs[ i , 'this_link' ] ) , ssl.verifypeer = FALSE ) , "(\r)?\n" )[[1]]
+				puf_result <- readLines( curl::curl( paste0( "https://meps.ahrq.gov/mepsweb/data_stats/" , available_pufs[ i , 'this_link' ] ) ) )
 				
 				link_names <- gsub( '(.*)href=\"(.*)\">(.*)</a>(.*)' , "\\2" , puf_result[ grepl( "ssp\\.zip" , puf_result ) ] )
 				
