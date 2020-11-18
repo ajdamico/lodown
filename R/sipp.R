@@ -577,7 +577,7 @@ lodown_sipp <-
 				}
 					
 				# loop through each core wave..
-				if ( catalog[ i , 'full_url' ] %in% paste0( "https://www2.census.gov/programs-surveys/sipp/data/datasets/2008/l08puw" , 1:16 , ".zip" ) ){
+				if ( catalog[ i , 'full_url' ] %in% paste0( "https://www2.census.gov/programs-surveys/sipp/data/datasets/2008/w" , 1:16 , "/l08puw" , 1:16 , ".zip" ) ){
 
 
 					# add the core wave to the database in a table w#
@@ -594,7 +594,7 @@ lodown_sipp <-
 				}
 
 				# loop through each replicate weight wave..
-				if ( catalog[ i , 'full_url' ] %in% paste0( "https://www2.census.gov/programs-surveys/sipp/data/datasets/2008/rw08w" , 1:16 , ".zip" ) ){
+				if ( catalog[ i , 'full_url' ] %in% paste0( "https://www2.census.gov/programs-surveys/sipp/data/datasets/2008/w" , 1:16 , "/rw08w" , 1:16 , ".zip" ) ){
 
 
 					# add the wave-specific replicate weight to the database in a table rw#
@@ -611,7 +611,7 @@ lodown_sipp <-
 				}
 
 				# loop through each topical module..
-				if ( catalog[ i , 'full_url' ] %in% paste0( "https://www2.census.gov/programs-surveys/sipp/data/datasets/2008/p08putm" , c( 1:11 , 13 ) , ".zip" ) ){
+				if ( catalog[ i , 'full_url' ] %in% paste0( "https://www2.census.gov/programs-surveys/sipp/data/datasets/2008/w" , c( 1:11 , 13 ) , "/p08putm" , c( 1:11 , 13 ) , ".zip" ) ){
 					
 					# add each topical module to the database in a table tm#
 					read_SAScii_monetdb (
