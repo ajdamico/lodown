@@ -71,9 +71,9 @@ get_catalog_sipp <-
 				db_tablename = c( paste0( "w" , 1:16 ) , paste0( "rw" , 1:16 ) , paste0( "tm" , c( 1:11 , 13 ) ) , "wgtw16" , paste0( 'cy' , 1:5 ) , paste0( 'pn' , 1:5 ) ) ,
 				full_url =
 					c(
-						paste0( "https://www2.census.gov/programs-surveys/sipp/data/datasets/2008/l08puw" , 1:16 , ".zip" ) ,
+						paste0( "https://www2.census.gov/programs-surveys/sipp/data/datasets/2008/w" , 1:16 , "/l08puw" , 1:16 , ".zip" ) ,
 						paste0( "https://www2.census.gov/programs-surveys/sipp/data/datasets/2008/rw08w" , 1:16 , ".zip" ) ,
-						paste0( "https://www2.census.gov/programs-surveys/sipp/data/datasets/2008/p08putm" , c( 1:11 , 13 ) , ".zip" ) ,
+						paste0( "https://www2.census.gov/programs-surveys/sipp/data/datasets/2008/w" , c( 1:11 , 13 ) , "/p08putm" , c( 1:11 , 13 ) , ".zip" ) ,
 						"https://www2.census.gov/programs-surveys/sipp/data/datasets/2008/lgtwgt2008w16.zip" ,
 						paste0( "https://www2.census.gov/programs-surveys/sipp/data/datasets/2008/lrw08" , c( paste0( 'cy' , 1:5 ) , paste0( 'pn' , 1:5 ) ) , ".zip" )
 					) ,
