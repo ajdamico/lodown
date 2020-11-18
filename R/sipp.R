@@ -72,7 +72,7 @@ get_catalog_sipp <-
 				full_url =
 					c(
 						paste0( "https://www2.census.gov/programs-surveys/sipp/data/datasets/2008/w" , 1:16 , "/l08puw" , 1:16 , ".zip" ) ,
-						paste0( "https://www2.census.gov/programs-surveys/sipp/data/datasets/2008/rw08w" , 1:16 , ".zip" ) ,
+						paste0( "https://www2.census.gov/programs-surveys/sipp/data/datasets/2008/w" , 1:16 , "/rw08w" , 1:16 , ".zip" ) ,
 						paste0( "https://www2.census.gov/programs-surveys/sipp/data/datasets/2008/w" , c( 1:11 , 13 ) , "/p08putm" , c( 1:11 , 13 ) , ".zip" ) ,
 						"https://www2.census.gov/programs-surveys/sipp/data/datasets/2008/lgtwgt2008w16.zip" ,
 						paste0( "https://www2.census.gov/programs-surveys/sipp/data/datasets/2008/lrw08" , c( paste0( 'cy' , 1:5 ) , paste0( 'pn' , 1:5 ) ) , ".zip" )
