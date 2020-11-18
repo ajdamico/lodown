@@ -115,7 +115,7 @@ read_SAScii_monetdb <-
 		na_strings = ""	,				# by default, na strings are empty
 		unzip_fun = unzip_warn_fail ,
 		winslash_edit = "\\" ,
-		filesize_fun = 'httr'
+		filesize_fun = 'unzip_verify'
 	) {
 		if( is.null( sas_ri ) & is.null( sas_stru ) ) stop( "either sas_ri= or sas_stru= must be specified" )
 		if( !is.null( sas_ri ) & !is.null( sas_stru ) ) stop( "either sas_ri= or sas_stru= must be specified, but not both" )
