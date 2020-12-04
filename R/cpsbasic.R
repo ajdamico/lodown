@@ -1,7 +1,7 @@
 get_catalog_cpsbasic <-
 	function( data_name = "cpsbasic" , output_dir , ... ){
 
-		cps_ftp <- "https://thedataweb.rm.census.gov/ftp/cps_ftp.html"
+		cps_ftp <- "https://www.census.gov/data/datasets/time-series/demo/cps/cps-basic.html"
 		
 		link_page <- rvest::html_nodes( xml2::read_html( cps_ftp ) , "a" )
 		
