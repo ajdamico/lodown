@@ -11,7 +11,7 @@ get_catalog_pns <-
 	
 		for( this_year in available_years ){
 			
-			file_listing <- RCurl::getURL( paste0( "ftp://ftp.ibge.gov.br/PNS/" , this_year , "/microdados/" ) )
+			file_listing <- RCurl::getURL( paste0( "ftp://ftp.ibge.gov.br/PNS/" , this_year , "/Microdados/" ) )
 
 			af <- gsub( "(.*) (.*)" , "\\2" , file_listing )
 			af <- gsub( "\\r\\n" , "" , af )
@@ -22,7 +22,7 @@ get_catalog_pns <-
 					catalog ,
 					data.frame(
 						year = this_year ,
-						full_url = paste0( "ftp://ftp.ibge.gov.br/PNS/" , this_year , "/microdados/" , af ) ,
+						full_url = paste0( "ftp://ftp.ibge.gov.br/PNS/" , this_year , "/Microdados/" , af ) ,
 						output_folder = paste0( output_dir , "/" ) ,
 						long_file = paste0( this_year , " long questionnaire survey.rds" ) , 
 						all_file = paste0( this_year , " all questionnaire survey.rds" ) ,
