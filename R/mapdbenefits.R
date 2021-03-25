@@ -4,8 +4,8 @@ get_catalog_mapdbenefits <-
 	cpsc_url <- "https://www.cms.gov/Research-Statistics-Data-and-Systems/Statistics-Trends-and-Reports/MCRAdvPartDEnrolData/Benefits-Data?items_per_page=100"
 
 	all_dates <- data.frame( rvest::html_table(xml2::read_html(cpsc_url)) )
-	all_titles <- all_dates[[1]][ , "Title"]
-	all_dates <- all_dates[[1]][ , "Report Period"]
+	all_titles <- all_dates[ , "Title"]
+	all_dates <- all_dates[ , "Report.Period"]
 	
 	all_dates[ all_dates >= 2018 ] <-
 		gsub( "PBP Benefits |- " , "" , all_titles[ all_dates >= 2018 ] )
