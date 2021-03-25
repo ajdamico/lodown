@@ -1,7 +1,7 @@
 get_catalog_mapdbenefits <-
   function( data_name = "mapdbenefits" , output_dir , ... ){
 
-	cpsc_url <- "https://www.cms.gov/Research-Statistics-Data-and-Systems/Statistics-Trends-and-Reports/MCRAdvPartDEnrolData/Benefits-Data.html"
+	cpsc_url <- "https://www.cms.gov/Research-Statistics-Data-and-Systems/Statistics-Trends-and-Reports/MCRAdvPartDEnrolData/Benefits-Data?items_per_page=100"
 
 	all_dates <- rvest::html_table(xml2::read_html(cpsc_url))
 	all_titles <- all_dates[[1]][ , "Title"]
@@ -9,6 +9,8 @@ get_catalog_mapdbenefits <-
 	
 	all_dates[ all_dates >= 2018 ] <-
 		gsub( "PBP Benefits |- " , "" , all_titles[ all_dates >= 2018 ] )
+	
+	all_dates <- gsub( "^– |\\-|\\(|\\)|\\/|^ " , "" , all_dates )
 	
 	all_links <- rvest::html_nodes(xml2::read_html(cpsc_url),xpath='//td/a')
 
@@ -30,7 +32,7 @@ get_catalog_mapdbenefits <-
 	for( this_row in seq( nrow( this_catalog ) ) ){
 		
 		link_text <- readLines( this_catalog[ this_row , 'full_url' ] )
-		link_line <- grep( "zip" , link_text , value = TRUE )
+		link_line <- grep( "\\.zip" , link_text , value = TRUE )
 		link_line <- gsub( '(.*) href=\"' , "" , gsub( '(.*) href=\"/' , prefix , link_line ) )
 		this_catalog[ this_row , 'full_url' ] <- gsub( '\">(.*)' , "" , link_line )
 		
