@@ -80,6 +80,11 @@ lodown_scpenetration <-
 
 				x <- data.frame( readr::read_csv( grep( "State_County(.*)\\.csv$" , unzipped_files , value = TRUE , ignore.case = TRUE ) , guess_max = 100000 ) )
 
+				x[ , 'Check.Penetration' ] <- NULL
+				x[ , 'X16' ] <- NULL
+				x[ , 'DIFF.Pene' ] <- NULL
+				
+
 				x$year_month <- these_entries[ i , 'year_month' ]
 				
 				x <- unique( x )
