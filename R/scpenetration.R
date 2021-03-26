@@ -84,6 +84,14 @@ lodown_scpenetration <-
 				x[ , 'X16' ] <- NULL
 				x[ , 'DIFF.Pene' ] <- NULL
 				
+				x[ , 'State.Name' ] <- 
+					gsub(
+						"(^|[[:space:]])([[:alpha:]])", 
+						"\\1\\U\\2",    # Uppercase with Base R
+						x[ , 'State.Name' ] ,
+						perl = TRUE
+					)
+					
 
 				x$year_month <- these_entries[ i , 'year_month' ]
 				
