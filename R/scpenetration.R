@@ -9,9 +9,9 @@ get_catalog_scpenetration <-
 			
 				pene_url <- paste0( "https://www.cms.gov/Research-Statistics-Data-and-Systems/Statistics-Trends-and-Reports/MCRAdvPartDEnrolData/" , ma_pd , "-State-County-Penetration?items_per_page_options%5B5%5D=5%20per%20page&items_per_page_options%5B10%5D=10%20per%20page&items_per_page_options%5B25%5D=25%20per%20page&items_per_page_options%5B50%5D=50%20per%20page&items_per_page_options%5B100%5D=100%20per%20page&combine=&items_per_page=100&page=" , this_page )
 
-				all_dates <- rvest::html_table( xml2::read_html( pene_url ) )
+				all_dates <- data.frame( rvest::html_table( xml2::read_html( pene_url ) ) )
 
-				all_dates <- all_dates[[1]][ , "Report Period" ]
+				all_dates <- all_dates[ , "Report.Period" ]
 
 				all_links <- rvest::html_nodes( xml2::read_html( pene_url ) , xpath = '//td/a' )
 
