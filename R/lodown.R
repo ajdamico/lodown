@@ -38,7 +38,7 @@ lodown <-
 
 		if( nrow( catalog ) == 0 ) stop( "catalog must have at least one record" )
 
-		unique_directories <- unique( c( if( 'unzip_folder' %in% names( catalog ) ) catalog$unzip_folder , if( 'output_filename' %in% names( catalog ) ) np_dirname( catalog$output_filename ) , if( 'dbfile' %in% names( catalog ) ) np_dirname( catalog$dbfile ) ,  if( 'output_folder' %in% names( catalog ) ) catalog$output_folder ) )
+		unique_directories <- unique( c( if( 'unzip_folder' %in% names( catalog ) )catalog$unzip_folder , if( 'output_filename' %in% names( catalog ) ) np_dirname( catalog$output_filename ) , if( 'dbfile' %in% names( catalog ) ) np_dirname( catalog$dbfile ) , if( 'output_folder' %in% names( catalog ) ) catalog$output_folder ) )
 
 		for ( this_dir in unique_directories ){
 			if( !dir.exists( this_dir ) ){

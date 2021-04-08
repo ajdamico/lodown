@@ -47,6 +47,8 @@ get_catalog_nhanes <-
 
 		catalog <- catalog[ order( catalog[ , 'years' ] ) , ]
 
+		catalog <- data.frame(catalog)
+
 		catalog
 
 	}
@@ -60,10 +62,11 @@ lodown_nhanes <-
 		tf <- tempfile()
 
 		for ( i in seq_len( nrow( catalog ) ) ){
-			# download the file
-			cachaca( catalog[[ i , "full_url" ]] , tf , mode = 'wb' )
 
-			if( grepl( "\\.zip$" , catalog[[ i , "full_url" ]] , ignore.case = TRUE ) ){
+			# download the file
+			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
+
+			if( grepl( "\\.zip$" , catalog[ i , "full_url" ] , ignore.case = TRUE ) ){
 
 				unzipped_files <- unzip( tf , exdir = tempdir() )
 
@@ -80,7 +83,7 @@ lodown_nhanes <-
 			# convert all column names to lowercase
 			names( x ) <- tolower( names( x ) )
 
-			saveRDS( x , file = catalog[[ i , 'output_filename' ]] , compress = FALSE )
+			saveRDS( x , file = catalog[ i , 'output_filename' ] , compress = FALSE )
 
 			catalog[ i , 'case_count' ] <- nrow( x )
 
