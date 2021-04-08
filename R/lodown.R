@@ -35,52 +35,52 @@ lodown <-
 	function( data_name , catalog = NULL , ... ){
 
 		if( is.null( catalog ) ) catalog <- get_catalog( data_name , ... )
-		
+
 		if( nrow( catalog ) == 0 ) stop( "catalog must have at least one record" )
 
-		unique_directories <- unique( c( catalog$unzip_folder , if( 'output_filename' %in% names( catalog ) ) np_dirname( catalog$output_filename ) , if( 'dbfile' %in% names( catalog ) ) np_dirname( catalog$dbfile ) , catalog$output_folder ) )
+		unique_directories <- unique( c( if( 'unzip_folder' %in% names( catalog ) )catalog$unzip_folder , if( 'output_filename' %in% names( catalog ) ) np_dirname( catalog$output_filename ) , if( 'dbfile' %in% names( catalog ) ) np_dirname( catalog$dbfile ) , if( 'output_folder' %in% names( catalog ) ) catalog$output_folder ) )
 
 		for ( this_dir in unique_directories ){
 			if( !dir.exists( this_dir ) ){
-				tryCatch( { 
-					dir.create( this_dir , recursive = TRUE , showWarnings = TRUE ) 
-					} , 
-					warning = function( w ) stop( "while creating directory " , this_dir , "\n" , conditionMessage( w ) ) 
+				tryCatch( {
+					dir.create( this_dir , recursive = TRUE , showWarnings = TRUE )
+					} ,
+					warning = function( w ) stop( "while creating directory " , this_dir , "\n" , conditionMessage( w ) )
 				)
 			}
 		}
 
-		catalog$case_count <- NA
-		
+		catalog$case_count <- NA_integer_
+
 		load_fun <- getFromNamespace( paste0( "lodown_" , data_name ) , "lodown" )
 
 		cat( paste0( "locally downloading " , data_name , "\r\n\n" ) )
 
 		memory_note <- "\r\n\nlodown is now exiting due to a memory error.\nwindows users: your computing performance would suffer due to disk paging,\nbut you can increase your memory limits with beyond your available hardware with the `?memory.limit` function.\nfor example, you can set the memory ceiling of an R session to 256 GB by typing `memory.limit(256000)`.\r\n\n"
-		
+
 		installation_note <- "\r\n\nlodown is now exiting due to an installation error.\r\n\n"
-		
+
 		parameter_note <- "\r\n\nlodown is now exiting due to a parameter omission.\r\n\n"
-		
+
 		unknown_error_note <- "\r\n\nlodown is now exiting unexpectedly.\nwebsites that host publicly-downloadable microdata change often and sometimes those changes cause this software to break.\nif the error call stack below appears to be a hiccup in your internet connection, then please verify your connectivity and retry the download.\notherwise, please open a new issue at `https://github.com/ajdamico/asdfree/issues` with the contents of this error call stack and also the output of your `sessionInfo()`.\r\n\n"
-		
+
 		withCallingHandlers(
-			catalog <- load_fun( data_name = data_name , catalog , ... ) , 
-			error = 
-				function( e ){ 
-			
+			catalog <- load_fun( data_name = data_name , catalog , ... ) ,
+			error =
+				function( e ){
+
 					print( sessionInfo() )
-			
-					if( grepl( 'cannot allocate vector of size' , e ) ) message( memory_note ) else 
+
+					if( grepl( 'cannot allocate vector of size' , e ) ) message( memory_note ) else
 					if( grepl( 'parameter must be specified' , e ) ) message( parameter_note ) else
 					if( grepl( 'to install' , e ) ) message( installation_note ) else {
-					
+
 						message( unknown_error_note )
-					
+
 						print( sys.calls() )
-						
+
 					}
-					
+
 				}
 		)
 
@@ -89,12 +89,12 @@ lodown <-
 		invisible( catalog )
 
 	}
-	
+
 no.na <- function( x , value = FALSE ){ x[ is.na( x ) ] <- value ; x }
 
 unzip_warn_fail <- function( ... ) tryCatch( { unzip( ... ) } , warning = function( w ) stop( conditionMessage( w ) ) )
 
-unarchive_nicely <- 
+unarchive_nicely <-
 	function( file_to_unzip , unzip_directory = tempdir() ) {
 		file.remove( list.files( file.path( unzip_directory , "archive_unzip" ) , recursive = TRUE , full.names = TRUE ) )
 		archive::archive_extract( file_to_unzip , dir = file.path( unzip_directory , "archive_unzip" ) )
