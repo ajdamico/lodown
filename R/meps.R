@@ -38,7 +38,7 @@ get_catalog_meps <-
 
 			writeLines( search_result , tf )
 
-			available_pufs <- rvest::html_table( xml2::read_html( tf ) , fill = TRUE )[[1]]
+			available_pufs <- data.frame( rvest::html_table( xml2::read_html( tf ) , fill = TRUE )[[1]] )
 
 			available_pufs <- available_pufs[ grepl( "^HC" , available_pufs[ , 1 ] ) , ]
 
