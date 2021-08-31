@@ -57,7 +57,7 @@ get_catalog_meps <-
 				puf_result <- readLines( curl::curl( paste0( "https://meps.ahrq.gov/mepsweb/data_stats/" , available_pufs[ i , 'this_link' ] ) ) )
 				
 				if( any( grepl( 'v9\\.zip' , puf_result ) ) ){
-					link_names <- gsub( '(.*)href=\"(.*)\">(.*)</a>(.*)' , "\\2" , puf_result[ grepl( "ssp\\.zip" , puf_result ) ] )
+					link_names <- gsub( '(.*)href=\"(.*)\">(.*)</a>(.*)' , "\\2" , puf_result[ grepl( "v9\\.zip" , puf_result ) ] )
 				} else {
 					link_names <- gsub( '(.*)href=\"(.*)\">(.*)</a>(.*)' , "\\2" , puf_result[ grepl( "ssp\\.zip" , puf_result ) ] )
 				}
@@ -75,10 +75,10 @@ get_catalog_meps <-
 		catalog$output_filename <- 
 			paste0( 
 				output_dir , "/" , 
-				ifelse( grepl( "-" , catalog$year ) , "" , paste0( catalog$year , "/" ) ) ,
+				ifelse( grepl( "\\-" , catalog$year ) , "" , paste0( catalog$year , "/" ) ) ,
 				ifelse( grepl( "Longitudinal" , catalog$file_name ) , paste0( catalog$year , " " ) , "" ) ,
 				
-				ifelse( !grepl( "-" , catalog$year ) ,
+				ifelse( !grepl( "\\-" , catalog$year ) ,
 					gsub( "[0-9][0-9][0-9][0-9] " , ""  , tolower( gsub( "[^A-z0-9 -]" , "" , catalog$file_name ) ) ) ,
 					tolower( gsub( "[^A-z0-9 -]" , "" , catalog$file_name ) )
 				) ,
