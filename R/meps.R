@@ -56,7 +56,11 @@ get_catalog_meps <-
 
 				puf_result <- readLines( curl::curl( paste0( "https://meps.ahrq.gov/mepsweb/data_stats/" , available_pufs[ i , 'this_link' ] ) ) )
 				
-				link_names <- gsub( '(.*)href=\"(.*)\">(.*)</a>(.*)' , "\\2" , puf_result[ grepl( "ssp\\.zip" , puf_result ) ] )
+				if( any( grepl( 'v9\\.zip' , puf_result ) ) ){
+					link_names <- gsub( '(.*)href=\"(.*)\">(.*)</a>(.*)' , "\\2" , puf_result[ grepl( "ssp\\.zip" , puf_result ) ] )
+				} else {
+					link_names <- gsub( '(.*)href=\"(.*)\">(.*)</a>(.*)' , "\\2" , puf_result[ grepl( "ssp\\.zip" , puf_result ) ] )
+				}
 				
 				this_file <- merge( available_pufs[ i , ] , data.frame( full_url = paste0( "https://meps.ahrq.gov/" , gsub( "../" , "" , link_names , fixed = TRUE ) ) , file_num = if( length( link_names ) > 1 ) seq( link_names ) else NA , stringsAsFactors = FALSE ) )
 			
@@ -109,16 +113,23 @@ lodown_meps <-
 
 			unzipped_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) )
 
-			if( length( unzipped_files ) != 1 ) stop( "expecting a single sas transport file" )
+			if( length( unzipped_files ) != 1 ) stop( "expecting a single sas v9 or transport file" )
 
 			import_result <-
 				try({
-					x <- foreign::read.xport( unzipped_files )
+				
+					if( grepl( 'sas7bdat' , unzipped_files ) ){
+						x <- data.frame( haven::read_sas( unzipped_files ) )
+					} else {
+						x <- foreign::read.xport( unzipped_files )
+					}
 
 					# convert all column names to lowercase
 					names( x ) <- tolower( names( x ) )
 
 					catalog[ i , 'case_count' ] <- nrow( x )
+					
+					dir.create( dirname( catalog[ i , 'output_filename' ] ) )
 					
 					saveRDS( x , file = catalog[ i , 'output_filename' ] , compress = FALSE )
 				} , silent = TRUE )
