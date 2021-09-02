@@ -5,7 +5,7 @@ get_catalog_mapdcpsc <-
 
 	all_dates <- rvest::html_table(xml2::read_html(cpsc_url))
 
-	all_dates <- all_dates[[1]][ , "Report Period"]
+	all_dates <- data.frame( all_dates[[1]] )[ , "Report.Period"]
 
 	all_links <- rvest::html_nodes(xml2::read_html(cpsc_url),xpath='//td/a')
 
