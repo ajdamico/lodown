@@ -1,40 +1,46 @@
 get_catalog_mapdcpsc <-
   function( data_name = "mapdcpsc" , output_dir , ... ){
 
-	cpsc_url <- "https://www.cms.gov/Research-Statistics-Data-and-Systems/Statistics-Trends-and-Reports/MCRAdvPartDEnrolData/Monthly-Enrollment-by-Contract-Plan-State-County.html"
+	catalog <- NULL
 
-	all_dates <- rvest::html_table(xml2::read_html(cpsc_url))
+	for( cpsc_url in c( "https://www.cms.gov/Research-Statistics-Data-and-Systems/Statistics-Trends-and-Reports/MCRAdvPartDEnrolData/Monthly-Enrollment-by-Contract?items_per_page=100&items_per_page_options%5B5%5D=5%20per%20page&items_per_page_options%5B10%5D=10%20per%20page&items_per_page_options%5B25%5D=25%20per%20page&items_per_page_options%5B50%5D=50%20per%20page&items_per_page_options%5B100%5D=100%20per%20page&combine=&page=0" , "https://www.cms.gov/Research-Statistics-Data-and-Systems/Statistics-Trends-and-Reports/MCRAdvPartDEnrolData/Monthly-Enrollment-by-Contract?items_per_page=100&items_per_page_options%5B5%5D=5%20per%20page&items_per_page_options%5B10%5D=10%20per%20page&items_per_page_options%5B25%5D=25%20per%20page&items_per_page_options%5B50%5D=50%20per%20page&items_per_page_options%5B100%5D=100%20per%20page&combine=&page=1" ) ){
 
-	all_dates <- data.frame( all_dates[[1]] )[ , "Report.Period"]
+		all_dates <- rvest::html_table(xml2::read_html(cpsc_url))
 
-	all_links <- rvest::html_nodes(xml2::read_html(cpsc_url),xpath='//td/a')
+		all_dates <- data.frame( all_dates[[1]] )[ , "Report.Period"]
 
-	prefix <- "https://www.cms.gov/"
+		all_links <- rvest::html_nodes(xml2::read_html(cpsc_url),xpath='//td/a')
 
-	these_links <- 
-		gsub( "\">(.*)" , "" , 
-		gsub( '<a href=\"' , prefix , 
-			all_links ) )
+		prefix <- "https://www.cms.gov/"
 
-    this_catalog <-
-      data.frame(
-          output_filename = paste0( output_dir , "/" , all_dates , " cpsc enrollment.rds" ) ,
-          full_url = as.character( these_links ) ,
-          year_month = all_dates ,
-		  stringsAsFactors = FALSE
-      )
-	
-	for( this_row in seq( nrow( this_catalog ) ) ){
+		these_links <- 
+			gsub( "\">(.*)" , "" , 
+			gsub( '<a href=\"' , prefix , 
+				all_links ) )
+
+		this_catalog <-
+		  data.frame(
+			  output_filename = paste0( output_dir , "/" , all_dates , " cpsc enrollment.rds" ) ,
+			  full_url = as.character( these_links ) ,
+			  year_month = all_dates ,
+			  stringsAsFactors = FALSE
+		  )
 		
-		link_text <- readLines( this_catalog[ this_row , 'full_url' ] )
-		link_line <- grep( "cpsc(.*)zip|zip(.*)cpsc|monthly(.*)zip" , link_text , value = TRUE )
-		link_line <- gsub( '(.*) href=\"' , "" , gsub( '(.*) href=\"/' , prefix , link_line ) )
-		this_catalog[ this_row , 'full_url' ] <- gsub( '\">(.*)' , "" , link_line )
+		for( this_row in seq( nrow( this_catalog ) ) ){
+			
+			link_text <- readLines( this_catalog[ this_row , 'full_url' ] )
+			link_line <- grep( "cpsc(.*)zip|zip(.*)cpsc|onthly(.*)zip" , link_text , value = TRUE )
+			link_line <- gsub( '(.*) href=\"' , "" , gsub( '(.*) href=\"/' , prefix , link_line ) )
+			this_catalog[ this_row , 'full_url' ] <- gsub( '\">(.*)' , "" , link_line )
 
+		}
+		
+		catalog <- rbind( catalog , this_catalog )
+		
 	}
 	
 	
-	this_catalog[ order( this_catalog$year_month ) , ]
+	catalog[ order( this_catalog$year_month ) , ]
   }
 
 
