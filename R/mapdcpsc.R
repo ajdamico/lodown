@@ -31,7 +31,7 @@ get_catalog_mapdcpsc <-
 			link_text <- readLines( this_catalog[ this_row , 'full_url' ] )
 			link_line <- grep( "cpsc(.*)zip|zip(.*)cpsc|onthly(.*)zip|nrollment(.*)zip" , link_text , value = TRUE )
 			link_line <- gsub( '(.*) href=(\"|\')' , "" , gsub( '(.*) href=\"/' , prefix , link_line ) )
-			this_catalog[ this_row , 'full_url' ] <- gsub( '(\"|\')>(.*)' , "" , link_line )
+			this_catalog[ this_row , 'full_url' ] <- stringr::str_trim( gsub( '(\"|\')>(.*)' , "" , link_line ) )
 
 		}
 		
