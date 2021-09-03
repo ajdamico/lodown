@@ -165,9 +165,13 @@ lodown_mapdlandscape <-
 				
 				names( csv_df ) <- gsub( "(\\.+)$" , "" , names( csv_df ) )
 				
+				names( csv_df ) <- gsub( "([0-9])$" , "" , names( csv_df ) )
+				
+				names( csv_df ) <- gsub( "(\\.+)$" , "" , names( csv_df ) )
+				
 				names( csv_df )[ names( csv_df ) == "Additional.Coverage.Offered.in.the.Gap" ] <- "Type.of..Additional.Coverage.Offered.in.the.Gap"
 				
-				if( grepl( "sanction" , this_csv , ignore.case = TRUE ) ) csv_df$sanctioned <- TRUE else csv_df$sanctioned <- FALSE
+				if( nrow( csv_df ) == 0 ) csv_df[ , 'sanctioned' ] <- as.logical( NULL ) else if( grepl( "sanction" , this_csv , ignore.case = TRUE ) ) csv_df$sanctioned <- TRUE else csv_df$sanctioned <- FALSE
 				
 				if( !is.null( out ) & ( "Type.of..Additional.Coverage.Offered.in.the.Gap" %in% names( csv_df ) ) ) out[ , "Type.of..Additional.Coverage.Offered.in.the.Gap" ] <- NA
 				

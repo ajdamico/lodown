@@ -3,7 +3,7 @@ get_catalog_mapdcpsc <-
 
 	catalog <- NULL
 
-	for( cpsc_url in c( "https://www.cms.gov/Research-Statistics-Data-and-Systems/Statistics-Trends-and-Reports/MCRAdvPartDEnrolData/Monthly-Enrollment-by-Contract?items_per_page=100&items_per_page_options%5B5%5D=5%20per%20page&items_per_page_options%5B10%5D=10%20per%20page&items_per_page_options%5B25%5D=25%20per%20page&items_per_page_options%5B50%5D=50%20per%20page&items_per_page_options%5B100%5D=100%20per%20page&combine=&page=0" , "https://www.cms.gov/Research-Statistics-Data-and-Systems/Statistics-Trends-and-Reports/MCRAdvPartDEnrolData/Monthly-Enrollment-by-Contract?items_per_page=100&items_per_page_options%5B5%5D=5%20per%20page&items_per_page_options%5B10%5D=10%20per%20page&items_per_page_options%5B25%5D=25%20per%20page&items_per_page_options%5B50%5D=50%20per%20page&items_per_page_options%5B100%5D=100%20per%20page&combine=&page=1" ) ){
+	for( cpsc_url in c( "https://www.cms.gov/Research-Statistics-Data-and-Systems/Statistics-Trends-and-Reports/MCRAdvPartDEnrolData/Monthly-Enrollment-by-Contract-Plan-State-County?items_per_page=100&items_per_page_options%5B5%5D=5%20per%20page&items_per_page_options%5B10%5D=10%20per%20page&items_per_page_options%5B25%5D=25%20per%20page&items_per_page_options%5B50%5D=50%20per%20page&items_per_page_options%5B100%5D=100%20per%20page&combine=&page=0" , "https://www.cms.gov/Research-Statistics-Data-and-Systems/Statistics-Trends-and-Reports/MCRAdvPartDEnrolData/Monthly-Enrollment-by-Contract-Plan-State-County?items_per_page=100&items_per_page_options%5B5%5D=5%20per%20page&items_per_page_options%5B10%5D=10%20per%20page&items_per_page_options%5B25%5D=25%20per%20page&items_per_page_options%5B50%5D=50%20per%20page&items_per_page_options%5B100%5D=100%20per%20page&combine=&page=1" ) ){
 
 		all_dates <- rvest::html_table(xml2::read_html(cpsc_url))
 
@@ -29,7 +29,7 @@ get_catalog_mapdcpsc <-
 		for( this_row in seq( nrow( this_catalog ) ) ){
 			
 			link_text <- readLines( this_catalog[ this_row , 'full_url' ] )
-			link_line <- grep( "cpsc(.*)zip|zip(.*)cpsc|onthly(.*)zip" , link_text , value = TRUE )
+			link_line <- grep( "cpsc(.*)zip|zip(.*)cpsc|onthly(.*)zip|nrollment(.*)zip" , link_text , value = TRUE )
 			link_line <- gsub( '(.*) href=\"' , "" , gsub( '(.*) href=\"/' , prefix , link_line ) )
 			this_catalog[ this_row , 'full_url' ] <- gsub( '\">(.*)' , "" , link_line )
 
@@ -40,7 +40,7 @@ get_catalog_mapdcpsc <-
 	}
 	
 	
-	catalog[ order( this_catalog$year_month ) , ]
+	catalog[ order( catalog$year_month ) , ]
   }
 
 
