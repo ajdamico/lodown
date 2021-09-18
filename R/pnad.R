@@ -93,7 +93,7 @@ lodown_pnad <-
 			# download the sas file
 			if( !is.na( catalog[ i , 'sas_ri' ] ) ){
 			
-				cachaca( catalog[ i , "sas_ri" ] , tf , mode = 'wb' )
+				cachaca( catalog[ i , "sas_ri" ] , tf , mode = 'wb', filesize_fun = 'unzip_verify' )
 
 				unzipped_files <- c( unzipped_files , unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) ) )
 
