@@ -86,14 +86,14 @@ lodown_pnad <-
 		for ( i in seq_len( nrow( catalog ) ) ){
 
 			# download the file
-			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb', filesize_fun = 'unzip_verify' )
+			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' , filesize_fun = 'unzip_verify' )
 
 			unzipped_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) )
 
 			# download the sas file
 			if( !is.na( catalog[ i , 'sas_ri' ] ) ){
 			
-				cachaca( catalog[ i , "sas_ri" ] , tf , mode = 'wb' )
+				cachaca( catalog[ i , "sas_ri" ] , tf , mode = 'wb' , filesize_fun = 'unzip_verify'  )
 
 				unzipped_files <- c( unzipped_files , unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) ) )
 
