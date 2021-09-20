@@ -4,7 +4,7 @@ get_catalog_censo <-
 		catalog <- NULL
 
 		# designate the location of the 2010 general sample microdata files
-		ftp_path_2010 <-	"ftp://ftp.ibge.gov.br/Censos/Censo_Demografico_2010/Resultados_Gerais_da_Amostra/Microdados/"
+		ftp_path_2010 <- "ftp://ftp.ibge.gov.br/Censos/Censo_Demografico_2010/Resultados_Gerais_da_Amostra/Microdados/"
 
 		# fetch all available files in the ftp site's directory
 		all_files <- RCurl::getURL( ftp_path_2010 , dirlistonly = TRUE )
@@ -87,7 +87,7 @@ lodown_censo <-
 
 		for ( i in seq_len( nrow( catalog ) ) ){
 
-			cachaca( catalog[ i , 'full_url' ] , tf , mode = 'wb' )
+			cachaca( catalog[ i , 'full_url' ] , tf , mode = 'wb' , filesize_fun = 'unzip_verify' )
 
 			unzipped_files <- unzip_warn_fail( tf , exdir = catalog[ i , 'output_folder' ] )
 			
