@@ -9,7 +9,7 @@ get_catalog_acs <-
 		
 		pums_ftp <- "https://www2.census.gov/programs-surveys/acs/data/pums/"
 	
-		ftp_listing <- rvest::html_table( xml2::read_html( pums_ftp ) )[[1]][ , "Name" ]
+		ftp_listing <- data.frame( rvest::html_table( xml2::read_html( pums_ftp ) )[[1]] )[ , "Name" ]
 
 		suppressWarnings( available_years <- as.numeric( gsub( "/" , "" , ftp_listing ) ) )
 		
@@ -19,8 +19,12 @@ get_catalog_acs <-
 		available_years <- available_years[ available_years >= 2005 ]
 		
 		for( this_year in available_years ){
-		
-			cat( paste0( "loading " , data_name , " catalog from " , paste0( pums_ftp , this_year ) , "\r\n\n" ) )
+			
+			if( this_year == 2020 ){
+				cat( paste0( "loading " , data_name , " catalog from https://www2.census.gov/programs-surveys/acs/experimental/2020/data/pums/\r\n\n" ) )
+			} else {
+				cat( paste0( "loading " , data_name , " catalog from " , paste0( pums_ftp , this_year ) , "\r\n\n" ) )
+			}
 
 			if( this_year < 2007 ){
 			
@@ -28,9 +32,17 @@ get_catalog_acs <-
 				
 				available_folders <- paste0( pums_ftp , this_year )
 				
+			} else if( this_year == 2020 ){
+
+				ftp_listing <- data.frame( rvest::html_table( xml2::read_html( "https://www2.census.gov/programs-surveys/acs/experimental/2020/data/pums/" ) )[[1]] )[ , "Name" ]
+			
+				available_periods <- gsub( "/$" , "" , grep( "-Year" , ftp_listing , value = TRUE ) )
+			
+				available_folders <- paste0( "https://www2.census.gov/programs-surveys/acs/experimental/2020/data/pums/" , "/" , available_periods )
+			
 			} else {
 			
-				ftp_listing <- rvest::html_table( xml2::read_html( paste0( pums_ftp , this_year ) ) )[[1]][ , "Name" ]
+				ftp_listing <- data.frame( rvest::html_table( xml2::read_html( paste0( pums_ftp , this_year ) ) )[[1]] )[ , "Name" ]
 			
 				available_periods <- gsub( "/$" , "" , grep( "-Year" , ftp_listing , value = TRUE ) )
 			
