@@ -3,10 +3,6 @@ get_catalog_acs <-
 
 		catalog <- NULL
 		
-		h_basenames <- paste0( "csv_h" , tolower( c( state.abb , "DC" , "PR" ) ) , ".zip" )
-		
-		p_basenames <- paste0( "csv_p" , tolower( c( state.abb , "DC" , "PR" ) ) , ".zip" )
-		
 		pums_ftp <- "https://www2.census.gov/programs-surveys/acs/data/pums/"
 	
 		ftp_listing <- data.frame( rvest::html_table( xml2::read_html( pums_ftp ) )[[1]] )[ , "Name" ]
@@ -53,14 +49,18 @@ get_catalog_acs <-
 			for( i in seq_along( available_folders ) ){
 			
 				this_tablename <- paste0( "acs" , this_year , "_" , substr( available_periods[ i ] , 1 , 1 ) , "yr" )
-			
+					
+				h_basenames <- paste0( "csv_h" , tolower( c( state.abb , "DC" , if( this_year != 2020 ) "PR" ) ) , ".zip" )
+				
+				p_basenames <- paste0( "csv_p" , tolower( c( state.abb , "DC" , if( this_year != 2020 ) "PR" ) ) , ".zip" )
+				
 				catalog <-
 					rbind( 
 						catalog ,
 						data.frame(
 							year = this_year ,
 							time_period = available_periods[ i ] ,
-							stateab = tolower( c( state.abb , "DC" , "PR" ) ) ,
+							stateab = tolower( c( state.abb , "DC" , if( this_year != 2020 ) "PR" ) ) ,
 							h_full_url = paste0( available_folders[ i ] , "/" , h_basenames ) ,
 							p_full_url = paste0( available_folders[ i ] , "/" , p_basenames ) ,
 							merged_tablename = paste0( output_dir , "/acs" , this_year , "_" , substr( available_periods[ i ] , 1 , 1 ) , "yr.rds" ) ,
