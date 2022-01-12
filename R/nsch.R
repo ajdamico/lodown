@@ -67,8 +67,8 @@ get_catalog_nsch <-
 				directory = four_digit_years ,
 				virgin_islands = FALSE ,
 				year = four_digit_years ,
-				dat_url = paste0( "https://www2.census.gov/programs-surveys/nsch/datasets/" , four_digit_years , "/nsch_" , four_digit_years , "_topical.zip" ) ,
-				screener_url = paste0( "https://www2.census.gov/programs-surveys/nsch/datasets/" , four_digit_years , "/nsch_" , four_digit_years , "_screener.zip" ) ,
+				dat_url = paste0( "https://www2.census.gov/programs-surveys/nsch/datasets/" , four_digit_years , "/nsch_" , four_digit_years , "_topical" , ifelse( four_digit_years >= 2018 , "_SAS" , "" ) , ".zip" ) ,
+				screener_url = paste0( "https://www2.census.gov/programs-surveys/nsch/datasets/" , four_digit_years , "/nsch_" , four_digit_years , "_screener" , ifelse( four_digit_years >= 2018 , "_SAS" , "" ) , ".zip" ) ,
 				mi_url = ifelse( four_digit_years == 2016 , "https://www2.census.gov/programs-surveys/nsch/datasets/2016/nsch_2016_implicate.zip" , NA ) ,
 				stringsAsFactors = FALSE
 			)
