@@ -48,44 +48,15 @@ get_catalog_nsch <-
 	
 	
 	
-	# data_links <- readLines( "https://www.census.gov/programs-surveys/nsch/data.html" , warn = FALSE )
+	data_links <- readLines( "https://www.census.gov/programs-surveys/nsch/data/datasets.html" , warn = FALSE )
 	
-	# dataset_lines <- grep( "html(.*)data release" , data_links , value = TRUE , ignore.case = TRUE )
+	dataset_lines <- grep( "https(.*)datasets(.*)nsch" , data_links , value = TRUE , ignore.case = TRUE )
 	
-	# dataset_hrefs <- unique( paste0( "https://www.census.gov/" , gsub( '(.*)href=\"(.*)html(.*)' , "\\2html" , dataset_lines ) ) )
+	dataset_hrefs <- unique( paste0( "https://www.census.gov/" , gsub( '(.*)href=\"(.*)html(.*)' , "\\2html" , dataset_lines ) ) )
 	
-	# four_digit_years <- suppressWarnings( as.numeric( gsub( "(.*)([0-9][0-9][0-9][0-9])(.*)" , "\\2" , dataset_hrefs ) ) )
+	dataset_hrefs <- dataset_hrefs[ !grepl( 'linkedin' , dataset_hrefs ) ]
 	
-	
-
-	catalog <-
-		rbind(
-			catalog ,
-			data.frame(
-				directory = 2016 ,
-				virgin_islands = FALSE ,
-				year = 2016 ,
-				dat_url = "https://www2.census.gov/programs-surveys/nsch/datasets/2016/nsch_2016_topical.zip" ,
-				screener_url = "https://www2.census.gov/programs-surveys/nsch/datasets/2016/nsch_2016_screener.zip" ,
-				mi_url = "https://www2.census.gov/programs-surveys/nsch/datasets/2016/nsch_2016_implicate.zip" ,
-				stringsAsFactors = FALSE
-			)
-		)
-	
-
-	catalog <-
-		rbind(
-			catalog ,
-			data.frame(
-				directory = 2017 ,
-				virgin_islands = FALSE ,
-				year = 2017 ,
-				dat_url = "https://www2.census.gov/programs-surveys/nsch/datasets/2017/nsch_2017_topical.zip" ,
-				screener_url = "https://www2.census.gov/programs-surveys/nsch/datasets/2017/nsch_2017_screener.zip" ,
-				mi_url = NA ,
-				stringsAsFactors = FALSE
-			)
-		)
+	four_digit_years <- suppressWarnings( as.numeric( gsub( "(.*)([0-9][0-9][0-9][0-9])(.*)" , "\\2" , dataset_hrefs ) ) )
 	
 	
 
@@ -93,16 +64,17 @@ get_catalog_nsch <-
 		rbind(
 			catalog ,
 			data.frame(
-				directory = 2018 ,
+				directory = four_digit_years ,
 				virgin_islands = FALSE ,
-				year = 2018 ,
-				dat_url = "https://www2.census.gov/programs-surveys/nsch/datasets/2018/nsch_2018_topical_SAS.zip" ,
-				screener_url = "https://www2.census.gov/programs-surveys/nsch/datasets/2018/nsch_2018_screener_SAS.zip" ,
-				mi_url = NA ,
+				year = four_digit_years ,
+				dat_url = paste0( "https://www2.census.gov/programs-surveys/nsch/datasets/" , four_digit_years , "/nsch_" , four_digit_years , "_topical.zip" ) ,
+				screener_url = paste0( "https://www2.census.gov/programs-surveys/nsch/datasets/" , four_digit_years , "/nsch_" , four_digit_years , "_screener.zip" ) ,
+				mi_url = ifelse( four_digit_years == 2016 , "https://www2.census.gov/programs-surveys/nsch/datasets/2016/nsch_2016_implicate.zip" , NA ) ,
 				stringsAsFactors = FALSE
 			)
 		)
 	
+
 	
 	catalog$output_folder <- output_dir
 	
