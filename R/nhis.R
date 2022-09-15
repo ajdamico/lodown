@@ -240,6 +240,8 @@ lodown_nhis <-
 
 					ii$rectype <- NULL
 					
+					if( any( names( ii ) == 'impnum_a' ) ) names( ii )[ names( ii ) == 'impnum_a' ] <- 'impnum'
+					
 					for( j in 1:10 ) assign( paste0( "ii" , j ) , subset( ii , impnum == j ) )
 				
 					# save all five imputed income data frames to a single .rds file #
