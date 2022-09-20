@@ -39,6 +39,7 @@ get_catalog_mapdcpsc <-
 		
 	}
 	
+	catalog <- catalog[ !grepl( 'contract' , basename( catalog[ , 'full_url' ] ) ) , ]
 	
 	catalog[ order( catalog$year_month ) , ]
   }
