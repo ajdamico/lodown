@@ -94,9 +94,11 @@ census_thresholds <-
 		all_thresholds$num_kids <- as.numeric( as.character( all_thresholds$num_kids ) )
 
 		all_thresholds$family_type <-
+			gsub( "aged 65 and over" , "65 years and over" ,
 			gsub( "aged 65 and older" , "65 years and over" ,
 			gsub( "age 65" , "65 years" , 
 				all_thresholds$family_type , 
+				ignore.case = TRUE ) , 
 				ignore.case = TRUE ) , 
 				ignore.case = TRUE )
 		
