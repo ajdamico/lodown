@@ -55,6 +55,9 @@ lodown_ces <-
 				# read the current stata-readable (.dta) file into R
 				x <- data.frame( haven::read_dta( this_dta ) )
 
+				# convert all column names to lowercase
+				names( x ) <- tolower( names( x ) )
+
 				# if the data.frame is a family file, tack on poverty thresholds
 				if( grepl( "fmli" , df_name ) ){
 
@@ -93,9 +96,6 @@ lodown_ces <-
 					stopifnot( nrow( x ) == before_nrow )
 
 				}
-
-				# convert all column names to lowercase
-				names( x ) <- tolower( names( x ) )
 
 				newids <- unique( c( newids , x$newid ) )
 				
