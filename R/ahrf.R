@@ -11,14 +11,14 @@ get_catalog_ahrf <-
 	
 	full_url <- ifelse( grepl( "^https" , partial_url ) , partial_url , paste0( "https://data.hrsa.gov" , partial_url ) )
 
-	full_url <- full_url[ !grepl( "_SAS_" , full_url ) & grepl( "zip" , full_url , ignore.case = TRUE ) ]
+	full_url <- full_url[ !grepl( "_SAS" , full_url ) & grepl( "zip" , full_url , ignore.case = TRUE ) ]
 	
 	full_url <- gsub( "//DataDownload" , "/DataDownload" , full_url )
 	
     this_catalog <-
       data.frame(
           directory = ifelse( grepl( "_SN_" , full_url ) , "state" , "county" ) ,
-          tech_doc = grepl( "_tech_" , full_url , ignore.case = TRUE ) ,
+          tech_doc = grepl( "_tech" , full_url , ignore.case = TRUE ) ,
           year = gsub( "(.*)([0-9][0-9][0-9][0-9])-([0-9][0-9][0-9][0-9])(.*)" , "\\2" , full_url )
       )
 
