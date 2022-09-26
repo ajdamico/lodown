@@ -13,6 +13,8 @@ get_catalog_ahrf <-
 
 	full_url <- full_url[ !grepl( "_SAS_" , full_url ) & grepl( "zip" , full_url , ignore.case = TRUE ) ]
 	
+	full_url <- gsub( "//DataDownload" , "/DataDownload" , full_url )
+	
     this_catalog <-
       data.frame(
           directory = ifelse( grepl( "_SN_" , full_url ) , "state" , "county" ) ,
@@ -24,7 +26,7 @@ get_catalog_ahrf <-
 
 	this_catalog$output_filename <- paste0( output_dir , "/" , this_catalog$directory , "/" , gsub( "\\.zip" , ".rds" , basename( this_catalog$full_url ) , ignore.case = TRUE ) )
 	
-    this_catalog[ !this_catalog[ , "tech_doc" ] , ]
+    unique( this_catalog[ !this_catalog[ , "tech_doc" ] , ] )
   }
 
 
