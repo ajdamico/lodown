@@ -25,6 +25,11 @@ get_catalog_mapdlandscape <-
 				stringsAsFactors = FALSE
 			)
 		
+		
+		mid_lsc_and_ptd <- subset( these_zips , data_name == "2013-2020 Landscape and Plan and Premium Information for Medicare Plans Offering Part D (ZIP) (ZIP)" )
+		
+		mid_lsc_and_ptd$year <- NULL
+		
 		early_lsc <- subset( these_zips , data_name == "2007-2012 PDP, MA, and SNP Landscape Files (ZIP)" )
 		
 		early_partd <- subset( these_zips , data_name == "2006-2012 Plan and Premium Information for Medicare Plans Offering Part D (ZIP)" )
@@ -34,10 +39,17 @@ get_catalog_mapdlandscape <-
 		these_zips <- 
 			subset( 
 				these_zips , 
+				!( data_name %in% "2013-2020 Landscape and Plan and Premium Information for Medicare Plans Offering Part D (ZIP) (ZIP)" ) &
 				!( data_name %in% "2007-2012 PDP, MA, and SNP Landscape Files (ZIP)" ) &
 				!( data_name %in% "2006-2012 Plan and Premium Information for Medicare Plans Offering Part D (ZIP)" ) 
 			)
 
+		these_zips <-
+			rbind( 
+				these_zips , 
+				merge( expand.grid( year = 2013:2020 ) , mid_lsc_and_ptd )
+			)
+		
 		these_zips <-
 			rbind( 
 				these_zips , 
