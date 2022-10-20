@@ -91,7 +91,7 @@ lodown_acs <-
 			for( j in c( "h" , "p" ) ){
 
 				# download the wyoming structure file
-				wyoming_unix <- paste0( dirname( catalog[ i , 'h_full_url' ] ) , "/unix_" , j , "wy.zip" )
+				wyoming_unix <- paste0( dirname( catalog[ i , 'h_full_url' ] ) , if( catalog[ i , 'year' ] < 2021 ) "/unix_" else "/sas_" , j , "wy.zip" )
 				
 				cachaca( wyoming_unix , tf , mode = 'wb' , filesize_fun = 'unzip_verify' )
 
