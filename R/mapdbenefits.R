@@ -34,7 +34,7 @@ get_catalog_mapdbenefits <-
 		link_text <- readLines( this_catalog[ this_row , 'full_url' ] )
 		link_line <- grep( "\\.zip" , link_text , value = TRUE )
 		link_line <- gsub( '(.*) href=\"' , "" , gsub( '(.*) href=\"/' , prefix , link_line ) )
-		this_catalog[ this_row , 'full_url' ] <- gsub( 'zip\">(.*)' , "zip" , link_line )
+		this_catalog[ this_row , 'full_url' ] <- gsub( 'zip\"(.*)' , "zip" , link_line )
 		
 	}
 	
