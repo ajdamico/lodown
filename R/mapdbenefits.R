@@ -65,7 +65,11 @@ lodown_mapdbenefits <-
 
 			for( j in seq_along( txt_files ) ){
 
-				x <- data.frame( readr::read_delim( txt_files[ j ] , delim = "\t" , guess_max = 10000 ) )
+				x <- readr::read_delim( txt_files[ j ] , delim = "\t" , guess_max = 10000 , quote = "" , show_col_types = FALSE )
+				
+				stopifnot( nrow( x ) == R.utils::countLines( txt_files[ j ] ) - 1 )
+
+				x <- data.frame( x )
 
 				names( x ) <- tolower( names( x ) )
 
