@@ -10,7 +10,7 @@ get_catalog_ces <-
 	catalog <-
 		data.frame(
 			type = gsub( "([0-9][0-9])(.*)" , "" , basename( stata_links ) ) ,
-			year = ifelse( as.numeric( stata_years ) > 95 , 1900 + as.numeric( stata_years ) , 2000 + as.numeric( stata_years ) ) ,
+			year = ifelse( as.numeric( stata_years ) > 79 , 1900 + as.numeric( stata_years ) , 2000 + as.numeric( stata_years ) ) ,
 			full_url = paste0( 'https://www.bls.gov/' , stata_links ) ,
 			stringsAsFactors = FALSE
 		)
@@ -34,7 +34,9 @@ lodown_ces <-
 		for ( i in seq_len( nrow( catalog ) ) ){
 
 			# download the file
-			cachaca( catalog[ i , "full_url" ] , tf , mode = 'wb' )
+			this_bin <- cachaca( catalog[ i , "full_url" ] , FUN = RCurl::getBinaryURL, filesize_fun = 'unzip_verify' )
+			
+			writeBin( this_bin , tf )
 
 			unzipped_files <- unzip_warn_fail( tf , exdir = paste0( tempdir() , "/unzips" ) )
 
