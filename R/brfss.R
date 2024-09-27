@@ -20,12 +20,14 @@ get_catalog_brfss <-
 		sas_files <-
 			ifelse( available_years < 2002 ,
 				NA ,
+			ifelse( available_years >= 2023 ,
+				paste0( "https://www.cdc.gov/brfss/annual_data/" , available_years , "/files/SASOUT" , substr( available_years , 3 , 4 ) , "_LLCP.ZIP" ) ,
 			ifelse( available_years >= 2012 ,
 				paste0( "https://www.cdc.gov/brfss/annual_data/" , available_years , "/files/sasout" , substr( available_years , 3 , 4 ) , "_llcp.sas" ) ,
 			ifelse( available_years == 2011 ,
 				"https://www.cdc.gov/brfss/annual_data/2011/sasout11_llcp.sas" ,
 				paste0( "https://www.cdc.gov/brfss/annual_data/" , available_years , "/files/sasout" , substr( available_years , 3 , 4 ) , ifelse( available_years > 2006 , ".SAS" , ".sas" ) ) 
-				) ) )
+				) ) ) )
 
 
 		catalog <-
@@ -69,6 +71,16 @@ lodown_brfss <-
 				x <- foreign::read.xport( unzipped_files ) 
 				
 			} else {
+			
+				if( grepl( "zip$" , catalog[ i , 'sas_ri' ] , ignore.case = TRUE ) ){
+				
+					sas_zip <- tempfile()
+					
+					download.file( catalog[ i , 'sas_ri' ] , sas_zip , mode = 'wb' )
+					
+					catalog[ i , 'sas_ri' ] <- unzip( sas_zip , exdir = tempdir() )
+				
+				}
 			
 				sas_con <- file( catalog[ i , 'sas_ri' ] , "rb" , encoding = "windows-1252" )
 				z <- readLines( sas_con , encoding = 'latin1' )
