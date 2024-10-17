@@ -36,6 +36,18 @@ get_catalog_acs <-
 			
 				available_folders <- paste0( "https://www2.census.gov/programs-surveys/acs/experimental/2020/data/pums/" , "/" , available_periods )
 			
+			} else if( this_year == 2023 ){
+
+				
+				available_periods <- "1-Year"
+				# if the 5-year file becomes available, use:
+				# available_periods <- c( "1-Year" , "5-Year" )
+				
+				available_folders <- "https://www2.census.gov/programs-surveys/acs/data/pums/2023/1-Year/"
+				# if the 5-year file becomes available, use:
+				# available_folders <- c( "https://www2.census.gov/programs-surveys/acs/data/pums/2023/1-Year/" , "https://www2.census.gov/programs-surveys/acs/data/pums/2023/5-Year/" )
+				
+				
 			} else {
 			
 				ftp_listing <- data.frame( rvest::html_table( xml2::read_html( paste0( pums_ftp , this_year ) ) )[[1]] )[ , "Name" ]
