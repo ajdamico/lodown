@@ -39,13 +39,21 @@ get_catalog_acs <-
 			} else if( this_year == 2023 ){
 
 				
+				available_periods <- c( "1-Year" , "5-Year" )
+				
+				available_folders <- c( "https://www2.census.gov/programs-surveys/acs/data/pums/2023/1-Year/" , "https://www2.census.gov/programs-surveys/acs/data/pums/2023/5-Year/" )
+				
+				
+			} else if( this_year == 2024 ){
+
+				
 				available_periods <- "1-Year"
 				# if the 5-year file becomes available, use:
 				# available_periods <- c( "1-Year" , "5-Year" )
 				
-				available_folders <- "https://www2.census.gov/programs-surveys/acs/data/pums/2023/1-Year/"
+				available_folders <- "https://www2.census.gov/programs-surveys/acs/data/pums/2024/1-Year/"
 				# if the 5-year file becomes available, use:
-				# available_folders <- c( "https://www2.census.gov/programs-surveys/acs/data/pums/2023/1-Year/" , "https://www2.census.gov/programs-surveys/acs/data/pums/2023/5-Year/" )
+				# available_folders <- c( "https://www2.census.gov/programs-surveys/acs/data/pums/2024/1-Year/" , "https://www2.census.gov/programs-surveys/acs/data/pums/2023/5-Year/" )
 				
 				
 			} else {
